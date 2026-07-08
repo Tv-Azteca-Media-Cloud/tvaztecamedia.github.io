@@ -115,6 +115,11 @@
         <span class="nav-ico">📡</span>Portal de Tracking
       </a>
     </li>
+    <li>
+      <a onclick="filterCategory('seguridad-salesforce',this)" id="nav-seguridad-salesforce">
+        <span class="nav-ico">🔐</span>Seguridad Salesforce
+      </a>
+    </li>
   </ul>
   <div class="nav-foot">Portal interno<br>TV Azteca &middot; Media Cloud<br>2026</div>
 </div>
@@ -143,11 +148,11 @@
     <!-- KPIs -->
     <div class="kpi-strip">
       <div class="kpi">
-        <div class="kpi-v" id="kpi-total">1</div>
+        <div class="kpi-v" id="kpi-total">2</div>
         <div class="kpi-l">Presentaciones totales</div>
       </div>
       <div class="kpi">
-        <div class="kpi-v">1</div>
+        <div class="kpi-v">2</div>
         <div class="kpi-l">Categorías activas</div>
       </div>
       <div class="kpi">
@@ -162,6 +167,7 @@
     <div class="filter-bar">
       <button class="f-tab active" onclick="filterCategory('all',this)">Todas</button>
       <button class="f-tab" onclick="filterCategory('portal-de-tracking',this)">Portal de Tracking</button>
+      <button class="f-tab" onclick="filterCategory('seguridad-salesforce',this)">Seguridad Salesforce</button>
     </div>
 
     <!-- Cards -->
@@ -179,6 +185,27 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Presentación del portal de tracking para TV Azteca Media Cloud. Visión general, alcance y próximos pasos.</div>
+          <div class="card-footer">
+            Ver presentación
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="presentaciones/seguridad-salesforce/2026-07-08-permission-sets/index.html"
+         class="pres-card"
+         data-category="seguridad-salesforce">
+        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a2a 0%,#0d5c3a 100%)">
+          <div class="card-banner-top">
+            <span class="card-tag">Seguridad Salesforce</span>
+          </div>
+          <div class="card-date">08 Jul 2026</div>
+          <div class="card-title">Asignación de Permission Sets — TV Azteca</div>
+        </div>
+        <div class="card-desc-wrap">
+          <div class="card-desc">Recomendación de asignación de Permission Sets por perfil de usuario. Segregación de funciones (SoD) para el entorno Media Cloud.</div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
