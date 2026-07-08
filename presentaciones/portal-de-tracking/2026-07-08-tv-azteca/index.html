@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tv Azteca — Portal de Tracking | 2026-07-08</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:       #C8102E;
+      --dark:      #0A0A0A;
+      --gray:      #111111;
+      --mid:       #222222;
+      --border:    #2E2E2E;
+      --light:     #F0F0F0;
+      --muted:     #777;
+      --accent:    #E8C84A;
+      --slide-w:   1100px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
+    }
+
+    /* ── Top nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 200;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--light); }
+
+    .nav-sep { color: var(--border); }
+
+    .nav-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .nav-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(200,16,46,0.15);
+      color: var(--red);
+      border: 1px solid rgba(200,16,46,0.3);
+    }
+
+    .nav-date { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── Slide layout ── */
+    .deck {
+      padding-top: 52px;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .slide-inner {
+      max-width: var(--slide-w);
+      width: 100%;
+    }
+
+    .slide-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slide-num::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      max-width: 60px;
+      background: var(--red);
+      opacity: 0.5;
+    }
+
+    /* ── Slide 1: Cover ── */
+    .slide-cover {
+      background: radial-gradient(ellipse at 30% 50%, rgba(200,16,46,0.18) 0%, transparent 65%),
+                  var(--dark);
+    }
+
+    .cover-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+    }
+
+    .cover-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.0;
+      margin-bottom: 1rem;
+    }
+
+    .cover-title .highlight { color: var(--red); }
+
+    .cover-subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 600px;
+      line-height: 1.5;
+      margin-bottom: 3rem;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cover-meta-item label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .cover-meta-item span {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* ── Slide 2: Agenda ── */
+    .slide-agenda { background: var(--gray); }
+
+    .slide-h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 2.5rem;
+    }
+
+    .agenda-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      counter-reset: agenda;
+      max-width: 700px;
+    }
+
+    .agenda-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+      counter-increment: agenda;
+    }
+
+    .agenda-item::before {
+      content: "0" counter(agenda);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--red);
+      min-width: 28px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .agenda-item-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .agenda-item-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ── Slide 3: Resumen ejecutivo ── */
+    .slide-exec { background: var(--dark); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .kpi-card {
+      background: var(--mid);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem 1.2rem;
+    }
+
+    .kpi-card .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .kpi-card .desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    /* ── Slide 4: Contenido principal ── */
+    .slide-main { background: var(--gray); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    .content-block h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .bullet-list li {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--light);
+    }
+
+    .bullet-list li::before {
+      content: "—";
+      color: var(--red);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Slide 5: Siguientes pasos ── */
+    .slide-next { background: var(--dark); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .step-card {
+      background: var(--mid);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .step-num {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    /* ── Slide 6: Cierre ── */
+    .slide-close {
+      background: radial-gradient(ellipse at 70% 50%, rgba(200,16,46,0.2) 0%, transparent 65%),
+                  var(--dark);
+      text-align: center;
+    }
+
+    .close-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .close-inner h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .close-inner p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .contact-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--mid);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.82rem;
+    }
+
+    /* ── Scroll indicator ── */
+    .progress-bar {
+      position: fixed;
+      top: 52px;
+      left: 0;
+      height: 2px;
+      background: var(--red);
+      z-index: 199;
+      transition: width 0.1s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../../index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Portal
+    </a>
+    <span class="nav-sep">/</span>
+    <span class="nav-title">Tv Azteca — Portal de Tracking</span>
+    <span class="nav-tag">Portal de Tracking</span>
+  </div>
+  <span class="nav-date">08 Jul 2026</span>
+</nav>
+
+<div class="deck">
+
+  <!-- Slide 1: Cover -->
+  <section class="slide slide-cover">
+    <div class="slide-inner">
+      <div class="cover-eyebrow">Portal de Tracking &nbsp;·&nbsp; 08 Julio 2026</div>
+      <h1 class="cover-title">
+        Portal de <span class="highlight">Tracking</span><br>
+        Tv Azteca
+      </h1>
+      <p class="cover-subtitle">
+        Presentación del estado actual, alcance del proyecto y hoja de ruta para el portal de tracking de Tv Azteca Media Cloud.
+      </p>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <label>Cliente</label>
+          <span>Tv Azteca</span>
+        </div>
+        <div class="cover-meta-item">
+          <label>Área</label>
+          <span>Media Cloud</span>
+        </div>
+        <div class="cover-meta-item">
+          <label>Fecha</label>
+          <span>08 Jul 2026</span>
+        </div>
+        <div class="cover-meta-item">
+          <label>Categoría</label>
+          <span>Portal de Tracking</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2: Agenda -->
+  <section class="slide slide-agenda">
+    <div class="slide-inner">
+      <div class="slide-num">Agenda</div>
+      <h2 class="slide-h2">¿Qué vamos a revisar hoy?</h2>
+      <ol class="agenda-list">
+        <li class="agenda-item">
+          <div>
+            <div class="agenda-item-title">Resumen ejecutivo</div>
+            <div class="agenda-item-sub">Estado actual del proyecto</div>
+          </div>
+        </li>
+        <li class="agenda-item">
+          <div>
+            <div class="agenda-item-title">Contexto y objetivos</div>
+            <div class="agenda-item-sub">¿Qué buscamos lograr con el portal de tracking?</div>
+          </div>
+        </li>
+        <li class="agenda-item">
+          <div>
+            <div class="agenda-item-title">Solución propuesta</div>
+            <div class="agenda-item-sub">Arquitectura, componentes y flujo</div>
+          </div>
+        </li>
+        <li class="agenda-item">
+          <div>
+            <div class="agenda-item-title">Siguientes pasos</div>
+            <div class="agenda-item-sub">Hoja de ruta y responsables</div>
+          </div>
+        </li>
+        <li class="agenda-item">
+          <div>
+            <div class="agenda-item-title">Preguntas y cierre</div>
+            <div class="agenda-item-sub">Acuerdos y compromisos</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Slide 3: KPIs / Resumen ejecutivo -->
+  <section class="slide slide-exec">
+    <div class="slide-inner">
+      <div class="slide-num">01 — Resumen ejecutivo</div>
+      <h2 class="slide-h2">Estado del proyecto</h2>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">Fase actual</div>
+          <div class="value">1</div>
+          <div class="desc">Discovery &amp; Diseño</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Avance</div>
+          <div class="value">—%</div>
+          <div class="desc">Actualizar con valor real</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Entregables</div>
+          <div class="value">—</div>
+          <div class="desc">Actualizar con valor real</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Fecha objetivo</div>
+          <div class="value">—</div>
+          <div class="desc">Actualizar con fecha real</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Contenido principal -->
+  <section class="slide slide-main">
+    <div class="slide-inner">
+      <div class="slide-num">02 — Contexto y solución</div>
+      <h2 class="slide-h2">Detalle del portal</h2>
+      <div class="two-col">
+        <div class="content-block">
+          <h3>Objetivos</h3>
+          <ul class="bullet-list">
+            <li>Centralizar el tracking de activos y campañas de Tv Azteca</li>
+            <li>Visibilidad en tiempo real para equipos internos</li>
+            <li>Reducir tiempos de reporte manual</li>
+            <li>Integración con sistemas existentes de Media Cloud</li>
+          </ul>
+        </div>
+        <div class="content-block">
+          <h3>Componentes clave</h3>
+          <ul class="bullet-list">
+            <li>Dashboard principal con métricas en vivo</li>
+            <li>Módulo de alertas y notificaciones</li>
+            <li>Gestión de usuarios y roles</li>
+            <li>Exportación de reportes automatizados</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Siguientes pasos -->
+  <section class="slide slide-next">
+    <div class="slide-inner">
+      <div class="slide-num">03 — Hoja de ruta</div>
+      <h2 class="slide-h2">Siguientes pasos</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">Paso 01</div>
+          <div class="step-title">Validación de requisitos</div>
+          <div class="step-desc">Confirmar alcance con stakeholders de Tv Azteca y alinear expectativas del MVP.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Paso 02</div>
+          <div class="step-title">Diseño UX/UI</div>
+          <div class="step-desc">Prototipo de alta fidelidad del portal, flujos de usuario y sistema de diseño.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Paso 03</div>
+          <div class="step-title">Desarrollo MVP</div>
+          <div class="step-desc">Implementación del portal con integraciones core y módulo de tracking.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Paso 04</div>
+          <div class="step-title">QA &amp; Lanzamiento</div>
+          <div class="step-desc">Pruebas de aceptación, correcciones y go-live con usuarios piloto.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Cierre -->
+  <section class="slide slide-close">
+    <div class="slide-inner">
+      <div class="close-inner">
+        <div class="slide-num" style="justify-content:center">Cierre</div>
+        <h2>¿Preguntas?</h2>
+        <p>
+          Gracias por su tiempo. Estamos disponibles para resolver dudas y agendar los siguientes pasos del proyecto.
+        </p>
+        <div class="contact-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Tv Azteca Media Cloud
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+  });
+</script>
+
+</body>
+</html>

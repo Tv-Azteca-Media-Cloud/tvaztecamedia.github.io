@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de Presentaciones — Tv Azteca Media</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azteca-red:    #C8102E;
+      --azteca-dark:   #0A0A0A;
+      --azteca-gray:   #1A1A1A;
+      --azteca-mid:    #2C2C2C;
+      --azteca-light:  #F5F5F5;
+      --azteca-muted:  #888;
+      --accent:        #E8C84A;
+      --radius:        12px;
+      --transition:    0.25s ease;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--azteca-dark);
+      color: var(--azteca-light);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--azteca-gray);
+      border-bottom: 3px solid var(--azteca-red);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      background: var(--azteca-red);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: -1px;
+      color: #fff;
+    }
+
+    .logo-text {
+      line-height: 1.1;
+    }
+
+    .logo-text strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      font-size: 0.72rem;
+      color: var(--azteca-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .header-meta {
+      font-size: 0.75rem;
+      color: var(--azteca-muted);
+      text-align: right;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(200,16,46,0.12) 0%, transparent 70%);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h1 span { color: var(--azteca-red); }
+
+    .hero p {
+      color: var(--azteca-muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Category tabs ── */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 2rem 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--azteca-mid);
+      background: transparent;
+      color: var(--azteca-muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .tab:hover { border-color: var(--azteca-red); color: var(--azteca-light); }
+    .tab.active { background: var(--azteca-red); border-color: var(--azteca-red); color: #fff; font-weight: 600; }
+
+    /* ── Grid ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--azteca-muted);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--azteca-mid);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--azteca-gray);
+      border: 1.5px solid var(--azteca-mid);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--azteca-red);
+      transform: scaleX(0);
+      transition: transform var(--transition);
+      transform-origin: left;
+    }
+
+    .card:hover {
+      border-color: var(--azteca-red);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(200,16,46,0.15);
+    }
+
+    .card:hover::before { transform: scaleX(1); }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-date {
+      font-size: 0.72rem;
+      color: var(--azteca-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(200,16,46,0.15);
+      color: var(--azteca-red);
+      border: 1px solid rgba(200,16,46,0.3);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--azteca-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--azteca-mid);
+      font-size: 0.78rem;
+      color: var(--azteca-red);
+      font-weight: 600;
+      gap: 0.3rem;
+    }
+
+    .card-footer svg { transition: transform var(--transition); }
+    .card:hover .card-footer svg { transform: translateX(4px); }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--azteca-muted);
+    }
+
+    .empty svg { margin-bottom: 1rem; opacity: 0.3; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem;
+      color: var(--azteca-muted);
+      border-top: 1px solid var(--azteca-mid);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-badge">TA</div>
+    <div class="logo-text">
+      <strong>Tv Azteca Media</strong>
+      <span>Portal de Presentaciones</span>
+    </div>
+  </div>
+  <div class="header-meta">
+    Uso interno<br>Media Cloud
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Portal de <span>Presentaciones</span></h1>
+  <p>Repositorio centralizado de presentaciones por proyecto y categoría.</p>
+</section>
+
+<div class="tabs">
+  <button class="tab active" onclick="filterCategory('all', this)">Todas</button>
+  <button class="tab" onclick="filterCategory('portal-de-tracking', this)">Portal de Tracking</button>
+</div>
+
+<main>
+  <div class="section-label">Presentaciones disponibles</div>
+
+  <div class="grid" id="grid">
+
+    <a href="presentaciones/portal-de-tracking/2026-07-08-tv-azteca/index.html"
+       class="card"
+       data-category="portal-de-tracking">
+      <div class="card-meta">
+        <span class="card-date">08 Jul 2026</span>
+        <span class="card-tag">Portal de Tracking</span>
+      </div>
+      <div class="card-title">Tv Azteca — Presentación Inicial</div>
+      <div class="card-desc">Presentación del portal de tracking para Tv Azteca Media Cloud. Visión general, alcance y próximos pasos.</div>
+      <div class="card-footer">
+        Ver presentación
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Tv Azteca Media &mdash; Uso interno. Todos los derechos reservados.
+</footer>
+
+<script>
+  function filterCategory(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      const match = cat === 'all' || card.dataset.category === cat;
+      card.style.display = match ? 'flex' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
