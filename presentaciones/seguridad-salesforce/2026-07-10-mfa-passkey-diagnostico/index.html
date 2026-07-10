@@ -3,147 +3,246 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Diagnóstico: Doble MFA — Salesforce + Okta</title>
+<title>Diagnóstico: Doble MFA — Salesforce + Okta | TV Azteca</title>
 <style>
-:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;}
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;padding:32px 20px 64px;}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
 
-.container{max-width:980px;margin:0 auto;}
+/* ── Sidebar ── */
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0;flex:1}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
 
-/* HEADER */
-.page-header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;border-radius:14px;padding:28px 32px;margin-bottom:32px;position:relative;overflow:hidden;}
-.page-header::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
-.page-header h1{font-size:1.15rem;font-weight:800;margin-bottom:6px;}
-.page-header p{opacity:.8;font-size:12px;margin-top:4px;}
-.hdr-meta{display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5);margin-top:10px;}
+/* ── Page ── */
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+#progress{position:fixed;top:0;left:var(--nav);right:0;height:3px;background:var(--teal);z-index:999;transition:width .1s;width:0}
+
+/* ── Header ── */
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.hdr-title{font-size:14px;font-weight:800;line-height:1.3}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:3px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
 .hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;margin-right:6px}
+.hdr-badge.red{background:rgba(220,38,38,.25);border-color:rgba(248,113,113,.4)}
 
-/* SECTION TITLE */
-.section-title{font-size:11.5px;font-weight:700;color:var(--blue);margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;}
-.section-title::after{content:"";flex:1;height:1px;background:var(--border);}
+/* ── Main ── */
+main{padding:28px 36px 64px;flex:1}
+.section{scroll-margin-top:16px;margin-bottom:32px}
+.section-title{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:"";flex:1;height:1px;background:var(--border)}
 
-/* ── FLOW ROW ── */
-.flow-row{display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center;gap:0;margin-bottom:32px;}
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;border-top:3px solid var(--blue)}
+.kpi.red{border-top-color:#c0392b}
+.kpi.orange{border-top-color:#d97706}
+.kpi.green{border-top-color:#16a34a}
+.kpi-v{font-size:22px;font-weight:800;color:var(--blue);line-height:1.1}
+.kpi.red .kpi-v{color:#c0392b}
+.kpi.orange .kpi-v{color:#d97706}
+.kpi.green .kpi-v{color:#16a34a}
+.kpi-l{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500}
 
-.screen-col{display:flex;flex-direction:column;align-items:stretch;}
-.step-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;display:flex;align-items:center;gap:7px;justify-content:center;}
-.step-label .num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;}
-.step-label.ok{color:#16a34a;} .step-label.ok .num{background:#16a34a;}
-.step-label.bad{color:#dc2626;} .step-label.bad .num{background:#dc2626;}
+/* ── FLOW ──
+   Step labels in one grid row, browsers in another.
+   Browsers row uses align-items:center so arrow is at
+   the midpoint of the tallest browser — always visually correct.
+*/
+.flow-labels{display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;margin-bottom:10px}
+.flow-browsers{display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center;margin-bottom:28px}
 
-.arrow-col{display:flex;align-items:center;justify-content:center;}
-.arrow-col svg{color:#94a3b8;}
+.step-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 4px}
+.step-label .num{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#fff;flex-shrink:0}
+.step-label.ok{color:#16a34a} .step-label.ok .num{background:#16a34a}
+.step-label.bad{color:#dc2626} .step-label.bad .num{background:#dc2626}
+.flow-label-spacer{} /* empty arrow column placeholder */
 
-/* BROWSER MOCKUP */
-.browser{border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #dde2ea;background:#fff;}
-.browser-bar{background:#f1f3f5;padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid #dde2ea;}
-.bdot{width:9px;height:9px;border-radius:50%;}
-.bdot.r{background:#ff5f57} .bdot.y{background:#febc2e} .bdot.g{background:#28c840}
-.burl{flex:1;background:#fff;border-radius:3px;padding:2px 7px;font-size:9px;color:#777;border:1px solid #e2e6ea;margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.arrow-col{display:flex;align-items:center;justify-content:center}
+.arrow-col svg{color:#94a3b8}
+
+/* ── Browser mockup ── */
+.browser{border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #dde2ea;background:#fff}
+.browser-bar{background:#f1f3f5;padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid #dde2ea}
+.bdot{width:9px;height:9px;border-radius:50%}
+.bdot.r{background:#ff5f57}.bdot.y{background:#febc2e}.bdot.g{background:#28c840}
+.burl{flex:1;background:#fff;border-radius:3px;padding:2px 7px;font-size:9px;color:#777;border:1px solid #e2e6ea;margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* Screen 1 — Okta Push */
-.scr-push{background:#f3f4f6;padding:18px 14px;text-align:center;}
-.gs-logo{font-size:10px;font-weight:800;color:#d97706;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
-.push-icon{width:48px;height:48px;border-radius:50%;background:#1a56a0;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;}
-.push-title{font-size:12px;font-weight:700;color:#111;margin-bottom:3px;}
-.push-user{font-size:10px;color:#666;margin-bottom:8px;}
-.push-check{font-size:9px;color:#1a56a0;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:4px;}
-.push-instruction{font-size:9.5px;color:#444;line-height:1.5;margin-bottom:12px;padding:0 8px;}
-.push-instruction strong{color:#1a56a0;font-size:11px;}
-.push-phone{width:44px;height:60px;background:#222;border-radius:7px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:#60a5fa;font-size:18px;font-weight:800;}
-.push-links{font-size:9.5px;color:#1a56a0;line-height:1.9;}
+.scr-push{background:#f3f4f6;padding:20px 16px;text-align:center}
+.gs-logo{font-size:10px;font-weight:800;color:#d97706;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.push-icon{width:50px;height:50px;border-radius:50%;background:#1a56a0;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
+.push-title{font-size:12px;font-weight:700;color:#111;margin-bottom:4px}
+.push-user{font-size:10px;color:#666;margin-bottom:8px}
+.push-check{font-size:9px;color:#1a56a0;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:4px}
+.push-instruction{font-size:9.5px;color:#444;line-height:1.5;margin-bottom:14px;padding:0 8px}
+.push-instruction strong{color:#1a56a0;font-size:11px}
+.push-phone{width:46px;height:64px;background:#222;border-radius:8px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:#60a5fa;font-size:20px;font-weight:800}
+.push-links{font-size:9.5px;color:#1a56a0;line-height:2}
 
 /* Screen 2 — Okta Dashboard */
-.scr-dash{background:#fff;}
-.okta-topbar{background:#fff;border-bottom:1px solid #eee;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;}
-.okta-logo{font-size:15px;font-weight:800;color:#007dc1;}
-.okta-user{font-size:8.5px;color:#555;text-align:right;line-height:1.4}
-.okta-body{display:flex;height:170px;}
-.okta-sidebar{width:72px;background:#fafafa;border-right:1px solid #eee;padding:8px 6px;font-size:8.5px;color:#555;}
-.okta-sidebar .nav-item{padding:4px 5px;border-radius:4px;margin-bottom:2px;}
-.okta-sidebar .nav-item.active{background:#e8f4fb;color:#007dc1;font-weight:700;}
-.okta-content{flex:1;padding:8px;overflow:hidden;}
-.apps-section-title{font-size:8px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
-.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;}
-.app-tile{background:#f8f9fa;border:1px solid #eee;border-radius:5px;padding:5px;text-align:center;font-size:7.5px;color:#333;}
-.app-tile .app-icon{width:20px;height:20px;background:#e8e8e8;border-radius:3px;margin:0 auto 3px;display:flex;align-items:center;justify-content:center;font-size:9px;}
-.app-tile.hi{border-color:#007dc1;background:#f0f7ff;}
-.app-tile.hi .app-icon{background:#cce5ff;}
+.scr-dash{background:#fff}
+.okta-topbar{background:#fff;border-bottom:1px solid #eee;padding:7px 10px;display:flex;align-items:center;justify-content:space-between}
+.okta-logo{font-size:15px;font-weight:800;color:#007dc1}
+.okta-user-lbl{font-size:8.5px;color:#555;text-align:right;line-height:1.4}
+.okta-body{display:flex;height:190px}
+.okta-sidebar-nav{width:72px;background:#fafafa;border-right:1px solid #eee;padding:8px 6px;font-size:8.5px;color:#555}
+.okta-sidebar-nav .nav-item{padding:4px 5px;border-radius:4px;margin-bottom:2px}
+.okta-sidebar-nav .nav-item.active{background:#e8f4fb;color:#007dc1;font-weight:700}
+.okta-content{flex:1;padding:8px;overflow:hidden}
+.apps-section-title{font-size:8px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
+.app-tile{background:#f8f9fa;border:1px solid #eee;border-radius:5px;padding:5px;text-align:center;font-size:7.5px;color:#333}
+.app-tile .app-icon{width:20px;height:20px;background:#e8e8e8;border-radius:3px;margin:0 auto 3px;display:flex;align-items:center;justify-content:center;font-size:9px}
+.app-tile.hi{border-color:#007dc1;background:#f0f7ff}
+.app-tile.hi .app-icon{background:#cce5ff}
 
 /* Screen 3 — Salesforce Passkey */
-.scr-passkey{background:#fff;padding:16px 14px;text-align:center;}
-.sf-icon-row{display:flex;justify-content:center;gap:10px;margin-bottom:10px;font-size:13px;color:#aaa;}
-.sf-main-icon{font-size:28px;margin-bottom:10px;}
-.passkey-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;}
-.passkey-warning{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;font-size:8.5px;color:#1e40af;line-height:1.5;margin-bottom:10px;text-align:left;}
-.passkey-features{text-align:left;margin-bottom:12px;}
-.passkey-feature{display:flex;align-items:flex-start;gap:5px;font-size:8.5px;color:#333;margin-bottom:5px;line-height:1.45;}
-.feat-icon{font-size:10px;flex-shrink:0;margin-top:1px;}
-.passkey-btn{background:#0176d3;color:#fff;border:none;width:100%;padding:7px;border-radius:5px;font-size:10.5px;font-weight:700;cursor:default;}
-.passkey-back{font-size:9.5px;color:#0176d3;margin-top:7px;cursor:pointer;}
+.scr-passkey{background:#fff;padding:18px 16px;text-align:center}
+.sf-icon-row{display:flex;justify-content:center;gap:10px;margin-bottom:10px;font-size:13px;color:#aaa}
+.sf-main-icon{font-size:30px;margin-bottom:10px}
+.passkey-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px}
+.passkey-warning{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;font-size:8.5px;color:#1e40af;line-height:1.5;margin-bottom:10px;text-align:left}
+.passkey-features{text-align:left;margin-bottom:12px}
+.passkey-feature{display:flex;align-items:flex-start;gap:5px;font-size:8.5px;color:#333;margin-bottom:5px;line-height:1.45}
+.feat-icon{font-size:10px;flex-shrink:0;margin-top:1px}
+.passkey-btn{background:#0176d3;color:#fff;border:none;width:100%;padding:8px;border-radius:5px;font-size:10.5px;font-weight:700;cursor:default}
+.passkey-back{font-size:9.5px;color:#0176d3;margin-top:8px;cursor:pointer}
 
-/* DIAGNOSIS BOX */
-.diagnosis-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid #f59e0b;border-radius:10px;padding:18px 22px;margin-bottom:26px;}
-.diagnosis-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.diagnosis-header h2{font-size:14px;font-weight:800;color:#92400e;}
-.diagnosis-box p{font-size:12.5px;color:#78350f;line-height:1.7;}
-.diagnosis-box strong{color:#92400e;}
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:16px}
+.card-hdr{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.card-hdr-icon{font-size:1.2rem}
+.card-hdr-title{font-size:.88rem;font-weight:700;color:var(--navy)}
+.card-hdr-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.card-body{padding:18px 20px}
 
-/* FIX GRID */
-.fix-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
-.fix-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.fix-card h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
-.fix-step{display:flex;gap:9px;margin-bottom:9px;align-items:flex-start;}
-.fix-num{flex-shrink:0;width:19px;height:19px;background:var(--blue);color:#fff;border-radius:50%;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
-.fix-step p{font-size:12px;color:#333;line-height:1.5;}
-.fix-step code{background:#f0f4f8;padding:1px 5px;border-radius:3px;font-size:11px;color:var(--blue);border:1px solid var(--border);}
+/* ── Diagnosis callout ── */
+.diagnosis-box{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid #f59e0b;border-radius:10px;padding:18px 22px;margin-bottom:28px}
+.diagnosis-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.diagnosis-header h2{font-size:14px;font-weight:800;color:#92400e}
+.diagnosis-box p{font-size:12.5px;color:#78350f;line-height:1.7}
+.diagnosis-box strong{color:#92400e}
 
-/* CRITICAL CHECKBOX */
-.critical-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:20px;}
-.critical-card h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;}
-.checkbox-row{display:flex;align-items:flex-start;gap:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;padding:12px 14px;}
-.cb{width:16px;height:16px;border:2px solid #dc2626;border-radius:3px;background:#fee2e2;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:#dc2626;flex-shrink:0;margin-top:1px;}
-.checkbox-row p{font-size:12px;color:#92400e;line-height:1.55;}
-.checkbox-row strong{color:#dc2626;}
+/* ── Fix steps ── */
+.fix-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.fix-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.fix-card h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.fix-step{display:flex;gap:9px;margin-bottom:9px;align-items:flex-start}
+.fix-num{flex-shrink:0;width:19px;height:19px;background:var(--blue);color:#fff;border-radius:50%;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.fix-step p{font-size:12px;color:#333;line-height:1.5}
+.fix-step code{background:#f0f4f8;padding:1px 5px;border-radius:3px;font-size:11px;color:var(--blue);border:1px solid var(--border)}
 
-/* COMPAT TABLE */
-.compat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.compat-card h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;}
-table{width:100%;border-collapse:collapse;font-size:12px;}
-th{background:#f4f6f9;padding:8px 12px;text-align:left;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--border);}
-td{padding:9px 12px;border-bottom:1px solid var(--border);color:#333;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-.bdg{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
-.bdg.green{background:#d1fae5;color:#065f46;}
-.bdg.blue{background:#dbeafe;color:#1e40af;}
-.note{font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
+/* ── Critical checkbox ── */
+.checkbox-row{display:flex;align-items:flex-start;gap:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;padding:12px 14px}
+.cb{width:16px;height:16px;border:2px solid #dc2626;border-radius:3px;background:#fee2e2;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:#dc2626;flex-shrink:0;margin-top:2px}
+.checkbox-row p{font-size:12px;color:#92400e;line-height:1.55}
+.checkbox-row strong{color:#dc2626}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f0f3f8;color:var(--navy);font-size:10px;font-weight:700;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:#333;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8faff}
+.bdg{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.bdg.green{background:#d1fae5;color:#065f46}
+.bdg.blue{background:#dbeafe;color:#1e40af}
+.note{font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+
+@media(max-width:680px){.fix-grid{grid-template-columns:1fr}.flow-labels,.flow-browsers{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <h1>Diagnóstico: Doble MFA — Salesforce + Okta</h1>
-    <p>El usuario completa MFA en Okta pero Salesforce vuelve a solicitar registro de Passkey</p>
-    <div class="hdr-meta">
-      <span>Cliente: <strong>TV Azteca Media</strong></span>
-      <span>Ambiente: <strong>UAT / SIT / Data</strong></span>
-      <span>Fecha: <strong>2026-07-10</strong></span>
+<!-- ── Sidebar ── -->
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">Seguridad Salesforce</div>
+    <div class="sub">TV Azteca · Media Cloud · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">SECCIONES</li>
+    <li><a href="#flujo" class="active"><span class="nav-ico">🔄</span>Flujo actual</a></li>
+    <li><a href="#causa-raiz"><span class="nav-ico">⚠️</span>Causa raíz</a></li>
+    <li><a href="#solucion"><span class="nav-ico">🔧</span>Solución</a></li>
+    <li><a href="#campo-critico"><span class="nav-ico">🚩</span>Campo crítico</a></li>
+    <li><a href="#autenticadores"><span class="nav-ico">🔐</span>Autenticadores</a></li>
+  </ul>
+  <div class="nav-foot">Diagnóstico MFA / Passkey<br>TV Azteca · UAT / SIT / Data<br>2026-07-10</div>
+</div>
+
+<div id="page">
+<div id="progress"></div>
+
+<!-- ── Header ── -->
+<header>
+  <div class="hdr-top">
+    <div>
+      <span class="hdr-badge red">Incidente activo</span>
+      <span class="hdr-badge">Seguridad Salesforce</span>
+      <div class="hdr-title" style="margin-top:10px">Diagnóstico: Doble MFA — Salesforce + Okta</div>
+      <div class="hdr-sub">El usuario completa MFA en Okta pero Salesforce vuelve a solicitar registro de Passkey</div>
+    </div>
+  </div>
+  <div class="hdr-meta">
+    <span>Cliente: <strong>TV Azteca Media</strong></span>
+    <span>Ambiente: <strong>UAT / SIT / Data</strong></span>
+    <span>Fecha: <strong>2026-07-10</strong></span>
+    <span>Área: <strong>Identity &amp; Access</strong></span>
+  </div>
+</header>
+
+<main>
+
+  <!-- KPI strip -->
+  <div class="kpi-strip">
+    <div class="kpi red">
+      <div class="kpi-v">2×</div>
+      <div class="kpi-l">Prompts MFA al usuario</div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-v">0</div>
+      <div class="kpi-l">Claims SAML enviados por Okta</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-v">2</div>
+      <div class="kpi-l">Fixes requeridos (Okta + SF)</div>
     </div>
   </div>
 
-  <!-- FLOW -->
-  <div class="section-title">Flujo actual — lo que está ocurriendo</div>
+  <!-- ── FLOW ── -->
+  <div class="section" id="flujo">
+    <div class="section-title">Flujo actual — lo que está ocurriendo</div>
 
-  <div class="flow-row">
+    <!-- Labels row (separado del grid de browsers para centrado correcto) -->
+    <div class="flow-labels">
+      <div class="step-label ok"><span class="num">1</span>Okta Verify Push — OK</div>
+      <div class="flow-label-spacer"></div>
+      <div class="step-label ok"><span class="num">2</span>Dashboard Okta — OK</div>
+      <div class="flow-label-spacer"></div>
+      <div class="step-label bad"><span class="num">3</span>Salesforce pide Passkey ✗</div>
+    </div>
 
-    <!-- Screen 1 -->
-    <div class="screen-col">
-      <div class="step-label ok">
-        <span class="num">1</span>Okta Verify Push — OK
-      </div>
+    <!-- Browsers row — align-items:center garantiza que la flecha quede al centro exacto de cada browser -->
+    <div class="flow-browsers">
+
+      <!-- Screen 1 -->
       <div class="browser">
         <div class="browser-bar">
           <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
@@ -155,9 +254,7 @@ tr:last-child td{border-bottom:none;}
           <div class="push-title">Notificación push enviada</div>
           <div class="push-user">⚙ 60031887</div>
           <div class="push-check">☑ Enviar notificación push automáticamente</div>
-          <div class="push-instruction">
-            En su dispositivo, abra el aviso de Okta Verify y pulse <strong>95</strong> para continuar.
-          </div>
+          <div class="push-instruction">En su dispositivo, abra Okta Verify y pulse <strong>95</strong> para continuar.</div>
           <div class="push-phone">95</div>
           <div class="push-links">
             <div>Verificar mediante otra opción</div>
@@ -165,18 +262,13 @@ tr:last-child td{border-bottom:none;}
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Arrow -->
-    <div class="arrow-col">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </div>
-
-    <!-- Screen 2 -->
-    <div class="screen-col">
-      <div class="step-label ok">
-        <span class="num">2</span>Dashboard Okta — OK
+      <!-- Arrow 1→2 -->
+      <div class="arrow-col">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </div>
+
+      <!-- Screen 2 -->
       <div class="browser">
         <div class="browser-bar">
           <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
@@ -185,17 +277,17 @@ tr:last-child td{border-bottom:none;}
         <div class="scr-dash">
           <div class="okta-topbar">
             <div class="okta-logo">okta</div>
-            <div class="okta-user">DEV HECTOR<br>Grupo Salinas</div>
+            <div class="okta-user-lbl">DEV HECTOR<br>Grupo Salinas</div>
           </div>
           <div class="okta-body">
-            <div class="okta-sidebar">
+            <div class="okta-sidebar-nav">
               <div class="nav-item active">Mis apps</div>
               <div class="nav-item">GENERAL</div>
               <div class="nav-item">APPS</div>
             </div>
             <div class="okta-content">
               <div class="apps-section-title">General</div>
-              <div class="apps-grid" style="grid-template-columns:1fr">
+              <div class="apps-grid" style="grid-template-columns:1fr;margin-bottom:8px">
                 <div class="app-tile hi">
                   <div class="app-icon">⚙</div>
                   CRM Salesforce TV Azteca media
@@ -211,18 +303,13 @@ tr:last-child td{border-bottom:none;}
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Arrow -->
-    <div class="arrow-col">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </div>
-
-    <!-- Screen 3 -->
-    <div class="screen-col">
-      <div class="step-label bad">
-        <span class="num">3</span>Salesforce pide Passkey ✗
+      <!-- Arrow 2→3 -->
+      <div class="arrow-col">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </div>
+
+      <!-- Screen 3 -->
       <div class="browser">
         <div class="browser-bar">
           <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
@@ -244,100 +331,141 @@ tr:last-child td{border-bottom:none;}
           <div class="passkey-back">Volver al principio</div>
         </div>
       </div>
-    </div>
 
-  </div>
-
-  <!-- DIAGNOSIS -->
-  <div class="diagnosis-box">
-    <div class="diagnosis-header">
-      <span style="font-size:22px">⚠️</span>
-      <h2>Causa raíz: Okta no está pasando el claim MFA a Salesforce</h2>
-    </div>
-    <p>
-      El usuario completó correctamente el MFA en Okta (Okta Verify Push con número de confirmación).
-      Sin embargo, Okta <strong>no está enviando el claim de autenticación</strong> en la aserción SAML que manda a Salesforce.
-      Salesforce no reconoce que ya hubo MFA y por lo tanto exige que el usuario registre un autenticador propio (Passkey).
-      Esto genera <strong>doble MFA</strong> — uno en Okta y otro en Salesforce.
-    </p>
-  </div>
-
-  <!-- FIX STEPS -->
-  <div class="section-title">Solución requerida</div>
-  <div class="fix-grid">
-
-    <div class="fix-card">
-      <h3>🔐 Fix en Okta — Authentication Policy</h3>
-      <div class="fix-step"><div class="fix-num">1</div><p>Ir a <code>Security → Authentication Policies</code></p></div>
-      <div class="fix-step"><div class="fix-num">2</div><p>Seleccionar la policy asignada a la app <strong>CRM Salesforce TV Azteca media</strong></p></div>
-      <div class="fix-step"><div class="fix-num">3</div><p>Agregar o editar regla para los usuarios</p></div>
-      <div class="fix-step"><div class="fix-num">4</div><p>En <strong>Actions → User must authenticate with</strong> → seleccionar <code>Any 2 factor types</code></p></div>
-      <div class="fix-step"><div class="fix-num">5</div><p>En <strong>Possession factor constraints</strong> → <code>Require user interaction: Any Interaction</code></p></div>
-      <div class="fix-step"><div class="fix-num">6</div><p>En <strong>Allow specific authentication methods</strong> → activar <code>Okta Verify Push</code> y <code>Okta FastPass</code></p></div>
-      <div class="fix-step"><div class="fix-num">7</div><p>Guardar y priorizar la regla</p></div>
-    </div>
-
-    <div class="fix-card">
-      <h3>☁ Fix en Salesforce — Verificar SSO</h3>
-      <div class="fix-step"><div class="fix-num">1</div><p>Ir a <code>Setup → Single Sign-On Settings → TVA SSO OKTA → Edit</code></p></div>
-      <div class="fix-step"><div class="fix-num">2</div><p>Verificar que <strong>"Use Salesforce MFA for this SSO Provider"</strong> esté <strong>desactivado</strong></p></div>
-      <div class="fix-step"><div class="fix-num">3</div><p>Si está activo, Salesforce ignora el MFA de Okta y exige el suyo propio — desactivarlo resuelve el doble MFA</p></div>
-      <div class="fix-step"><div class="fix-num">4</div><p>Guardar cambios y probar el login nuevamente desde el portal de Okta</p></div>
-    </div>
-
-  </div>
-
-  <!-- CRITICAL FIELD -->
-  <div class="critical-card">
-    <h3>⚠️ Campo crítico a verificar en Salesforce</h3>
-    <div class="checkbox-row">
-      <div class="cb">✗</div>
-      <p><strong>Use Salesforce MFA for this SSO Provider</strong> — debe estar <strong>desactivado</strong>. Si está marcado, Salesforce obliga su propio MFA sin importar que Okta ya lo hizo.</p>
     </div>
   </div>
 
-  <!-- COMPAT TABLE -->
-  <div class="compat-card">
-    <h3>Autenticadores de Okta compatibles con el mandato de Salesforce</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Autenticador</th>
-          <th>Nivel MFA</th>
-          <th>Claim que pasa</th>
-          <th>Salesforce lo acepta</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Okta Verify Push</td>
-          <td><span class="bdg blue">Phishing-Resistant*</span></td>
-          <td><code>swk</code></td>
-          <td><span class="bdg green">✓ Sí</span></td>
-        </tr>
-        <tr>
-          <td>Okta FastPass</td>
-          <td><span class="bdg blue">Phishing-Resistant</span></td>
-          <td><code>fido, swk</code></td>
-          <td><span class="bdg green">✓ Sí</span></td>
-        </tr>
-        <tr>
-          <td>Okta Verify TOTP</td>
-          <td><span class="bdg green">Standard MFA</span></td>
-          <td><code>okta_verify, timesynctoken</code></td>
-          <td><span class="bdg green">✓ Sí</span></td>
-        </tr>
-        <tr>
-          <td>FIDO2 / WebAuthn</td>
-          <td><span class="bdg blue">Phishing-Resistant</span></td>
-          <td><code>fido2, hwk</code></td>
-          <td><span class="bdg green">✓ Sí</span></td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="note">* Okta Verify Push no es phishing-resistant según Okta, pero Salesforce lo acepta como tal por el claim <code>swk</code>.</p>
+  <!-- ── DIAGNOSIS ── -->
+  <div class="section" id="causa-raiz">
+    <div class="section-title">Causa raíz</div>
+    <div class="diagnosis-box">
+      <div class="diagnosis-header">
+        <span style="font-size:22px">⚠️</span>
+        <h2>Okta no está pasando el claim MFA a Salesforce</h2>
+      </div>
+      <p>
+        El usuario completó correctamente el MFA en Okta (Okta Verify Push con número de confirmación).
+        Sin embargo, Okta <strong>no está enviando el claim de autenticación</strong> en la aserción SAML que entrega a Salesforce.
+        Salesforce no reconoce que ya hubo MFA y por lo tanto exige que el usuario registre un autenticador propio (Passkey).
+        Esto genera <strong>doble MFA</strong> — uno en Okta y otro en Salesforce.
+      </p>
+    </div>
   </div>
 
+  <!-- ── FIX ── -->
+  <div class="section" id="solucion">
+    <div class="section-title">Solución requerida</div>
+    <div class="fix-grid">
+
+      <div class="fix-card">
+        <h3>🔐 Fix en Okta — Authentication Policy</h3>
+        <div class="fix-step"><div class="fix-num">1</div><p>Ir a <code>Security → Authentication Policies</code></p></div>
+        <div class="fix-step"><div class="fix-num">2</div><p>Seleccionar la policy asignada a la app <strong>CRM Salesforce TV Azteca media</strong></p></div>
+        <div class="fix-step"><div class="fix-num">3</div><p>Agregar o editar la regla para los usuarios afectados</p></div>
+        <div class="fix-step"><div class="fix-num">4</div><p>En <strong>Actions → User must authenticate with</strong> → seleccionar <code>Any 2 factor types</code></p></div>
+        <div class="fix-step"><div class="fix-num">5</div><p>En <strong>Possession factor constraints</strong> → <code>Require user interaction: Any Interaction</code></p></div>
+        <div class="fix-step"><div class="fix-num">6</div><p>En <strong>Allow specific authentication methods</strong> → activar <code>Okta Verify Push</code> y <code>Okta FastPass</code></p></div>
+        <div class="fix-step"><div class="fix-num">7</div><p>Guardar y priorizar la regla sobre cualquier otra regla existente</p></div>
+      </div>
+
+      <div class="fix-card">
+        <h3>☁️ Fix en Salesforce — Verificar SSO</h3>
+        <div class="fix-step"><div class="fix-num">1</div><p>Ir a <code>Setup → Single Sign-On Settings → TVA SSO OKTA → Edit</code></p></div>
+        <div class="fix-step"><div class="fix-num">2</div><p>Verificar que <strong>"Use Salesforce MFA for this SSO Provider"</strong> esté <strong>desactivado</strong></p></div>
+        <div class="fix-step"><div class="fix-num">3</div><p>Si está activo, Salesforce ignora el MFA de Okta y exige el suyo propio — desactivarlo resuelve el doble MFA</p></div>
+        <div class="fix-step"><div class="fix-num">4</div><p>Guardar cambios y probar el login nuevamente desde el portal de Okta</p></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CRITICAL FIELD ── -->
+  <div class="section" id="campo-critico">
+    <div class="section-title">Campo crítico a verificar en Salesforce</div>
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-hdr-icon">🚩</span>
+        <div>
+          <div class="card-hdr-title">Setup → Single Sign-On Settings → TVA SSO OKTA</div>
+          <div class="card-hdr-sub">Este campo determina si Salesforce respeta o ignora el MFA completado en Okta</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="checkbox-row">
+          <div class="cb">✗</div>
+          <p><strong>Use Salesforce MFA for this SSO Provider</strong> — debe estar <strong>desactivado</strong>. Si está marcado, Salesforce obliga su propio MFA sin importar que Okta ya lo completó.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMPAT TABLE ── -->
+  <div class="section" id="autenticadores">
+    <div class="section-title">Autenticadores de Okta compatibles con el mandato de Salesforce</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Autenticador</th>
+                <th>Nivel MFA</th>
+                <th>Claim que pasa</th>
+                <th>Salesforce lo acepta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Okta Verify Push</td>
+                <td><span class="bdg blue">Phishing-Resistant*</span></td>
+                <td><code>swk</code></td>
+                <td><span class="bdg green">✓ Sí</span></td>
+              </tr>
+              <tr>
+                <td>Okta FastPass</td>
+                <td><span class="bdg blue">Phishing-Resistant</span></td>
+                <td><code>fido, swk</code></td>
+                <td><span class="bdg green">✓ Sí</span></td>
+              </tr>
+              <tr>
+                <td>Okta Verify TOTP</td>
+                <td><span class="bdg green">Standard MFA</span></td>
+                <td><code>okta_verify, timesynctoken</code></td>
+                <td><span class="bdg green">✓ Sí</span></td>
+              </tr>
+              <tr>
+                <td>FIDO2 / WebAuthn</td>
+                <td><span class="bdg blue">Phishing-Resistant</span></td>
+                <td><code>fido2, hwk</code></td>
+                <td><span class="bdg green">✓ Sí</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">* Okta Verify Push no es phishing-resistant según la clasificación de Okta, pero Salesforce lo acepta como tal por el claim <code>swk</code>.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
 </div>
+
+<script>
+  // Scroll progress
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  }, {passive: true});
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) cur = s.id; });
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  }, {passive: true});
+</script>
 </body>
 </html>
