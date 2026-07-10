@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MEDIA-001 — Data Cloud Nested Payload Deserialization</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;--green:#1e7e34;--red:#9b2226;--amber:#854d0e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+/* — Sidebar — */
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0;flex:1}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+/* — Page — */
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+
+/* — Header — */
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff}
+.badge.accepted{background:#1a7a4a;border-color:#2da870}
+.badge.id{background:rgba(255,255,255,.1);font-family:monospace;font-size:10px}
+.hdr-title{font-size:1.15rem;font-weight:800;line-height:1.3;margin-top:8px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+/* — Progress — */
+#progress{position:fixed;top:0;left:var(--nav);right:0;height:3px;background:rgba(255,255,255,.08);z-index:200}
+#progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));width:0;transition:width .12s}
+
+/* — Main layout — */
+main{padding:28px 36px 80px;flex:1;max-width:900px}
+
+/* — Section anchors — */
+.section{scroll-margin-top:20px;margin-bottom:36px}
+.section-hdr{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:10px}
+.section-ico{font-size:14px}
+
+/* — Prose — */
+p{line-height:1.7;color:var(--text);margin-bottom:10px;font-size:13px}
+ul,ol{padding-left:20px;margin-bottom:10px}
+li{line-height:1.7;margin-bottom:3px;font-size:13px}
+strong{font-weight:700}
+em{font-style:italic;color:var(--muted)}
+code{font-family:"SF Mono","Fira Code","Cascadia Code",monospace;font-size:11.5px;background:#f0f4f8;border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+
+/* — Layer table — */
+.layer-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px}
+.layer-table th{background:var(--navy);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;text-align:left}
+.layer-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.layer-table tr:last-child td{border-bottom:none}
+.layer-table tr:nth-child(even) td{background:#f9fafb}
+.layer-badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+.lb-bronze{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.lb-silver{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.lb-gold{background:#fef9c3;color:#713f12;border:1px solid #fde047}
+.lb-reporting{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+
+/* — Callout boxes — */
+.callout{border-radius:10px;padding:14px 18px;margin-bottom:14px;border:1px solid}
+.callout.decision{background:#eff6ff;border-color:#bfdbfe;border-left:4px solid var(--blue)}
+.callout.warning{background:#fff7ed;border-color:#fed7aa;border-left:4px solid #f97316}
+.callout.success{background:#f0fdf4;border-color:#bbf7d0;border-left:4px solid #16a34a}
+.callout.info{background:#f0f9ff;border-color:#bae6fd;border-left:4px solid var(--teal)}
+.callout-title{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.callout.decision .callout-title{color:var(--blue)}
+.callout.warning .callout-title{color:#c2410c}
+.callout.success .callout-title{color:#15803d}
+.callout.info .callout-title{color:#0369a1}
+
+/* — Anti-pattern card — */
+.anti-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.anti-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;border-top:3px solid var(--red)}
+.anti-title{font-weight:700;font-size:12px;color:#9b2226;margin-bottom:6px}
+.anti-body{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* — Consequences — */
+.conseq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.pos,.neg{border-radius:10px;padding:14px 16px;border:1px solid}
+.pos{background:#f0fdf4;border-color:#bbf7d0;border-top:3px solid #16a34a}
+.neg{background:#fef2f2;border-color:#fecaca;border-top:3px solid #dc2626}
+.pos-title{font-weight:800;font-size:11px;text-transform:uppercase;color:#15803d;margin-bottom:8px;letter-spacing:.06em}
+.neg-title{font-weight:800;font-size:11px;text-transform:uppercase;color:#b91c1c;margin-bottom:8px;letter-spacing:.06em}
+.pos li,.neg li{font-size:11.5px;line-height:1.55;margin-bottom:5px}
+.pos li{color:#166534}
+.neg li{color:#991b1b}
+
+/* — Verifiability checks — */
+.verify-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.verify-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.verify-num{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.verify-body{flex:1}
+.verify-title{font-weight:700;font-size:12px;margin-bottom:4px}
+.verify-desc{font-size:11.5px;color:var(--muted);line-height:1.55}
+.code-block{font-family:"SF Mono","Fira Code","Cascadia Code",monospace;font-size:10.5px;background:#1e293b;color:#e2e8f0;border-radius:8px;padding:12px 14px;margin:8px 0;overflow-x:auto;line-height:1.6}
+.code-block .kw{color:#7dd3fc}
+.code-block .cm{color:#64748b;font-style:italic}
+
+/* — Naming convention badge — */
+.naming-ex{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:8px 16px;border-radius:8px;font-family:monospace;font-size:12px;margin:10px 0}
+.naming-part{opacity:.55;font-size:10px;display:block;margin-top:2px}
+
+/* — Related ADRs — */
+.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.related-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+.related-card:hover{box-shadow:0 4px 16px rgba(1,118,211,.12)}
+.related-id{font-family:monospace;font-size:10px;font-weight:800;color:var(--blue);margin-bottom:4px}
+.related-title{font-size:12px;font-weight:600;line-height:1.4}
+.related-desc{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+
+@media(max-width:640px){
+  .anti-grid,.conseq-grid,.related-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR Library</div>
+    <div class="sub">TV Azteca · Media Cloud · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">SECCIONES</li>
+    <li><a href="#context" class="active"><span class="nav-ico">🗺</span>Context</a></li>
+    <li><a href="#decision"><span class="nav-ico">✅</span>Decision</a></li>
+    <li><a href="#layer-contract"><span class="nav-ico">📋</span>Layer Contract</a></li>
+    <li><a href="#silver-shape"><span class="nav-ico">🔷</span>Silver DLO Shape</a></li>
+    <li><a href="#anti-patterns"><span class="nav-ico">🚫</span>Anti-patterns</a></li>
+    <li><a href="#naming"><span class="nav-ico">🏷</span>Naming Convention</a></li>
+    <li><a href="#alternatives"><span class="nav-ico">🔀</span>Alternatives</a></li>
+    <li><a href="#consequences"><span class="nav-ico">⚖️</span>Consequences</a></li>
+    <li><a href="#reversibility"><span class="nav-ico">↩</span>Reversibility</a></li>
+    <li><a href="#verifiability"><span class="nav-ico">🔍</span>Verifiability</a></li>
+    <li><a href="#related"><span class="nav-ico">🔗</span>Related ADRs</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">📐</span>ADR Library</a></li>
+    <li><a href="../../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">MEDIA-001 · Accepted<br>2026-07-10</div>
+</div>
+
+<div id="progress"><div id="progress-bar"></div></div>
+
+<div id="page">
+
+<header>
+  <div class="hdr-top">
+    <div class="hdr-badges">
+      <span class="badge id">MEDIA-001</span>
+      <span class="badge accepted">Accepted</span>
+      <span class="badge">Media Layer</span>
+      <span class="badge">Data Cloud</span>
+    </div>
+    <a href="../index.html" class="hdr-home" title="ADR Library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-title">Data Cloud — Nested Payload Deserialization<br>in Bronze→Silver Batch Data Transforms</div>
+  <div class="hdr-meta">
+    <span>Fecha: <strong>2026-07-10</strong></span>
+    <span>Layer: <strong>Media</strong></span>
+    <span>Scope: <strong>Salesforce Data Cloud</strong></span>
+    <span>Relación: <strong>First ADR of media layer</strong></span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Context -->
+  <section class="section" id="context">
+    <div class="section-hdr"><span class="section-ico">🗺</span>Context</div>
+    <p>Media/ad-tech connectors ingested into Salesforce Data Cloud frequently deliver structured payloads inside a single string field: XML fragments, nested JSON objects, or aggregated arrays. Two concrete cases exist in the project today:</p>
+    <ul>
+      <li><strong>GAM Connector</strong> — the packaged Google Ad Manager connector materializes <code>LineItems_TVA_GAM_Connection__dll</code> with the field <code>Stats__c</code> containing an XML fragment (<code>&lt;stats&gt;&lt;impressionsDelivered&gt;…&lt;/impressionsDelivered&gt;…&lt;/stats&gt;</code>). Other columns of the same DLO (<code>DeliveryIndicator__c</code>, <code>CustomTargetingAggregate__c</code>, <code>GrpSettings__c</code>, <code>FrequencyCaps__c</code>, <code>DeliveryData__c</code>) follow the same pattern.</li>
+      <li><strong>Anticipated future connectors</strong> — Marketing Cloud webhooks, S3 landing files, and Ingestion API integrations for other media-domain systems will produce similar nested payloads (JSON envelopes containing arrays of counts, XML SOAP responses, etc.).</li>
+    </ul>
+    <p>Without a canonical location for the parsing operation, each downstream consumer (DMO field mappings, Calculated Insights, LWCs querying via GraphQL, reports) will re-implement the deserialization independently. This leads to:</p>
+    <ul>
+      <li>Regex/parse logic duplicated across the platform</li>
+      <li>Inconsistent NULL semantics</li>
+      <li>Silent schema drift when the source payload changes shape</li>
+      <li>Re-parsing cost paid on every read</li>
+    </ul>
+    <div class="callout info">
+      <div class="callout-title">Scope</div>
+      This decision applies to <strong>Data Cloud only</strong>. Payload transformations happening upstream in an integration orchestrator (per ADR-001 Passive Core) or in Apex are governed by other decisions.
+    </div>
+  </section>
+
+  <!-- Decision -->
+  <section class="section" id="decision">
+    <div class="section-hdr"><span class="section-ico">✅</span>Decision</div>
+    <div class="callout decision">
+      <div class="callout-title">Canonical Rule</div>
+      <p><strong>Deserialization of nested string payloads inside Data Cloud occurs in a Batch Data Transform (BDT) that reads from a Bronze DLO and writes to a Silver DLO.</strong> The Silver DLO contains only the join key plus the parsed fields — never a full copy of the Bronze row.</p>
+    </div>
+  </section>
+
+  <!-- Layer Contract -->
+  <section class="section" id="layer-contract">
+    <div class="section-hdr"><span class="section-ico">📋</span>Layer Contract</div>
+    <table class="layer-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Role</th>
+          <th>Payload State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="layer-badge lb-bronze">Bronze</span></td>
+          <td>Raw ingest (connector output, Ingestion API landing)</td>
+          <td>Nested payload preserved as-is (XML/JSON in string)</td>
+        </tr>
+        <tr>
+          <td><span class="layer-badge lb-silver">Silver</span></td>
+          <td>Parsed, typed, per-source</td>
+          <td>Flat columns, no nested payloads</td>
+        </tr>
+        <tr>
+          <td><span class="layer-badge lb-gold">Gold</span></td>
+          <td>Canonical DMO (harmonized across sources)</td>
+          <td>Only flat inputs from Silver</td>
+        </tr>
+        <tr>
+          <td><span class="layer-badge lb-reporting">Reporting</span></td>
+          <td>Calculated Insights / Segments / Activation</td>
+          <td>Consumes Gold</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Silver DLO Shape -->
+  <section class="section" id="silver-shape">
+    <div class="section-hdr"><span class="section-ico">🔷</span>Silver DLO Shape</div>
+    <p>The Silver DLO produced by the BDT must contain:</p>
+    <ol>
+      <li>The <strong>join key(s)</strong> to the Bronze DLO (typically the natural business identifier — e.g. <code>LineItemId__c</code> for GAM Line Items).</li>
+      <li>Optionally, a <strong>source watermark</strong> (e.g. <code>SourceLastModified__c</code>) used as Event Time for upsert semantics.</li>
+      <li>The <strong>parsed fields</strong> derived from the payload, typed appropriately (<code>BIGINT</code>, <code>DECIMAL</code>, <code>TIMESTAMP</code>, etc.).</li>
+    </ol>
+    <div class="callout warning">
+      <div class="callout-title">Important constraint</div>
+      The Silver DLO does <strong>not</strong> duplicate the remaining Bronze columns. Downstream consumers that need Bronze columns join to Bronze on the shared key.
+    </div>
+  </section>
+
+  <!-- Anti-patterns -->
+  <section class="section" id="anti-patterns">
+    <div class="section-hdr"><span class="section-ico">🚫</span>Anti-patterns Explicitly Rejected</div>
+    <div class="anti-grid">
+      <div class="anti-card">
+        <div class="anti-title">DLO Formula Fields on Bronze</div>
+        <div class="anti-body">Formula fields recalculate on every read — no materialization, no incremental processing, no schema validation. Acceptable for ad-hoc exploration in Data Explorer; <strong>not acceptable as a production contract</strong>.</div>
+      </div>
+      <div class="anti-card">
+        <div class="anti-title">Parsing inside DMO Field Mapping</div>
+        <div class="anti-body">Couples parse logic to the canonical model, prevents reuse when a second consumer needs the same fields without the DMO, and mixes source-format concerns with harmonization concerns.</div>
+      </div>
+      <div class="anti-card">
+        <div class="anti-title">Parsing inside Calculated Insights</div>
+        <div class="anti-body">CI is a Gold-layer aggregation surface. Doing deserialization in a CI mixes layer responsibilities and produces CIs that are brittle to source-format change.</div>
+      </div>
+      <div class="anti-card">
+        <div class="anti-title">BDTs that Deserialize AND Aggregate</div>
+        <div class="anti-body">A BDT that parses <code>Stats__c</code> and simultaneously aggregates to a weekly rollup mixes Silver (parse) with Gold (aggregate). Split them: one BDT Bronze→Silver, one CI or BDT Silver→Gold.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Naming Convention -->
+  <section class="section" id="naming">
+    <div class="section-hdr"><span class="section-ico">🏷</span>Naming Convention</div>
+    <p>Silver DLOs produced by a deserialization BDT are named:</p>
+    <div class="naming-ex">
+      &lt;SourceEntity&gt;&lt;Concept&gt;_&lt;SourceSystem&gt;__dll
+    </div>
+    <p>For example, for the parsed <code>Stats__c</code> of GAM Line Items:</p>
+    <div class="naming-ex">
+      LineItemStats_TVA_GAM__dll
+    </div>
+    <div class="callout info">
+      <div class="callout-title">Why &lt;Concept&gt;?</div>
+      The <code>&lt;Concept&gt;</code> component makes explicit which sub-structure of the Bronze row is being materialized. A single Bronze DLO may have <strong>multiple Silver DLOs</strong>, one per parsed payload column.
+    </div>
+  </section>
+
+  <!-- Alternatives -->
+  <section class="section" id="alternatives">
+    <div class="section-hdr"><span class="section-ico">🔀</span>Alternatives Considered</div>
+
+    <div class="callout warning">
+      <div class="callout-title">Deserialize at ingestion time (Ingestion API + Apex/middleware)</div>
+      <p>Rejected as the general rule because the project's primary media data source (GAM) is ingested via the <strong>packaged GAM Connector</strong>, which cannot be customized to run an Apex parser inline. This alternative remains valid for future sources ingested via Ingestion API — but it is out of scope for this ADR because it lives upstream of Data Cloud, governed by the integration orchestrator (ADR-001).</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">DLO Formula Fields with REGEXP_EXTRACT</div>
+      <p>Rejected — non-materialized, read-time cost, no schema validation, poor reuse. Acceptable for one-off exploration in Data Explorer only.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">DMO Mapping Expression Parsing</div>
+      <p>Rejected — couples deserialization to the canonical model. If a second consumer (e.g. a per-source LWC) needs the parsed fields but not the harmonized DMO, the parse logic must be duplicated. Also produces a DMO whose mapping semantics are load-bearing on source-format details, which violates the "canonical model is source-agnostic" property.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">Skip Silver — Ingest Bronze directly into Gold DMOs</div>
+      <p>Rejected — forces the DMO mapping to parse the payload (the previously rejected DMO-mapping anti-pattern) and prevents per-source materialization.</p>
+    </div>
+  </section>
+
+  <!-- Consequences -->
+  <section class="section" id="consequences">
+    <div class="section-hdr"><span class="section-ico">⚖️</span>Consequences</div>
+    <div class="conseq-grid">
+      <div class="pos">
+        <div class="pos-title">✅ Positive</div>
+        <ul>
+          <li><strong>Single source of truth</strong> for parse logic per payload. All downstream consumers read from the Silver DLO — parse logic lives in one BDT, versioned as <code>DataTransform</code> metadata.</li>
+          <li><strong>Read cost paid once.</strong> BDT materializes the result; consumers pay only their query cost against a flat, typed DLO.</li>
+          <li><strong>Explicit contract</strong> between ingestion and modeling layers.</li>
+          <li><strong>Schema drift produces a localized failure</strong> at the BDT — not scattered across N mapping expressions.</li>
+          <li><strong>Testable in isolation.</strong> The BDT can be validated against sample Bronze rows independently of any DMO or CI.</li>
+        </ul>
+      </div>
+      <div class="neg">
+        <div class="neg-title">⚠️ Negative</div>
+        <ul>
+          <li><strong>Storage duplication scoped to key + parsed fields only.</strong> Bounded by parsed columns per row (~6 fields for GAM Stats, negligible on ~157k row DLO).</li>
+          <li><strong>Recurring BDT credit consumption</strong> (~1–2 credits/day estimated for the current GAM LineItems volume). Acceptable trade-off.</li>
+          <li><strong>Schema-drift monitoring obligation.</strong> New source fields don't flow to Silver automatically — team must monitor connector release notes.</li>
+          <li><strong>Silver DLO becomes a versioned dependency.</strong> Schema evolution must be treated as a public API change.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reversibility -->
+  <section class="section" id="reversibility">
+    <div class="section-hdr"><span class="section-ico">↩</span>Reversibility</div>
+    <p>Partially reversible; cost grows with adoption. Reverting the pattern requires:</p>
+    <ol>
+      <li>Reimplementing the parse in the alternative location (DMO mapping / CI / Formula).</li>
+      <li>Redirecting all consumers away from the Silver DLO.</li>
+      <li>Retiring the BDT and Silver DLO.</li>
+    </ol>
+    <div class="callout info">
+      <div class="callout-title">Adoption note</div>
+      Cost is bounded and mechanical when there is one consumer; grows meaningfully as consumers multiply. <strong>Early commitment is correct</strong> because reversal cost grows with time.
+    </div>
+  </section>
+
+  <!-- Verifiability -->
+  <section class="section" id="verifiability">
+    <div class="section-hdr"><span class="section-ico">🔍</span>Verifiability</div>
+    <p>Compliance can be verified during <strong>Phase 4 (Review)</strong> via:</p>
+    <div class="verify-list">
+
+      <div class="verify-item">
+        <div class="verify-num">1</div>
+        <div class="verify-body">
+          <div class="verify-title">No parse functions inside DMO field mapping expressions</div>
+          <div class="verify-desc">Grep DMO metadata — any match on parse functions inside a mapping expression is a violation.</div>
+          <div class="code-block"><span class="cm"># Flag violations in DMO mapping expressions</span>
+grep -r "REGEXP_EXTRACT\|REGEXP_SUBSTR\|PARSE_JSON" \
+  --include="*.dataModelObject-meta.xml" .</div>
+        </div>
+      </div>
+
+      <div class="verify-item">
+        <div class="verify-num">2</div>
+        <div class="verify-body">
+          <div class="verify-title">No Formula Fields on Bronze DLOs performing structural parses</div>
+          <div class="verify-desc">Grep DLO Formula Field definitions for parse functions — flag for review; acceptable only if the field is documented as exploratory-only.</div>
+        </div>
+      </div>
+
+      <div class="verify-item">
+        <div class="verify-num">3</div>
+        <div class="verify-body">
+          <div class="verify-title">Every Bronze DLO column holding a nested payload has a Silver DLO downstream</div>
+          <div class="verify-desc">For each Bronze DLO with a string column containing XML/JSON (identified by inspection or Data Explorer sampling), a corresponding BDT must exist. Absence of the BDT is a governance gap.</div>
+        </div>
+      </div>
+
+      <div class="verify-item">
+        <div class="verify-num">4</div>
+        <div class="verify-body">
+          <div class="verify-title">Silver DLO naming convention</div>
+          <div class="verify-desc">Files must include the Concept naming (<code>&lt;Source&gt;&lt;Concept&gt;_&lt;System&gt;__dll</code>) — never a hybrid that hides the layer role.</div>
+          <div class="code-block"><span class="cm"># Check naming convention on Silver DLOs</span>
+find . -path "*/dataLakeObjects/**/*_TVA_*__dll.md"</div>
+        </div>
+      </div>
+
+      <div class="verify-item">
+        <div class="verify-num">5</div>
+        <div class="verify-body">
+          <div class="verify-title">No BDT performs deserialization AND aggregation in the same transform</div>
+          <div class="verify-desc">Review BDT nodes: a BDT with both a <code>REGEXP_EXTRACT</code>-style node and a <code>GROUP BY</code> aggregation is a violation.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Related -->
+  <section class="section" id="related">
+    <div class="section-hdr"><span class="section-ico">🔗</span>Related ADRs</div>
+    <div class="related-grid">
+      <div class="related-card">
+        <div class="related-id">ADR-001</div>
+        <div class="related-title">Passive Core</div>
+        <div class="related-desc">Governs whether parsing should happen <em>upstream</em> of Data Cloud (in an integration orchestrator) vs. inside Data Cloud. This ADR applies once the payload is inside Data Cloud; deserialization done by the orchestrator before ingestion is out of scope here.</div>
+      </div>
+      <div class="related-card">
+        <div class="related-id">ADR-004</div>
+        <div class="related-title">Standard Data Model First</div>
+        <div class="related-desc">The Silver DLO is a per-source intermediate, not a substitute for a canonical DMO. The Gold DMO layer remains the standard-first canonical model; Silver serves only as the deserialization boundary.</div>
+      </div>
+    </div>
+    <div class="callout info" style="margin-top:14px">
+      <div class="callout-title">Relationship to base layer</div>
+      First ADR of the <code>media</code> industry layer. Does not specialize any base ADR — introduces a new Data Cloud governance dimension not covered by existing base decisions. If the base layer later adopts a general Data Cloud transformation strategy ADR, this one may become a specialization of it.
+    </div>
+  </section>
+
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — MEDIA-001 · Accepted · 2026-07-10 · Uso interno.</footer>
+</div>
+
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress-bar').style.width = (total > 0 ? (scrolled / total * 100) : 0) + '%';
+  });
+
+  // Active nav highlight on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+
+  function onScroll() {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 60) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+</script>
+
+</body>
+</html>

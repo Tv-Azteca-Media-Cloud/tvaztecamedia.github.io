@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Architecture Decision Records — TV Azteca Media Cloud</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0;flex:1}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-title{font-size:14px;font-weight:700}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:2px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+main{padding:28px 36px 64px;flex:1}
+
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;border-top:3px solid var(--blue)}
+.kpi-v{font-size:26px;font-weight:800;color:var(--blue);line-height:1.1}
+.kpi-l{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500}
+
+.section-title{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:"";flex:1;height:1px;background:var(--border)}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:8px}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+#search{width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border);border-radius:8px;font:13px "Segoe UI",system-ui;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+#search:focus{border-color:var(--blue)}
+#search::placeholder{color:var(--muted)}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;display:none;padding:2px 4px}
+.search-clear:hover{color:var(--text)}
+.search-count{font-size:11px;color:var(--muted);margin-bottom:16px;min-height:18px}
+mark{background:#fff3b0;color:inherit;border-radius:2px;padding:0 1px}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.f-tab{padding:5px 14px;border-radius:16px;border:1.5px solid var(--border);background:#fff;font:600 10.5px "Segoe UI",system-ui;color:var(--muted);cursor:pointer;transition:all .14s}
+.f-tab:hover{border-color:var(--blue);color:var(--blue)}
+.f-tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ADR cards grid */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+
+.adr-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s}
+.adr-card:hover{box-shadow:0 6px 24px rgba(1,118,211,.13);transform:translateY(-2px)}
+
+.card-banner{padding:18px 20px 14px;color:#fff;position:relative;overflow:hidden}
+.card-banner::after{content:"";position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.card-banner-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card-id{font-size:11px;font-weight:800;font-family:monospace;opacity:.85}
+.card-status{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+.card-layer{font-size:9px;opacity:.6;margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+.card-title{font-size:.95rem;font-weight:700;margin-top:8px;line-height:1.3}
+.card-desc-wrap{padding:14px 20px;flex:1;display:flex;flex-direction:column;gap:10px}
+.card-desc{font-size:11.5px;color:var(--muted);line-height:1.55}
+.card-footer{display:flex;align-items:center;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border);font-size:11px;font-weight:600;color:var(--blue);gap:4px}
+.card-footer svg{transition:transform .18s}
+.adr-card:hover .card-footer svg{transform:translateX(4px)}
+
+/* What is ADR info box */
+.info-box{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:11.5px;line-height:1.6;color:var(--text)}
+.info-box strong{color:var(--navy)}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR Library</div>
+    <div class="sub">TV Azteca · Media Cloud · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">LAYERS</li>
+    <li><a onclick="filterLayer('all',this)" id="nav-all" class="active"><span class="nav-ico">📐</span>Todos los ADRs</a></li>
+    <li class="nav-sep"></li>
+    <li><a onclick="filterLayer('media',this)" id="nav-media"><span class="nav-ico">📡</span>Media Layer</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">Architecture Decision Records<br>TV Azteca · Media Cloud · 2026</div>
+</div>
+
+<div id="page">
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-title">Architecture Decision Records</div>
+      <div class="hdr-sub">TV Azteca · Salesforce Media Cloud · ADP Whitelabel</div>
+    </div>
+    <a href="../index.html" class="hdr-home" title="Portal de Presentaciones">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-meta">
+    <span>Proyecto: <strong>TV Azteca Media Cloud</strong></span>
+    <span>Template: <strong>ADP Whitelabel</strong></span>
+    <span>Uso: <strong>Interno · Governance</strong></span>
+  </div>
+</header>
+
+<main>
+
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-v" id="kpi-total">1</div>
+      <div class="kpi-l">ADRs publicados</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-v">1</div>
+      <div class="kpi-l">Layers activos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-v">1</div>
+      <div class="kpi-l">Accepted</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>¿Qué es un ADR?</strong> Un Architecture Decision Record es un documento corto y estructurado que captura una decisión arquitectónica no obvia: el problema que la motivó, las alternativas consideradas, la decisión tomada y sus consecuencias. Los ADRs existen para que las decisiones no sean revertidas silenciosamente, olvidadas o re-debatidas sin contexto. Son versionados, revisados por pares y consumidos por el tooling agéntico durante el refinamiento de historias — lo que significa que se <em>aplican activamente</em>, no solo se documentan.
+  </div>
+
+  <div class="section-title">ADRs disponibles</div>
+
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search" type="text" placeholder="Buscar ADR…" oninput="onSearch(this.value)" autocomplete="off"/>
+    <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
+  </div>
+  <div class="search-count" id="search-count"></div>
+
+  <div class="filter-bar">
+    <button class="f-tab active" onclick="filterLayer('all',this)">Todos</button>
+    <button class="f-tab" onclick="filterLayer('media',this)">Media Layer</button>
+  </div>
+
+  <div class="cards-grid" id="grid">
+
+    <a href="media/001-data-cloud-bronze-silver-deserialization.html"
+       class="adr-card"
+       data-layer="media"
+       data-title="Data Cloud — Nested Payload Deserialization in Bronze→Silver Batch Data Transforms"
+       data-desc="Define el único lugar canónico donde ocurre la deserialización de payloads anidados (XML/JSON) dentro de Data Cloud: un Batch Data Transform que lee de un DLO Bronze y escribe a un DLO Silver.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">MEDIA-001</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Media Layer · Data Cloud</div>
+        <div class="card-title">Data Cloud — Nested Payload Deserialization in Bronze→Silver Batch Data Transforms</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">Define el único lugar canónico donde ocurre la deserialización de payloads anidados (XML/JSON) dentro de Data Cloud: un Batch Data Transform que lee de un DLO Bronze y escribe a un DLO Silver.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — Uso interno. Architecture Decision Records.</footer>
+</div>
+
+<script>
+  let currentLayer = 'all';
+
+  function filterLayer(layer, el) {
+    currentLayer = layer;
+    const searchEl = document.getElementById('search');
+    searchEl.value = '';
+    document.getElementById('search-clear').style.display = 'none';
+    document.getElementById('search-count').textContent = '';
+
+    document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + layer);
+    if (navEl) navEl.classList.add('active');
+
+    document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+    if (el && el.classList.contains('f-tab')) el.classList.add('active');
+
+    applyFilters('');
+  }
+
+  function onSearch(query) {
+    document.getElementById('search-clear').style.display = query.length > 0 ? 'block' : 'none';
+    if (query.length > 0) {
+      currentLayer = 'all';
+      document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
+      document.getElementById('nav-all').classList.add('active');
+      document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.f-tab').classList.add('active');
+    }
+    applyFilters(query);
+  }
+
+  function clearSearch() {
+    const el = document.getElementById('search');
+    el.value = ''; el.focus();
+    document.getElementById('search-clear').style.display = 'none';
+    document.getElementById('search-count').textContent = '';
+    applyFilters('');
+  }
+
+  function applyFilters(query) {
+    const q = query.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.adr-card').forEach(card => {
+      const titleEl = card.querySelector('.card-title');
+      const descEl  = card.querySelector('.card-desc');
+      if (!titleEl._orig) titleEl._orig = titleEl.innerHTML;
+      if (!descEl._orig)  descEl._orig  = descEl.innerHTML;
+      titleEl.innerHTML = titleEl._orig;
+      descEl.innerHTML  = descEl._orig;
+
+      const layerMatch = currentLayer === 'all' || card.dataset.layer === currentLayer;
+      const textMatch  = q === '' ||
+        card.dataset.title.toLowerCase().includes(q) ||
+        card.dataset.desc.toLowerCase().includes(q) ||
+        card.dataset.layer.toLowerCase().includes(q);
+
+      const show = layerMatch && textMatch;
+      card.style.display = show ? 'flex' : 'none';
+      if (show) {
+        visible++;
+        if (q) {
+          titleEl.innerHTML = highlight(titleEl._orig, query);
+          descEl.innerHTML  = highlight(descEl._orig, query);
+        }
+      }
+    });
+
+    document.getElementById('kpi-total').textContent = visible;
+    const countEl = document.getElementById('search-count');
+    countEl.textContent = q
+      ? (visible === 0 ? 'Sin resultados para "' + query + '"' : visible + ' resultado' + (visible !== 1 ? 's' : '') + ' para "' + query + '"')
+      : '';
+  }
+
+  function highlight(html, query) {
+    const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return html.replace(new RegExp('(' + q + ')', 'gi'), '<mark>$1</mark>');
+  }
+</script>
+
+</body>
+</html>
