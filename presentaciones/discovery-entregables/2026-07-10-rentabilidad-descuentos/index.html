@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV Azteca · Discovery — Rentabilidad, Descuentos, Portal de Costos y Autorización</title>
+<style>
+:root {
+  --sf-blue:#0070d2;--sf-dark:#032d60;--sf-green:#04844b;--sf-red:#c23934;
+  --sf-orange:#e07000;--sf-purple:#716caa;--sf-bg:#f3f2f2;--sf-white:#ffffff;
+  --sf-border:#dddbda;--sf-text:#3e3e3c;--sf-label:#706e6b;--sf-yellow:#ffb75d;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Salesforce Sans','Segoe UI',Arial,sans-serif;font-size:13px;color:var(--sf-text);background:var(--sf-bg);}
+.appbar{background:var(--sf-dark);height:48px;display:flex;align-items:center;padding:0 20px;gap:16px;}
+.appbar-title{color:#fff;font-size:16px;font-weight:600;letter-spacing:.3px;}
+.appbar-sub{color:rgba(255,255,255,.65);font-size:12px;}
+.page-header{background:var(--sf-white);border-bottom:1px solid var(--sf-border);padding:16px 24px;}
+.page-header h1{font-size:20px;color:var(--sf-dark);font-weight:700;}
+.page-header p{color:var(--sf-label);font-size:12px;margin-top:4px;}
+.tab-bar{background:var(--sf-blue);display:flex;overflow-x:auto;padding:0 24px;}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,.8);padding:12px 16px;font-size:12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;font-family:inherit;}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.1);}
+.tab-btn.active{color:#fff;border-bottom-color:var(--sf-yellow);background:rgba(255,255,255,.15);font-weight:600;}
+.tab-content{display:none;padding:24px;}
+.tab-content.active{display:block;}
+.card{background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.card-header{background:var(--sf-dark);color:#fff;padding:10px 16px;border-radius:4px 4px 0 0;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-header.blue{background:var(--sf-blue);}
+.card-header.green{background:var(--sf-green);}
+.card-header.orange{background:var(--sf-orange);}
+.card-header.purple{background:var(--sf-purple);}
+.card-body{padding:16px;}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+.fgrid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fgrid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.fgrid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;}
+@media(max-width:900px){.fgrid-2,.fgrid-3,.fgrid-4{grid-template-columns:1fr;}}
+.field-item{padding:8px 0;border-bottom:1px solid var(--sf-bg);}
+.field-item:last-child{border-bottom:none;}
+.field-label{font-size:11px;text-transform:uppercase;color:var(--sf-label);letter-spacing:.5px;margin-bottom:3px;}
+.field-value{font-size:13px;color:var(--sf-text);}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin:2px;}
+.badge-must{background:#fce4e4;color:var(--sf-red);border:1px solid var(--sf-red);}
+.badge-should{background:#fff3e0;color:var(--sf-orange);border:1px solid var(--sf-orange);}
+.badge-nice{background:#e8f4fd;color:var(--sf-blue);border:1px solid var(--sf-blue);}
+.badge-ootb{background:#e3f5e9;color:var(--sf-green);border:1px solid var(--sf-green);}
+.badge-config{background:#eef2f8;color:var(--sf-purple);border:1px solid var(--sf-purple);}
+.badge-custom{background:#fff3e0;color:var(--sf-orange);border:1px solid var(--sf-orange);}
+.badge-pending{background:#fff8e1;color:#b57700;border:1px solid #e0a500;}
+.badge-done{background:#e3f5e9;color:var(--sf-green);border:1px solid var(--sf-green);}
+.badge-risk{background:#fce4e4;color:var(--sf-red);border:1px solid var(--sf-red);}
+.alert{border-radius:4px;padding:12px 16px;margin-bottom:12px;border-left:4px solid;display:flex;gap:12px;align-items:flex-start;}
+.alert-info{background:#e8f4fd;border-color:var(--sf-blue);color:var(--sf-text);}
+.alert-warn{background:#fff3e0;border-color:var(--sf-orange);color:var(--sf-text);}
+.alert-ok{background:#e3f5e9;border-color:var(--sf-green);color:var(--sf-text);}
+.alert-err{background:#fce4e4;border-color:var(--sf-red);color:var(--sf-text);}
+.alert-pending{background:#fff8e1;border-color:#e0a500;color:var(--sf-text);}
+.section-title{font-size:15px;font-weight:700;color:var(--sf-dark);margin:20px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--sf-blue);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:var(--sf-dark);color:#fff;padding:8px 10px;text-align:left;font-weight:600;}
+td{padding:8px 10px;border-bottom:1px solid var(--sf-border);vertical-align:top;}
+tr:nth-child(even) td{background:#f9f9f9;}
+tr:hover td{background:#eef5fb;}
+.swim{display:grid;gap:0;border:1px solid var(--sf-border);border-radius:4px;overflow:hidden;margin-bottom:16px;}
+.swim-lane{display:grid;grid-template-columns:140px 1fr;border-bottom:1px solid var(--sf-border);}
+.swim-lane:last-child{border-bottom:none;}
+.swim-actor{background:var(--sf-dark);color:#fff;padding:12px;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;}
+.swim-steps{padding:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.step{background:var(--sf-blue);color:#fff;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap;}
+.step-green{background:var(--sf-green);}
+.step-orange{background:var(--sf-orange);}
+.step-red{background:var(--sf-red);}
+.step-purple{background:var(--sf-purple);}
+.step-gray{background:var(--sf-label);}
+.arrow{color:var(--sf-label);font-size:14px;font-weight:700;}
+.domain-pill{display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:700;margin-bottom:8px;}
+.domain-rent{background:#fce4e4;color:var(--sf-red);}
+.domain-desc{background:#fff3e0;color:var(--sf-orange);}
+.domain-port{background:#e3f5e9;color:var(--sf-green);}
+.domain-aut{background:#e8f4fd;color:var(--sf-blue);}
+ul.detail-list{padding-left:20px;}
+ul.detail-list li{margin-bottom:6px;line-height:1.5;}
+.req-row{display:grid;grid-template-columns:40px 1fr 90px 90px 100px;gap:8px;padding:8px 0;border-bottom:1px solid var(--sf-bg);align-items:start;}
+.req-row:last-child{border-bottom:none;}
+.req-id{font-size:11px;font-weight:700;color:var(--sf-label);}
+.persona-tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;background:#eef2f8;color:var(--sf-dark);border:1px solid var(--sf-border);margin:1px;}
+.code{font-family:monospace;background:#f4f4f4;padding:1px 5px;border-radius:3px;font-size:12px;color:var(--sf-red);}
+.tag-session{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;background:var(--sf-dark);color:#fff;margin-right:6px;}
+tr.row-ingreso td{background:#e3f5e9 !important;}
+tr.row-excluida td{background:#fce4e4 !important;}
+tr.row-costo td{background:#fff3e0 !important;}
+tr.row-factor td{background:#e8f4fd !important;}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <span class="appbar-title">TV Azteca · Salesforce Media Cloud</span>
+  <span class="appbar-sub">Discovery — Devolutiva para Define &amp; Design</span>
+  <a href="../../../index.html" title="Inicio" style="margin-left:auto;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;text-decoration:none;flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Rentabilidad · Descuentos &amp; Bonificaciones · Portal de Costos · Autorización</h1>
+  <p>Consolidado de Discovery · Sesiones del 19–21 y 26 de mayo de 2026 · v1.1 · Preparado por GPS para revisión y aprobación TV Azteca</p>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('e1',this)">E1 — Contexto</button>
+  <button class="tab-btn" onclick="showTab('e2',this)">E2 — Proceso</button>
+  <button class="tab-btn" onclick="showTab('e3',this)">E3 — Requisitos</button>
+  <button class="tab-btn" onclick="showTab('e4',this)">E4 — RAID</button>
+  <button class="tab-btn" onclick="showTab('e5',this)">E5 — Artefactos</button>
+  <button class="tab-btn" onclick="showTab('e6',this)">E6 — Diseño</button>
+  <button class="tab-btn" onclick="showTab('e7',this)">E7 — Escenarios de Cálculo</button>
+<!--  <button class="tab-btn" onclick="showTab('e7',this)">E7 — Minutas</button>
+  <button class="tab-btn" onclick="showTab('e8',this)">E8 — Diagramas</button>-->
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ E1 CONTEXTO -->
+<div id="e1" class="tab-content active">
+
+  <div class="alert alert-info">
+    <div><strong>Propósito de este documento:</strong> Devolutiva del Discovery para validación con TV Azteca e inicio de la fase de Define &amp; Design. Los cuatro dominios analizados son etapas de un único flujo comercial integrado — no procesos independientes.</div>
+  </div>
+
+  <div class="section-title">Alcance del análisis</div>
+  <div class="fgrid-4">
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-red)">Cálculo de Rentabilidad</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Define si una campaña es viable financieramente. El umbral del 50% de margen de contribución sobre el total de la campaña digital es el gatillo del proceso de autorización.</p>
+        <div style="margin-top:10px;"><span class="tag-session">Sesión 19 may</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-orange)">Descuentos &amp; Bonificaciones</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Define los instrumentos comerciales que impactan el precio neto de la campaña. Ambos afectan el cálculo de rentabilidad y disparan flujos de aprobación cuando exceden los límites contractuales.</p>
+        <div style="margin-top:10px;"><span class="tag-session">Sesión 20 may</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-green)">Portal de Costos</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Sistema interno TV Azteca para asignación de presupuesto por campaña. Requiere registro de Centro de Costos (cuenta) y Subproducción (campaña) como prerequisito <strong>antes del cierre de la campaña como "Conciliada"</strong> — <em>no antes de la activación</em>. La campaña puede activarse y entregar mientras la Subproducción se tramita en paralelo.</p>
+        <div style="margin-top:10px;"><span class="tag-session">Sesión 21 may — tarde</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-blue)">Proceso de Autorización</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Flujo de aprobación jerárquico que se activa cuando la rentabilidad está por debajo del 50% o cuando los descuentos/bonificaciones superan los límites acordados. SLA de 24 horas.</p>
+        <div style="margin-top:10px;"><span class="tag-session">Sesión 21 may — noche</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Situación actual (AS-IS) — Principales problemas</div>
+  <div class="fgrid-2">
+    <div class="card">
+      <div class="card-header">Rentabilidad y Descuento Especial</div>
+      <div class="card-body">
+        <ul class="detail-list">
+          <li>El cálculo de rentabilidad y margen de contribución se realiza completamente de forma manual, mediante hojas de cálculo Excel, sin ningún sistema que lo automatice o valide en tiempo real.</li>
+          <li>No existe un modelo de "valor con descuento especial" — para clientes con descuento especial 0.987 (equivalente a un descuento del 9.87%), los ajustes se calculan manualmente en Excel fuera de cualquier sistema.</li>
+          <li>No existe integración entre el proceso de ventas y el sistema de facturación DS. El traspaso de información se realiza de forma manual, sin distinción por línea de producto ni por tipo de inventario.</li>
+          <li>El umbral del 50% se evalúa manualmente en Excel sin separar productos digitales propios de terceros, sin excluir bonificaciones, y sin visibilidad del peso del costo de producción — generando riesgo de decisiones financieras incorrectas.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Descuentos y Bonificaciones</div>
+      <div class="card-body">
+        <ul class="detail-list">
+          <li>No existe ningún sistema que imponga restricciones automáticas ante descuentos elevados — el proceso es completamente manual y depende del criterio del implementador.</li>
+          <li>No existe un archivo centralizado y actualizado con las condiciones contractuales de bonificación por cliente.</li>
+          <li>Las bonificaciones no tienen tope operativo en el sistema — el control es manual y propenso a errores.</li>
+          <li>Las reclasificaciones de contratos se realizan cancelando y recreando órdenes, sin trazabilidad sistémica.</li>
+          <li>Las campañas multimensuales se gestionan con doble carga de trabajo o sin reconocimiento de ingresos correcto.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Portal de Costos</div>
+      <div class="card-body">
+        <ul class="detail-list">
+          <li>No existe API expuesta — el Portal de Costos corre en la intranet y no tiene integración disponible en esta fase.</li>
+          <li>El flujo actual es 100% manual: el ejecutivo envía un correo al equipo responsable del Portal de Costos para solicitar el registro de Subproducción.</li>
+          <li>No hay ningún sistema que rastreé si el Centro de Costos existe o si la Subproducción fue creada — la trazabilidad depende de correos y hojas de control manuales.</li>
+          <li>El prerequisito de Centro de Costos anual (nivel cuenta) y Subproducción por campaña (nivel orden) no está modelado en ningún sistema de ventas. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> la Subproducción es prerequisito para <strong>cerrar la campaña como "Conciliada"</strong>, no para activarla — la campaña puede correr sin Subproducción confirmada.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Proceso de Autorización</div>
+      <div class="card-body">
+        <ul class="detail-list">
+          <li>El proceso de aprobación es informal: el ejecutivo consulta verbalmente con su gerente y luego con el director.</li>
+          <li>No hay SLA formalizado ni recordatorios automáticos de aprobación pendiente.</li>
+          <li>El equipo de implementación no tiene visibilidad sobre los contratos, lo que genera rechazos manuales innecesarios.</li>
+          <li>Los aprobadores actuales (María o Kenneth) reciben solicitudes por correo o de forma verbal, sin una interfaz centralizada ni trazabilidad.</li>
+          <li>No existe un flujo formal para que las áreas soliciten la configuración de nuevos productos o ad units en ningún sistema.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Personas y Responsabilidades</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Persona</th><th>Rol</th>
+          <th>Rentabilidad</th><th>Descuentos/Bon.</th><th>Portal Costos</th><th>Autorización</th>
+        </tr>
+        <tr>
+          <td><strong>Ejecutivo Comercial</strong></td>
+          <td>Genera la cotización y orden de campaña</td>
+          <td>Ve el margen calculado en tiempo real</td>
+          <td>Aplica descuento/bonificación dentro de su límite</td>
+          <td>Solicita Portal de Costos si es necesario</td>
+          <td>Inicia el flujo de aprobación si supera umbrales</td>
+        </tr>
+        <tr>
+          <td><strong>Gerente Comercial</strong></td>
+          <td>Primer nivel de aprobación de excepciones</td>
+          <td>—</td>
+          <td>Aprueba descuentos que superan el límite del ejecutivo</td>
+          <td>—</td>
+          <td>Aprueba dentro de su rango de autoridad</td>
+        </tr>
+        <tr>
+          <td><strong>Director Digital (María / Kenneth)</strong></td>
+          <td>Autoridad de primer nivel en ventas digitales. Aprueba descuentos hasta el 30%.</td>
+          <td>Aprueba campañas bajo 50%</td>
+          <td>Aprueba bonificaciones sobre el límite jerárquico</td>
+          <td>—</td>
+          <td>Aprueba casos escalados dentro de su rango de autoridad</td>
+        </tr>
+        <tr>
+          <td><strong>Director General (Carlos Escobedo / Jesús de la Vega)</strong></td>
+          <td>Autoridad máxima de aprobación. Carlos Escobedo (Chachi) y Jesús de la Vega (Chucho). Aprueban descuentos superiores al 30%.</td>
+          <td>Aprueba campañas con rentabilidad excepcional o descuentos &gt; 30%</td>
+          <td>Aprueba excepciones por encima del límite de directores digitales</td>
+          <td>—</td>
+          <td>Último nivel de aprobación; firma excepciones extraordinarias</td>
+        </tr>
+        <tr>
+          <td><strong>Verónica Arizaga</strong></td>
+          <td>CC obligatorio en todas las autorizaciones del flujo de aprobación. Actúa como delegada cuando directores están fuera de oficina.</td>
+          <td>Recibe copia de todas las notificaciones de aprobación de rentabilidad</td>
+          <td>Recibe copia de autorizaciones de descuento/bonificación excepcional</td>
+          <td>Recibe copia de aprobaciones relacionadas con Portal de Costos</td>
+          <td>CC obligatorio en todo el Approval Process; puede actuar como delegada</td>
+        </tr>
+        <tr>
+          <td><strong>Equipo Implementación (Fernanda / Ana Isabel)</strong></td>
+          <td>Valida y activa la campaña en el sistema</td>
+          <td>Verifica el margen antes de activar</td>
+          <td>Verifica que descuentos/bonificaciones tengan autorización</td>
+          <td>Confirma existencia de Subproducción <strong>antes de cerrar la campaña como "Conciliada"</strong> (no bloquea activación)</td>
+          <td>Gestiona el flujo de aprobación operativamente</td>
+        </tr>
+        <tr>
+          <td><strong>Operador (Portal de Costos)</strong></td>
+          <td>Responsable del registro en el Portal de Costos</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Crea el Centro de Costos y la Subproducción en el sistema</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Admin Técnico Salesforce</strong></td>
+          <td>Administrador técnico centralizado del catálogo</td>
+          <td>Configura productos con flag "digital" para cálculo</td>
+          <td>Configura elegibilidad de bonificación por producto</td>
+          <td>—</td>
+          <td>Configura nuevos ad units y productos en el sistema</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Sistemas involucrados</div>
+  <div class="fgrid-3">
+    <div class="card">
+      <div class="card-header blue">Salesforce Media Cloud</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Plataforma central a implementar. Gestionará cuentas, cotizaciones, órdenes de campaña, catálogo de productos, flujos de aprobación y trazabilidad de descuentos y bonificaciones. <strong>Sistema orquestador de toda la lógica comercial.</strong></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header green">Portal de Costos (TV Azteca)</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Sistema interno en intranet. Sin API disponible en esta fase. Integración <strong>Fase 1 vía email automatizado</strong> desde Salesforce al equipo responsable. Fase 2 (API) como roadmap futuro.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-purple)">DS (Sistema de Facturación y Contratos)</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Sistema downstream que gestiona contratos comerciales y facturación. La integración propuesta enviará las órdenes <strong>línea a línea</strong> (no solo header) para soportar el descuento especial por tipo de producto. Actualmente no existe integración automatizada.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-label)">GAM (Google Ad Manager)</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Plataforma de ad serving. Las líneas bonificadas se envían a GAM con su <strong>valor original</strong> para trazabilidad de entrega de inventario. El impacto financiero se controla en el cálculo de rentabilidad dentro de Salesforce, no en GAM.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-label)">CECO</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Sistema donde se crean los Centros de Costos de TV Azteca. El Centro de Costos es un prerequisito a nivel cuenta que se renueva anualmente. Salesforce enviará notificación al equipo responsable para su creación en CECO.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-label)">Excel / Herramientas manuales (AS-IS)</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;">Hoy los cálculos de rentabilidad, el control de descuentos y bonificaciones, y el seguimiento de aprobaciones se gestionan completamente mediante hojas de cálculo Excel y correos electrónicos, sin trazabilidad sistémica.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="section-title">6 — Ítems Pendientes para Cierre de Análisis y Diseño de Solución</div>
+
+  <div class="alert alert-warn" style="margin-bottom:16px;">
+    <span style="font-size:18px;">⚠️</span>
+    <div>
+      <strong>Estado del análisis:</strong> El diseño de solución está <strong>sustancialmente completo</strong> — modelo de datos, reglas de cálculo de rentabilidad, lógica del descuento especial y flujo de autorización están definidos. Los ítems a continuación son las dependencias que deben resolverse antes de poder redactar las User Stories técnicas (Sección A) y los puntos que la squad detallará en su etapa de refinamiento (Sección B).
+    </div>
+  </div>
+
+  <!-- SECCIÓN A -->
+  <div class="card" style="border-left:4px solid var(--sf-red);">
+    <div class="card-header" style="background:var(--sf-red);">Sección A — Pendientes que bloquean el cierre del diseño de solución</div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--sf-label);margin-bottom:12px;">Estos ítems deben resolverse <strong>antes de redactar User Stories técnicas</strong>. Sin ellos, no es posible especificar la lógica de negocio completa en las historias.</p>
+      <table>
+        <thead>
+          <tr><th style="width:70px;">Ref.</th><th>Descripción del pendiente</th><th style="width:160px;">Responsable</th><th style="width:120px;">Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="code">I-06</span></td>
+            <td>
+              <strong>Sign-off sobre unificación de contratos (costos + ventas)</strong> <span class="badge badge-done">CERRADO 30-Jun-2026</span><br>
+              <span style="font-size:12px;color:var(--sf-label);">TV Azteca confirmó en la Devolutiva que la unificación aplica (Escenario A). La propuesta técnica de campos duales por línea (<span class="code">Valor_Total__c</span> / <span class="code">Valor_con_Descuento_Especial__c</span>) queda como diseño definitivo. Escenario B descartado. Ver R-04.</span>
+            </td>
+            <td>Confirmado — TV Azteca<br><span style="font-size:11px;color:var(--sf-label);">Devolutiva 30-Jun-2026</span></td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">A-06 / D-04</span></td>
+            <td>
+              <strong>Validación técnica del cambio de integración con DS (línea a línea)</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">La integración actual con DS envía solo el header del contrato. El diseño requiere que DS reciba datos línea a línea (<span class="code">Valor_Total__c</span> + <span class="code">Valor_con_Descuento_Especial__c</span> por OrderItem) para aplicar el descuento especial selectivamente. El equipo técnico de DS debe confirmar si puede soportar este cambio en el contrato de integración — incluyendo el nuevo payload y la capacidad de recibir <span class="code">special_discount</span> por línea.</span>
+            </td>
+            <td>Equipo técnico DS<br><span style="font-size:11px;color:var(--sf-label);">Validación técnica en Define &amp; Design</span></td>
+            <td><span class="badge badge-risk">Pendiente validación DS</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECCIÓN B -->
+  <div class="card" style="border-left:4px solid var(--sf-orange);">
+    <div class="card-header" style="background:var(--sf-orange);">Sección B — Ítems para la etapa de refinamiento de la squad</div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--sf-label);margin-bottom:12px;">Estos ítems <strong>no bloquean la redacción de User Stories</strong>. La squad los detallará y definirá en su proceso normal de refinamiento — son parámetros de configuración, plantillas operativas o decisiones de diseño de detalle.</p>
+      <table>
+        <thead>
+          <tr><th style="width:70px;">Ref.</th><th>Descripción del pendiente</th><th style="width:160px;">Responsable</th><th style="width:120px;">Cuándo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="code">I-01</span></td>
+            <td>
+              <strong>Tabla de umbrales de descuento</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Porcentajes exactos de descuento que puede autorizar cada nivel (ejecutivo, gerente, director). El Approval Process y su estructura de escalamiento ya están diseñados — los umbrales son parámetros de configuración que TV Azteca proveerá antes del UAT. La User Story se escribe con los umbrales como variable de configuración.</span>
+            </td>
+            <td>Luis / Kenneth / Dirección Comercial</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-04</span></td>
+            <td>
+              <strong>Organigrama comercial completo — Roles y Territorios</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">La jerarquía de Roles y Territorios como mecanismo de ruteo del Approval Process ya está decidida por diseño. El organigrama real es dato de configuración — necesario antes del UAT, no antes de escribir las User Stories. La Task de Configuración correspondiente especifica "configurar Roles y Territorios conforme organigrama provisto por TV Azteca".</span>
+            </td>
+            <td>Dirección Comercial</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-02</span></td>
+            <td>
+              <strong>Lista de productos NO elegibles para bonificación</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Lista de productos donde <span class="code">Elegible_Bonificacion__c = FALSE</span> (ej. Disney). Requiere catálogo actualizado. El campo y la lógica ya están diseñados — solo faltan los valores de configuración.</span>
+            </td>
+            <td>Fernanda Tavira<br><span style="font-size:11px;color:var(--sf-label);">Migración de catálogo</span></td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-05</span></td>
+            <td>
+              <strong>Template del correo al Portal de Costos</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Formato exacto, campos requeridos, destinatarios y protocolo de confirmación para el email automático de creación de Subproducción y Centro de Costos. El flujo ya está diseñado — el template es un detalle de implementación.</span>
+            </td>
+            <td>Fernanda / equipo Portal de Costos<br><span style="font-size:11px;color:var(--sf-label);">Define &amp; Design</span></td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-07</span></td>
+            <td>
+              <strong>Descuento en cascada vs. sobre precio de lista</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Definición de la metodología estándar para la parte digital: ¿el descuento aplicado en cotización se calcula sobre el precio de lista o en cascada sobre el descuento previo? Afecta la fórmula de Revenue Cloud en la cotización.</span>
+            </td>
+            <td>Luis / Kenneth / Dirección<br><span style="font-size:11px;color:var(--sf-label);">Sesión 26 may — a confirmar</span></td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-08</span></td>
+            <td>
+              <strong>Porcentaje máximo de bolsa de bonificaciones</strong> <span class="badge badge-done">CERRADO — Fuera de alcance</span><br>
+              <span style="font-size:12px;color:var(--sf-label);">La bolsa de bonificaciones para digital <strong>no aplica en esta fase</strong> (Devolutiva 30-Jun-2026). En este scope solo se valida el porcentaje de descuento/bonificación permitido por jerarquía (matriz de aprobación). El tope de bolsa por contrato queda fuera del alcance actual.</span>
+            </td>
+            <td>Director Ventas Nacionales / Director Digital</td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">I-09</span></td>
+            <td>
+              <strong>Alineación de reportes con equipo Lidia / Adriana</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Hoy distinguen el tipo de contrato (costo vs. venta) por el nombre del contrato. Con el modelo unificado, necesitarán un campo explícito en los reportes. Requiere sesión para mapear sus reportes actuales antes de la migración.</span>
+            </td>
+            <td>Lidia / Adriana<br><span style="font-size:11px;color:var(--sf-label);">Sesión a coordinar</span></td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">R-06</span></td>
+            <td>
+              <strong>Metodología de reconocimiento de ingresos — campañas multimensuales</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Las campañas que atraviesan meses fiscales necesitan una metodología definida: ¿órdenes mensuales separadas o campaña completa con cálculo proporcional? La squad debe definir esto con <strong>Contraloría</strong> durante el refinamiento para evitar inconsistencias contables. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> Contraloría no participó en las sesiones de Discovery — esta validación queda formalmente pendiente para la fase Define &amp; Design.</span>
+            </td>
+            <td>Contraloría (pendiente post-Discovery) / Dirección Comercial</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">R-05</span></td>
+            <td>
+              <strong>Proceso formal de solicitud de nuevos productos al catálogo</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Formalizar el flujo operativo para que los equipos de ventas soliciten la creación de nuevos productos al Admin Técnico. El campo <span class="code">Requiere_Admin_Tecnico__c</span> y el Permission Set restrictivo ya están diseñados — falta el SLA y el canal de solicitud.</span>
+            </td>
+            <td>Admin Técnico Salesforce / Operaciones</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="code">R-03</span></td>
+            <td>
+              <strong>Diseño del email Portal de Costos orientado a futura migración a API</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El Portal de Costos no tiene API disponible hoy. El email automático debe estructurarse con datos en formato que facilite la transición a API cuando el portal la exponga (Fase 2). El equipo de integración define el formato durante el refinamiento técnico.</span>
+            </td>
+            <td>Equipo de integración</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td>Sin ref.</td>
+            <td>
+              <strong>Tipos de campaña: Anticipado, Real, Postecipado — flujos de conciliación diferenciados</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El campo <span class="code">Tipo_Campaña__c</span> está diseñado, pero los flujos específicos de conciliación para cada tipo (incluyendo el bloqueo de orden por Ana Isabel y el candado de mes) no tuvieron sesión dedicada. La squad debe detallar estos flujos en refinamiento.</span>
+            </td>
+            <td>Operaciones / Squad</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td>Sin ref.</td>
+            <td>
+              <strong>Gestión de campañas multimensuales — clonación y advertencias de continuidad</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El comportamiento de clonación automática mensual y las advertencias cuando una campaña supera el 31-dic no tuvieron sesión dedicada. La squad define la UX y la lógica de automatización en refinamiento.</span>
+            </td>
+            <td>Squad / UX</td>
+            <td><span class="badge badge-pending">Refinamiento</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /E1 -->
+
+<!-- ═══════════════════════════════════════════════════════ E2 PROCESO -->
+<div id="e2" class="tab-content">
+
+  <div class="alert alert-info">
+    <div>Los diagramas a continuación siguen notación <strong>BPMN simplificada</strong> en formato swimlane. El Ejecutivo Comercial trabaja sobre la <strong>Cotización</strong> — la Orden se genera solo después de las aprobaciones correspondientes. Consulte la leyenda al final de la sección.</div>
+  </div>
+
+  <div class="section-title">AS-IS — Flujo actual (100% manual, sin sistema de ventas)</div>
+  <div class="swim">
+    <div class="swim-lane">
+      <div class="swim-actor">Ejecutivo Comercial</div>
+      <div class="swim-steps">
+        <div class="step" style="border:2px solid #fff;background:var(--sf-blue);">⬟ Inicio: solicitud de campaña</div><span class="arrow">→</span>
+        <div class="step step-orange">Elabora cotización en Excel</div><span class="arrow">→</span>
+        <div class="step step-orange">Calcula margen manualmente en Excel</div><span class="arrow">→</span>
+        <div class="step step-red">◇ ¿Requiere autorización?</div><span class="arrow">→</span>
+        <div class="step step-orange">Consulta verbal / email al Director</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Director (María / Kenneth)</div>
+      <div class="swim-steps">
+        <div class="step step-orange">Recibe consulta verbal o email</div><span class="arrow">→</span>
+        <div class="step step-red">Aprueba o rechaza informalmente</div><span class="arrow">→</span>
+        <div class="step step-red">Sin SLA ni trazabilidad sistémica</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Implementación</div>
+      <div class="swim-steps">
+        <div class="step step-orange">Recibe cotización aprobada</div><span class="arrow">→</span>
+        <div class="step step-red">Verifica manualmente si hay autorización</div><span class="arrow">→</span>
+        <div class="step step-red">◇ ¿Autorización OK?</div><span class="arrow">→</span>
+        <div class="step step-red">NO: rechaza y regresa al ejecutivo</div><span class="arrow">|</span>
+        <div class="step step-orange">SÍ: crea orden manualmente</div><span class="arrow">→</span>
+        <div class="step step-orange">Envía email al equipo Portal de Costos</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Equipo Resp.<br/>Portal de Costos</div>
+      <div class="swim-steps">
+        <div class="step step-orange">Recibe email del ejecutivo / implementación</div><span class="arrow">→</span>
+        <div class="step step-orange">Crea Centro de Costos en CECO (si no existe)</div><span class="arrow">→</span>
+        <div class="step step-orange">Crea Subproducción en Portal de Costos</div><span class="arrow">→</span>
+        <div class="step step-orange">Responde por email</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">DS / GAM</div>
+      <div class="swim-steps">
+        <div class="step step-red">Carga manual de datos de facturación en DS</div><span class="arrow">→</span>
+        <div class="step step-red">Sin distinción por línea de producto</div><span class="arrow">→</span>
+        <div class="step step-red">GAM no recibe información estructurada de bonificaciones</div><span class="arrow">→</span>
+        <div class="step" style="border:2px solid #fff;background:var(--sf-label);">⬟ Fin</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">TO-BE — Flujo propuesto en Salesforce (automatizado e integrado)</div>
+  <div class="swim">
+    <div class="swim-lane">
+      <div class="swim-actor">Ejecutivo Comercial</div>
+      <div class="swim-steps">
+        <div class="step step-green" style="border:2px solid #fff;">⬟ Inicio: crea Cotización en Salesforce</div><span class="arrow">→</span>
+        <div class="step step-green">Agrega líneas de productos (digitales / terceros)</div><span class="arrow">→</span>
+        <div class="step step-green">Aplica descuento o bonificación (dentro de límite)</div><span class="arrow">→</span>
+        <div class="step step-green">Ve margen calculado automáticamente en tiempo real</div><span class="arrow">→</span>
+        <div class="step" style="background:var(--sf-blue)">Envía cotización para aprobación</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Salesforce<br/>(Motor de reglas)</div>
+      <div class="swim-steps">
+        <div class="step" style="background:var(--sf-purple)">◇ Gate 1: ¿Descuento/Bon. supera límite jerárquico del ejecutivo?</div><span class="arrow">→</span>
+        <div class="step" style="background:var(--sf-purple)">◇ Gate 2: ¿Rentabilidad digital &lt; 50%?</div><span class="arrow">→</span>
+        <div class="step step-green">Ambos OK → genera Orden automáticamente</div><span class="arrow">|</span>
+        <div class="step step-orange">Alguno falla → inicia Approval Process</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Director (Aprobador)</div>
+      <div class="swim-steps">
+        <div class="step">Recibe notificación nativa Salesforce</div><span class="arrow">→</span>
+        <div class="step" style="background:var(--sf-purple)">◇ ¿Aprueba o rechaza?</div><span class="arrow">→</span>
+        <div class="step step-green">Aprueba → Salesforce genera Orden y continúa flujo</div><span class="arrow">|</span>
+        <div class="step step-red">Rechaza → Cotización regresa al ejecutivo con motivo</div><span class="arrow">→</span>
+        <div class="step step-gray">Recordatorio automático a 12h si sin respuesta (SLA 24h)</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Salesforce<br/>(Post-aprobación)</div>
+      <div class="swim-steps">
+        <div class="step step-green">Orden generada y aprobada</div><span class="arrow">→</span>
+        <div class="step step-green">◇ ¿Centro de Costos existe en Account?</div><span class="arrow">→</span>
+        <div class="step step-orange">NO: email automático al equipo CECO para crearlo</div><span class="arrow">→</span>
+        <div class="step step-green">SÍ: email automático al equipo Portal de Costos para crear Subproducción</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Equipo Resp.<br/>Portal de Costos<br/>/ CECO</div>
+      <div class="swim-steps">
+        <div class="step">Recibe email estructurado automático de Salesforce</div><span class="arrow">→</span>
+        <div class="step step-orange">Crea Centro de Costos en CECO (si aplica)</div><span class="arrow">→</span>
+        <div class="step step-orange">Crea Subproducción en Portal de Costos</div><span class="arrow">→</span>
+        <div class="step step-green">Notifica al Admin Técnico Salesforce</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">Admin Técnico<br/>Salesforce</div>
+      <div class="swim-steps">
+        <div class="step step-green">Recibe confirmación del equipo Portal de Costos / CECO</div><span class="arrow">→</span>
+        <div class="step step-green">Actualiza campos en Salesforce: Centro_de_Costos__c y Subproduccion__c</div><span class="arrow">→</span>
+        <div class="step step-green">Status_Portal_Costos__c = "Confirmado"</div>
+      </div>
+    </div>
+    <div class="swim-lane">
+      <div class="swim-actor">DS / GAM</div>
+      <div class="swim-steps">
+        <div class="step step-green">Salesforce envía Orden a DS con todas las líneas (línea a línea)</div><span class="arrow">→</span>
+        <div class="step step-green">Descuento Especial aplicado selectivamente por tipo de producto en DS</div><span class="arrow">→</span>
+        <div class="step step-green">Líneas bonificadas enviadas a GAM con valor original (trazabilidad de inventario)</div><span class="arrow">→</span>
+        <div class="step step-green" style="border:2px solid #fff;">⬟ Campaña activa (Subproducción puede quedar en trámite)</div>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-info" style="margin-top:12px;">
+    <div><strong>Actualizado 30-Jun-2026 · Devolutiva.</strong> La activación de la campaña <strong>no depende</strong> de la confirmación de Subproducción — la orden puede activarse y entregar mientras el equipo del Portal de Costos completa el registro. El ID de Subproducción se exige <strong>únicamente al momento de cerrar la campaña como "Conciliada"</strong>, previo a la facturación. Ver POC-02.</div>
+  </div>
+
+  <div class="section-title">Puntos de decisión (Gates) en el flujo TO-BE</div>
+  <div class="fgrid-3">
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-orange)">Gate 1 — Descuento / Bonificación</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;"><strong>Trigger:</strong> El ejecutivo aplica uno o más descuentos (múltiples <code>PricingAdjustment</code>) o una bonificación en la Cotización en Salesforce.</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Lógica:</strong> Si el <code>TotalAdjustmentAmount</code> agregado en la línea o la bonificación está dentro del <strong>límite del nivel jerárquico</strong> del ejecutivo → avanza. Si supera el límite → inicia Approval Process al aprobador correspondiente (Gerente / Director / Director Digital).</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Pendiente:</strong> Matriz de porcentajes máximos por nivel jerárquico (ver RAID E4-I01). <em>Actualizado 30-Jun-2026:</em> validación únicamente contra matriz jerárquica, no contra umbrales contractuales.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-red)">Gate 2 — Rentabilidad 50%</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;"><strong>Trigger:</strong> Al completar la captura de líneas en la Cotización.</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Lógica:</strong> Calcula margen de contribución sobre líneas digitales propias no bonificadas y no de terceros. El componente de costo es el costo de producción (<code>Es_Produccion__c = TRUE</code>). Si ≥ 50% → avanza. Si &lt; 50% → Approval Process hacia Dirección Comercial Digital.</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Acordado:</strong> Excluye líneas de terceros y bonificaciones del ingreso. Las líneas de producción (<code>Es_Produccion__c = TRUE</code>) no generan ingreso pero sí entran como costo en el denominador del margen — deprimiendo el Yield cuando el costo de producción es alto.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-green)">Gate 3 — Portal de Costos</div>
+      <div class="card-body">
+        <p style="font-size:12px;line-height:1.6;"><strong>Trigger:</strong> Generación de la Orden aprobada en Salesforce.</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Lógica (Fase 1):</strong> Salesforce dispara email automático al equipo responsable del Portal de Costos. El Admin Técnico Salesforce actualiza los campos de confirmación una vez recibe la respuesta del equipo.</p>
+        <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Fase 2 (roadmap):</strong> Integración directa vía API cuando el Portal de Costos la exponga.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Leyenda BPMN</div>
+  <div class="card">
+    <div class="card-body" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step" style="background:var(--sf-blue);font-size:11px;">⬟ Inicio / Fin</div>
+        <span style="font-size:12px;color:var(--sf-label);">Evento de inicio o fin del proceso</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step" style="background:var(--sf-purple);font-size:11px;">◇ Gateway</div>
+        <span style="font-size:12px;color:var(--sf-label);">Punto de decisión exclusivo (XOR)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step step-green" style="font-size:11px;">Tarea</div>
+        <span style="font-size:12px;color:var(--sf-label);">Actividad propuesta (TO-BE)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step step-orange" style="font-size:11px;">Tarea</div>
+        <span style="font-size:12px;color:var(--sf-label);">Actividad manual o con fricción</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step step-red" style="font-size:11px;">Tarea</div>
+        <span style="font-size:12px;color:var(--sf-label);">Problema / antipatrón AS-IS</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="step step-gray" style="font-size:11px;">Tarea</div>
+        <span style="font-size:12px;color:var(--sf-label);">Actividad automática programada</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="arrow" style="font-size:18px;">→</span>
+        <span style="font-size:12px;color:var(--sf-label);">Flujo de secuencia</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="arrow" style="font-size:18px;">|</span>
+        <span style="font-size:12px;color:var(--sf-label);">Flujo condicional (rama del gateway)</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /E2 -->
+
+<!-- ═══════════════════════════════════════════════════════ E3 REQUISITOS -->
+<div id="e3" class="tab-content">
+
+  <div class="alert alert-ok">
+    <div><strong>Convención:</strong> <span class="badge badge-must">MUST</span> = Requisito confirmado y no negociable · <span class="badge badge-should">SHOULD</span> = Importante, requiere validación de detalle · <span class="badge badge-nice">NICE</span> = Deseable, backlog futuro · <span class="badge badge-pending">PENDIENTE</span> = Acordado en sesión, detalles a confirmar por TV Azteca.</div>
+  </div>
+
+  <div class="section-title">Dominio 1 — Cálculo de Rentabilidad</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th width="60">ID</th><th>Requisito</th><th width="100">Prioridad</th><th width="120">Fuente</th></tr>
+        <tr>
+          <td class="req-id">REN-01</td>
+          <td>El sistema debe calcular automáticamente el margen de contribución de la campaña en tiempo real, visible para el ejecutivo durante la captura de la orden.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-02</td>
+          <td>El cálculo de rentabilidad debe aplicarse <strong>exclusivamente sobre las líneas de productos digitales propios</strong>. Las líneas de terceros o no digitales no forman parte del denominador del margen.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may / Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-03</td>
+          <td>El umbral mínimo de margen de contribución es el <strong>50% sobre el total de la campaña digital</strong> (no por línea individual).</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may / Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-04</td>
+          <td>Cada línea de orden debe contener dos valores calculados: <span class="code">Valor_Total__c</span> (valor bruto de la línea) y <span class="code">Valor_con_Descuento_Especial__c</span> (valor ajustado por el descuento especial del cliente).<br/><br/>
+          <em>Contexto:</em> Para clientes con descuento especial (ej. Target, Adlit), TV Azteca debe simultáneamente (a) registrar el 100% del valor para pago a proveedores y (b) reconocer solo ~10% como ingreso en el sistema DS. Hoy esto se resuelve con <strong>dos contratos separados</strong> por cliente, lo que impide calcular la rentabilidad a nivel de campaña. Los campos duales permiten que un único contrato en Salesforce contenga ambas perspectivas por línea.<br/><br/>
+          El descuento especial aplica solo cuando se cumplen dos condiciones: (1) <code>Contrato.Porcentaje_Descuento_Especial__c &gt; 0</code> (DS envía este valor como <code>special_discount</code> en la sincronización de contratos; cuando es cero = sin descuento especial activo, sin flag separado) y (2) <code>Producto.Elegible_Descuento_Especial__c = TRUE</code> (inventario propio TV Azteca). Líneas de producción y productos de terceros siempre tienen <code>Valor_con_Descuento_Especial__c = Valor_Total__c</code>. El descuento especial es una propiedad del Contrato — no de la línea individual.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-05</td>
+          <td>La integración con DS debe enviarse <strong>línea a línea</strong> (no solo header de orden), permitiendo que el descuento especial se aplique selectivamente por tipo de producto.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-05b</td>
+          <td>Las líneas marcadas como bonificación deben quedar <strong>excluidas del cálculo del margen de contribución</strong>. Una bonificación representa ingreso neto cero en esa línea — incluirla en el denominador distorsionaría el margen calculado.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may / Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-05c</td>
+          <td>Las líneas de costo de producción deben clasificarse con el campo <span class="code">Tipo_Costo__c</span> (picklist: <strong>Complementario</strong> / <strong>Bolsa Propuesta</strong> <em style="color:#706e6b;font-size:11px;">(antes "Bolsa de Costos" — renombrado por Devolutiva 30-jun-2026)</em>). <strong>Complementario:</strong> talento externo, agencia de producción, costos directos facturados al cliente. <strong>Bolsa Propuesta:</strong> producción interna de TV Azteca absorbida de la bolsa presupuestal anual. Ambos tipos entran en el cálculo del margen de la misma forma (<code>Es_Produccion__c = TRUE</code>). La diferencia es puramente operacional: determina el roteamiento en CECO (ITC vs. Portal de Costos).</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-06</td>
+          <td>El catálogo de productos debe incluir un flag que determine si una línea participa en el cálculo de rentabilidad digital (ej. <span class="code">Es_Producto_Digital__c</span> — nombre de referencia, a confirmar en diseño del modelo de datos).</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-07</td>
+          <td>El valor del descuento especial (<code>Porcentaje_Descuento_Especial__c</code>) se recibe automáticamente desde DS vía sincronización de contratos, bajo el nombre de campo <code>special_discount</code> en el payload. Cuando el valor es mayor que cero, el sistema aplica el descuento especial a las líneas elegibles del contrato. No se requiere un campo flag separado — la regla es: <code>Porcentaje_Descuento_Especial__c &gt; 0</code> activa el descuento especial. El valor actual del mercado es 0.987 (9.87%), pero puede variar por contrato según la negociación.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 19 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">REN-08</td>
+          <td><span class="badge badge-done">CONFIRMADO 30-Jun-2026</span> Un único contrato en Salesforce cubre simultáneamente el registro del 100% del costo (para pago a proveedores) y el reconocimiento del valor con descuento especial (para ingresos en DS).<br/><br/>
+          <em>Situación AS-IS:</em> Hoy existen <strong>dos contratos separados por cliente</strong>: (1) un "contrato de costo" al 100% del valor para que Administración pueda pagar proveedores, y (2) un "contrato de venta" con el descuento especial aplicado para el reconocimiento de ingresos en DS. Esto impide a Anita (Ana Isabel) calcular rentabilidad por campaña — debe descargar dos reportes y correlacionar manualmente.<br/><br/>
+          <em>Solución confirmada:</em> Los campos <code>Valor_Total__c</code> y <code>Valor_con_Descuento_Especial__c</code> por línea resuelven la dualidad dentro de un único contrato. TV Azteca validó en la Devolutiva 30-Jun-2026 que este modelo aplica (Escenario A). La estrategia de migración procederá a consolidar o archivar los contratos duplicados históricos. Escenario B descartado.</td>
+          <td><span class="badge badge-done">CERRADO</span></td>
+          <td>Sesión 19 may / act. 30-Jun-2026</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Dominio 2 — Descuentos y Bonificaciones</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th width="60">ID</th><th>Requisito</th><th width="100">Prioridad</th><th width="120">Fuente</th></tr>
+        <tr>
+          <td class="req-id">DYB-01</td>
+          <td><strong>Descuento:</strong> Reduce el precio de la línea (ej. CPM). Se aplica al momento de la cotización. Debe estar parametrizado con umbrales por tipo de producto y nivel jerárquico de aprobación.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-02</td>
+          <td><strong>Bonificación:</strong> Mantiene el precio pero entrega impresiones adicionales o no cobra la línea (100% descuento). Las líneas bonificadas deben registrarse en la orden con su <strong>valor original</strong> para trazabilidad en GAM y DS. El valor original <strong>sí se envía a DSM con fines informativos</strong>, pero <strong>no consume saldo del contrato</strong> — la línea bonificada queda excluida del ingreso neto reconocido y del cálculo de rentabilidad en Salesforce. <em>Precisado por cliente · Devolutiva 30-Jun-2026.</em></td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-03</td>
+          <td><span class="badge badge-done">FUERA DE ALCANCE — Fase actual</span> El modelado de la bonificación como <strong>bolsa finita con tope por contrato</strong> se retira del scope actual. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> "Actualmente no existirá una bolsa de bonificaciones para digital dentro del contrato. Esta validación deberá considerarse fuera del alcance actual. En esta fase solo deberá validarse el porcentaje de descuento/bonificación permitido por jerarquía." La validación se apoya únicamente en la <strong>matriz de aprobación jerárquica</strong> (ver DYB-06) — sin evaluación de saldo de bolsa.</td>
+          <td><span class="badge badge-done">OUT-OF-SCOPE</span></td>
+          <td>Sesión 20 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-04</td>
+          <td>El catálogo debe incluir un flag <span class="code">Elegible_Bonificacion__c</span> por producto. Productos de terceros como Disney <strong>no son elegibles</strong> para bonificación.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-05</td>
+          <td>Debe diferenciarse el tipo de inventario: <span class="code">Propio</span> (plataformas Azteca) vs. <span class="code">Tercero</span> (CTV, Tubi, Pluto). La bonificación de inventario propio es prioritaria por ser más económica.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-06</td>
+          <td>El sistema debe evaluar descuentos y bonificaciones contra la <strong>matriz jerárquica de aprobación</strong> (porcentaje máximo por nivel: ejecutivo → gerente → director → director digital) y disparar el Approval Process nativo cuando el % agregado supere el límite del nivel del usuario. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> la validación es <strong>únicamente contra la matriz jerárquica</strong>, no contra umbrales contractuales del cliente.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-07</td>
+          <td>Debe soportarse la funcionalidad de <strong>enmienda de órdenes</strong>: modificar una orden activa sin necesidad de cancelarla, protegiendo el presupuesto ya consumido.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-10</td>
+          <td>Tabla de umbrales de descuento por plataforma/producto y niveles de aprobación. Requiere reunión con Luis, Kenneth y dirección para formalizar.</td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Sesión 20 may / 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-11</td>
+          <td><span class="badge badge-done">FUERA DE ALCANCE — Fase actual</span> El archivo consolidado de <strong>condiciones contractuales de bonificación</strong> por cliente ya no se requiere en esta fase. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> con la bolsa de bonificaciones fuera de alcance (DYB-03), la validación se realiza únicamente contra la matriz de porcentajes por jerarquía — no contra condiciones contractuales de bonificación por cliente. TV Azteca podrá volver a evaluar la carga histórica en una fase futura.</td>
+          <td><span class="badge badge-done">OUT-OF-SCOPE</span></td>
+          <td>Sesión 20 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-12</td>
+          <td><strong>Descuentos NO son mutuamente excluyentes</strong> — una línea de cotización puede recibir <strong>múltiples descuentos superpuestos</strong> (comercial, volumen, especial, promocional). <em>Precisado por cliente · Devolutiva 30-Jun-2026 (Luis Antonio):</em> se acumulan y aplican secuencialmente sobre el precio base.<br><br><strong>Implementación nativa (RCA · sin custom fields):</strong> se usa la capacidad estándar de <strong>Pricing Adjustments</strong> de Salesforce Media Cloud On Core (Revenue Cloud Advanced). Cada descuento se registra como un <strong>registro independiente de <code>PricingAdjustment</code></strong> asociado a la línea (<code>AdQuoteLine</code> / <code>AdOrderItem</code>), con: <code>AdjustmentType</code> (Percentage / Amount), <code>AdjustmentValue</code>, <code>AdjustmentReason</code> (Comercial / Volumen / Especial / Promocional) y <code>AdjustmentSource</code> (Manual / Procedure / Contract). El motor de precios de RCA <strong>aplica los ajustes en cascada</strong> y agrega el resultado en el campo estándar <code>TotalAdjustmentAmount</code> de la línea — este es el valor que evalúa el Approval Process contra la matriz jerárquica (DYB-04 / DYB-05). <strong>Cero campos personalizados</strong> — todo se soporta con objetos y campos nativos de RCA.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 20 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-13</td>
+          <td>El ejecutivo debe registrar una <strong>justificación obligatoria</strong> al momento de aplicar cualquier descuento o bonificación que supere el límite de su nivel de autoridad. Este campo es requerido para iniciar el Approval Process.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 26 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-14</td>
+          <td>Las órdenes deben soportar tres tipos de campaña: <strong>Anticipado</strong> (capturada antes de que comience), <strong>Real</strong> (capturada durante la ejecución) y <strong>Postecipado</strong> (capturada después). El tipo de campaña determina el flujo de conciliación y facturación.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 26 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">DYB-15</td>
+          <td>Debe existir un nuevo estado <strong>"Bloqueada"</strong> en la Orden, activado durante la conciliación operativa. Solo <strong>Ana Isabel Vázquez</strong> puede revertir este estado. El bloqueo impide modificaciones hasta que la conciliación esté resuelta.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 26 may</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="alert alert-warn" style="margin-bottom:16px;">
+    <div><strong>Temas para sesión específica futura (no alcanzados en el Discovery):</strong>
+    <ul class="detail-list" style="margin-top:8px;">
+      <li><strong>Candados de mes:</strong> bloquear modificaciones en órdenes cerradas 1–2 días después del cierre del mes fiscal, con perfil de excepción para el equipo de administración. Requiere definir la fecha exacta de candado, los perfiles de excepción y el alcance de objetos afectados.</li>
+      <li><strong>Gestión de campañas multimensuales:</strong> mecanismo para gestionar campañas que abarcan varios meses — clonación automática mensual, advertencias de continuidad, o reconocimiento de ingresos proporcional. Requiere alineación con <strong>Contraloría</strong> sobre la metodología contable. <em>Devolutiva 30-Jun-2026:</em> Contraloría no participó en Discovery — validación pendiente para Define &amp; Design.</li>
+    </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Dominio 3 — Portal de Costos</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th width="60">ID</th><th>Requisito</th><th width="100">Prioridad</th><th width="120">Fuente</th></tr>
+        <tr>
+          <td class="req-id">POC-01</td>
+          <td>Salesforce debe registrar el <strong>Centro de Costos</strong> a nivel Cuenta. Este campo es prerequisito anual que debe existir antes de la primera campaña del cliente en el año. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> la información de Centro de Costos por cliente se poblará <strong>en la migración inicial de datos</strong> — se carga como parte del paquete de migración de cuentas al Salesforce productivo. Post go-live, la renovación anual y las altas de nuevos clientes siguen el flujo estándar (email al equipo CECO → Admin Técnico captura el ID en Account).</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-02</td>
+          <td>Salesforce debe registrar la <strong>Subproducción</strong> a nivel Orden. Vigencia hasta el 31 de diciembre del año en curso. Requerida por campaña <strong>antes del cierre como "Conciliada"</strong>. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> la Subproducción es prerequisito para conciliar y facturar la campaña — no bloquea la activación ni la entrega. La campaña puede correr con Subproducción en estado "Pendiente" o "Solicitado" y solo al llegar a "Conciliado" se exige el ID confirmado. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> las Subproducciones <strong>NO se migran</strong> — no hay migración de Orders al arranque. Todas las Subproducciones se crean bajo demanda tras el go-live, mediante el flujo estándar (email automático → Portal de Costos → captura del ID en Order). Las campañas históricas cerradas antes del go-live permanecen en el sistema legado.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-03</td>
+          <td><strong>Fase 1:</strong> Al aprobarse la orden, Salesforce dispara automáticamente un correo estructurado a Equipo Resp. Portal de Costos con los datos necesarios para crear la Subproducción.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-04</td>
+          <td>El correo automático debe incluir: Nombre del cliente, ID de cuenta, nombre de la campaña, ID de orden, período de vigencia, monto asignado y datos del ejecutivo responsable.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-05</td>
+          <td>Salesforce debe rastrear el estado de la Subproducción: Pendiente → Solicitado → Confirmado. El equipo de implementación debe tener visibilidad de este estado en la orden.</td>
+          <td><span class="badge badge-should">SHOULD</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-06</td>
+          <td><strong>Fase 2 (roadmap):</strong> Integración directa vía API entre Salesforce y el Portal de Costos, eliminando el paso manual de email. Condicionado a que TV Azteca exponga una API del portal.</td>
+          <td><span class="badge badge-nice">NICE / ROADMAP</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">POC-07</td>
+          <td>Formato del correo a Portal de Costos y datos exactos requeridos por el sistema. TV Azteca debe confirmar el template con el equipo responsable del Portal de Costos.</td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Dominio 4 — Proceso de Autorización</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th width="60">ID</th><th>Requisito</th><th width="100">Prioridad</th><th width="120">Fuente</th></tr>
+        <tr>
+          <td class="req-id">AUT-01</td>
+          <td>Cuando la rentabilidad de la campaña es &lt; 50% o los descuentos/bonificaciones superan el <strong>límite del nivel jerárquico del ejecutivo</strong> (matriz de porcentajes por rol), el sistema debe iniciar automáticamente un <strong>Approval Process en Salesforce</strong>. <em>Precisado por cliente · Devolutiva 30-Jun-2026:</em> la validación de descuentos/bonificaciones se realiza contra la matriz jerárquica, no contra umbrales contractuales del cliente.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may / act. 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-02</td>
+          <td>El Approval Process debe operar a nivel de <strong>campaña completa</strong> (Order), no por línea individual. Si una línea dispara la regla, toda la campaña requiere aprobación.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-03</td>
+          <td>El SLA de respuesta para aprobaciones es de <strong>24 horas</strong>. El sistema debe enviar un recordatorio automático al aprobador a las <strong>12 horas</strong> si no ha respondido.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-04</td>
+          <td>Las notificaciones de aprobación deben utilizar el <strong>mecanismo nativo de Salesforce</strong>. No se implementará integración con Slack en esta fase, para evitar desarrollos adicionales.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-05</td>
+          <td>El aprobador asignado depende de la <strong>dirección comercial o de grupo</strong> del ejecutivo y del nivel de descuento/rentabilidad: hasta 10% lo aprueba el líder del ejecutivo; 10–30% escala a Director Digital (María o Kenneth); más del 30% escala a Carlos Escobedo (Chachi) o Jesús de la Vega (Chucho). Verónica Arizaga debe ir en CC en todas las notificaciones.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-06</td>
+          <td>Toda aprobación o rechazo debe quedar registrada en Salesforce con fecha, aprobador y motivo, garantizando trazabilidad para auditoría.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-07</td>
+          <td>Debe existir un proceso formal para solicitar la configuración de nuevos productos (ad units) en Salesforce. El Admin Técnico Salesforce es el único responsable de esta operación — los equipos comerciales y de implementación envían solicitudes formales, no acceden directamente al catálogo.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td class="req-id">AUT-08</td>
+          <td>La identificación del aprobador en el Approval Process debe realizarse de forma <strong>automática</strong> a partir de la estructura de ventas configurada en Salesforce mediante <strong>Roles y Territorios</strong>. El ruteo usará la jerarquía de roles del ejecutivo para determinar al aprobador correspondiente (María o Kenneth para 10–30%; Carlos Escobedo o Jesús de la Vega para &gt; 30%), sin mapeo manual por nombre. Verónica Arizaga debe recibir copia (CC) en todas las notificaciones del flujo.</td>
+          <td><span class="badge badge-must">MUST</span></td>
+          <td>Sesión 21 may</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /E3 -->
+
+<!-- ═══════════════════════════════════════════════════════ E4 RAID -->
+<div id="e4" class="tab-content">
+
+  <div class="alert alert-info">
+    <div>Los ítems marcados como <span class="badge badge-pending">PENDIENTE TV AZTECA</span> son informaciones acordadas de compartir por TV Azteca. <strong>No bloquean las decisiones de diseño ya tomadas</strong> — son requeridos para migración de datos, parametrización o configuración durante la fase de Define &amp; Design.</div>
+  </div>
+
+  <div class="section-title">Riesgos</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>ID</th><th>Riesgo</th><th>Dominio</th><th>Probabilidad</th><th>Impacto</th><th>Mitigación</th></tr>
+        <tr>
+          <td><strong>R-01</strong></td>
+          <td>Los umbrales exactos de descuento por producto no están definidos. El Approval Process no puede configurarse sin esta información.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>Alta</td>
+          <td>Alto</td>
+          <td>TV Azteca realizará una reunión interna (Luis, Kenneth y dirección) para definir los umbrales y compartirá la tabla de resultados con el equipo GPS durante la fase de Define &amp; Design.</td>
+        </tr>
+        <tr>
+          <td><strong>R-02</strong></td>
+          <td>El descuento especial se recibe vía integración DS como <code>special_discount</code> — no depende de migración manual. <strong>Riesgo eliminado</strong> por decisión de diseño (sesión Squad Integraciones 09-jun-2026).</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>N/A</td>
+          <td>Eliminado</td>
+          <td>Resuelto por diseño de integración — el valor del descuento especial viaja en el payload de sincronización de contratos.</td>
+        </tr>
+        <tr>
+          <td><strong>R-03</strong></td>
+          <td>El Portal de Costos no tiene API. Si cambia la tecnología del portal, la integración email podría quedar obsoleta antes de que se implemente la Fase 2.</td>
+          <td><span class="domain-port">Portal Costos</span></td>
+          <td>Baja</td>
+          <td>Bajo</td>
+          <td>Diseñar el email automático con datos estructurados que faciliten la migración a API cuando esté disponible.</td>
+        </tr>
+        <tr>
+          <td><strong>R-04</strong></td>
+          <td>La unificación de contratos (costos + ventas) fue <strong>confirmada por el cliente</strong>.<br/><br/>
+          <strong>Escenario A (CONFIRMADO — Devolutiva 30-Jun-2026):</strong> Un único contrato en Salesforce con campos <code>Valor_Total__c</code> + <code>Valor_con_Descuento_Especial__c</code> por línea. DS recibe datos línea a línea. Contratos duplicados son eliminados o archivados. <em>Éste es el diseño vigente.</em><br/>
+          <strong>Escenario B (descartado — ya no aplica):</strong> <s>Salesforce debe soportar dos contratos por cliente con descuento especial — uno marcado como "costo" (sin descuento especial) y otro como "venta" (con descuento especial). El diseño de campos duales ya contempla este caso. La restricción operativa es la misma: Administración necesita el 100% visible para aprobar pagos a proveedores.</s> <span class="badge badge-done">DESCARTADO 30-Jun-2026</span> — TV Azteca confirmó en la Devolutiva que la unificación de contratos aplica; no se mantendrá el modelo de dos contratos paralelos.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Baja</td>
+          <td>Bajo</td>
+          <td>Escenario A definitivo — el diseño técnico único (un contrato con campos duales por línea) queda cerrado. La estrategia de migración de datos elimina los contratos duplicados históricos.</td>
+        </tr>
+        <tr>
+          <td><strong>R-05</strong></td>
+          <td>Sin un administrador técnico único del catálogo, los productos pueden quedar mal configurados en Salesforce, impidiendo que los ejecutivos coticen correctamente.</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Media</td>
+          <td>Alto</td>
+          <td>Formalizar el proceso de solicitud de nuevos productos.</td>
+        </tr>
+        <tr>
+          <td><strong>R-06</strong></td>
+          <td>Las campañas multimensuales actuales no tienen una metodología definida de reconocimiento de ingresos en Salesforce. Puede generar inconsistencias contables.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>Media</td>
+          <td>Alto</td>
+          <td>Definir en Design si se usan órdenes mensuales o campaña completa con cálculo proporcional. Involucrar a <strong>Contraloría</strong> — validación pendiente post-Discovery (no participó en las sesiones · Devolutiva 30-Jun-2026).</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Asunciones</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>ID</th><th>Asunción</th><th>Dominio</th><th>Validado en sesión</th></tr>
+        <tr>
+          <td><strong>A-01</strong></td>
+          <td>El umbral de rentabilidad del 50% aplica sobre el total de líneas de productos digitales propios, no sobre el total de la orden.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Sí — Sesión 19 may + 21 may</td>
+        </tr>
+        <tr>
+          <td><strong>A-02</strong></td>
+          <td>Las líneas bonificadas se envían a GAM con su <strong>valor original</strong> para trazabilidad de inventario entregado. Su impacto financiero se excluye del cálculo de rentabilidad en Salesforce.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>Sí — Sesión 20 may</td>
+        </tr>
+        <tr>
+          <td><strong>A-03</strong></td>
+          <td>Hay un solo Centro de Costos por cliente (nivel Account), con renovación anual. Hay una Subproducción por campaña (nivel Order), con vigencia al 31 de diciembre. <strong>Estrategia de datos al arranque (Devolutiva 30-Jun-2026):</strong> los CECOs vigentes al go-live se cargan en la <strong>migración inicial de cuentas</strong> (D-06, I-10). Las Subproducciones <strong>no se migran</strong> — se crean bajo demanda por campaña nueva tras el go-live (D-07).</td>
+          <td><span class="domain-port">Portal Costos</span></td>
+          <td>Sí — Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td><strong>A-04</strong></td>
+          <td>El Approval Process opera sobre la campaña completa, no línea a línea. Si una línea dispara la regla, toda la campaña requiere aprobación.</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Sí — Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td><strong>A-05</strong></td>
+          <td>Salesforce usará notificaciones nativas para el flujo de aprobación. No se integrará Slack en esta fase.</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Sí — Sesión 21 may</td>
+        </tr>
+        <tr>
+          <td><strong>A-06</strong></td>
+          <td>La integración con DS cambiará de header-only a línea por línea. El equipo técnico de DS puede soportar este cambio en el contrato de integración, incluyendo la recepción de <code>Valor_Total__c</code> y <code>Valor_con_Descuento_Especial__c</code> por línea para aplicar el descuento especial selectivamente por tipo de producto.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Parcial — <span class="badge badge-pending">Validación técnica pendiente con equipo DS durante Define &amp; Design</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Issues (Puntos Abiertos)</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>ID</th><th>Issue</th><th>Dominio</th><th>Estado</th><th>Responsable / Fecha</th></tr>
+        <tr>
+          <td><strong>I-01</strong></td>
+          <td>Tabla de umbrales de descuento por tipo de producto y nivel de aprobación. Definir qué % puede autorizar el ejecutivo, gerente y director.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Luis / Kenneth — Reunión a coordinar</td>
+        </tr>
+        <tr>
+          <td><strong>I-02</strong></td>
+          <td>Lista de productos NO elegibles para bonificación (ej. Disney). Requiere catálogo actualizado de TV Azteca.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Fernanda Tavira — Para migración de catálogo</td>
+        </tr>
+        <tr>
+          <td><strong>I-03</strong></td>
+          <td>El valor del descuento especial (<code>special_discount</code>) se recibe automáticamente en el payload de sincronización de contratos desde DS — no requiere migración manual. <strong>Resuelto por diseño de integración</strong> (sesión Squad Integraciones 09-jun-2026). El campo <code>Porcentaje_Descuento_Especial__c</code> se popula con el valor enviado por DS en cada sincronización; cuando DS envía cero, el contrato no tiene descuento especial activo.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td><span class="badge badge-done">RESUELTO</span></td>
+          <td>Resuelto por diseño — el valor viaja vía integración DS (campo <code>special_discount</code>)</td>
+        </tr>
+        <tr>
+          <td><strong>I-04</strong></td>
+          <td>Configuración de la estructura de ventas en Salesforce mediante <strong>Roles y Territorios</strong>. Esta jerarquía es la base para el ruteo automático del Approval Process — el sistema identifica al aprobador correspondiente a partir del rol del ejecutivo, sin necesidad de mapeo manual por nombre. TV Azteca debe proveer el organigrama comercial completo para modelar la jerarquía.</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Dirección Comercial — Organigrama para configuración de Roles y Territorios en Define &amp; Design</td>
+        </tr>
+        <tr>
+          <td><strong>I-05</strong></td>
+          <td>Template del correo a Portal de Costos: formato exacto, campos requeridos, destinatarios y protocolo de confirmación con el equipo responsable del Portal de Costos.</td>
+          <td><span class="domain-port">Portal Costos</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Fernanda / el equipo responsable del Portal de Costos — Define &amp; Design</td>
+        </tr>
+        <tr>
+          <td><strong>I-06</strong></td>
+          <td><span class="badge badge-done">CERRADO 30-Jun-2026</span> TV Azteca confirmó en la Devolutiva que la unificación de contratos aplica (Escenario A). El diseño de campos duales por línea (<code>Valor_Total__c</code> / <code>Valor_con_Descuento_Especial__c</code>) queda como modelo definitivo. La estrategia de migración consolidará o archivará los contratos duplicados históricos.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td><span class="badge badge-done">CERRADO</span></td>
+          <td>Confirmado por TV Azteca — Devolutiva 30-Jun-2026</td>
+        </tr>
+        <tr>
+          <td><strong>I-10</strong></td>
+          <td>Archivo de mapeo <strong>Cliente ↔ Centro de Costos vigente</strong> (año en curso) para carga inicial en Salesforce. Formato: CSV/Excel con ID de Cuenta Salesforce + ID de CECO en Portal de Costos. Se carga junto con la migración de cuentas. <em>Requerimiento generado por Devolutiva 30-Jun-2026.</em></td>
+          <td><span class="domain-port">Portal Costos</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Fernanda / Equipo Portal de Costos — Fase de migración</td>
+        </tr>
+        <tr>
+          <td><strong>I-09</strong></td>
+          <td>Alineación con el equipo de Lidia/Adriana sobre cómo interpretar los datos de rentabilidad línea a línea en sus reportes. Actualmente distinguen el tipo de contrato (costo vs. venta) por el nombre del contrato. Con la unificación propuesta, necesitarán un campo explícito en el reporte para distinguir el valor de costo (100%) del valor con descuento especial. Requiere sesión de trabajo con el equipo de Lidia para mapear sus reportes actuales antes de migrar.</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Lidia / Adriana — Sesión a coordinar durante Define &amp; Design</td>
+        </tr>
+        <tr>
+          <td><strong>I-07</strong></td>
+          <td>Definición de descuento "en cascada" vs. sobre precio de lista como metodología estándar para la parte digital.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td><span class="badge badge-pending">PENDIENTE TV AZTECA</span></td>
+          <td>Luis / Kenneth / Dirección</td>
+        </tr>
+        <tr>
+          <td><strong>I-08</strong></td>
+          <td><span class="badge badge-done">CERRADO — Fuera de alcance</span> Porcentaje máximo de bolsa de bonificaciones ya no aplica en esta fase (Devolutiva 30-Jun-2026). Ver DYB-03/DYB-11.</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td><span class="badge badge-done">Cerrado</span></td>
+          <td>Director Ventas Nacionales / Director Digital</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Dependencias</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>ID</th><th>Dependencia</th><th>Bloqueado</th><th>Tipo</th></tr>
+        <tr>
+          <td><strong>D-01</strong></td>
+          <td>La configuración del Approval Process depende de la tabla de umbrales de descuento (I-01) y el mapeo de aprobadores (I-04).</td>
+          <td>AUT-01, AUT-05</td>
+          <td>Técnica / Datos</td>
+        </tr>
+        <tr>
+          <td><strong>D-02</strong></td>
+          <td>El diseño del campo <code>Elegible_Bonificacion__c</code> requiere la lista definitiva de productos excluidos (I-02).</td>
+          <td>DYB-04</td>
+          <td>Datos</td>
+        </tr>
+        <tr>
+          <td><strong>D-03</strong></td>
+          <td>El valor del descuento especial en contratos se recibe automáticamente vía integración DS (<code>special_discount</code> en el payload de sincronización). I-03 resuelto por diseño — no hay dependencia de migración manual.</td>
+          <td>REN-04 (validación)</td>
+          <td>Datos de migración</td>
+        </tr>
+        <tr>
+          <td><strong>D-04</strong></td>
+          <td>La integración con DS línea a línea requiere validación del contrato técnico de integración con el equipo de DS.</td>
+          <td>REN-05</td>
+          <td>Integración / Técnica</td>
+        </tr>
+        <tr>
+          <td><strong>D-05</strong></td>
+          <td>El email automático a Portal de Costos requiere el template acordado con el equipo responsable del Portal de Costos (I-05) antes de implementación.</td>
+          <td>POC-03, POC-04</td>
+          <td>Operativa</td>
+        </tr>
+        <tr>
+          <td><strong>D-06</strong></td>
+          <td>El valor de <strong>Centro de Costos por cliente</strong> (<code>Account.Centro_de_Costos__c</code>) debe ser incluido en el <strong>paquete de migración de cuentas</strong> — TV Azteca debe entregar el mapeo Cliente ↔ ID de CECO vigente para carga inicial. <span class="badge badge-done">CONFIRMADO 30-Jun-2026</span></td>
+          <td>POC-01</td>
+          <td>Datos de migración</td>
+        </tr>
+        <tr>
+          <td><strong>D-07</strong></td>
+          <td>Las <strong>Subproducciones NO se migran</strong> — no hay migración de Orders. Todas las Subproducciones se generan bajo demanda post go-live vía el flujo email → Portal de Costos → captura Admin Técnico. <span class="badge badge-done">CONFIRMADO 30-Jun-2026</span></td>
+          <td>POC-02</td>
+          <td>Datos de migración</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /E4 -->
+
+<!-- ═══════════════════════════════════════════════════════ E5 ARTEFACTOS -->
+<div id="e5" class="tab-content">
+
+  <div class="section-title">Artefacto 1 — Modelo de Datos Propuesto (campos nuevos / modificados)</div>
+  <div class="fgrid-2">
+    <div class="card">
+      <div class="card-header green">Account (Cuenta)</div>
+      <div class="card-body">
+        <table>
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><span class="code">Centro_de_Costos__c</span></td><td>Text</td><td>ID del Centro de Costos en Portal de Costos. Prerequisito anual. Renovación cada enero.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-dark)">Contract (Contrato Comercial)</div>
+      <div class="card-body">
+        <table>
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><span class="code">Porcentaje_Descuento_Especial__c</span></td><td>Percent</td><td>Valor del descuento especial para este contrato. Enviado en el payload de sincronización de contratos desde DS bajo el nombre <code>special_discount</code>. Cuando el valor es <strong>mayor que cero</strong>, el descuento especial aplica a las líneas elegibles del pedido asociado a este contrato. Cuando es <strong>cero</strong>, no hay descuento especial activo — no se requiere un campo flag separado. Valor actual del mercado: 0.987 (equivalente al 9.87% de descuento sobre el valor bruto). Puede variar por contrato si DS lo envía diferente en negociaciones futuras.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-orange)">Order (Campaña / Orden de Servicio)</div>
+      <div class="card-body">
+        <table>
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><span class="code">Subproduccion__c</span></td><td>Text</td><td>ID de Subproducción en Portal de Costos. Vigencia al 31-dic del año en curso.</td></tr>
+          <tr><td><span class="code">Status_Portal_Costos__c</span></td><td>Picklist</td><td>Pendiente / Solicitado / Confirmado</td></tr>
+          <tr><td><span class="code">Rentabilidad_Digital__c</span></td><td>Percent (fórmula)</td><td>Margen de contribución calculado sobre líneas digitales propias únicamente.</td></tr>
+          <tr><td><span class="code">Rentabilidad_Ok__c</span></td><td>Checkbox (fórmula)</td><td>TRUE si Rentabilidad_Digital__c ≥ 50%.</td></tr>
+          <tr><td><span class="code">Requiere_Aprobacion__c</span></td><td>Checkbox (fórmula)</td><td>TRUE si rentabilidad &lt; 50% O si algún descuento/bonificación supera umbral.</td></tr>
+          <tr><td><span class="code">Tipo_Campaña__c</span></td><td>Picklist</td><td>Anticipado / Real / Postecipado. Determina el flujo de conciliación y facturación.</td></tr>
+          <tr><td><span class="code">Bloqueada__c</span></td><td>Checkbox</td><td>Indica que la orden está bloqueada durante conciliación operativa. Solo Ana Isabel Vázquez puede revertir este estado. Impide modificaciones hasta resolver la conciliación.</td></tr>
+          <tr><td><span class="code">Justificacion_Descuento__c</span></td><td>Text Area</td><td>Campo obligatorio cuando el descuento o bonificación supera el límite del ejecutivo. Requerido para iniciar el Approval Process.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background:var(--sf-purple)">OrderItem / Order Product (Línea de Orden)</div>
+      <div class="card-body">
+        <table>
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><span class="code">Valor_Total__c</span></td><td>Currency</td><td>Valor bruto de la línea antes del descuento especial. Representa el 100% del valor, necesario para el pago a proveedores y para que Administración autorice costos.</td></tr>
+          <tr><td><span class="code">Valor_con_Descuento_Especial__c</span></td><td>Currency (fórmula)</td><td>Valor ajustado por el descuento especial. Se calcula aplicando el descuento especial <strong>solo cuando se cumplen ambas condiciones simultáneamente</strong>: (1) el Contrato tiene <code>Porcentaje_Descuento_Especial__c &gt; 0</code> (descuento especial activo, enviado por DS como <code>special_discount</code>) y (2) el producto tiene <code>Elegible_Descuento_Especial__c = TRUE</code> (inventario propio TV Azteca). Si alguna condición no se cumple — línea de producción, producto de tercero, o contrato sin descuento especial — este campo es igual a <code>Valor_Total__c</code>. Es el valor usado para el reconocimiento de ingresos en DS y para el cálculo de rentabilidad.</td></tr>
+          <tr><td><span class="code">Es_Bonificacion__c</span></td><td>Checkbox</td><td>Línea registrada como bonificación. Se envía a GAM con valor original para trazabilidad. Se excluye del cálculo de ingreso neto real en Salesforce.</td></tr>
+          <tr><td><span class="code">Tipo_Linea__c</span></td><td>Picklist</td><td>Venta / Costo. Las líneas de tipo <strong>Venta</strong> generan el ingreso del cálculo de rentabilidad (<code>Ingreso_Digital</code>). Las líneas de tipo <strong>Costo</strong> (<code>Es_Produccion__c = TRUE</code>) entran como costo en el denominador del margen (<code>Costo_Produccion</code>). Ambos tipos aparecen en ODS y PDF de cotización para transparencia operativa.</td></tr>
+          <tr><td><span class="code">Es_Produccion__c</span></td><td>Checkbox</td><td>Indica que la línea es un costo de producción (no inventario de pauta). Se incluye en el costo digital total del cálculo de margen — no genera ingreso propio.</td></tr>
+          <tr><td><span class="code">Tipo_Costo__c</span></td><td>Picklist</td><td>Complementario / Bolsa Propuesta <em style="color:#706e6b;font-size:11px;">(antes "Bolsa de Costos" — renombrado por Devolutiva 30-jun-2026)</em>. Aplica solo cuando <code>Es_Produccion__c = TRUE</code>. Ambos tipos entran en el cálculo del margen como costo — la diferencia es <strong>puramente operacional</strong> y determina de dónde se consume el valor: <strong>Complementario:</strong> costo facturado al cliente; requiere Centro de Costos para el bloqueo en el contrato ITC. <strong>Bolsa Propuesta:</strong> costo absorbido de la bolsa presupuestal anual de TV Azteca; requiere Subproducción en Portal de Costos para rastrear el consumo.</td></tr>
+          <tr><td><span class="code">Tipo_Inventario__c</span></td><td>Picklist</td><td>Propio / Tercero. Determina la prioridad de bonificación y si la línea entra en el denominador del margen.</td></tr>
+        </table>
+        <div class="alert alert-info" style="margin-top:12px;">
+          <div><strong>Por qué existen estos dos campos — contexto del diseño:</strong><br/><br/>
+          Para clientes con descuento especial (ej. Target, Adlit), TV Azteca registra internamente solo ~10% del valor de la campaña (valor con descuento especial), pero debe reportar el 100% al comité y pagar el 100% a proveedores. En el AS-IS esto se resuelve con <strong>dos contratos separados</strong>: un "contrato de costo" al 100% y un "contrato de venta" con el descuento especial aplicado. Esta duplicidad impide calcular la rentabilidad a nivel de campaña — Anita (Ana Isabel) debe correlacionar los dos reportes manualmente en Excel.<br/><br/>
+          La solución propuesta en Salesforce consolida ambas perspectivas en las <strong>líneas de la misma orden</strong>: <code>Valor_Total__c</code> cubre el 100% para pagos y <code>Valor_con_Descuento_Especial__c</code> cubre el valor reconocible en DS. El descuento especial se aplica a una línea cuando se cumplen <strong>dos condiciones</strong>: (1) el Contrato tiene <code>Porcentaje_Descuento_Especial__c &gt; 0</code> (DS envía este valor como <code>special_discount</code> en la sincronización de contratos — cuando es cero, no hay descuento especial) y (2) el producto tiene <code>Elegible_Descuento_Especial__c = TRUE</code> (inventario propio TV Azteca). Productos de terceros (Pluto TV, Roku, Disney, etc.) tienen <code>Elegible_Descuento_Especial__c = FALSE</code> — no reciben ajuste de descuento especial aunque el contrato lo active. Las líneas de producción tampoco aplican descuento especial — en ambos casos <code>Valor_con_Descuento_Especial__c = Valor_Total__c</code>.<br/><br/>
+          <span class="badge badge-done">CONFIRMADO 30-Jun-2026</span> La unificación fue validada por TV Azteca en la Devolutiva (Escenario A). El diseño técnico de campos duales queda como modelo definitivo y I-06 se cierra.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header blue">Product2 (Catálogo de Productos)</div>
+      <div class="card-body">
+        <table>
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><span class="code">Es_Producto_Digital__c</span></td><td>Checkbox</td><td>Determina si la línea entra en el cálculo de rentabilidad digital.</td></tr>
+          <tr><td><span class="code">Elegible_Bonificacion__c</span></td><td>Checkbox</td><td>Determina si el producto puede ser bonificado. FALSE para productos como Disney.</td></tr>
+          <tr><td><span class="code">Elegible_Descuento_Especial__c</span></td><td>Checkbox</td><td>Indica si el producto es elegible para la aplicación del descuento especial. TRUE para productos de inventario propio TV Azteca (línea de negocio = TV Azteca). FALSE para productos de terceros (Pluto TV, Roku, Disney, etc.). La fórmula de <code>Valor_con_Descuento_Especial__c</code> en la línea solo aplica el descuento especial cuando este campo es TRUE <strong>y</strong> el contrato tiene <code>Porcentaje_Descuento_Especial__c &gt; 0</code> (DS envía como <code>special_discount</code>). Si cualquiera de las dos condiciones no se cumple, <code>Valor_con_Descuento_Especial__c = Valor_Total__c</code>.</td></tr>
+          <tr><td><span class="code">Tipo_Inventario_Default__c</span></td><td>Picklist</td><td>Propio / Tercero. Valor por defecto al agregar el producto a una orden.</td></tr>
+          <tr><td><span class="code">ID_Linea_Negocio__c</span></td><td>Text</td><td>Identificador de la línea de negocio en DS/Multiads (ej. Pluto TV, Roku, Digital Azteca). Campo crítico para el envío correcto a la bolsa de dinero correspondiente en DS. Cada producto debe tener este campo configurado antes de poder cotizarse.</td></tr>
+          <tr><td><span class="code">Requiere_Admin_Tecnico__c</span></td><td>Checkbox</td><td>Indica que la activación del producto requiere revisión y configuración por parte del Admin Técnico Salesforce.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Artefacto 2 — Reglas de Cálculo de Rentabilidad</div>
+  <div class="card">
+    <div class="card-body">
+
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Fórmula del Margen de Contribución Digital</div>
+          <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:6px;line-height:1.8;">
+            <strong>// Universo de líneas de ingreso válidas:</strong><br/>
+            Líneas_Base = OrderItems WHERE<br/>
+            &nbsp;&nbsp;&nbsp;Es_Producto_Digital__c = TRUE<br/>
+            &nbsp;&nbsp;&nbsp;AND Es_Bonificacion__c = FALSE<br/>
+            &nbsp;&nbsp;&nbsp;AND Tipo_Inventario__c &lt;&gt; 'Tercero'<br/>
+            &nbsp;&nbsp;&nbsp;AND Es_Produccion__c = FALSE<br/><br/>
+            <strong>// Ingreso digital neto:</strong><br/>
+            <strong>// Valor_con_Descuento_Especial__c ya incorpora la lógica dual:</strong><br/>
+            <strong>// aplica descuento especial solo si Contrato.Porcentaje_Descuento_Especial__c &gt; 0</strong><br/>
+            <strong>// (DS envía como "special_discount"; cero = sin descuento especial)</strong><br/>
+            <strong>// AND Producto.Elegible_Descuento_Especial__c = TRUE (propio TV Azteca)</strong><br/>
+            <strong>// en caso contrario, Valor_con_Descuento_Especial__c = Valor_Total__c</strong><br/>
+            Ingreso_Digital = SUM(Valor_con_Descuento_Especial__c)<br/>
+            &nbsp;&nbsp;&nbsp;FOR Líneas_Base<br/><br/>
+            <strong>// Costo digital (líneas de producción — ambos tipos):</strong><br/>
+            Costo_Produccion = SUM(Costo_Linea__c)<br/>
+            &nbsp;&nbsp;&nbsp;WHERE Es_Produccion__c = TRUE<br/><br/>
+            <strong>// Margen de contribución:</strong><br/>
+            Rentabilidad_Digital__c =<br/>
+            &nbsp;&nbsp;&nbsp;(Ingreso_Digital - Costo_Produccion)<br/>
+            &nbsp;&nbsp;&nbsp;/ Ingreso_Digital × 100
+          </div>
+          <div class="field-label" style="margin-top:12px;">Peso del costo de producción</div>
+          <div style="background:#fff3e0;padding:10px;border-radius:4px;font-size:12px;margin-top:6px;line-height:1.6;border-left:3px solid var(--sf-orange);">
+            Las líneas de producción (<span class="code">Es_Produccion__c = TRUE</span>) reducen el margen. Su peso relativo = Costo_Produccion / Ingreso_Digital. Si el costo de producción es elevado, puede deprimir el margen aunque el precio de venta sea alto. El campo <code>Tipo_Costo__c</code> (Complementario / Bolsa Propuesta) determina el tratamiento operacional en CECO — ambos tipos entran en el cálculo del margen de la misma forma.
+          </div>
+        </div>
+        <div>
+          <div class="field-label">Reglas de Aplicación</div>
+          <ul class="detail-list" style="margin-top:6px;">
+            <li><strong>Umbral:</strong> Rentabilidad_Digital__c ≥ 50% → campaña puede avanzar sin aprobación de rentabilidad.</li>
+            <li><strong>Exclusión de terceros:</strong> Las líneas con Tipo_Inventario__c = "Tercero" se excluyen completamente — no forman parte del ingreso ni del costo del cálculo.</li>
+            <li><strong>Exclusión de bonificaciones:</strong> Las líneas bonificadas (Es_Bonificacion__c = TRUE) se excluyen del ingreso — representan ingreso neto cero.</li>
+            <li><strong>Costos de producción confirmados:</strong> Las líneas con <code>Es_Produccion__c = TRUE</code> entran como costo en el denominador del margen. Aplica independientemente del <code>Tipo_Costo__c</code> (Complementario o Bolsa Propuesta) — ambos tipos reducen el margen de la misma forma. El <code>Tipo_Costo__c</code> solo determina el tratamiento operacional en CECO (ITC vs. Portal de Costos).</li>
+            <li><strong>Desc. Especial:</strong> El descuento especial aplica a una línea solo cuando <strong>ambas</strong> condiciones se cumplen: (1) <code>Contrato.Porcentaje_Descuento_Especial__c &gt; 0</code> — DS envía este valor como <code>special_discount</code> en la sincronización de contratos; cuando viene en cero significa que el contrato no tiene descuento especial activo, sin necesidad de un campo flag separado; y (2) <code>Producto.Elegible_Descuento_Especial__c = TRUE</code> (producto de inventario propio TV Azteca). Productos de terceros (Pluto TV, Roku, Disney, etc.) tienen <code>Elegible_Descuento_Especial__c = FALSE</code> — nunca reciben ajuste de descuento especial. En todos los casos sin descuento especial, <code>Valor_con_Descuento_Especial__c = Valor_Total__c</code>.</li>
+            <li><strong>Cálculo en tiempo real:</strong> El margen se recalcula automáticamente cada vez que se agrega, modifica o elimina una línea.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:16px;">
+        <div>Los escenarios de cálculo detallados con líneas de productos comerciales y de producción se encuentran en la pestaña <strong>E7 — Escenarios de Cálculo</strong>. Consultar esa sección para la validación completa de todos los casos posibles con TV Azteca.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Artefacto 3 — Matriz de Aprobación (Esqueleto)</div>
+  <div class="alert alert-warn">
+    <div><strong>Nota:</strong> Los umbrales exactos (%) son <span class="badge badge-pending">PENDIENTE TV AZTECA</span> — sesión con Luis y Kenneth. La matriz a continuación muestra la estructura de decisión acordada, con los porcentajes a completar en la fase de Define &amp; Design.</div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Evento que dispara aprobación</th>
+          <th>Condición</th>
+          <th>Nivel de Aprobación</th>
+          <th>Aprobador</th>
+          <th>SLA</th>
+        </tr>
+        <tr>
+          <td>Descuento sobre tarifa</td>
+          <td>% descuento &gt; 10% (límite de leads)</td>
+          <td>Director Digital</td>
+          <td>María o Kenneth (según dirección). CC: Verónica Arizaga</td>
+          <td>24h / recordatorio 12h</td>
+        </tr>
+        <tr>
+          <td>Descuento extraordinario</td>
+          <td>% descuento &gt; 30%</td>
+          <td>Director General</td>
+          <td>Carlos Escobedo (Chachi) o Jesús de la Vega (Chucho). CC: Verónica Arizaga</td>
+          <td>24h / recordatorio 12h</td>
+        </tr>
+        <tr>
+          <td>Bonificación sobre límite</td>
+          <td>% bonificación &gt; 10% <span class="badge badge-pending">Umbral exacto TBD</span></td>
+          <td>Director Digital / DVN</td>
+          <td>María o Kenneth. CC: Verónica Arizaga</td>
+          <td>24h / recordatorio 12h</td>
+        </tr>
+        <tr>
+          <td>Rentabilidad insuficiente</td>
+          <td>Margen digital &lt; 50%</td>
+          <td>Dirección Comercial Digital</td>
+          <td>María o Kenneth. CC: Verónica Arizaga</td>
+          <td>24h / recordatorio 12h</td>
+        </tr>
+        <tr>
+          <td>Nuevo producto / ad unit</td>
+          <td>Producto no existe en catálogo SF</td>
+          <td>Admin Técnico</td>
+          <td>Admin Técnico Salesforce</td>
+          <td>A definir</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Artefacto 4 — Flujo de Email Portal de Costos (Fase 1)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Trigger del Email Automático</div>
+          <ul class="detail-list" style="margin-top:6px;">
+            <li>La Orden es generada y aprobada en Salesforce (tras pasar los Gates de descuento y rentabilidad)</li>
+            <li>Si el Centro de Costos no existe en la Cuenta → email al equipo CECO para crearlo</li>
+            <li>Si el Centro de Costos existe → email al equipo responsable del Portal de Costos para crear la Subproducción</li>
+          </ul>
+          <div class="field-label" style="margin-top:12px;">Datos a incluir en el email</div>
+          <ul class="detail-list" style="margin-top:6px;">
+            <li>Nombre del cliente (Account Name)</li>
+            <li>ID de cuenta en Salesforce</li>
+            <li>Nombre de la campaña (Order Name)</li>
+            <li>ID de la orden en Salesforce</li>
+            <li>Período de vigencia (fecha inicio — 31-dic-año)</li>
+            <li>Monto asignado a la subproducción</li>
+            <li>Nombre del ejecutivo responsable</li>
+            <li>Dirección comercial / grupo</li>
+          </ul>
+        </div>
+        <div>
+          <div class="field-label">Destinatario y Proceso de Confirmación</div>
+          <ul class="detail-list" style="margin-top:6px;">
+            <li>Destinatario: Equipo Resp. Portal de Costos — <span class="badge badge-pending">Email a confirmar TV Azteca</span></li>
+            <li>CC: Ejecutivo comercial, Equipo de implementación</li>
+          </ul>
+          <div class="field-label" style="margin-top:12px;">Actualización en Salesforce (por Admin Técnico)</div>
+          <ul class="detail-list" style="margin-top:6px;">
+            <li>Al enviar el email: <code>Status_Portal_Costos__c</code> = "Solicitado"</li>
+            <li>El equipo Portal de Costos / CECO notifica al Admin Técnico Salesforce una vez crea los registros</li>
+            <li>El Admin Técnico actualiza en Salesforce: <code>Status_Portal_Costos__c</code> = "Confirmado" + <code>Subproduccion__c</code> = ID recibido + <code>Centro_de_Costos__c</code> si aplica</li>
+            <li>Fase 2 (roadmap): actualización automática vía API cuando el Portal de Costos la exponga</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /E5 -->
+
+<!-- ═══════════════════════════════════════════════════════ E6 DISEÑO -->
+<div id="e6" class="tab-content">
+
+  <div class="section-title">Decisiones de Diseño en Salesforce — Resumen Ejecutivo</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>Decisión</th><th>Dominio</th><th>Enfoque</th><th>Tipo</th><th>Justificación</th></tr>
+        <tr>
+          <td>Cálculo de rentabilidad automático en tiempo real</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Campo fórmula en Order + evaluación en Apex Trigger</td>
+          <td><span class="badge badge-custom">Custom</span></td>
+          <td>La lógica de exclusión de terceros, exclusión de bonificaciones e inclusión del costo de producción en el denominador requiere evaluación programática que no puede expresarse solo en fórmula declarativa estándar.</td>
+        </tr>
+        <tr>
+          <td>Valor Total y Valor con Descuento Especial por línea (<span class="code">Valor_Total__c</span> / <span class="code">Valor_con_Descuento_Especial__c</span>)</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Campos en OrderItem + fórmula basada en descuento especial del contrato</td>
+          <td><span class="badge badge-custom">Custom</span></td>
+          <td>Revenue Cloud no tiene campo nativo para descuento especial personalizado. La dualidad de campos resuelve además el problema de los dos contratos AS-IS: hoy TV Azteca mantiene un "contrato de costo" (100%) y un "contrato de venta" (con descuento especial) por cliente, impidiendo el cálculo de rentabilidad por campaña. Con estos campos, un único contrato en Salesforce contiene ambas perspectivas por línea. El descuento especial (<code>Porcentaje_Descuento_Especial__c</code>, recibido de DS como <code>special_discount</code>) vive en el Contrato, no en la línea. <span class="badge badge-done">CONFIRMADO 30-Jun-2026</span> — TV Azteca validó la unificación (Escenario A) en la Devolutiva; I-06 queda cerrado y la migración procede a consolidar los contratos duplicados existentes.</td>
+        </tr>
+        <tr>
+          <td>Approval Process para rentabilidad y descuentos</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Salesforce Standard Approval Process</td>
+          <td><span class="badge badge-ootb">OOTB</span></td>
+          <td>El motor nativo de Approval Process soporta la jerarquía de aprobación, SLA con recordatorios y trazabilidad de auditoría sin desarrollo adicional.</td>
+        </tr>
+        <tr>
+          <td>Notificaciones de aprobación</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Notificaciones nativas Salesforce (email + in-app)</td>
+          <td><span class="badge badge-ootb">OOTB</span></td>
+          <td>Decisión explícita en sesión: no integrar Slack para evitar desarrollo adicional. Notificación nativa es suficiente y accesible para aprobadores fuera del escritorio.</td>
+        </tr>
+        <tr>
+          <td>Recordatorio automático SLA 12h/24h</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Scheduled Flow + Approval Process escalation</td>
+          <td><span class="badge badge-config">Config</span></td>
+          <td>Combinación de escalation rules nativas + Scheduled Flow para recordatorio a las 12h. No requiere desarrollo Apex.</td>
+        </tr>
+        <tr>
+          <td>Bolsa de bonificaciones (tope) <span class="badge badge-done">FUERA DE ALCANCE</span></td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>—</td>
+          <td><span class="badge badge-done">N/A</span></td>
+          <td>La bolsa de bonificaciones para digital <strong>ya no aplica en esta fase</strong> (Devolutiva 30-Jun-2026). La validación se realiza únicamente contra la <strong>matriz de porcentajes por jerarquía</strong> (Approval Process nativo). Sin desarrollo custom asociado.</td>
+        </tr>
+        <tr>
+          <td>Candado de mes (bloqueo post-cierre fiscal)</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>Validation Rule en Order + campo de fecha de cierre</td>
+          <td><span class="badge badge-config">Config</span></td>
+          <td>Validation Rule parametrizable que bloquea edición de órdenes del mes anterior después de la fecha de candado. Perfil de excepción para Ana Isabel.</td>
+        </tr>
+        <tr>
+          <td>Integración Portal de Costos (Fase 1)</td>
+          <td><span class="domain-port">Portal Costos</span></td>
+          <td>Email automatizado vía Flow al aprobar la orden</td>
+          <td><span class="badge badge-config">Config</span></td>
+          <td>El Portal de Costos no tiene API disponible. Email automático estructurado es el mecanismo de integración posible en esta fase. Diseño preparado para migración a API (Fase 2).</td>
+        </tr>
+        <tr>
+          <td>Integración DS — línea a línea</td>
+          <td><span class="domain-rent">Rentabilidad</span></td>
+          <td>Cambio en el contrato de integración con DS para incluir OrderItems</td>
+          <td><span class="badge badge-custom">Custom / Integración</span></td>
+          <td>La integración actual envía solo el header de la orden, impidiendo la aplicación selectiva del descuento especial por tipo de producto. Se requiere cambio en el payload enviado a DS.</td>
+        </tr>
+        <tr>
+          <td>Administración centralizada del catálogo</td>
+          <td><span class="domain-aut">Autorización</span></td>
+          <td>Proceso operativo + Permission Set restrictivo en Product2</td>
+          <td><span class="badge badge-config">Config</span></td>
+          <td>Solo el Admin Técnico puede crear/modificar productos en Salesforce. Los equipos operativos envían solicitudes formales. Previene configuraciones erróneas que bloqueen ventas.</td>
+        </tr>
+        <tr>
+          <td>Enmienda de órdenes activas</td>
+          <td><span class="domain-desc">Descuentos</span></td>
+          <td>Funcionalidad de Amendment de Revenue Cloud</td>
+          <td><span class="badge badge-ootb">OOTB / Config</span></td>
+          <td>Revenue Cloud soporta el ciclo de vida de órdenes con enmiendas. Evaluar si la funcionalidad nativa cubre el escenario de modificación sin cancelación durante Define &amp; Design.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Leyenda de tipos de implementación</div>
+  <div class="card">
+    <div class="card-body" style="display:flex;gap:16px;flex-wrap:wrap;">
+      <div><span class="badge badge-ootb">OOTB</span> Funcionalidad estándar de Salesforce sin configuración significativa</div>
+      <div><span class="badge badge-config">Config</span> Configuración declarativa: flows, validation rules, permission sets</div>
+      <div><span class="badge badge-custom">Custom</span> Desarrollo pro-code: Apex, LWC, extensión del modelo de datos</div>
+    </div>
+  </div>
+
+</div><!-- /E6 -->
+
+<!-- ═══════════════════════════════════════════════════════ E7 MINUTAS -->
+<!-- 
+<div id="e7" class="tab-content">
+
+  <div class="section-title">Sesión 1 — Cálculo de Rentabilidad y Margen de la Venta</div>
+  <div class="card">
+    <div class="card-header green">19 de mayo de 2026</div>
+    <div class="card-body">
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Participantes clave</div>
+          <div class="field-value">María Fernanda Tavira Suárez · Ana Ruth Salinas · Gustavo Sant Anna · Gustavo Richter · Carlos Pereyra · Daniel Murcia · José Carlos Padilla · Nicolas Papa · Felippe Vance</div>
+          <div class="field-label" style="margin-top:12px;">Objetivo</div>
+          <div class="field-value">Definir cómo se calcula la rentabilidad de una campaña digital, identificar el umbral de aprobación y acordar el diseño del descuento especial.</div>
+        </div>
+        <div>
+          <div class="field-label">Decisiones tomadas</div>
+          <ul class="detail-list">
+            <li>Umbral de margen de contribución: <strong>50% sobre el total de la campaña digital</strong> (no por línea).</li>
+            <li>Campañas bajo el 50% → aprobación automática a <strong>Dirección Comercial Digital</strong>.</li>
+            <li>Descuento Especial 9.87% (almacenado como 0.987 en el campo de porcentaje) aplica a nivel contrato para clientes específicos (Target, Adlit y otros por confirmar).</li>
+            <li>Propuesta de campo dual por línea: <code>Valor_Total__c</code> (100%) + <code>Valor_con_Descuento_Especial__c</code> (~10%) para unificar los dos contratos AS-IS en un solo instrumento en Salesforce.</li>
+            <li>Integración con DS debe cambiar de header a <strong>línea a línea</strong> para aplicar el descuento especial selectivamente por tipo de producto.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="field-label" style="margin-top:12px;">Tema analizado en detalle: Unificación de contratos (costos + ventas)</div>
+      <div class="card" style="margin-top:6px;border-left:4px solid var(--sf-orange);">
+        <div class="card-body">
+          <p style="font-size:12px;line-height:1.6;"><strong>Problema identificado:</strong> Para clientes con descuento especial (Target, Adlit), TV Azteca mantiene hoy <em>dos contratos separados</em>: uno al 100% del valor ("contrato de costo") para que Administración autorice el pago a proveedores, y uno con el descuento especial aplicado (~10% del valor) ("contrato de venta") para el reconocimiento de ingresos en DS. Esta duplicación impide a Anita (Ana Isabel) calcular la rentabilidad por campaña — actualmente debe descargar dos reportes en Excel y correlacionarlos manualmente por nombre de campaña.</p>
+          <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Solución propuesta y acordada técnicamente:</strong> Los campos <code>Valor_Total__c</code> y <code>Valor_con_Descuento_Especial__c</code> a nivel <code>OrderItem</code> eliminan la necesidad de dos contratos. El ejecutivo captura un único contrato; Salesforce calcula automáticamente el valor con descuento especial por línea. El descuento especial aplica solo cuando se cumplen dos condiciones: el Contrato tiene <code>Porcentaje_Descuento_Especial__c &gt; 0</code> (DS envía este valor como <code>special_discount</code> en la sincronización de contratos; cero = sin descuento especial activo) y el producto tiene <code>Elegible_Descuento_Especial__c = TRUE</code> (inventario propio TV Azteca). Productos de terceros y líneas de producción siempre pasan al 100% — <code>Valor_con_Descuento_Especial__c = Valor_Total__c</code>.</p>
+          <p style="font-size:12px;line-height:1.6;margin-top:8px;"><strong>Pendientes internos TV Azteca identificados:</strong></p>
+          <ul class="detail-list" style="font-size:12px;">
+            <li><s><strong>Contraloría / Adrián:</strong> deben aprobar si un único contrato puede servir para ambos propósitos (pago de costo 100% + reconocimiento de ingreso con descuento especial). Se anticipa resistencia dado que el proceso contable actual depende de la separación. Esto no bloquea el diseño técnico de los campos.</s> <span class="badge badge-done">RESUELTO 30-Jun-2026</span> TV Azteca confirmó en la Devolutiva que la unificación aplica (Escenario A). I-06 cerrado.</li>
+            <li><strong>Equipo de Lidia / Adriana:</strong> sus reportes actuales distinguen el tipo de contrato por nombre (string en el título). Con la unificación, necesitarán un campo explícito en el reporte para identificar el valor de costo vs. el valor con descuento especial. Requiere sesión de alineación en Define &amp; Design.</li>
+            <li><strong>Equipo técnico DS:</strong> debe validar la capacidad de recibir los datos línea a línea (actualmente solo recibe el header de la orden). Pendiente validación técnica durante Define &amp; Design.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="field-label" style="margin-top:12px;">Puntos pendientes post-sesión</div>
+      <div class="alert alert-pending" style="margin-top:6px;">
+Descuento Especial (<code>special_discount</code>) resuelto vía integración DS — I-03 cerrado · <s>Sign-off de Contraloría/Adrián para unificación de contratos (I-06)</s> <span class="badge badge-done">CERRADO 30-Jun-2026 — Escenario A confirmado</span> · Alineación de reportes con equipo Lidia/Adriana (I-09) · Validación técnica del cambio de integración con equipo DS (A-06)
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Sesión 2 — Políticas de Descuentos, Bonificaciones y Precios</div>
+  <div class="card">
+    <div class="card-header" style="background:var(--sf-orange)">20 de mayo de 2026</div>
+    <div class="card-body">
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Participantes clave</div>
+          <div class="field-value">María Fernanda Tavira Suárez · Ana Isabel Vázquez Rodriguez · Carlos A. Rojas Vargas · Hector Guerrero · Ana Ruth Salinas · Gustavo Sant Anna · Gustavo Richter · José Carlos Padilla · Nicolas Papa · Felippe Vance</div>
+          <div class="field-label" style="margin-top:12px;">Objetivo</div>
+          <div class="field-value">Mapear los tipos de descuentos y bonificaciones, identificar las reglas de negocio y diseñar el modelo de control en Salesforce.</div>
+        </div>
+        <div>
+          <div class="field-label">Decisiones tomadas</div>
+          <ul class="detail-list">
+            <li><strong>Descuento:</strong> reduce CPM/precio de línea. <strong>Bonificación:</strong> mantiene precio, entrega impresiones adicionales o línea a costo cero.</li>
+            <li><s>Bonificación = bolsa finita con tope, controlada por el Director.</s> <span class="badge badge-done">Revisado 30-Jun-2026</span> La bolsa de bonificaciones para digital <strong>queda fuera del alcance actual</strong>; en esta fase la bonificación se valida únicamente por la matriz de aprobación jerárquica (ver DYB-03/DYB-11).</li>
+            <li>Líneas bonificadas se envían a GAM y a DSM con valor original para trazabilidad; <strong>no consumen saldo del contrato</strong> y se excluyen del ingreso neto reconocido en Salesforce.</li>
+            <li>Productos de terceros como Disney <strong>no son elegibles para bonificación</strong>.</li>
+            <li>Jerarquía de aprobación: ejecutivo → gerente → director para descuentos extraordinarios.</li>
+            <li>Enmienda de órdenes en lugar de cancelación y recreación.</li>
+            <li>Candados de mes: bloqueo 1–2 días post-cierre fiscal.</li>
+            <li>Rentabilidad calculada sobre valor neto (precio - descuentos - bonificaciones).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="field-label" style="margin-top:12px;">Puntos pendientes post-sesión</div>
+      <div class="alert alert-pending" style="margin-top:6px;">
+        Tabla de umbrales de descuento por producto/plataforma · Lista de productos no elegibles para bonificación · <s>Archivo consolidado de condiciones contractuales por cliente</s> · <s>Porcentaje máximo de bolsa de bonificaciones</s> · Definición de descuento en cascada vs. sobre precio de lista<br><span style="font-size:11px;color:var(--sf-label);">Los ítems tachados quedaron fuera de alcance en esta fase (Devolutiva 30-Jun-2026 · ver DYB-03/DYB-11).</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Sesión 3 — Integración con el Portal de Costos</div>
+  <div class="card">
+    <div class="card-header" style="background:var(--sf-green)">21 de mayo de 2026 — 15:37 CST</div>
+    <div class="card-body">
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Participantes clave</div>
+          <div class="field-value">María Fernanda Tavira Suárez · Ana Isabel Vázquez Rodriguez · ITHIC DS MULTIAD · Gustavo Sant Anna · Gustavo Richter · Felippe Vance</div>
+          <div class="field-label" style="margin-top:12px;">Objetivo</div>
+          <div class="field-value">Entender el funcionamiento del Portal de Costos, mapear la dependencia con el flujo de campaña y definir el mecanismo de integración posible en esta fase.</div>
+        </div>
+        <div>
+          <div class="field-label">Decisiones tomadas</div>
+          <ul class="detail-list">
+            <li>Portal de Costos <strong>no tiene API</strong>. Corre en la intranet. Integración Fase 1 = email automatizado.</li>
+            <li>Centro de Costos: <strong>nivel Account</strong>, 1 por cliente, renovación anual.</li>
+            <li>Subproducción: <strong>nivel Order</strong>, 1 por campaña, vigencia 31-dic.</li>
+            <li>Trigger: el equipo responsable del Portal de Costos aprueba la orden → Salesforce dispara el email automático.</li>
+            <li>Fase 2 (roadmap): integración vía API cuando el portal la exponga.</li>
+            <li><strong>Estrategia de datos al arranque (Devolutiva 30-Jun-2026):</strong> CECOs vigentes se cargan en la <strong>migración inicial de cuentas</strong>; Subproducciones <strong>no se migran</strong> (no hay migración de Orders). Ver D-06, D-07 e I-10.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="field-label" style="margin-top:12px;">Puntos pendientes post-sesión</div>
+      <div class="alert alert-pending" style="margin-top:6px;">
+        Template del correo acordado con el equipo responsable del Portal de Costos · Email de destinatario y CC del Portal de Costos · Mecanismo de confirmación de Subproducción (cómo se actualiza Salesforce)
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Sesión 4 — Proceso de Autorización — Rentabilidad y Validación de Crédito</div>
+  <div class="card">
+    <div class="card-header blue">21 de mayo de 2026 — 17:10 CST</div>
+    <div class="card-body">
+      <div class="fgrid-2">
+        <div>
+          <div class="field-label">Participantes clave</div>
+          <div class="field-value">María Fernanda Tavira Suárez · Ana Ruth Salinas · Carlos Pereyra · Carlos Rojas · Daniel Murcia · Gustavo Sant Anna · Gustavo Richter · Hector Guerrero · José Carlos Padilla · Nicolas Papa · Felippe Vance</div>
+          <div class="field-label" style="margin-top:12px;">Objetivo</div>
+          <div class="field-value">Definir el flujo de aprobación para campañas con rentabilidad insuficiente o descuentos/bonificaciones excepcionales, y establecer el modelo de gestión del catálogo.</div>
+        </div>
+        <div>
+          <div class="field-label">Decisiones tomadas</div>
+          <ul class="detail-list">
+            <li>El umbral del 50% aplica <strong>exclusivamente sobre productos digitales</strong> (no terceros).</li>
+            <li>Aprobación opera a nivel de <strong>campaña completa</strong>, no por línea.</li>
+            <li>Aprobadores: María o Kenneth según la dirección comercial del ejecutivo.</li>
+            <li>Notificaciones <strong>nativas de Salesforce</strong> — no Slack.</li>
+            <li>SLA: <strong>24 horas</strong> con recordatorio automático a las <strong>12 horas</strong>.</li>
+            <li>Admin Técnico único para el catálogo. Equipos envían solicitudes formales.</li>
+            <li>Revisión del modelo de datos Salesforce Media Cloud para espacios publicitarios.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="field-label" style="margin-top:12px;">Puntos pendientes post-sesión</div>
+      <div class="alert alert-pending" style="margin-top:6px;">
+        Mapeo completo de ejecutivos por dirección comercial (María vs. Kenneth) · Proceso formal documentado para solicitud de nuevos ad units · Porcentajes exactos de rentabilidad y bonificación (reunión programada siguiente día)
+      </div>
+    </div>
+  </div>
+
+</div>
+ -->
+<!-- /E7 -->
+
+<!-- ═══════════════════════════════════════════════════════ E8 DIAGRAMAS -->
+<!--
+<div id="e8" class="tab-content">
+
+  <div class="section-title">Diagrama 1 — Flujo de Aprobación de Campaña (Approval Process)</div>
+  <div class="card">
+    <div class="card-body">
+      <div style="font-size:11px;color:var(--sf-label);margin-bottom:12px;">BPMN simplificado — Diseño propuesto para Salesforce Approval Process</div>
+      <div class="swim">
+        <div class="swim-lane">
+          <div class="swim-actor">Ejecutivo Comercial</div>
+          <div class="swim-steps">
+            <div class="step">Crea Order / Campaña</div><span class="arrow">→</span>
+            <div class="step">Agrega líneas de productos</div><span class="arrow">→</span>
+            <div class="step step-orange">Aplica Descuento / Bonificación</div><span class="arrow">→</span>
+            <div class="step" style="background:var(--sf-purple)">Guarda la Orden</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Salesforce<br/>(Evaluación automática)</div>
+          <div class="swim-steps">
+            <div class="step" style="background:var(--sf-purple)">Evalúa Gate 1: Descuento/Bon. vs. matriz jerárquica del ejecutivo</div><span class="arrow">→</span>
+            <div class="step" style="background:var(--sf-purple)">Evalúa Gate 2: Rentabilidad Digital vs. 50%</div><span class="arrow">→</span>
+            <div class="step step-green">Si ambos OK → Estado: Pendiente Aprobación Operativa</div><span class="arrow">OR</span>
+            <div class="step step-orange">Si falla alguno → Inicia Approval Process</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Director (María / Kenneth)</div>
+          <div class="swim-steps">
+            <div class="step">Recibe notificación SF</div><span class="arrow">→</span>
+            <div class="step step-orange">Revisa campaña en Salesforce</div><span class="arrow">→</span>
+            <div class="step step-green">Aprueba → Estado: Aprobada</div><span class="arrow">OR</span>
+            <div class="step step-red">Rechaza → Estado: Rechazada (motivo registrado)</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Scheduled Flow<br/>(Recordatorio SLA)</div>
+          <div class="swim-steps">
+            <div class="step step-gray">A las 12h sin respuesta: envía recordatorio al aprobador</div><span class="arrow">→</span>
+            <div class="step step-red">A las 24h sin respuesta: escalación (regla a definir)</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Salesforce<br/>(Post-aprobación)</div>
+          <div class="swim-steps">
+            <div class="step step-green">Actualiza estado de la Orden</div><span class="arrow">→</span>
+            <div class="step step-green">Dispara email automático a Portal de Costos</div><span class="arrow">→</span>
+            <div class="step step-green">Envía líneas a DS (línea a línea)</div><span class="arrow">→</span>
+            <div class="step step-green">Líneas bonificadas → GAM con valor original (trazabilidad de inventario)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Diagrama 2 — Flujo Portal de Costos y CECO (Fase 1)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="swim">
+        <div class="swim-lane">
+          <div class="swim-actor">Salesforce<br/>(Automatización)</div>
+          <div class="swim-steps">
+            <div class="step step-green" style="border:2px solid #fff;">⬟ Orden aprobada</div><span class="arrow">→</span>
+            <div class="step" style="background:var(--sf-purple)">◇ ¿Centro de Costos existe en Account?</div><span class="arrow">→</span>
+            <div class="step step-orange">NO: email automático al equipo CECO para crearlo</div><span class="arrow">|</span>
+            <div class="step step-green">SÍ: email automático al equipo Portal de Costos para crear Subproducción</div><span class="arrow">→</span>
+            <div class="step step-green">Actualiza Order: Status_Portal_Costos__c = "Solicitado"</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Equipo CECO<br/>(si aplica)</div>
+          <div class="swim-steps">
+            <div class="step">Recibe email de Salesforce</div><span class="arrow">→</span>
+            <div class="step step-orange">Crea Centro de Costos en CECO</div><span class="arrow">→</span>
+            <div class="step step-green">Notifica al Admin Técnico Salesforce con el ID</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Equipo Resp.<br/>Portal de Costos</div>
+          <div class="swim-steps">
+            <div class="step">Recibe email de Salesforce</div><span class="arrow">→</span>
+            <div class="step step-orange">Crea Subproducción en Portal de Costos</div><span class="arrow">→</span>
+            <div class="step step-green">Notifica al Admin Técnico Salesforce con el ID de Subproducción</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Admin Técnico<br/>Salesforce</div>
+          <div class="swim-steps">
+            <div class="step step-green">Recibe confirmación de equipo CECO / Portal de Costos</div><span class="arrow">→</span>
+            <div class="step step-green">Actualiza Account: Centro_de_Costos__c (si aplica)</div><span class="arrow">→</span>
+            <div class="step step-green">Actualiza Order: Subproduccion__c + Status_Portal_Costos__c = "Confirmado"</div><span class="arrow">→</span>
+            <div class="step step-green" style="border:2px solid #fff;">⬟ Campaña habilitada para activación</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px;">
+        <div><strong>Fase 2 (Roadmap):</strong> Cuando el Portal de Costos y CECO expongan APIs, los emails se reemplazan por llamadas directas desde Salesforce y la actualización de campos se automatiza. El diseño de objetos y campos se mantiene idéntico.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Diagrama 3 — Gestión de Bonificaciones (Validación jerárquica)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-warn" style="margin-bottom:12px;">
+        <div><strong>Revisado 30-Jun-2026 · Devolutiva.</strong> La <strong>bolsa finita de bonificaciones</strong> quedó <strong>fuera de alcance</strong> en esta fase (ver DYB-03 / DYB-11). Bonificaciones en digital se validan <strong>únicamente contra la matriz jerárquica</strong> (Approval Process nativo), sin control de saldo contractual acumulado.</div>
+      </div>
+      <div class="swim">
+        <div class="swim-lane">
+          <div class="swim-actor">Ejecutivo</div>
+          <div class="swim-steps">
+            <div class="step">Agrega línea de producto a la Order</div><span class="arrow">→</span>
+            <div class="step step-orange">Marca línea como Bonificación</div><span class="arrow">→</span>
+            <div class="step" style="background:var(--sf-purple)">Salesforce valida elegibilidad del producto</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Salesforce<br/>(Validación)</div>
+          <div class="swim-steps">
+            <div class="step" style="background:var(--sf-purple)">¿Producto elegible para bonificación?</div><span class="arrow">→</span>
+            <div class="step step-red">Si NO → Error: "Este producto no es elegible para bonificación"</div><span class="arrow">OR</span>
+            <div class="step" style="background:var(--sf-purple)">Si SÍ → Evalúa matriz jerárquica de aprobación</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Approval Process<br/>(Matriz jerárquica)</div>
+          <div class="swim-steps">
+            <div class="step" style="background:var(--sf-purple)">Determina aprobador según % bonificación y jerarquía del ejecutivo</div><span class="arrow">→</span>
+            <div class="step step-orange">Ruta al aprobador correspondiente (Gerente / Director / Director Digital)</div><span class="arrow">→</span>
+            <div class="step step-green">Aprobado → Línea guardada como bonificación</div>
+          </div>
+        </div>
+        <div class="swim-lane">
+          <div class="swim-actor">Integración<br/>(GAM / DSM)</div>
+          <div class="swim-steps">
+            <div class="step step-green">Línea bonificada → DSM con valor original (informativo, no consume saldo)</div><span class="arrow">→</span>
+            <div class="step step-green">Línea bonificada → GAM con valor original (trazabilidad de entrega de inventario)</div><span class="arrow">→</span>
+            <div class="step step-green">Rentabilidad calculada en Salesforce excluyendo líneas bonificadas del ingreso neto real</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+-->
+<!-- /E8 -->
+
+<!-- ═══════════════════════════════════════════════════════ E7 ESCENARIOS -->
+<div id="e7" class="tab-content">
+
+  <div class="alert alert-info">
+    <div><strong>Propósito:</strong> Esta sección presenta todos los escenarios posibles de cálculo de rentabilidad con detalle línea a línea, para validación con TV Azteca. Cada escenario incluye al menos 3 líneas comerciales y 2 líneas de producción, y cubre una combinación distinta de descuento especial, descuentos, bonificaciones e inventario de terceros. Los montos son ilustrativos — los precios reales dependen del catálogo definitivo.</div>
+  </div>
+
+  <div class="alert alert-warn">
+    <div><strong>Convención de colores en las tablas:</strong> <span style="background:#e3f5e9;padding:2px 6px;border-radius:3px;">Verde</span> = línea incluida en el ingreso · <span style="background:#fce4e4;padding:2px 6px;border-radius:3px;">Rojo</span> = línea excluida del cálculo (terceros / bonificación) · <span style="background:#fff3e0;padding:2px 6px;border-radius:3px;">Naranja</span> = línea de producción (entra como costo en el denominador del margen) · <span style="background:#e8f4fd;padding:2px 6px;border-radius:3px;">Azul</span> = línea afectada por descuento especial. Rentabilidad ≥ 50% = OK · &lt; 50% = Approval Process.</div>
+  </div>
+
+  <!-- ── ESCENARIO 1 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 1 — Campaña estándar, sin descuento especial, sin descuentos (caso base)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Televisa · Desc. Especial: No · Descuento contractual: No · Bonificación: No</div>
+        </div>
+        <div>
+          <div class="field-label">Tipo de campaña</div>
+          <div class="field-value">Anticipado · Inventario: 100% propio digital · 0 líneas de terceros</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Tipo</th><th>Inventario</th><th>Valor Total</th><th>Valor con Desc. Especial</th><th>Es Bonif.</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Banner Display Digital</td><td>Comercial</td><td>Propio</td><td>$400,000</td><td>$400,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Video Pre-roll Web</td><td>Comercial</td><td>Propio</td><td>$300,000</td><td>$300,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>3</td><td>Sponsorship Noticias</td><td>Comercial</td><td>Propio</td><td>$200,000</td><td>$200,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción de materiales</td><td>Producción</td><td>N/A</td><td>$80,000</td><td>$80,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Adaptación de creativos</td><td>Producción</td><td>N/A</td><td>$40,000</td><td>$40,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;">
+        Ingreso_Digital = $400,000 + $300,000 + $200,000 = <strong>$900,000</strong><br/>
+        Costo_Produccion = $80,000 + $40,000 = <strong>$120,000</strong><br/>
+        Rentabilidad = (900,000 − 120,000) / 900,000 = 780,000 / 900,000 = <strong style="color:var(--sf-green)">86.7% ✓</strong><br/>
+        → No requiere Approval Process · Campaña avanza directamente
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 2 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 2 — Campaña con líneas de terceros (CTV / Pluto TV)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Walmart · Desc. Especial: No · Descuento contractual: No · Bonificación: No</div>
+        </div>
+        <div>
+          <div class="field-label">Tipo de campaña</div>
+          <div class="field-value">Anticipado · Mezcla: propio digital + CTV tercero · Líneas tercero: excluidas del cálculo</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Tipo</th><th>Inventario</th><th>Valor Total</th><th>Valor con Desc. Especial</th><th>Es Bonif.</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Video Pre-roll Digital Azteca</td><td>Comercial</td><td>Propio</td><td>$350,000</td><td>$350,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Display Rich Media</td><td>Comercial</td><td>Propio</td><td>$200,000</td><td>$200,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-excluida">
+          <td>3</td><td>CTV Pluto TV (tercero)</td><td>Comercial</td><td>Tercero</td><td>$500,000</td><td>$500,000</td><td>No</td><td>No</td><td>✗ Excluida</td>
+        </tr>
+        <tr class="row-excluida">
+          <td>4</td><td>Roku (tercero)</td><td>Comercial</td><td>Tercero</td><td>$200,000</td><td>$200,000</td><td>No</td><td>No</td><td>✗ Excluida</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Producción spot 30seg</td><td>Producción</td><td>N/A</td><td>$90,000</td><td>$90,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>6</td><td>Locución y post-producción</td><td>Producción</td><td>N/A</td><td>$30,000</td><td>$30,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;">
+        Ingreso_Digital = $350,000 + $200,000 = <strong>$550,000</strong> (Pluto TV y Roku EXCLUIDOS)<br/>
+        Costo_Produccion = $90,000 + $30,000 = <strong>$120,000</strong><br/>
+        Rentabilidad = (550,000 − 120,000) / 550,000 = 430,000 / 550,000 = <strong style="color:var(--sf-green)">78.2% ✓</strong><br/>
+        → No requiere Approval Process · Las líneas de terceros NO afectan el margen digital
+      </div>
+      <div class="alert alert-info" style="margin-top:12px;">
+        <div><strong>Punto a validar con TV Azteca:</strong> Las líneas de terceros se envían a DS con su Valor Total y a GAM con su valor original. ¿Confirman que el margen sobre el inventario propio digital es el único indicador que activa el Approval Process, independientemente del tamaño de las líneas de terceros?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 3 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 3 — Campaña con bonificación parcial (línea bonificada excluida)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Bimbo · Desc. Especial: No · Descuento: No · Bonificación: 1 línea bonificada (dentro del tope)</div>
+        </div>
+        <div>
+          <div class="field-label">Tipo de campaña</div>
+          <div class="field-value">Anticipado · La línea bonificada se envía a GAM/DS con valor original pero se excluye del ingreso neto</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Tipo</th><th>Inventario</th><th>Valor Total</th><th>Valor con Desc. Especial</th><th>Es Bonif.</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Video Pre-roll Digital</td><td>Comercial</td><td>Propio</td><td>$600,000</td><td>$600,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Display Home Page</td><td>Comercial</td><td>Propio</td><td>$250,000</td><td>$250,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>3</td><td>Sponsorship Deportes</td><td>Comercial</td><td>Propio</td><td>$150,000</td><td>$150,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-excluida">
+          <td>4</td><td>Banner Display (bonificado)</td><td>Comercial</td><td>Propio</td><td>$100,000</td><td>$100,000</td><td><strong>Sí</strong></td><td>No</td><td>✗ Excluida (bonif.)</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Producción materiales digitales</td><td>Producción</td><td>N/A</td><td>$120,000</td><td>$120,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>6</td><td>Diseño de piezas</td><td>Producción</td><td>N/A</td><td>$50,000</td><td>$50,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;">
+        Ingreso_Digital = $600,000 + $250,000 + $150,000 = <strong>$1,000,000</strong> (línea 4 EXCLUIDA por bonificación)<br/>
+        Costo_Produccion = $120,000 + $50,000 = <strong>$170,000</strong><br/>
+        Rentabilidad = (1,000,000 − 170,000) / 1,000,000 = 830,000 / 1,000,000 = <strong style="color:var(--sf-green)">83.0% ✓</strong><br/>
+        → No requiere Approval Process · La línea bonificada se envía a GAM/DS con $100,000 (valor original)
+      </div>
+      <div class="alert alert-info" style="margin-top:12px;">
+        <div><strong>Punto a validar:</strong> La línea bonificada tiene Valor_Total = $100,000 y se envía a GAM con ese valor para trazabilidad de inventario. ¿Confirman que la bonificación no aparece como ingreso en DS, solo en GAM?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 4 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 4 — Campaña con descuento especial 9.87% (cliente Target) — Rentabilidad OK</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Target · Desc. Especial: 9.87% (Porcentaje_Descuento_Especial__c = 0.987) · Descuento: No · Bonificación: No</div>
+        </div>
+        <div>
+          <div class="field-label">Comportamiento del descuento especial</div>
+          <div class="field-value">Aplica a líneas de media (comerciales). Producción: sin descuento especial (Valor_con_Factor = Valor_Total)</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Tipo</th><th>Inventario</th><th>Valor Total</th><th>Desc. Especial</th><th>Valor con Desc. Especial</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-factor">
+          <td>1</td><td>Video Pre-roll Digital</td><td>Comercial</td><td>Propio</td><td>$2,000,000</td><td>9.87%</td><td>$197,400</td><td>No</td><td>✓ Ingreso (con desc. especial)</td>
+        </tr>
+        <tr class="row-factor">
+          <td>2</td><td>Display Home Page</td><td>Comercial</td><td>Propio</td><td>$1,000,000</td><td>9.87%</td><td>$98,700</td><td>No</td><td>✓ Ingreso (con desc. especial)</td>
+        </tr>
+        <tr class="row-factor">
+          <td>3</td><td>Sponsorship Entretenimiento</td><td>Comercial</td><td>Propio</td><td>$500,000</td><td>9.87%</td><td>$49,350</td><td>No</td><td>✓ Ingreso (con desc. especial)</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción spot digital</td><td>Producción</td><td>N/A</td><td>$50,000</td><td>Sin desc. especial</td><td>$50,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Adaptación versiones</td><td>Producción</td><td>N/A</td><td>$20,000</td><td>Sin desc. especial</td><td>$20,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;">
+        Ingreso_Digital = $197,400 + $98,700 + $49,350 = <strong>$345,450</strong> (valores CON descuento especial)<br/>
+        Costo_Produccion = $50,000 + $20,000 = <strong>$70,000</strong> (sin descuento especial — producción al 100%)<br/>
+        Rentabilidad = (345,450 − 70,000) / 345,450 = 275,450 / 345,450 = <strong style="color:var(--sf-green)">79.7% ✓</strong><br/>
+        → No requiere Approval Process de rentabilidad<br/>
+        → Valor_Total acumulado ($3,500,000) = lo que Administración ve para pago a proveedores<br/>
+        → Valor_con_Factor acumulado ($345,450) = lo que se reconoce como ingreso en DS
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px;">
+        <div><strong>Punto clave del diseño dual:</strong> Administración ve $3,500,000 (Valor_Total) para autorizar pagos. DS recibe $345,450 (Valor_con_Factor) para reconocimiento de ingresos. Ambos valores en la misma orden — sin duplicar contratos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 5 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 5 — Campaña con descuento especial 9.87% — Rentabilidad INSUFICIENTE (Approval Process)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Adlit · Desc. Especial: 9.87% · Producción alta en relación al ingreso con descuento especial</div>
+        </div>
+        <div>
+          <div class="field-label">Resultado esperado</div>
+          <div class="field-value" style="color:var(--sf-red);font-weight:600;">Rentabilidad &lt; 50% → Approval Process hacia Kenneth / María + CC Verónica Arizaga</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Tipo</th><th>Tipo Costo</th><th>Inventario</th><th>Valor Total</th><th>Desc. Especial</th><th>Valor con Desc. Especial</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-factor">
+          <td>1</td><td>Video Pre-roll Digital</td><td>Comercial</td><td>—</td><td>Propio</td><td>$800,000</td><td>9.87%</td><td>$78,960</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-factor">
+          <td>2</td><td>Display Rich Media</td><td>Comercial</td><td>—</td><td>Propio</td><td>$400,000</td><td>9.87%</td><td>$39,480</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-factor">
+          <td>3</td><td>Sponsorship Noticias</td><td>Comercial</td><td>—</td><td>Propio</td><td>$300,000</td><td>9.87%</td><td>$29,610</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción spot 60seg</td><td>Producción</td><td>Complementario</td><td>N/A</td><td>$60,000</td><td>Sin desc. especial</td><td>$60,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Diseño y animación</td><td>Producción</td><td>Complementario</td><td>N/A</td><td>$40,000</td><td>Sin desc. especial</td><td>$40,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#fce4e4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;border-left:4px solid var(--sf-red);">
+        Ingreso_Digital = $78,960 + $39,480 + $29,610 = <strong>$148,050</strong><br/>
+        Costo_Produccion = $60,000 + $40,000 = <strong>$100,000</strong><br/>
+        Rentabilidad = (148,050 − 100,000) / 148,050 = 48,050 / 148,050 = <strong style="color:var(--sf-red)">32.5% ✗</strong><br/>
+        → Inicia Approval Process (Rentabilidad &lt; 50%)<br/>
+        → Aprobador: Kenneth / María (según jerarquía) + CC Verónica Arizaga<br/>
+        → SLA: 24h · Recordatorio automático a las 12h
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px;">
+        <div><strong>Punto a validar:</strong> En este escenario, el costo de producción ($100,000) representa el 67.5% del ingreso con descuento especial ($148,050). ¿TV Azteca confirma que este es el comportamiento esperado cuando la producción es alta en relación al ingreso ajustado por descuento especial?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 6 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 6 — Campaña con descuento sobre tarifa (hasta 10% — sin Approval adicional)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Soriana · Desc. Especial: No · Descuento: 8% sobre precio de lista (dentro del límite de leads)</div>
+        </div>
+        <div>
+          <div class="field-label">Comportamiento del descuento</div>
+          <div class="field-value">Descuento sobre suma base (precio de lista). Aplica al Valor_Total__c de la línea comercial. No activa Approval Process de descuento.</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Precio Lista</th><th>Descuento</th><th>Valor Total</th><th>Valor con Desc. Especial</th><th>Es Bonif.</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Video Pre-roll Digital</td><td>$500,000</td><td>8%</td><td>$460,000</td><td>$460,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Display Home Page</td><td>$300,000</td><td>8%</td><td>$276,000</td><td>$276,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>3</td><td>Sponsorship Deportes</td><td>$200,000</td><td>0%</td><td>$200,000</td><td>$200,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción materiales</td><td>$100,000</td><td>—</td><td>$100,000</td><td>$100,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Edición de video</td><td>$50,000</td><td>—</td><td>$50,000</td><td>$50,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f4f4f4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;">
+        Ingreso_Digital = $460,000 + $276,000 + $200,000 = <strong>$936,000</strong><br/>
+        Costo_Produccion = $100,000 + $50,000 = <strong>$150,000</strong><br/>
+        Rentabilidad = (936,000 − 150,000) / 936,000 = 786,000 / 936,000 = <strong style="color:var(--sf-green)">83.9% ✓</strong><br/>
+        → No requiere Approval Process · Descuento 8% está dentro del límite de leads (≤ 10%)
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 7 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 7 — Descuento extraordinario (&gt; 30%) activa Approval Process de Director General</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Coca-Cola · Desc. Especial: No · Descuento: 35% sobre precio de lista (supera 30%)</div>
+        </div>
+        <div>
+          <div class="field-label">Resultado esperado</div>
+          <div class="field-value" style="color:var(--sf-red);font-weight:600;">Descuento &gt; 30% → Approval Process hacia Carlos Escobedo (Chachi) o Jesús de la Vega (Chucho) + CC Verónica Arizaga</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Precio Lista</th><th>Descuento</th><th>Valor Total</th><th>Valor con Desc. Especial</th><th>Es Bonif.</th><th>Es Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Video Pre-roll Digital</td><td>$1,000,000</td><td>35%</td><td>$650,000</td><td>$650,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Display Rich Media</td><td>$500,000</td><td>35%</td><td>$325,000</td><td>$325,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>3</td><td>Sponsorship Prime Time</td><td>$400,000</td><td>35%</td><td>$260,000</td><td>$260,000</td><td>No</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción spot 30seg</td><td>$80,000</td><td>—</td><td>$80,000</td><td>$80,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Adaptación formatos</td><td>$40,000</td><td>—</td><td>$40,000</td><td>$40,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#fce4e4;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;border-left:4px solid var(--sf-red);">
+        Ingreso_Digital = $650,000 + $325,000 + $260,000 = <strong>$1,235,000</strong><br/>
+        Costo_Produccion = $80,000 + $40,000 = <strong>$120,000</strong><br/>
+        Rentabilidad = (1,235,000 − 120,000) / 1,235,000 = 1,115,000 / 1,235,000 = <strong style="color:var(--sf-orange)">90.3% ✓ (OK en rentabilidad)</strong><br/><br/>
+        Gate 1 — Descuento: 35% &gt; 30% → <strong style="color:var(--sf-red)">Inicia Approval Process por descuento</strong><br/>
+        Gate 2 — Rentabilidad: 90.3% ≥ 50% → OK (no activa por rentabilidad)<br/>
+        → Aprobador Gate 1: Carlos Escobedo (Chachi) o Jesús de la Vega (Chucho) + CC Verónica Arizaga<br/>
+        → Ejecutivo debe registrar justificación antes de enviar (Justificacion_Descuento__c)
+      </div>
+      <div class="alert alert-info" style="margin-top:12px;">
+        <div><strong>Punto a validar:</strong> El Gate de descuento se activa aunque la rentabilidad sea alta. ¿Confirman que ambas Gates son independientes y pueden activarse por separado o en combinación?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 8 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 8 — Campaña mixta: descuento especial + descuento 10–30% + bonificación + terceros</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: Target · Desc. Especial: 9.87% · Descuento: 20% (escala a Kenneth/María) · Bonificación: 1 línea · Terceros: Pluto TV</div>
+        </div>
+        <div>
+          <div class="field-label">Resultado esperado</div>
+          <div class="field-value" style="color:var(--sf-orange);font-weight:600;">Gate 1 (descuento 20%) → Approval Process Kenneth/María · Gate 2 (rentabilidad) puede activarse adicionalmente</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>P. Lista</th><th>Desc.</th><th>Valor Total</th><th>Desc. Especial</th><th>V. con Desc. Especial</th><th>Bonif.</th><th>Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-factor">
+          <td>1</td><td>Video Pre-roll Digital</td><td>$1,500,000</td><td>20%</td><td>$1,200,000</td><td>9.87%</td><td>$118,440</td><td>No</td><td>No</td><td>✓ Ingreso (desc. especial)</td>
+        </tr>
+        <tr class="row-factor">
+          <td>2</td><td>Display Rich Media</td><td>$800,000</td><td>20%</td><td>$640,000</td><td>9.87%</td><td>$63,168</td><td>No</td><td>No</td><td>✓ Ingreso (desc. especial)</td>
+        </tr>
+        <tr class="row-excluida">
+          <td>3</td><td>Sponsorship bonif. propio</td><td>$300,000</td><td>—</td><td>$300,000</td><td>9.87%</td><td>$29,610</td><td><strong>Sí</strong></td><td>No</td><td>✗ Excluida (bonif.)</td>
+        </tr>
+        <tr class="row-excluida">
+          <td>4</td><td>Pluto TV CTV (tercero)</td><td>$600,000</td><td>—</td><td>$600,000</td><td>—</td><td>$600,000</td><td>No</td><td>No</td><td>✗ Excluida (3ro)</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Producción contenido</td><td>$70,000</td><td>—</td><td>$70,000</td><td>Sin desc. especial</td><td>$70,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>6</td><td>Edición y locución</td><td>$30,000</td><td>—</td><td>$30,000</td><td>Sin desc. especial</td><td>$30,000</td><td>No</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#fff3e0;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;border-left:4px solid var(--sf-orange);">
+        Ingreso_Digital = $118,440 + $63,168 = <strong>$181,608</strong> (líneas 3 y 4 EXCLUIDAS)<br/>
+        Costo_Produccion = $70,000 + $30,000 = <strong>$100,000</strong><br/>
+        Rentabilidad = (181,608 − 100,000) / 181,608 = 81,608 / 181,608 = <strong style="color:var(--sf-orange)">44.9% ✗</strong><br/><br/>
+        Gate 1 — Descuento 20%: &gt; 10% → <strong style="color:var(--sf-orange)">Approval Process Kenneth/María</strong><br/>
+        Gate 2 — Rentabilidad 44.9%: &lt; 50% → <strong style="color:var(--sf-red)">Approval Process Kenneth/María (mismo aprobador)</strong><br/>
+        → Ambas gates activas: el Approval Process consolida ambas razones en una sola solicitud<br/>
+        → CC: Verónica Arizaga en toda la cadena<br/>
+        → Pluto TV ($600,000) y línea bonificada ($300,000 valor original) se envían a DS/GAM sin afectar el margen digital
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px;">
+        <div><strong>Punto a validar con TV Azteca:</strong> Cuando Gate 1 y Gate 2 se activan simultáneamente, ¿el Approval Process envía una sola notificación al aprobador con ambas razones, o envía dos notificaciones separadas? La recomendación técnica es una sola solicitud consolidada.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESCENARIO 9 ─────────────────────────────────────────────────── -->
+  <div class="section-title">Escenario 9 — Campaña con múltiples descuentos acumulados (comercial + volumen)</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-warn" style="margin-bottom:12px;">
+        <div><strong>Actualizado 30-Jun-2026 · Devolutiva.</strong> El escenario original describía descuento contractual y descuento porcentual como <strong>mutuamente excluyentes</strong>. TV Azteca (Luis Antonio) precisó que los descuentos <strong>no son mutuamente excluyentes</strong>: una línea puede acumular varios descuentos que se aplican en cascada. El escenario se reformula para ilustrar la composición nativa vía <code>PricingAdjustment</code> (RCA). Ver DYB-12.</div>
+      </div>
+      <div class="fgrid-2" style="margin-bottom:16px;">
+        <div>
+          <div class="field-label">Datos del cliente</div>
+          <div class="field-value">Cliente: P&amp;G · Descuento Comercial: 10% · Descuento por Volumen: 5% adicional · Desc. Especial: No · Bonificación: No</div>
+        </div>
+        <div>
+          <div class="field-label">Composición de descuentos (RCA nativa)</div>
+          <div class="field-value">Cada línea recibe <strong>dos registros de <code>PricingAdjustment</code></strong> (Reason = Comercial y Reason = Volumen). El motor de precios de RCA los aplica en cascada y agrega el resultado en el campo estándar <code>TotalAdjustmentAmount</code> — es este agregado el que evalúa el Approval Process contra la matriz jerárquica.</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Línea</th><th>Precio Lista</th><th>Ajustes RCA (PricingAdjustment)</th><th>TotalAdjustmentAmount</th><th>Precio Neto</th><th>Prod.</th><th>En cálculo</th></tr>
+        <tr class="row-ingreso">
+          <td>1</td><td>Video Pre-roll Digital</td><td>$700,000</td><td>Comercial 10% + Volumen 5%</td><td>$101,500</td><td>$598,500</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>2</td><td>Display Home Page</td><td>$300,000</td><td>Comercial 10% + Volumen 5%</td><td>$43,500</td><td>$256,500</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-ingreso">
+          <td>3</td><td>Sponsorship Noticias</td><td>$200,000</td><td>Comercial 10% (sin volumen)</td><td>$20,000</td><td>$180,000</td><td>No</td><td>✓ Ingreso</td>
+        </tr>
+        <tr class="row-costo">
+          <td>4</td><td>Producción y adaptación</td><td>$90,000</td><td>—</td><td>—</td><td>$90,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+        <tr class="row-costo">
+          <td>5</td><td>Motion graphics</td><td>$60,000</td><td>—</td><td>—</td><td>$60,000</td><td>Sí</td><td>✓ Costo</td>
+        </tr>
+      </table>
+      <div style="background:#f3f2f2;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;margin-top:12px;line-height:1.8;border:1px solid #dddbda;">
+        Ajuste efectivo total = $101,500 + $43,500 + $20,000 = <strong>$165,000</strong> sobre $1,200,000 (precio lista) = <strong>13.75%</strong><br/>
+        Gate 1 — Descuento agregado 13.75%: entre 10% y 30% → Approval Process al aprobador jerárquico correspondiente<br/><br/>
+        Ingreso_Digital = $598,500 + $256,500 + $180,000 = <strong>$1,035,000</strong><br/>
+        Costo_Produccion = $90,000 + $60,000 = <strong>$150,000</strong><br/>
+        Rentabilidad = (1,035,000 − 150,000) / 1,035,000 = 885,000 / 1,035,000 = <strong style="color:var(--sf-green)">85.5% ✓</strong><br/>
+        Gate 2 — Rentabilidad OK
+      </div>
+      <div class="alert alert-info" style="margin-top:12px;">
+        <div><strong>Implementación técnica:</strong> ningún campo personalizado de descuento en la línea. Cada descuento es un registro de <code>PricingAdjustment</code> con <code>AdjustmentReason</code> (Comercial / Volumen / Especial / Promocional), <code>AdjustmentType</code> (Percentage / Amount) y <code>AdjustmentSource</code> (Manual / Procedure / Contract). El aprobador ve la lista completa de ajustes en la línea antes de aprobar.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESUMEN DE VALIDACIÓN ──────────────────────────────────────── -->
+  <div class="section-title">Resumen de Cobertura de Escenarios — Checklist de Validación</div>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Escenario</th>
+          <th>Desc. Especial</th>
+          <th>Descuento</th>
+          <th>Bonif.</th>
+          <th>Terceros</th>
+          <th>Resultado Rentabilidad</th>
+          <th>Gates Activos</th>
+          <th>Validado TV Azteca</th>
+        </tr>
+        <tr>
+          <td><strong>1</strong> — Caso base</td>
+          <td>No</td><td>No</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-green)">86.7% ✓</td>
+          <td>Ninguno</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong> — Con terceros</td>
+          <td>No</td><td>No</td><td>No</td><td>Sí</td>
+          <td style="color:var(--sf-green)">78.2% ✓</td>
+          <td>Ninguno</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong> — Con bonificación</td>
+          <td>No</td><td>No</td><td>Sí</td><td>No</td>
+          <td style="color:var(--sf-green)">83.0% ✓</td>
+          <td>Ninguno</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>4</strong> — Desc. Especial, rentab. OK</td>
+          <td>9.87%</td><td>No</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-green)">79.7% ✓</td>
+          <td>Ninguno</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>5</strong> — Desc. Especial, rentab. BAJA</td>
+          <td>9.87%</td><td>No</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-red)">32.5% ✗</td>
+          <td>Gate 2</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>6</strong> — Descuento ≤ 10%</td>
+          <td>No</td><td>8%</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-green)">83.9% ✓</td>
+          <td>Ninguno</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>7</strong> — Descuento &gt; 30%</td>
+          <td>No</td><td>35%</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-green)">90.3% ✓</td>
+          <td>Gate 1 (Dir. Gral.)</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>8</strong> — Mixto (desc. especial + desc. + bonif. + 3ro)</td>
+          <td>9.87%</td><td>20%</td><td>Sí</td><td>Sí</td>
+          <td style="color:var(--sf-red)">44.9% ✗</td>
+          <td>Gate 1 + Gate 2</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+        <tr>
+          <td><strong>9</strong> — Múltiples descuentos acumulados (Comercial + Volumen · RCA)</td>
+          <td>No</td><td>10% + 5%</td><td>No</td><td>No</td>
+          <td style="color:var(--sf-green)">85.5% ✓</td>
+          <td>Gate 1 (Aprobador jerárquico)</td>
+          <td><span class="badge badge-pending">PENDIENTE</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    <div><strong>Escenarios no cubiertos en este documento — requieren definición TV Azteca:</strong>
+    <ul class="detail-list" style="margin-top:8px;">
+      <li><strong>Tipo_Costo__c — tratamiento operacional:</strong> ¿Cómo se comporta una línea Bolsa Propuesta <em style="color:#706e6b;font-size:11px;">(antes "Bolsa de Costos" — renombrado por Devolutiva 30-jun-2026)</em> en el flujo del Portal de Costos vs. una Complementaria? Ambas entran igual en el cálculo del margen — la diferencia es el roteamiento operacional en CECO. Requiere sesión con Ana Isabel para confirmar el flujo exacto.</li>
+      <li><s><strong>Descuento contractual vs. porcentual en misma orden:</strong> ¿Pueden coexistir en líneas distintas? ¿Cómo se suma para calcular el % efectivo de descuento total?</s> <span class="badge badge-done">RESUELTO 30-Jun-2026</span> Descuentos <strong>no son mutuamente excluyentes</strong>: se acumulan vía múltiples registros de <code>PricingAdjustment</code> (RCA) y agregan en <code>TotalAdjustmentAmount</code>. Ver DYB-12 y Escenario 9.</li>
+      <li><strong>Campaña Real y Postecipada:</strong> El flujo de conciliación y el estado "Bloqueada" aplican diferente según el tipo de campaña. Requiere sesión específica.</li>
+      <li><s><strong>Bonificación que supera el tope de bolsa:</strong> ¿Qué pasa si la bonificación supera el tope contractual disponible? ¿Rejection automático o Approval Process al Director?</s> <span class="badge badge-done">FUERA DE ALCANCE 30-Jun-2026</span> Bolsa finita de bonificaciones descartada en esta fase — validación únicamente contra matriz jerárquica (Approval Process). Ver DYB-03 / DYB-11.</li>
+    </ul>
+    </div>
+  </div>
+
+</div><!-- /E7 -->
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

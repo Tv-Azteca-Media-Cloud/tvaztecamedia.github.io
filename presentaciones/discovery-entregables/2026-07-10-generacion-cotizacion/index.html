@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generación PDF Cotización — Discovery Entregables | TV Azteca × Salesforce</title>
+<style>
+:root {
+  --sf-blue:#0070d2; --sf-dark:#032d60; --sf-green:#04844b; --sf-red:#c23934;
+  --sf-orange:#e07000; --sf-purple:#716caa; --sf-yellow:#ffb75d;
+  --sf-bg:#f3f2f2; --sf-white:#ffffff; --sf-border:#dddbda;
+  --sf-text:#3e3e3c; --sf-label:#706e6b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Salesforce Sans','Segoe UI',Arial,sans-serif;font-size:13px;
+  color:var(--sf-text);background:var(--sf-bg);line-height:1.5}
+
+/* ── NAV ── */
+.app-bar{background:var(--sf-dark);height:48px;display:flex;align-items:center;
+  padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.app-bar-title{color:#fff;font-size:15px;font-weight:700;letter-spacing:.3px}
+.app-bar-sub{color:rgba(255,255,255,0.65);font-size:12px;margin-left:12px}
+
+.tab-bar{background:var(--sf-blue);display:flex;gap:2px;padding:0 16px;
+  position:sticky;top:48px;z-index:99;overflow-x:auto}
+.tab{color:rgba(255,255,255,0.8);padding:10px 16px;font-size:12px;font-weight:700;
+  cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;
+  transition:all .2s;letter-spacing:.2px}
+.tab:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.tab.active{color:#fff;border-bottom-color:var(--sf-yellow);background:rgba(255,255,255,0.15)}
+
+/* ── CONTENT ── */
+.content{display:none;padding:20px;max-width:1100px;margin:0 auto}
+.content.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px;
+  margin-bottom:16px;box-shadow:0 2px 4px rgba(0,0,0,0.06)}
+.card-header{background:var(--sf-dark);color:#fff;padding:10px 16px;font-size:13px;
+  font-weight:700;border-radius:4px 4px 0 0;display:flex;align-items:center;gap:8px}
+.card-header .num{background:var(--sf-yellow);color:var(--sf-dark);border-radius:50%;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;flex-shrink:0}
+.card-body{padding:16px}
+
+/* ── SECTION HEADERS ── */
+.sec-hd{font-size:11px;font-weight:700;color:var(--sf-label);text-transform:uppercase;
+  letter-spacing:.5px;margin:16px 0 8px;border-bottom:1px solid var(--sf-border);padding-bottom:4px}
+.sec-hd:first-child{margin-top:0}
+
+/* ── FIELD GRID ── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:12px}
+.fgrid.cols3{grid-template-columns:1fr 1fr 1fr}
+.fgrid.cols1{grid-template-columns:1fr}
+.field .label{font-size:11px;color:var(--sf-label);text-transform:uppercase;
+  font-weight:600;letter-spacing:.3px;margin-bottom:3px}
+.field .val{font-size:13px;color:var(--sf-text);font-weight:600}
+.field .val.muted{font-weight:400;color:var(--sf-label)}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px}
+th{background:var(--sf-dark);color:#fff;padding:7px 10px;text-align:left;font-weight:700;
+  font-size:11px;letter-spacing:.3px}
+td{padding:7px 10px;border-bottom:1px solid var(--sf-border);vertical-align:top}
+tr:nth-child(even) td{background:#f9f9f9}
+tr:hover td{background:#eef5ff}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;
+  font-weight:700;letter-spacing:.2px}
+.badge-must{background:#fde8e8;color:#c23934;border:1px solid #f4b8b8}
+.badge-should{background:#fef3cd;color:#8a6000;border:1px solid #f5d87a}
+.badge-nice{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5}
+.badge-ootb{background:#e8f9ee;color:#04844b;border:1px solid #8dd4a6}
+.badge-config{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5}
+.badge-custom{background:#fde8e8;color:#c23934;border:1px solid #f4b8b8}
+.badge-open{background:#fde8e8;color:#c23934}
+.badge-done{background:#e8f9ee;color:#04844b}
+.badge-pend{background:#fef3cd;color:#8a6000}
+.badge-blocker{background:#c23934;color:#fff}
+.badge-risk{background:#e07000;color:#fff}
+.badge-decision{background:#04844b;color:#fff}
+.badge-parking{background:#716caa;color:#fff}
+
+/* ── ALERTS ── */
+.alert{display:flex;gap:10px;padding:10px 14px;border-radius:4px;margin-bottom:12px;
+  font-size:12px;border-left:4px solid}
+.alert-info{background:#e8f4fd;border-color:var(--sf-blue)}
+.alert-warn{background:#fef3cd;border-color:var(--sf-orange)}
+.alert-ok{background:#e8f9ee;border-color:var(--sf-green)}
+.alert-err{background:#fde8e8;border-color:var(--sf-red)}
+
+/* ── PROCESS FLOW ── */
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;
+  background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px;
+  margin-bottom:2px;position:relative}
+.flow-step:not(:last-child)::after{content:'↓';position:absolute;bottom:-14px;left:22px;
+  color:var(--sf-label);font-size:14px;z-index:1}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;color:#fff}
+.step-body strong{font-size:12px;display:block;margin-bottom:2px}
+.step-body p{font-size:11px;color:var(--sf-label)}
+.step-blue .step-num{background:var(--sf-blue)}
+.step-green .step-num{background:var(--sf-green)}
+.step-orange .step-num{background:var(--sf-orange)}
+.step-purple .step-num{background:var(--sf-purple)}
+.step-dark .step-num{background:var(--sf-dark)}
+.step-red .step-num{background:var(--sf-red)}
+.step-teal .step-num{background:#008a8a}
+.step-yellow .step-num{background:#c77700;color:#fff}
+
+/* ── SWIMLANE ── */
+.swimlane{border:1px solid var(--sf-border);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.sl-header{display:grid;background:var(--sf-dark)}
+.sl-cell-hd{color:#fff;font-size:11px;font-weight:700;padding:8px 10px;
+  border-right:1px solid rgba(255,255,255,0.2);text-align:center}
+.sl-row{display:grid;border-bottom:1px solid var(--sf-border)}
+.sl-row:last-child{border-bottom:none}
+.sl-row:nth-child(even){background:#f9f9f9}
+.sl-cell{padding:8px 10px;border-right:1px solid var(--sf-border);font-size:11px;vertical-align:top}
+.sl-cell:last-child{border-right:none}
+.actor-box{display:inline-block;background:#e8f4fd;border:1px solid #a8d4f5;
+  border-radius:3px;padding:2px 7px;font-size:11px;color:#005ea2;font-weight:600}
+
+/* ── PAGE HEADER ── */
+.page-hd{margin-bottom:20px}
+.page-hd h1{font-size:18px;font-weight:700;color:var(--sf-dark);margin-bottom:4px}
+.page-hd p{font-size:12px;color:var(--sf-label)}
+.status-strip{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;padding:10px 14px;
+  background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px}
+.status-strip .item{font-size:12px}
+.status-strip .item span{font-weight:700;color:var(--sf-text)}
+.status-strip .item label{color:var(--sf-label);font-size:11px;text-transform:uppercase;display:block}
+
+/* ── ACTION ITEMS ── */
+.action-row{display:flex;gap:8px;align-items:baseline;padding:8px 0;
+  border-bottom:1px solid var(--sf-border);font-size:12px}
+.action-row:last-child{border-bottom:none}
+.action-who{color:var(--sf-blue);font-weight:700;min-width:140px}
+
+/* ── DECISION ITEM ── */
+.dec-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid var(--sf-border);font-size:12px}
+.dec-item:last-child{border-bottom:none}
+.dec-num{width:24px;height:24px;border-radius:50%;background:var(--sf-green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
+.dec-num.open{background:var(--sf-orange)}
+
+/* ── FORK / BRANCH ── */
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.fork-branch{background:var(--sf-bg);border:1px solid var(--sf-border);border-radius:4px;
+  padding:10px 12px;font-size:11px}
+.fork-branch strong{display:block;font-size:11px;margin-bottom:4px}
+.fork-branch.alt{border-color:var(--sf-orange);background:#fff8ee}
+
+/* ─────────────────────────────────────────────────────────
+   PDF MOCKUP STYLES  (replica the TV Azteca Digital look)
+───────────────────────────────────────────────────────── */
+.pdf-wrap{background:#fff;border:1px solid #ccc;border-radius:4px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.12);overflow:hidden;font-family:'Segoe UI',Arial,sans-serif}
+
+/* top banner */
+.pdf-top{background:#1a2d5a;padding:12px 20px;display:flex;align-items:center;
+  justify-content:space-between}
+.pdf-logo-area{display:flex;align-items:center;gap:10px}
+.pdf-logo-icon{background:#ffcc00;border-radius:4px;padding:3px 7px;
+  font-size:11px;font-weight:900;color:#1a2d5a;letter-spacing:.5px}
+.pdf-brand{color:#fff;font-size:13px;font-weight:700;letter-spacing:.5px}
+.pdf-brand span{color:#ffcc00}
+.pdf-campaign{color:#fff;font-size:14px;font-weight:900;text-align:center;letter-spacing:.3px;flex:1;padding:0 16px}
+.pdf-folio{text-align:right;color:rgba(255,255,255,0.7);font-size:10px;line-height:1.6}
+.pdf-folio strong{color:#fff;display:block;font-size:11px}
+
+/* client info bar */
+.pdf-client-bar{background:#253d6e;display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;padding:0}
+.pdf-client-cell{padding:7px 12px;border-right:1px solid rgba(255,255,255,0.15)}
+.pdf-client-cell:last-child{border-right:none}
+.pdf-client-cell label{display:block;font-size:9px;color:rgba(255,255,255,0.55);
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.pdf-client-cell span{color:#fff;font-size:11px;font-weight:600}
+
+/* section header inside PDF */
+.pdf-sec-hd{background:#1a2d5a;color:#fff;font-size:10px;font-weight:900;
+  letter-spacing:.8px;text-transform:uppercase;padding:6px 12px}
+
+/* tables inside PDF */
+.pdf-tbl{width:100%;border-collapse:collapse;font-size:10px}
+.pdf-tbl thead tr th{background:#253d6e;color:#fff;padding:5px 8px;font-size:9px;
+  font-weight:700;letter-spacing:.3px;text-align:center;border-right:1px solid rgba(255,255,255,0.15)}
+.pdf-tbl thead tr th:last-child{border-right:none}
+.pdf-tbl tbody td{padding:5px 8px;border-bottom:1px solid #e0e0e0;
+  border-right:1px solid #e0e0e0;text-align:center;color:#222}
+.pdf-tbl tbody td:first-child,.pdf-tbl tbody td:nth-child(2),.pdf-tbl tbody td:nth-child(3),
+.pdf-tbl tbody td.txt-left{text-align:left}
+.pdf-tbl tbody td:last-child{border-right:none;font-weight:700}
+.pdf-tbl tbody tr:nth-child(even) td{background:#f5f5f5}
+.pdf-tbl tbody .desc-cell{font-style:italic;color:#555;font-size:9px}
+.pdf-total-row td{background:#1a2d5a!important;color:#fff!important;font-weight:900;
+  font-size:10px;text-align:right!important;padding:6px 8px;border:none!important}
+.pdf-total-row td:first-child{text-align:left!important}
+
+/* totals box */
+.pdf-totals-wrap{display:flex;justify-content:flex-end;padding:8px 12px;background:#f9f9f9;
+  border-top:2px solid #1a2d5a}
+.pdf-totals-table{width:260px;border-collapse:collapse;font-size:11px}
+.pdf-totals-table td{padding:4px 8px;border-bottom:1px solid #e0e0e0}
+.pdf-totals-table .grand{background:#1a2d5a;color:#fff;font-weight:900;font-size:12px}
+.pdf-totals-table .grand td{border:none;padding:6px 8px}
+
+/* notes box inside PDF */
+.pdf-notes{padding:10px 14px;background:#fffbf0;border-top:1px solid #e0d8b0}
+.pdf-notes label{display:block;font-size:9px;font-weight:700;color:#7a6000;
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.pdf-notes p{font-size:10px;color:#555;font-style:italic;line-height:1.5}
+
+/* T&C box inside PDF */
+.pdf-tc{padding:10px 14px;background:#f5f5f5;border-top:1px solid #ddd}
+.pdf-tc label{display:block;font-size:9px;font-weight:700;color:#555;
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.pdf-tc p{font-size:9px;color:#888;font-style:italic;line-height:1.5}
+
+/* footer bar */
+.pdf-footer{background:#1a2d5a;display:flex;justify-content:space-between;
+  align-items:center;padding:6px 14px}
+.pdf-footer span{color:rgba(255,255,255,0.6);font-size:9px}
+.pdf-footer strong{color:#ffcc00;font-size:9px}
+
+/* ── FIELD SPEC TABLE ── */
+.field-spec{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px}
+.field-spec th{background:var(--sf-dark);color:#fff;padding:7px 10px;text-align:left;
+  font-size:11px;font-weight:700}
+.field-spec td{padding:7px 10px;border-bottom:1px solid var(--sf-border);vertical-align:top}
+.field-spec tr:nth-child(even) td{background:#f9f9f9}
+.field-obj{display:inline-block;background:#032d60;color:#fff;border-radius:3px;
+  padding:1px 7px;font-size:10px;font-weight:700}
+code{background:#f3f2f2;border:1px solid var(--sf-border);border-radius:3px;
+  padding:1px 5px;font-size:11px;color:#c23934;font-family:monospace}
+</style>
+</head>
+<body>
+
+<div class="app-bar">
+  <span class="app-bar-title">Generación PDF Cotización — Discovery Entregables</span>
+  <span class="app-bar-sub">TV Azteca × Salesforce Media Cloud | Release 2 | Mayo 2026</span>
+  <a href="../../../index.html" title="Inicio" style="margin-left:auto;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;text-decoration:none;flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="show('e1',this)">E1 — Contexto Negocio</div>
+  <div class="tab" onclick="show('e2',this)">E2 — Diagrama Proceso</div>
+  <div class="tab" onclick="show('e3',this)">E3 — Decisiones</div>
+  <div class="tab" onclick="show('e4',this)">E4 — Diseño Solución</div>
+  <div class="tab" onclick="show('e5',this)">E5 — Mockup PDF</div>
+  <div class="tab" onclick="show('e6',this)">E6 — RAID Log</div>
+  <div class="tab" onclick="show('e7',this)">E7 — Minuta</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E1 — BUSINESS CONTEXT BRIEF
+════════════════════════════════════════════════════════════ -->
+<div id="e1" class="content active">
+  <div class="page-hd">
+    <h1>E1 — Business Context Brief: Generación Automatizada del Documento de Cotización</h1>
+    <p>Captura del estado actual (AS-IS) y estado futuro deseado (TO-BE) del proceso de generación del documento de cotización comercial en TV Azteca.</p>
+    <div class="status-strip">
+      <div class="item"><label>Versión</label><span>1.0</span></div>
+      <div class="item"><label>Fecha</label><span>27-May-2026</span></div>
+      <div class="item"><label>Sesión base</label><span>25-May-2026</span></div>
+      <div class="item"><label>Estado</label><span class="badge badge-pend">Pendiente validación cliente</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">1</div>Objetivo del Proceso e Impacto en el Negocio</div>
+    <div class="card-body">
+      <p>El proceso de <strong>Generación del Documento de Cotización</strong> cubre la producción del documento comercial que se entrega al anunciante o agencia como propuesta formal de campaña digital. Este documento sintetiza el plan de medios — productos, plataformas, cantidades, precios, inversión total y condiciones comerciales — y es el instrumento que el cliente acepta para dar inicio a la orden de servicio.</p>
+      <br>
+      <p>Actualmente este proceso se realiza de forma enteramente manual en Excel, con variantes por equipo que generan inconsistencias en el formato y en la información presentada. La automatización dentro de Salesforce Media Cloud elimina la reelaboración manual, garantiza un formato único y estandarizado, y crea trazabilidad completa del ciclo comercial desde la cotización hasta la activación.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">2</div>Actores Involucrados</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Persona</th><th>Rol en el Proceso</th><th>Sistema Actual</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Ejecutivo de Ventas</strong></td>
+            <td>Elabora el plan de medios, completa los campos de la cotización (incluidos descripción/racional por línea y notas generales), genera el PDF y lo envía al cliente.</td>
+            <td>Excel → correo electrónico</td>
+          </tr>
+          <tr>
+            <td><strong>Gerente / Director Comercial</strong></td>
+            <td>Aprueba cotizaciones que requieren validación de margen (yield &lt; 50%). Recibe notificación automática cuando la cotización está lista para revisión.</td>
+            <td>Email / comunicación directa</td>
+          </tr>
+          <tr>
+            <td><strong>Anunciante / Agencia</strong></td>
+            <td>Recibe la cotización, la evalúa y confirma la aceptación por correo electrónico al ejecutivo.</td>
+            <td>Email externo</td>
+          </tr>
+          <tr>
+            <td><strong>Área Legal / Contraloría</strong></td>
+            <td>Define y valida los Términos y Condiciones que se incorporarán al template de cotización. Responsable de proveer el texto oficial.</td>
+            <td>Documento interno (pendiente de entrega)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">3</div>Pain Points AS-IS</div>
+    <div class="card-body">
+      <div class="alert alert-err">⛔ <div><strong>Inconsistencia de formatos entre equipos:</strong> El machote del área de Grupo es obligatorio solo para cuentas específicas. Cada equipo ha adaptado su propia variante de Excel, lo que genera documentos con columnas, campos y estructuras distintas. No existe un formato único de propuesta para toda el área de ventas digitales.</div></div>
+      <div class="alert alert-err">⛔ <div><strong>Proceso manual con alto riesgo de error:</strong> El ejecutivo elabora el documento en Excel fuera de Salesforce, sin conexión con los datos del sistema. Los cálculos de inversión (CPM × impresiones, tarifas fijas, acumulados por sección) se construyen con fórmulas manuales, exponiéndose a errores de conciliación y cobro.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>T&C y disclaimers en el cuerpo del correo:</strong> Los términos y condiciones no forman parte del documento — se añaden manualmente en el cuerpo del correo de envío. Solo se incluyen notas breves como exclusión de IVA o cambios sin previo aviso. No existe un proceso formal ni texto legal aprobado incorporado al documento.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Sin trazabilidad del ciclo de aprobación:</strong> La aceptación del cliente se registra únicamente en el hilo de correo electrónico, sin ningún registro en un sistema. Si el cliente solicita cambios, se genera una nueva versión del Excel sin control formal de versiones.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Sin integración con la orden de servicio:</strong> Una vez aceptada la cotización, el ejecutivo debe reingresar manualmente los datos en el sistema de órdenes. No hay un flujo automatizado de conversión cotización → ODS.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">4</div>Expectativas TO-BE</div>
+    <div class="card-body">
+      <div class="fgrid">
+        <div>
+          <div class="sec-hd">Generación del Documento</div>
+          <ul style="margin-left:16px;font-size:12px;line-height:1.9">
+            <li>El ejecutivo elabora el plan de medios directamente en Salesforce, completando los campos de cada línea incluyendo un <strong>campo de descripción/racional de texto libre por línea</strong></li>
+            <li>Con un solo clic el sistema genera automáticamente el PDF con todos los datos del registro — sin reingreso de información</li>
+            <li>El PDF incluye un <strong>campo de notas generales de texto libre a nivel cotización</strong> para observaciones o racional global de la propuesta</li>
+            <li>El documento generado queda adjunto al registro de Salesforce con trazabilidad completa</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sec-hd">Aprobación y Conversión a ODS</div>
+          <ul style="margin-left:16px;font-size:12px;line-height:1.9">
+            <li>El sistema envía automáticamente el PDF al cliente por correo electrónico desde una <strong>cuenta de servicio institucional</strong> de TV Azteca; el ejecutivo queda en copia (CC). El ejecutivo puede personalizar el texto del mensaje o descargar el PDF y enviarlo directamente por el canal que prefiera (email personal, WhatsApp, etc.)</li>
+            <li>El cliente acepta por correo electrónico; el ejecutivo registra la aceptación en Salesforce</li>
+            <li>El ejecutivo convierte la cotización en Orden de Servicio (ODS) con un solo clic — <strong>sin reingresar datos</strong></li>
+            <li>Si el cliente solicita cambios, se genera una nueva Quote dentro de la misma Oportunidad. Al cierre, el ejecutivo designa la Quote primaria que se convierte en ODS</li>
+            <li>Si el equipo de implementación rechaza una línea específica, las líneas restantes continúan sin interrupciones</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">5</div>Restricciones Conocidas</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Tipo</th><th>Restricción</th><th>Impacto</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Contractual</strong></td><td>El SOW cubre la generación del PDF y la conversión cotización → ODS. El mecanismo de firma digital (DocuSign u equivalente) no está incluido en el alcance actual.</td><td>Medio — la aceptación se gestiona por correo electrónico como primera fase</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>La herramienta de generación del PDF es <strong>Quote Template nativo de Salesforce</strong> — decisión corporativa. El diseño visual del template se realizará durante el diseño técnico de la solución.</td><td>Bajo — capacidad nativa, no impacta el diseño funcional</td></tr>
+          <tr><td><strong>Operativa</strong></td><td>El formato único de columnas para cotizaciones digitales aún no está acordado entre los equipos. Está pendiente la homologación del machote entre las áreas de ventas.</td><td>Alto — prerrequisito para cerrar el diseño del template</td></tr>
+          <tr><td><strong>Legal</strong></td><td>El texto de Términos y Condiciones aprobado por Legal no ha sido entregado. El template arrancará con un placeholder hasta que Legal provea el texto oficial.</td><td>Medio — configurable en backlog; no bloquea el arranque</td></tr>
+          <tr><td><strong>Branding</strong></td><td>No existe una guía de marca formal para documentos comerciales. El template incluirá el logo de TV Azteca como único elemento de identidad corporativa en la primera versión.</td><td>Bajo — ajustes de branding formal se realizan en fase posterior</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─── SECCIÓN 6 — ÍTEMS PENDIENTES ─── -->
+  <div style="font-size:15px;font-weight:700;color:var(--sf-dark);margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--sf-blue);">6 — Ítems Pendientes para Cierre de Análisis y Diseño de Solución</div>
+
+  <div class="alert alert-warn" style="margin-bottom:16px;">
+    <span style="font-size:18px;">⚠️</span>
+    <div>
+      <strong>Estado del análisis:</strong> El diseño de solución está <strong>sustancialmente completo</strong> — herramienta de generación (Quote Template nativo), estructura del PDF, campos personalizados, flujo de aprobación interna, versionamiento y ciclo de vida de la cotización están definidos. Los ítems a continuación son las dependencias que deben resolverse antes de poder construir el template definitivo (Sección A) y los puntos que la squad detallará en su etapa de refinamiento (Sección B).
+    </div>
+  </div>
+
+  <!-- SECCIÓN A -->
+  <div class="card" style="border-left:4px solid var(--sf-red);">
+    <div class="card-header" style="background:var(--sf-red);">
+      <div class="num" style="background:var(--sf-red);border:2px solid #fff;">A</div>
+      Sección A — Pendientes que bloquean el cierre del diseño de solución
+    </div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--sf-label);margin-bottom:12px;">Estos ítems deben resolverse <strong>antes de construir el template del PDF</strong>. Sin ellos, el formato final no puede cerrarse ni aprobarse para construcción.</p>
+      <table>
+        <thead>
+          <tr><th style="width:70px;">Ref.</th><th>Descripción del pendiente</th><th style="width:160px;">Responsable</th><th style="width:110px;">Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-done">Q-1</span></td>
+            <td>
+              <strong>Validación del formato único de columnas por TV Azteca</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Resuelto en devolutiva 30-Jun-2026: el cliente confirma que el set de columnas ya está definido. Se aplican los ajustes solicitados — separar <strong>Tipo de compra</strong> (CPM · CPC · Patrocinio) de la <strong>Tarifa</strong>, e incorporar <strong>CTR estimado</strong> (Compra Directa) y <strong>VTR</strong> (Programático/CTV) como métricas formuladas a partir de Views/Impresiones. El template puede pasar a construcción con el set unificado en E4.</span>
+            </td>
+            <td>Dirección Ventas Digitales — todas las áreas</td>
+            <td><span class="badge badge-done">Resuelto</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-risk">A-2</span></td>
+            <td>
+              <strong>Confirmación de secciones condicionales en Quote Template nativo</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El template requiere renderizar dos secciones condicionales — Compra Directa y Programático/CTV — dependiendo de los tipos de línea en la cotización. El Quote Template nativo de Salesforce tiene capacidad limitada para lógica condicional. El arquitecto técnico debe confirmar si es viable o si se requiere una solución alternativa (ej. template con ambas secciones siempre visibles, o herramienta de generación diferente). Esta decisión afecta directamente el diseño del template.</span>
+            </td>
+            <td>Arquitecto técnico Salesforce</td>
+            <td><span class="badge badge-risk">Pendiente validación</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECCIÓN B -->
+  <div class="card" style="border-left:4px solid var(--sf-orange);">
+    <div class="card-header" style="background:var(--sf-orange);">
+      <div class="num" style="background:var(--sf-orange);border:2px solid #fff;">B</div>
+      Sección B — Ítems para la etapa de refinamiento de la squad
+    </div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--sf-label);margin-bottom:12px;">Estos ítems <strong>no bloquean la redacción de User Stories</strong>. La squad los detallará y definirá en su proceso normal de refinamiento — son contenidos configurables, ajustes de diseño visual o funcionalidades de backlog.</p>
+      <table>
+        <thead>
+          <tr><th style="width:70px;">Ref.</th><th>Descripción del pendiente</th><th style="width:160px;">Responsable</th><th style="width:110px;">Cuándo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-pend">Q-2</span></td>
+            <td>
+              <strong>Texto de Términos y Condiciones aprobado por Legal</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El template arrancará con un placeholder en la sección de T&amp;C. El texto legal vigente para campañas digitales se incorpora una vez Legal lo entregue. Si existen variantes por tipo de campaña (directa vs. programática), se entregan todas las versiones. No bloquea el arranque del desarrollo.</span>
+            </td>
+            <td>Legal / TV Azteca<br><span style="font-size:11px;color:var(--sf-label);">AI-2 — en revisión</span></td>
+            <td><span class="badge badge-pend">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-pend">D-10</span></td>
+            <td>
+              <strong>Branding formal del template (paleta, tipografía, guía de diseño)</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">El template de la primera versión incluirá el logo de TV Azteca Digital como único elemento de identidad. Los ajustes de branding completo — paleta corporativa, tipografías, layout formal — se realizan en una fase posterior cuando Diseño / Comunicación Corporativa entregue el Brand Kit.</span>
+            </td>
+            <td>Diseño / Comunicación Corporativa</td>
+            <td><span class="badge badge-pend">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-pend">AI-1</span></td>
+            <td>
+              <strong>Ejemplo de media plan consolidado (televisión + digital)</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Karol Jardines debe enviar un ejemplo de media plan que integre televisión y medios digitales. Insumo para análisis de fase futura — no afecta el diseño actual del template de cotización digital.</span>
+            </td>
+            <td>Karol Jardines</td>
+            <td><span class="badge badge-pend">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-pend">Parking</span></td>
+            <td>
+              <strong>Firma digital (DocuSign u equivalente)</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">La aceptación del cliente en Fase 1 se gestiona por correo electrónico (D-4). La integración con herramienta de firma digital está en el Parking Lot — se activa solo si TV Azteca lo solicita formalmente y se aprueba como Change Order.</span>
+            </td>
+            <td>TV Azteca — solicitud formal<br><span style="font-size:11px;color:var(--sf-label);">Parking Lot</span></td>
+            <td><span class="badge badge-pend">Refinamiento</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-pend">Parking</span></td>
+            <td>
+              <strong>T&amp;C dinámicos por tipo de campaña</strong><br>
+              <span style="font-size:12px;color:var(--sf-label);">Términos y Condiciones con variantes por tipo de campaña (directa vs. programática). Se activa cuando Legal entregue el texto con variantes — en Parking Lot hasta entonces.</span>
+            </td>
+            <td>Legal / TV Azteca</td>
+            <td><span class="badge badge-pend">Refinamiento</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E2 — PROCESS FLOW DIAGRAM
+════════════════════════════════════════════════════════════ -->
+<div id="e2" class="content">
+  <div class="page-hd">
+    <h1>E2 — Diagrama de Proceso TO-BE: Generación y Aprobación de Cotización</h1>
+    <p>Flujo punta a punta desde la elaboración del plan de medios hasta la conversión de la Quote en ODS. La activación operativa de la ODS y su integración con sistemas de tráfico pertenecen al proceso Order-to-Campaign y quedan fuera del alcance de este documento. Incluye el subproceso de versionamiento por múltiples Quotes.</p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--sf-blue);">
+    <div class="card-header"><div class="num">0</div>Tipificación de la Oportunidad — Prerrequisito del Flujo</div>
+    <div class="card-body">
+      <div class="alert alert-info">ℹ️ <div><strong>Actualización devolutiva 30-Jun-2026:</strong> TV Azteca opera con <strong>dos tipos de Oportunidad</strong> que se comportan de forma diferente respecto a la conversión a ODS. El tipo se define al momento de crear la Oportunidad y condiciona qué acciones habilita el sistema.</div></div>
+      <table>
+        <thead>
+          <tr><th style="width:180px">Tipo de Oportunidad</th><th>Alcance funcional</th><th style="width:180px">¿Habilita creación de ODS?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Oportunidad de Contrato</strong></td>
+            <td>Abre inversión con el cliente — habilita cotización, control de cierre y pipeline comercial. Representa el compromiso marco (ej. inversión anual, framework deal). Las Quotes generadas quedan asociadas a la Oportunidad pero <strong>no</strong> se convierten en Orden de Servicio.</td>
+            <td><span class="badge badge-blocker">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Oportunidad de Consumo</strong></td>
+            <td>Representa una compra específica dentro del marco contractual o una venta puntual. A partir de una Quote aceptada en esta Oportunidad se genera la ODS que dispara la ejecución operativa. <strong>Este es el tipo de Oportunidad que sigue el flujo E2.A a continuación.</strong></td>
+            <td><span class="badge badge-done">Sí</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--sf-label);margin-top:12px">El flujo principal descrito en E2.A aplica exclusivamente a la <strong>Oportunidad de Consumo</strong>. La Oportunidad de Contrato mantiene los pasos 1–6 (elaboración, generación del PDF, envío al cliente, aceptación) pero <strong>no</strong> ejecuta la conversión a ODS ni la activación descrita en el paso final. La mecánica de conversión y el modelo de datos que soporta ambos tipos se detalla en la etapa de refinamiento técnico.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">A</div>Flujo Principal — Generación, Envío y Conversión a ODS <span style="font-weight:400;font-size:12px;color:var(--sf-label);margin-left:8px">· Aplica a Oportunidad de Consumo</span></div>
+    <div class="card-body">
+
+      <div class="swimlane">
+        <div class="sl-header" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell-hd">Actor</div>
+          <div class="sl-cell-hd">Actividad</div>
+          <div class="sl-cell-hd">Sistema</div>
+          <div class="sl-cell-hd">Notas</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell">
+            <strong>1. Elabora el Plan de Medios en Salesforce</strong><br>
+            Agrega líneas a la cotización: producto, plataforma, canal, fechas, cantidad, tipo de compra (CPM / tarifa fija), alcance estimado, impresiones, views. Completa el <strong>campo Descripción/Racional</strong> por línea (texto libre) y las <strong>Notas Generales</strong> de la propuesta.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (Quote)</span></div>
+          <div class="sl-cell">Los campos de texto libre (Descripción por línea y Notas Generales) se completan en esta etapa y se reflejan en el PDF generado.</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell">
+            <strong>2. Valida el Yield de la cotización</strong><br>
+            El sistema calcula automáticamente el Yield% en el encabezado del registro. Si el Yield es ≥ 50%, la cotización avanza. Si es &lt; 50%, se genera una alerta y puede requerir aprobación del Gerente/Director antes de enviar.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (CPQ)</span></div>
+          <div class="sl-cell">Regla de negocio de margen mínimo definida en el proceso de Pricing (S2/S4).</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell">
+            <strong>3. Clic en "Generar Cotización"</strong><br>
+            El sistema lee todos los datos del registro (líneas de pedido, precios, descuentos, campos de texto libre) y genera el PDF con el template TV Azteca. El documento queda adjunto al registro como Salesforce File.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce</span><br><span class="actor-box" style="margin-top:4px;display:inline-block">Quote Template</span></div>
+          <div class="sl-cell">Herramienta definida: <strong>Quote Template nativo de Salesforce</strong> (decisión corporativa).</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Salesforce (automático)</strong></div>
+          <div class="sl-cell">
+            <strong>4. Envío del PDF al cliente</strong><br>
+            Un Flow envía el PDF al contacto de la Oportunidad desde una <strong>cuenta de servicio institucional</strong> de TV Azteca — el ejecutivo queda en copia (CC) automáticamente. Antes del envío, el ejecutivo puede <strong>personalizar el cuerpo del correo</strong> en lugar de usar el template estándar del sistema.<br><br>
+            <em>Alternativa:</em> el ejecutivo descarga el PDF desde Salesforce y lo envía directamente al cliente por el canal que prefiera (correo personal, WhatsApp, etc.).
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (Flow)</span><br><span class="actor-box" style="margin-top:4px;display:inline-block">Email (cuenta servicio)</span></div>
+          <div class="sl-cell">Las cuentas de correo personales de los ejecutivos no se pueden configurar en Salesforce — el envío se realiza desde una dirección institucional centralizada con el ejecutivo en CC. El historial queda vinculado al registro.</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Anunciante / Agencia</strong></div>
+          <div class="sl-cell">
+            <strong>5. El cliente revisa y responde</strong><br>
+            <strong>Ruta A — Aprobación:</strong> El cliente responde por correo electrónico confirmando la propuesta.<br>
+            <strong>Ruta B — Solicitud de cambios:</strong> El cliente solicita ajustes. El ejecutivo genera una nueva Quote dentro de la misma Oportunidad (ver subproceso B).
+          </div>
+          <div class="sl-cell"><span class="actor-box">Email externo</span></div>
+          <div class="sl-cell">Mecanismo de aceptación: correo electrónico. Sin firma digital en el alcance actual.</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell">
+            <strong>6. Registra la aceptación en Salesforce</strong><br>
+            Actualiza el estado de la Quote a <em>"Cotización Aceptada"</em>. El sistema registra la fecha de aceptación y habilita la conversión a ODS.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (Quote)</span></div>
+          <div class="sl-cell">Paso manual realizado por el ejecutivo tras recibir la confirmación del cliente.</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell">
+            <strong>7. Designa la Quote primaria y convierte a ODS</strong><br>
+            El ejecutivo marca la Quote aceptada como <em>Primaria</em> y la convierte en Orden de Servicio con un clic. Los datos de la cotización se transfieren automáticamente a la ODS — sin reingreso de información. Las demás Quotes quedan como historial dentro de la Oportunidad.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (ODS)</span></div>
+          <div class="sl-cell">Comportamiento nativo de Salesforce Revenue Cloud. Solo una Quote puede ser primaria en la Oportunidad.</div>
+        </div>
+
+        <div class="sl-row" style="grid-template-columns:150px 1fr 170px 200px">
+          <div class="sl-cell"><strong>Salesforce (automático)</strong></div>
+          <div class="sl-cell">
+            <strong>8. Cierre del proceso de cotización — Handoff a ODS</strong><br>
+            La Quote queda en estado <em>Convertida</em> y la ODS creada en el paso 7 pasa a ser el registro de referencia. El proceso de cotización finaliza aquí: <strong>la activación operativa de la ODS y su integración con los sistemas de tráfico (GAM/DRO) pertenecen al proceso Order-to-Campaign</strong> y se describen en su propio documento de análisis.
+          </div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (Quote → ODS)</span></div>
+          <div class="sl-cell">Frontera funcional: el objeto Quote entrega el control al objeto Order. Las reglas de activación, ejecución y rechazo por línea son responsabilidad del proceso OC — fuera del alcance de este documento.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">B</div>Subproceso — Versionamiento: Gestión de Cambios Solicitados por el Cliente</div>
+    <div class="card-body">
+      <div class="alert alert-info">ℹ️ <div><strong>Comportamiento nativo de Salesforce Revenue Cloud:</strong> Una Oportunidad puede tener múltiples Quotes (cotizaciones). Cada cambio solicitado por el cliente se gestiona generando una nueva Quote dentro de la misma Oportunidad — no modificando la ya enviada. Al cierre, el ejecutivo designa una sola Quote como <em>Primaria</em>, que es la que se convierte en ODS. Las versiones anteriores quedan como historial trazable en la Oportunidad.</div></div>
+      <div class="alert alert-warn" style="margin-top:8px">⚠️ <div><strong>Estados diferenciados para preservar reporting (devolutiva 30-Jun-2026):</strong> los estados terminales de una Quote no aceptada se distinguen explícitamente para no distorsionar los indicadores comerciales. <strong>"Enviada"</strong> se reserva para la Quote efectivamente presentada al cliente que sigue viva en la negociación. <strong>"Cancelado"</strong> aplica a las Quotes descartadas por generación de una nueva versión, por decisión del cliente, o por dejar de ser viables. La Quote aceptada pasa a <strong>"Aceptada"</strong> y luego a <strong>"Convertida"</strong> tras la creación de la ODS.</div></div>
+
+      <div class="flow" style="margin-top:12px">
+        <div class="flow-step step-blue">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Cliente solicita cambios en la cotización ya enviada</strong>
+            <p>Puede ser: cambio de precio, ajuste de fechas, cambio de producto, modificación de cantidad, o comentarios sobre el racional.</p>
+          </div>
+        </div>
+        <div class="flow-step step-orange">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Ejecutivo crea una nueva Quote en la misma Oportunidad</strong>
+            <p>La Quote anterior pasa a estado <strong>"Cancelado"</strong> (no viable / superada por nueva versión). La nueva Quote se elabora con los ajustes solicitados. El historial completo de versiones es visible en la Oportunidad — la distinción entre <em>"Enviada"</em> (Quote efectivamente presentada al cliente, viva) y <em>"Cancelado"</em> (Quote descartada por versión nueva o por el propio cliente) preserva la trazabilidad para reporting comercial.</p>
+          </div>
+        </div>
+        <div class="flow-step step-blue">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Genera el nuevo PDF y lo envía al cliente</strong>
+            <p>Repite el flujo principal (pasos 3–5). Puede haber múltiples iteraciones hasta llegar al acuerdo.</p>
+          </div>
+        </div>
+        <div class="flow-step step-green">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Cliente acepta — ejecutivo designa la Quote como Primaria</strong>
+            <p>Solo la Quote Primaria puede convertirse en ODS. Las demás versiones quedan como historial trazable en la Oportunidad.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">C</div>Subproceso — Rechazo en la gate de aprobación interna</div>
+    <div class="card-body">
+      <div class="alert alert-warn" style="margin-bottom:8px">⚠️ <div><strong>El rechazo en aprobación aplica a la cotización completa:</strong> Si el Gerente/Director rechaza la cotización por no superar la gate de rentabilidad (yield &lt; 50%), la <strong>cotización entera</strong> regresa al ejecutivo. No es posible rechazar líneas individuales en esta etapa. El ejecutivo ajusta el plan de medios completo y re-envía a aprobación.</div></div>
+      <div class="fork" style="margin-top:4px">
+        <div class="fork-branch">
+          <strong>✅ Cotización aprobada (yield ≥ 50%)</strong>
+          Avanza al paso de envío al cliente (Paso 4 del flujo principal).
+        </div>
+        <div class="fork-branch alt">
+          <strong>❌ Cotización rechazada (yield &lt; 50%)</strong>
+          Regresa completa al ejecutivo. El ejecutivo ajusta márgenes y vuelve a someter a aprobación. SLA aprobador: 24h con recordatorio automático a las 12h.
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--sf-label);margin-top:12px">El gate de implementación —revisión por el equipo de Ad Ops posterior a la creación de la ODS— opera sobre el objeto Order y no forma parte del proceso de cotización. Se describe en el análisis del proceso Order-to-Campaign.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E3 — DECISIONES
+════════════════════════════════════════════════════════════ -->
+<div id="e3" class="content">
+  <div class="page-hd">
+    <h1>E3 — Decisiones Cerradas en Sesión</h1>
+    <p>Acuerdos alcanzados durante las sesiones de Discovery del 25-May-2026 y 26-May-2026.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">✓</div>Decisiones confirmadas</div>
+    <div class="card-body">
+      <div class="dec-item">
+        <div class="dec-num">1</div>
+        <div>
+          <strong>Mecanismo de envío del PDF al cliente: cuenta de servicio institucional + ejecutivo en copia</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Las cuentas de correo personales de los ejecutivos no pueden configurarse en Salesforce para envío saliente. El envío automatizado se realizará desde una dirección institucional de TV Azteca (cuenta de servicio), con el ejecutivo asignado en CC automáticamente. El ejecutivo podrá personalizar el cuerpo del correo antes del envío, o alternativamente descargar el PDF y enviarlo por el canal que prefiera (correo personal, WhatsApp, etc.). <em>Sesión: 26-May-2026.</em></span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">2</div>
+        <div>
+          <strong>Vigencia de la cotización: 90 días naturales con expiración automática</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Una cotización enviada al cliente que no reciba respuesta dentro de los 90 días naturales expirará automáticamente mediante un Scheduled Flow. Al vencerse, el estado de la Quote cambia a "Expirada". El parámetro es configurable sin cambios de código. <em>Sesión: 26-May-2026.</em></span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">3</div>
+        <div>
+          <strong>Rechazo en la gate de aprobación interna: regresa la cotización completa al ejecutivo</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Si la cotización no supera la gate de rentabilidad (yield &lt; 50% en productos digitales propios), el aprobador puede rechazarla. El rechazo aplica a la <strong>cotización completa</strong> — no línea por línea. La cotización regresa al ejecutivo en estado "Rechazada — requiere ajuste" para que revise el plan de medios, ajuste los márgenes y re-envíe a aprobación. SLA del aprobador: 24 horas con recordatorio automático a las 12 horas. <em>Sesión: 26-May-2026.</em></span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">4</div>
+        <div>
+          <strong>Mecanismo de aceptación del cliente: correo electrónico</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">El cliente acepta la cotización por correo electrónico. El ejecutivo actualiza el estado en Salesforce tras recibir la confirmación. No se contempla en el alcance actual ninguna herramienta de firma digital. Esta funcionalidad puede evaluarse como mejora futura si TV Azteca lo requiere.</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">5</div>
+        <div>
+          <strong>Línea rechazada por implementación no bloquea el flujo completo</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Si el equipo de implementación rechaza una línea específica de la ODS, las líneas restantes continúan su proceso de activación. La corrección de la línea rechazada se gestiona de forma independiente.</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">6</div>
+        <div>
+          <strong>Conversión cotización → ODS: paso manual realizado por el ejecutivo</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Después de recibir la aceptación del cliente y registrarla en Salesforce, el ejecutivo convierte la Quote en ODS manualmente. Este es el comportamiento nativo de Revenue Cloud.</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">7</div>
+        <div>
+          <strong>Campos de texto abierto en Cotización y Línea de Cotización</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Se añadirán campos de texto libre en el objeto <strong>Cotización (Quote)</strong> — para notas generales y racional global de la propuesta — y en el objeto <strong>Línea de Cotización (Quote Line)</strong> — para descripción/racional específico de cada línea de producto. Estos campos se completan durante la elaboración del plan de medios en Salesforce y se reflejan en el PDF generado. Esta práctica ya existe en el proceso actual (columna "Descripción" en el Excel).</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">8</div>
+        <div>
+          <strong>Versionamiento: múltiples Quotes dentro de la misma Oportunidad</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">Cada cambio solicitado por el cliente origina una nueva Quote en la misma Oportunidad. Al cierre, el ejecutivo designa la Quote aceptada como <em>Primaria</em> y esta es la que se convierte en ODS. Las versiones anteriores quedan como historial trazable. Este es el comportamiento nativo de Salesforce Revenue Cloud — no requiere desarrollo adicional.</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">9</div>
+        <div>
+          <strong>Términos y Condiciones: placeholder en el template — pendiente de definición</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">El template arrancará con un espacio reservado para T&C. Si TV Azteca dispone del texto aprobado por Legal, se incorpora al template antes del arranque. Si no está disponible, esta sección se incorpora en una fase posterior del proyecto como backlog. El proceso no se bloquea por este punto.</span>
+        </div>
+      </div>
+      <div class="dec-item">
+        <div class="dec-num">10</div>
+        <div>
+          <strong>Branding del template: logo TV Azteca como único elemento de identidad</strong><br>
+          <span style="font-size:12px;color:var(--sf-label)">No existe una guía de marca formal para documentos comerciales en esta etapa. El template incluirá el logo de TV Azteca Digital. Los ajustes de branding completo (paleta, tipografía corporativa, guía de diseño) se realizarán en una fase posterior cuando Diseño/Comunicación Corporativa entregue el Brand Kit.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E4 — DISEÑO DE SOLUCIÓN
+════════════════════════════════════════════════════════════ -->
+<div id="e4" class="content">
+  <div class="page-hd">
+    <h1>E4 — Diseño de Solución: Generación del PDF en Salesforce</h1>
+    <p>Propuesta de diseño funcional y técnico para la automatización de la generación del documento de cotización.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">1</div>Herramienta de Generación del PDF</div>
+    <div class="card-body">
+      <div class="alert alert-ok">✅ <div><strong>Decisión corporativa — Quote Template nativo de Salesforce:</strong> La generación del documento de cotización se realizará mediante el <strong>Quote Template nativo de Salesforce</strong>. El uso de OmniStudio Document Generation no está en el roadmap tecnológico del proyecto. El diseño del template (estructura HTML/CSS, secciones condicionales y mapeo de campos) se definirá en detalle durante el diseño técnico de la solución.</div></div>
+      <table>
+        <thead><tr><th>Capacidad</th><th>Quote Template nativo de Salesforce</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td>Template HTML/CSS personalizado</td><td>✅ Soportado</td><td>Personalización visual con HTML/CSS en el editor de templates</td></tr>
+          <tr><td>Lógica condicional de secciones</td><td>⚠️ Limitada</td><td>Secciones condicionales (Compra Directa / Programático) requieren validación en diseño técnico</td></tr>
+          <tr><td>Loop sobre líneas de pedido (Quote Lines)</td><td>✅ Nativo</td><td>—</td></tr>
+          <tr><td>Almacenamiento como Salesforce File</td><td>✅ Nativo</td><td>El PDF generado queda adjunto al registro de Quote</td></tr>
+          <tr><td>Envío automático por email (Flow)</td><td>✅ Nativo</td><td>Compatible con el mecanismo de envío por cuenta de servicio + ejecutivo en CC</td></tr>
+          <tr><td>Integración con objeto Quote estándar</td><td>✅ Nativo</td><td>Acceso directo a campos de Quote y Quote Line, incluyendo campos customizados</td></tr>
+          <tr><td>Complejidad de implementación</td><td>Baja</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">2</div>Campos de Texto Libre — Objetos Quote y Quote Line</div>
+    <div class="card-body">
+      <div class="alert alert-ok">✅ <div><strong>Decisión cerrada en sesión:</strong> Se agregarán campos de texto libre en los objetos Quote y Quote Line. Estos campos se completan durante la elaboración del plan de medios en Salesforce y su contenido se incluye en el PDF generado.</div></div>
+      <table class="field-spec">
+        <thead>
+          <tr>
+            <th>Objeto</th>
+            <th>Campo API (propuesta)</th>
+            <th>Tipo</th>
+            <th>Longitud</th>
+            <th>Descripción / Uso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="field-obj">Quote</span></td>
+            <td><code>Notas_Generales__c</code></td>
+            <td>Long Text Area</td>
+            <td>2.000 car.</td>
+            <td>Campo de texto libre a nivel de cotización. Permite al ejecutivo incluir observaciones generales, condiciones especiales o el racional global de la propuesta. Se imprime en el PDF como bloque de notas antes de los T&C.</td>
+          </tr>
+          <tr>
+            <td><span class="field-obj">Quote Line</span></td>
+            <td><code>Descripcion_Racional__c</code></td>
+            <td>Long Text Area</td>
+            <td>1.000 car.</td>
+            <td>Campo de texto libre por línea de cotización. Permite al ejecutivo escribir el racional de la recomendación específica para ese producto/plataforma (ej. "Patrocinio de Canal Navideño en Pluto TV — recomendado por…"). Se imprime en la columna Descripción del PDF para cada línea. Equivale a la columna "Descripción" del Excel actual.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--sf-label);margin-top:8px">* Los nombres de campo API son propuestas sujetas a revisión durante el diseño técnico detallado de la solución.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">3</div>Análisis de Homologación de Columnas — Ejemplos Recibidos</div>
+    <div class="card-body">
+      <div class="alert alert-ok">✅ <div><strong>Dos ejemplos de cotización recibidos:</strong> Campaña Mercado Libre / Navidad (Karol Jardines) y Campaña Kelloggs Pringles / Mundial 2026. El análisis comparativo de ambos formatos permitió definir el set de columnas unificado propuesto a continuación.</div></div>
+      <table>
+        <thead>
+          <tr><th>Columna</th><th>Mercado Libre (MeLi)</th><th>Kelloggs / Pringles</th><th>Propuesta Unificada</th><th>Observación</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Temporalidad</strong></td><td>✅</td><td>✅ (Mes + Temporalidad)</td><td><span class="badge badge-done">Obligatoria</span></td><td>Unifica Mes y Período en una sola columna</td></tr>
+          <tr><td><strong>Concepto</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>—</td></tr>
+          <tr><td><strong>Propiedad / Acción</strong></td><td>✅ como "Propiedad"</td><td>✅ como "Acción"</td><td><span class="badge badge-done">Obligatoria</span></td><td>Mismo concepto — unificar etiqueta</td></tr>
+          <tr><td><strong>Formato</strong></td><td>❌</td><td>✅ (ej. "Vertical 40s")</td><td><span class="badge badge-done">Agregar</span></td><td>Relevante para campañas de contenido y patrocinio</td></tr>
+          <tr><td><strong>Descripción</strong></td><td>✅ (texto libre)</td><td>✅ (incluye racional + specs)</td><td><span class="badge badge-done">Obligatoria</span></td><td>Absorbe también las "Specs" técnicas del creativo de Kelloggs</td></tr>
+          <tr><td><strong>Plataforma / Canal</strong></td><td>✅ separados</td><td>✅ como "Canales" unificado</td><td><span class="badge badge-done">Obligatoria</span></td><td>Mantener separados para mayor precisión</td></tr>
+          <tr><td><strong>Cantidad</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>—</td></tr>
+          <tr><td><strong>Tarifa</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>Valor unitario negociado — sin etiqueta CPM (el modelo de compra se declara en columna aparte)</td></tr>
+          <tr><td><strong>Tipo de compra</strong></td><td>❌</td><td>❌</td><td><span class="badge badge-done">Agregar</span></td><td>Picklist: CPM · CPC · Patrocinio — declara explícitamente el modelo comercial de cada línea</td></tr>
+          <tr><td><strong>Frecuencia</strong></td><td>Solo en Programático</td><td>✅ en Compra Directa</td><td><span class="badge badge-done">Agregar</span></td><td>Incluir también en Compra Directa</td></tr>
+          <tr><td><strong>Alcance</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>—</td></tr>
+          <tr><td><strong>Impresiones</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>—</td></tr>
+          <tr><td><strong>Views</strong></td><td>✅</td><td>❌</td><td><span class="badge badge-done">Mantener</span></td><td>Relevante para formatos de video</td></tr>
+          <tr><td><strong>CTR estimado</strong></td><td>❌</td><td>❌</td><td><span class="badge badge-done">Agregar (Compra Directa)</span></td><td>Fórmula — indicador de rendimiento estimado sobre impresiones</td></tr>
+          <tr><td><strong>VTR</strong></td><td>❌</td><td>❌</td><td><span class="badge badge-done">Agregar (Programático/CTV)</span></td><td>Fórmula sobre Views — <code>Views ÷ Impresiones</code></td></tr>
+          <tr><td><strong>Total</strong></td><td>✅</td><td>✅</td><td><span class="badge badge-done">Obligatoria</span></td><td>—</td></tr>
+          <tr><td><strong>Specs</strong></td><td>❌</td><td>✅ (columna separada)</td><td><span class="badge badge-pend">Absorbida</span></td><td>Se incorpora al campo Descripción — no requiere columna propia</td></tr>
+          <tr><td><strong>Objetivo</strong></td><td>❌</td><td>✅ (nivel campaña)</td><td><span class="badge badge-pend">→ Notas Generales</span></td><td>Es información de nivel cotización — se cubre con el campo <code>Notas_Generales__c</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">4</div>Estructura del Template del PDF — Propuesta Unificada</div>
+    <div class="card-body">
+      <p style="font-size:12px;margin-bottom:12px">Set de columnas unificado derivado del análisis de los dos ejemplos recibidos. <strong>Sujeto a validación por TV Azteca.</strong></p>
+      <table>
+        <thead><tr><th>Sección</th><th>Contenido</th><th>Condicional</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Encabezado</strong></td><td>Logo TV Azteca Digital, nombre de campaña, folio de cotización, fecha de emisión, fecha de vigencia</td><td>Siempre presente</td></tr>
+          <tr><td><strong>Datos del cliente</strong></td><td>Anunciante, agencia, contacto del cliente, ejecutivo de ventas TV Azteca</td><td>Siempre presente</td></tr>
+          <tr><td><strong>Sección Compra Directa</strong></td><td>Temporalidad · Concepto · Propiedad/Acción · <strong>Formato</strong> · Descripción · Plataforma · Canal · Cantidad · <strong>Tarifa</strong> · <strong>Tipo de compra</strong> · <strong>Frecuencia</strong> · Alcance · Impresiones · Views · <strong>CTR estimado</strong> · Total</td><td>Se muestra si la cotización tiene líneas de tipo Compra Directa</td></tr>
+          <tr><td><strong>Sección Programático/CTV</strong></td><td>Temporalidad · Concepto · Propiedad · Plataforma · Universo · Canal · % Alcance · Tarifa · <strong>Tipo de compra</strong> · Frecuencia · Alcance · Impresiones · Views · <strong>VTR</strong> · Total</td><td>Se muestra si la cotización tiene líneas de tipo Programático</td></tr>
+          <tr><td><strong>Total General</strong></td><td>Suma de subtotales por sección. Indicación de exclusión de IVA.</td><td>Siempre presente</td></tr>
+          <tr><td><strong>Notas Generales</strong></td><td>Campo <code>Notas_Generales__c</code> de la cotización — objetivo de campaña, observaciones, condiciones especiales, racional global.</td><td>Se muestra si el campo tiene contenido</td></tr>
+          <tr><td><strong>Términos y Condiciones</strong></td><td>Texto legal aprobado por TV Azteca. Arranca con placeholder hasta que Legal entregue el texto oficial.</td><td>Siempre presente</td></tr>
+        </tbody>
+      </table>
+      <div class="alert alert-info" style="margin-top:12px">ℹ️ <div><strong>Columnas nuevas respecto a los formatos actuales:</strong> Se agregan <strong>Formato</strong> (tipo de creativo, ej. "Video Vertical 40s", "Patrocinio Horizontal") y <strong>Frecuencia</strong> a Compra Directa —incorporando la práctica del equipo de Kelloggs/Pringles—, se separa <strong>Tipo de compra</strong> (CPM · CPC · Patrocinio) de la <strong>Tarifa</strong> —eliminando la etiqueta "Tarifa/CPM" que mezclaba modelo comercial con valor—, y se incorporan <strong>CTR estimado</strong> (Compra Directa) y <strong>VTR</strong> (Programático/CTV) como métricas formuladas a partir de Views/Impresiones.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E5 — MOCKUP PDF
+════════════════════════════════════════════════════════════ -->
+<div id="e5" class="content">
+  <div class="page-hd">
+    <h1>E5 — Mockup: Documento de Cotización Generado</h1>
+    <p>Representación visual del PDF basada en el ejemplo de cotización digital recibido (campaña Mercado Libre / Navidad — Karol Jardines). Sujeto a ajustes una vez homologado el formato estándar entre equipos.</p>
+  </div>
+
+  <div class="alert alert-info" style="max-width:1100px;margin:0 auto 16px">ℹ️ <div><strong>Mockup de propuesta unificada — sujeto a validación por TV Azteca.</strong> El diseño del template integra las columnas identificadas en los dos ejemplos recibidos (Mercado Libre / Navidad y Kelloggs Pringles / Mundial 2026). Los datos mostrados son ilustrativos. <strong>Este es el formato único propuesto para todas las áreas de ventas digitales.</strong></div></div>
+
+  <div class="pdf-wrap" style="max-width:980px;margin:0 auto">
+
+    <!-- Top banner -->
+    <div class="pdf-top">
+      <div class="pdf-logo-area">
+        <div class="pdf-logo-icon">▶ TV</div>
+        <div class="pdf-brand">tv<span>azteca</span>digital</div>
+      </div>
+      <div class="pdf-campaign">ANUNCIANTE — NOMBRE DE CAMPAÑA</div>
+      <div class="pdf-folio">
+        <strong>COT-2026-00001</strong>
+        Fecha: 01-Jun-2026<br>
+        Vigente hasta: 30-Ago-2026 (90 días)
+      </div>
+    </div>
+
+    <!-- Client bar -->
+    <div class="pdf-client-bar">
+      <div class="pdf-client-cell">
+        <label>Anunciante</label>
+        <span>Nombre Anunciante</span>
+      </div>
+      <div class="pdf-client-cell">
+        <label>Agencia</label>
+        <span>Nombre Agencia</span>
+      </div>
+      <div class="pdf-client-cell">
+        <label>Contacto</label>
+        <span>Nombre Contacto</span>
+      </div>
+      <div class="pdf-client-cell">
+        <label>Ejecutivo TV Azteca</label>
+        <span>Nombre Ejecutivo</span>
+      </div>
+    </div>
+
+    <!-- Section 1: Compra Directa -->
+    <div class="pdf-sec-hd">COMPRA DIRECTA</div>
+    <table class="pdf-tbl">
+      <thead>
+        <tr>
+          <th style="width:78px">Temporalidad</th>
+          <th style="width:95px">Concepto</th>
+          <th style="width:105px">Propiedad / Acción</th>
+          <th style="width:72px">Formato</th>
+          <th style="width:130px">Descripción</th>
+          <th style="width:75px">Plataforma</th>
+          <th style="width:58px">Canal</th>
+          <th style="width:38px">Cant.</th>
+          <th style="width:58px">Tarifa</th>
+          <th style="width:62px">Tipo compra</th>
+          <th style="width:42px">Frec.</th>
+          <th style="width:58px">Alcance</th>
+          <th style="width:65px">Impresiones</th>
+          <th style="width:50px">Views</th>
+          <th style="width:52px">CTR est.</th>
+          <th style="width:65px">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="2">MAY — PREVIO AL EVENTO</td>
+          <td>Experiencia Previa</td>
+          <td>Bite de la Experiencia o Reto</td>
+          <td class="desc-cell">Formato Vertical 40s</td>
+          <td class="desc-cell">Miles de aficionados llegan horas antes, cantan, conviven y hacen rituales. La marca se integra al momento previo al silbatazo.</td>
+          <td>FB + TikTok</td>
+          <td>Azteca Deportes</td>
+          <td style="text-align:center">1</td>
+          <td style="text-align:right">$115,000</td>
+          <td style="text-align:center">Patrocinio</td>
+          <td style="text-align:center">2</td>
+          <td style="text-align:right">250,000</td>
+          <td style="text-align:right">500,000</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">$115,000</td>
+        </tr>
+        <tr>
+          <td>Donde Empieza el Mundial</td>
+          <td>Cápsula Original — Warrior</td>
+          <td class="desc-cell">Formato Vertical 40s</td>
+          <td class="desc-cell">Warrior recorre la ciudad mostrando cómo cambia la rutina de los mexicanos preparándose para ver el juego. La marca aparece como parte natural del ritual previo.</td>
+          <td>FB + TikTok + IG</td>
+          <td>Azteca Deportes</td>
+          <td style="text-align:center">1</td>
+          <td style="text-align:right">$350,000</td>
+          <td style="text-align:center">Patrocinio</td>
+          <td style="text-align:center">2</td>
+          <td style="text-align:right">300,000</td>
+          <td style="text-align:right">600,000</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">$350,000</td>
+        </tr>
+        <tr>
+          <td rowspan="2">JUN — DURANTE EL MUNDIAL</td>
+          <td>Templo Azteca</td>
+          <td>Patrocinio de Sección — Programa Digital</td>
+          <td class="desc-cell">Formato Horizontal — Patrocinio</td>
+          <td class="desc-cell">La marca se adueña del momento del gol: el conductor abre una lata y anuncia el "Momento de destapar el Pringooool de la semana". Incluye mención, super y cortinilla de salida.</td>
+          <td>Sitio + FB + YT</td>
+          <td>Azteca Deportes</td>
+          <td style="text-align:center">3</td>
+          <td style="text-align:right">$360,000</td>
+          <td style="text-align:center">Patrocinio</td>
+          <td style="text-align:center">2</td>
+          <td style="text-align:right">900,000</td>
+          <td style="text-align:right">1,800,000</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">$1,080,000</td>
+        </tr>
+        <tr>
+          <td>Warrior Cam</td>
+          <td>Cápsula — Warrior</td>
+          <td class="desc-cell">Formato Vertical 40s</td>
+          <td class="desc-cell">Warrior comparte desde su bitácora cómo se vive el partido — previo, durante y post — ofreciendo análisis del encuentro.</td>
+          <td>FB + TikTok + IG</td>
+          <td>Azteca Deportes</td>
+          <td style="text-align:center">1</td>
+          <td style="text-align:right">$220,000</td>
+          <td style="text-align:center">Patrocinio</td>
+          <td style="text-align:center">2</td>
+          <td style="text-align:right">300,000</td>
+          <td style="text-align:right">600,000</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">—</td>
+          <td style="text-align:right">$220,000</td>
+        </tr>
+        <tr class="pdf-total-row">
+          <td colspan="15">TOTAL COMPRA DIRECTA</td>
+          <td>$1,765,000</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Section 2: Programático -->
+    <div class="pdf-sec-hd" style="margin-top:2px">PROGRAMÁTICO — CTV</div>
+    <table class="pdf-tbl">
+      <thead>
+        <tr>
+          <th style="width:78px">Temporalidad</th>
+          <th>Concepto</th>
+          <th>Propiedad</th>
+          <th>Plataforma</th>
+          <th style="width:68px">Universo</th>
+          <th>Canal</th>
+          <th style="width:52px">% Alcance</th>
+          <th style="width:52px">Tarifa</th>
+          <th style="width:60px">Tipo compra</th>
+          <th style="width:45px">Frec.</th>
+          <th style="width:62px">Alcance</th>
+          <th style="width:68px">Impresiones</th>
+          <th style="width:62px">Views</th>
+          <th style="width:50px">VTR</th>
+          <th style="width:68px">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3">DIC — NAVIDAD</td>
+          <td>Video Ads Tubi</td>
+          <td>Video Ads</td>
+          <td>TUBI</td>
+          <td style="text-align:right">8,100,000</td>
+          <td>TUBI</td>
+          <td style="text-align:center">30.57%</td>
+          <td style="text-align:right">$140</td>
+          <td style="text-align:center">CPM</td>
+          <td style="text-align:center">3</td>
+          <td style="text-align:right">2,476,190</td>
+          <td style="text-align:right">7,428,571</td>
+          <td style="text-align:right">5,942,857</td>
+          <td style="text-align:center">80.0%</td>
+          <td style="text-align:right">$800,000</td>
+        </tr>
+        <tr>
+          <td>Video Ads Pluto TV</td>
+          <td>Video Ads</td>
+          <td>PLUTO TV</td>
+          <td style="text-align:right">5,500,000</td>
+          <td>PLUTO TV</td>
+          <td style="text-align:center">30.30%</td>
+          <td style="text-align:right">$140</td>
+          <td style="text-align:center">CPM</td>
+          <td style="text-align:center">3</td>
+          <td style="text-align:right">1,666,667</td>
+          <td style="text-align:right">5,000,000</td>
+          <td style="text-align:right">4,000,000</td>
+          <td style="text-align:center">80.0%</td>
+          <td style="text-align:right">$800,000</td>
+        </tr>
+        <tr>
+          <td>Video Ads TV Azteca</td>
+          <td>Video Ads</td>
+          <td>AZTECA</td>
+          <td style="text-align:right">2,000,000</td>
+          <td>AZTECA MEDIA</td>
+          <td style="text-align:center">30.95%</td>
+          <td style="text-align:right">$140</td>
+          <td style="text-align:center">CPM</td>
+          <td style="text-align:center">3</td>
+          <td style="text-align:right">619,048</td>
+          <td style="text-align:right">1,857,143</td>
+          <td style="text-align:right">1,485,714</td>
+          <td style="text-align:center">80.0%</td>
+          <td style="text-align:right">$400,000</td>
+        </tr>
+        <tr class="pdf-total-row">
+          <td colspan="10">Alcance Único Estimado: 4,313,320</td>
+          <td colspan="4" style="text-align:right">TOTAL PROGRAMÁTICO</td>
+          <td>$2,000,000</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Grand totals -->
+    <div class="pdf-totals-wrap">
+      <table class="pdf-totals-table">
+        <tr><td>Total Compra Directa</td><td style="text-align:right">$1,765,000</td></tr>
+        <tr><td>Total Programático / CTV</td><td style="text-align:right">$2,000,000</td></tr>
+        <tr class="grand"><td><strong>INVERSIÓN TOTAL</strong></td><td style="text-align:right"><strong>$3,765,000</strong></td></tr>
+        <tr><td colspan="2" style="font-size:9px;color:#888;text-align:center">Precios en MXN. No incluye IVA. Sujeto a disponibilidad de inventario.</td></tr>
+      </table>
+    </div>
+
+    <!-- Notas generales -->
+    <div class="pdf-notes">
+      <label>Notas generales de la propuesta / Objetivo de campaña</label>
+      <p>
+        Generar awareness para la marca durante el evento, aprovechando el alto alcance de los contenidos deportivos de TV Azteca a nivel nacional. La propuesta es modular: el cliente puede seleccionar las propiedades con las que desea participar.
+        <br><br>
+        <em style="color:#aaa">[Campo de texto libre — el ejecutivo completa este espacio al elaborar la cotización en Salesforce: objetivo de campaña, racional estratégico, condiciones especiales o cualquier observación relevante para el cliente.]</em>
+      </p>
+    </div>
+
+    <!-- T&C -->
+    <div class="pdf-tc">
+      <label>Términos y Condiciones</label>
+      <p>
+        <strong style="color:#c77700">[PENDIENTE — Texto a proveer por Legal / TV Azteca]</strong>
+        &nbsp;Esta sección incluirá los términos y condiciones oficiales aprobados por el área Legal de TV Azteca. Si el texto no está disponible al momento del arranque del proyecto, esta sección se incorporará en una fase posterior como backlog. Los términos actuales se comunican por correo electrónico (exclusión de IVA, cambios sujetos a disponibilidad de inventario).
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="pdf-footer">
+      <span>TV Azteca Digital · Ventas Digitales · Grupo Salinas</span>
+      <strong>COT-2026-00001</strong>
+      <span>Generado automáticamente desde Salesforce Media Cloud</span>
+    </div>
+
+  </div><!-- end pdf-wrap -->
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E6 — RAID LOG
+════════════════════════════════════════════════════════════ -->
+<div id="e6" class="content">
+  <div class="page-hd">
+    <h1>E6 — RAID Log: Riesgos, Suposiciones, Incidencias y Decisiones Pendientes</h1>
+    <p>Estado al 30-Jun-2026. Actualizado con la devolutiva del cliente (30-Jun-2026) que resuelve Q-1 y con las decisiones de sesión 26-May-2026 (Portal de Costos / Rentabilidad).</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">!</div>Pendientes Críticos — Información Requerida de TV Azteca</div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr><th>Prioridad</th><th>Pendiente</th><th>Responsable</th><th>Impacto si no llega</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-done">✅ RECIBIDO</span></td>
+            <td><strong>Ejemplo de cotización del equipo de Óscar Sebastián</strong><br><span style="font-size:11px;color:var(--sf-label)">Recibido: Campaña Kelloggs Pringles / Mundial 2026. El análisis comparativo con el ejemplo de Karol Jardines (MeLi / Navidad) permitió definir el set de columnas unificado propuesto en E4.</span></td>
+            <td>Óscar Sebastián</td>
+            <td>—</td>
+            <td><span class="badge badge-done">Recibido</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">✅ RESUELTO</span></td>
+            <td><strong>Validación del formato único propuesto por TV Azteca</strong><br><span style="font-size:11px;color:var(--sf-label)">Confirmado por el cliente en devolutiva 30-Jun-2026. Ajustes aplicados sobre la propuesta E4: separación de <strong>Tipo de compra</strong> (CPM · CPC · Patrocinio) respecto de la <strong>Tarifa</strong>, y adición de <strong>CTR estimado</strong> (Compra Directa) y <strong>VTR</strong> (Programático/CTV). El template queda habilitado para construcción.</span></td>
+            <td>Dirección Ventas Digitales — todas las áreas</td>
+            <td>—</td>
+            <td><span class="badge badge-done">Resuelto</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-risk">🟡 MEDIO</span></td>
+            <td><strong>Texto de Términos y Condiciones aprobado por Legal</strong><br><span style="font-size:11px;color:var(--sf-label)">Texto legal vigente para campañas digitales. Si existen variantes por tipo de campaña (directa vs. programática), enviar todas las versiones.</span></td>
+            <td>Legal / TV Azteca</td>
+            <td>El template arrancará con placeholder. Se incorpora en fase posterior si no está disponible — no bloquea el arranque.</td>
+            <td><span class="badge badge-pend">Backlog si no está disponible</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">✅ RESUELTO</span></td>
+            <td><strong>Política de vigencia de la cotización</strong><br><span style="font-size:11px;color:var(--sf-label)">Acordado en sesión del 26-May-2026: la cotización expira automáticamente a los <strong>90 días naturales</strong> sin respuesta del cliente. El Scheduled Flow actualizará el estado de la Quote a "Expirada" al vencimiento. Parámetro configurable sin cambios de código.</span></td>
+            <td>Dirección Ventas</td>
+            <td>—</td>
+            <td><span class="badge badge-done">Resuelto — 90 días</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">P</div>Parking Lot — Para Fases Posteriores</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Tema</th><th>Descripción</th><th>Condición para activar</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-parking">Firma digital</span></td>
+            <td><strong>Integración con herramienta de firma digital</strong> (DocuSign u equivalente)<br><span style="font-size:11px;color:var(--sf-label)">La aceptación de la cotización en la primera fase se gestiona por correo electrónico. Una herramienta de firma digital puede incorporarse en una fase posterior si TV Azteca lo requiere y se aprueba como cambio de alcance.</span></td>
+            <td>Solicitud formal de TV Azteca + aprobación de Change Order</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-parking">Branding formal</span></td>
+            <td><strong>Ajustes de branding completo del template</strong><br><span style="font-size:11px;color:var(--sf-label)">Aplicación de paleta de colores corporativa, tipografías y guía de diseño completa al template del PDF. En la primera versión se utiliza únicamente el logo de TV Azteca.</span></td>
+            <td>Entrega del Brand Kit por Diseño / Comunicación Corporativa</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-parking">T&C dinámicos</span></td>
+            <td><strong>Términos y Condiciones variables por tipo de campaña</strong><br><span style="font-size:11px;color:var(--sf-label)">Si existen cláusulas específicas para venta directa vs. programática vs. patrocinio, el template puede incorporar lógica condicional de secciones para mostrar el T&C correspondiente automáticamente.</span></td>
+            <td>Entrega del texto legal con variantes por Legal / TV Azteca</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E7 — MINUTA
+════════════════════════════════════════════════════════════ -->
+<div id="e7" class="content">
+  <div class="page-hd">
+    <h1>E7 — Minuta de Sesión</h1>
+    <p>Registro de acuerdos y acciones derivadas de la sesión de Discovery del 25-May-2026.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">i</div>Datos de la Sesión</div>
+    <div class="card-body">
+      <div class="fgrid cols3">
+        <div class="field"><div class="label">Fecha</div><div class="val">25 de Mayo de 2026</div></div>
+        <div class="field"><div class="label">Tipo</div><div class="val">Discovery — Generación Automatizada del Documento de Cotización</div></div>
+        <div class="field"><div class="label">Estado</div><div class="val"><span class="badge badge-pend">Pendiente validación</span></div></div>
+      </div>
+      <div class="sec-hd">Participantes</div>
+      <p style="font-size:12px">María Fernanda Tavira Suárez · Karol Alondra Jardines Luna · Óscar Sebastián · Ana Ruth Salinas · Carlos Rojas · Daniel Murcia · Edgar Azeka · Gustavo Richter · Nicolas Papa · Saul Ricardo Hernandez · Carlos Alberto Pereyra Valverde · Hector Guerrero Herrera · José Carlos Padilla · Lessly Cárams · Gustavo Sant'Anna · y otros (ver invitados de la convocatoria)</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">✓</div>Decisiones y Acuerdos de la Sesión</div>
+    <div class="card-body">
+      <ul class="decision-list" style="margin-left:16px">
+        <li style="margin:8px 0;font-size:12px">Se evaluó el formato de cotización actual (Excel) y se identificaron inconsistencias entre equipos. Se acordó crear un template universal que estandarice la información para todos los ejecutivos.</li>
+        <li style="margin:8px 0;font-size:12px">Se confirmó la necesidad de incluir campos de texto libre — tanto por línea (racional de la recomendación) como a nivel general de la propuesta (observaciones y condiciones) — en el documento generado. Esta práctica ya existe en el proceso actual.</li>
+        <li style="margin:8px 0;font-size:12px">El mecanismo de aceptación del cliente será por correo electrónico. Herramientas de firma digital quedan fuera del alcance actual del proyecto.</li>
+        <li style="margin:8px 0;font-size:12px">Si el equipo de implementación rechaza una línea específica de la ODS, el resto de las líneas continúa sin interrupción. La corrección de la línea rechazada se gestiona de forma independiente.</li>
+        <li style="margin:8px 0;font-size:12px">Los Términos y Condiciones se integrarán al template. Si el texto aprobado por Legal no está disponible al arranque, esta sección queda en backlog para una fase posterior.</li>
+        <li style="margin:8px 0;font-size:12px">El versionamiento de cotizaciones se gestiona mediante la creación de múltiples Quotes en la misma Oportunidad, comportamiento nativo de Salesforce Revenue Cloud.</li>
+        <li style="margin:8px 0;font-size:12px">Se identificó como necesidad futura (parking lot) la consolidación de medios en una vista que combine televisión y digital en un mismo plan de medios.</li>
+      </ul>
+      <div class="alert alert-info" style="margin-top:12px">ℹ️ <div><strong>Sesión complementaria — 26-May-2026 (Portal de Costos, Rentabilidad y Crédito):</strong><br>
+      • <strong>Envío de PDF:</strong> Se confirmó que las cuentas de correo personales de los ejecutivos no pueden configurarse en Salesforce. El envío se realizará desde una cuenta de servicio institucional con el ejecutivo en CC. El ejecutivo podrá personalizar el texto del correo o descargar el PDF y enviarlo por el canal de su preferencia.<br>
+      • <strong>Vigencia:</strong> Acordada en 90 días naturales. Expiración automática via Scheduled Flow.<br>
+      • <strong>Rechazo en aprobación de rentabilidad:</strong> El rechazo aplica a la cotización completa (no por línea). La cotización regresa al ejecutivo para ajuste de márgenes. SLA del aprobador: 24 horas con recordatorio automático a las 12 horas.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">→</div>Acciones Comprometidas (Action Items)</div>
+    <div class="card-body">
+      <div class="action-row">
+        <span class="action-who">Karol Jardines</span>
+        <span>Compartir el machote de cotización utilizado en el área de ventas del Grupo. <strong>(Recibido ✅ — ejemplo Mercado Libre / Navidad)</strong></span>
+      </div>
+      <div class="action-row">
+        <span class="action-who">Óscar Sebastián</span>
+        <span>Enviar el ejemplo de cotización utilizado en su equipo de trabajo. <span class="badge badge-done">✅ Recibido — Kelloggs Pringles / Mundial 2026</span></span>
+      </div>
+      <div class="action-row">
+        <span class="action-who">El grupo</span>
+        <span>Validar la propuesta de formato unificado elaborada a partir de los dos ejemplos recibidos (ver E4 — Análisis de Homologación). <span class="badge badge-pend">En revisión con cliente</span></span>
+      </div>
+      <div class="action-row">
+        <span class="action-who">Karol Jardines</span>
+        <span>Enviar un ejemplo de media plan consolidado que integre televisión y medios digitales (para análisis de fase futura). <span class="badge badge-open">Pendiente</span></span>
+      </div>
+      <div class="action-row">
+        <span class="action-who">El grupo / Legal</span>
+        <span>Revisar y definir las cláusulas de privacidad, T&C y políticas para incluir en el template oficial. Si no está disponible al arranque, se incorpora en backlog. <span class="badge badge-pend">En revisión</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

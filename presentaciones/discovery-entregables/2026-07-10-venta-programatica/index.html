@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venta Programática — Discovery Entregables | TV Azteca × Salesforce</title>
+<style>
+:root {
+  --sf-blue:#0070d2; --sf-dark:#032d60; --sf-green:#04844b; --sf-red:#c23934;
+  --sf-orange:#e07000; --sf-purple:#716caa; --sf-yellow:#ffb75d;
+  --sf-bg:#f3f2f2; --sf-white:#ffffff; --sf-border:#dddbda;
+  --sf-text:#3e3e3c; --sf-label:#706e6b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Salesforce Sans','Segoe UI',Arial,sans-serif;font-size:13px;
+  color:var(--sf-text);background:var(--sf-bg);line-height:1.5}
+
+/* ── NAV ── */
+.app-bar{background:var(--sf-dark);height:48px;display:flex;align-items:center;
+  padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.app-bar-title{color:#fff;font-size:15px;font-weight:700;letter-spacing:.3px}
+.app-bar-sub{color:rgba(255,255,255,0.65);font-size:12px;margin-left:12px}
+
+.tab-bar{background:var(--sf-blue);display:flex;gap:2px;padding:0 16px;
+  position:sticky;top:48px;z-index:99;overflow-x:auto}
+.tab{color:rgba(255,255,255,0.8);padding:10px 16px;font-size:12px;font-weight:700;
+  cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;
+  transition:all .2s;letter-spacing:.2px}
+.tab:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.tab.active{color:#fff;border-bottom-color:var(--sf-yellow);background:rgba(255,255,255,0.15)}
+
+/* ── CONTENT ── */
+.content{display:none;padding:20px;max-width:1100px;margin:0 auto}
+.content.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px;
+  margin-bottom:16px;box-shadow:0 2px 4px rgba(0,0,0,0.06)}
+.card-header{background:var(--sf-dark);color:#fff;padding:10px 16px;font-size:13px;
+  font-weight:700;border-radius:4px 4px 0 0;display:flex;align-items:center;gap:8px}
+.card-header .num{background:var(--sf-yellow);color:var(--sf-dark);border-radius:50%;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;flex-shrink:0}
+.card-body{padding:16px}
+
+/* ── SECTION HEADERS ── */
+.sec-hd{font-size:11px;font-weight:700;color:var(--sf-label);text-transform:uppercase;
+  letter-spacing:.5px;margin:16px 0 8px;border-bottom:1px solid var(--sf-border);padding-bottom:4px}
+.sec-hd:first-child{margin-top:0}
+
+/* ── FIELD GRID ── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:12px}
+.fgrid.cols3{grid-template-columns:1fr 1fr 1fr}
+.fgrid.cols1{grid-template-columns:1fr}
+.field .label{font-size:11px;color:var(--sf-label);text-transform:uppercase;
+  font-weight:600;letter-spacing:.3px;margin-bottom:3px}
+.field .val{font-size:13px;color:var(--sf-text);font-weight:600}
+.field .val.muted{font-weight:400;color:var(--sf-label)}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px}
+th{background:var(--sf-dark);color:#fff;padding:7px 10px;text-align:left;font-weight:700;
+  font-size:11px;letter-spacing:.3px}
+td{padding:7px 10px;border-bottom:1px solid var(--sf-border);vertical-align:top}
+tr:nth-child(even) td{background:#f9f9f9}
+tr:hover td{background:#eef5ff}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;
+  font-weight:700;letter-spacing:.2px}
+.badge-must{background:#fde8e8;color:#c23934;border:1px solid #f4b8b8}
+.badge-should{background:#fef3cd;color:#8a6000;border:1px solid #f5d87a}
+.badge-nice{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5}
+.badge-ootb{background:#e8f9ee;color:#04844b;border:1px solid #8dd4a6}
+.badge-config{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5}
+.badge-custom{background:#fde8e8;color:#c23934;border:1px solid #f4b8b8}
+.badge-integ{background:#f3f0ff;color:#5c1fad;border:1px solid #c7b0f5}
+.badge-oob2{background:#e8f9ee;color:#04844b}
+.badge-open{background:#fde8e8;color:#c23934}
+.badge-done{background:#e8f9ee;color:#04844b}
+.badge-pend{background:#fef3cd;color:#8a6000}
+.badge-blocker{background:#c23934;color:#fff}
+.badge-risk{background:#e07000;color:#fff}
+.badge-dep{background:#716caa;color:#fff}
+.badge-decision{background:#04844b;color:#fff}
+.badge-assumption{background:#0070d2;color:#fff}
+.badge-warn{background:#e07000;color:#fff}
+
+/* ── ALERTS ── */
+.alert{display:flex;gap:10px;padding:10px 14px;border-radius:4px;margin-bottom:12px;
+  font-size:12px;border-left:4px solid}
+.alert-info{background:#e8f4fd;border-color:var(--sf-blue)}
+.alert-warn{background:#fef3cd;border-color:var(--sf-orange)}
+.alert-ok{background:#e8f9ee;border-color:var(--sf-green)}
+.alert-err{background:#fde8e8;border-color:var(--sf-red)}
+
+/* ── PROCESS FLOW ── */
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;
+  background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px;
+  margin-bottom:2px;position:relative}
+.flow-step:not(:last-child)::after{content:'↓';position:absolute;bottom:-14px;left:22px;
+  color:var(--sf-label);font-size:14px;z-index:1}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;color:#fff}
+.step-body strong{font-size:12px;display:block;margin-bottom:2px}
+.step-body p{font-size:11px;color:var(--sf-label)}
+.step-blue .step-num{background:var(--sf-blue)}
+.step-green .step-num{background:var(--sf-green)}
+.step-orange .step-num{background:var(--sf-orange)}
+.step-purple .step-num{background:var(--sf-purple)}
+.step-dark .step-num{background:var(--sf-dark)}
+.step-red .step-num{background:var(--sf-red)}
+.step-teal .step-num{background:#008a8a}
+
+/* ── SWIMLANE ── */
+.swimlane{border:1px solid var(--sf-border);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.sl-header{display:grid;background:var(--sf-dark)}
+.sl-cell-hd{color:#fff;font-size:11px;font-weight:700;padding:8px 10px;
+  border-right:1px solid rgba(255,255,255,0.2);text-align:center}
+.sl-row{display:grid;border-bottom:1px solid var(--sf-border)}
+.sl-row:last-child{border-bottom:none}
+.sl-row:nth-child(even){background:#f9f9f9}
+.sl-cell{padding:8px 10px;border-right:1px solid var(--sf-border);font-size:11px;
+  vertical-align:top}
+.sl-cell:last-child{border-right:none}
+.actor-box{display:inline-block;background:#e8f4fd;border:1px solid #a8d4f5;
+  border-radius:3px;padding:2px 7px;font-size:11px;color:#005ea2;font-weight:600}
+.rn-ref{display:inline-block;background:var(--sf-dark);color:#fff;border-radius:3px;
+  padding:1px 6px;font-size:10px;font-weight:700}
+
+/* ── RN LIST ── */
+.rn-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;
+  border-bottom:1px solid var(--sf-border);font-size:12px}
+.rn-item:last-child{border-bottom:none}
+.rn-id{font-weight:900;color:var(--sf-dark);font-size:11px;white-space:nowrap;
+  min-width:70px}
+.rn-desc{flex:1}
+.rn-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+
+/* ── RAID ── */
+.raid-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── MINUTES ── */
+.minutes-meta{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px}
+.minutes-meta .item{font-size:12px}
+.minutes-meta .item strong{color:var(--sf-label);font-size:11px;
+  text-transform:uppercase;display:block}
+.decision-list li{margin:6px 0;font-size:12px;padding-left:4px}
+.decision-list li::marker{color:var(--sf-green);font-weight:700}
+.action-row{display:flex;gap:8px;align-items:baseline;padding:6px 0;
+  border-bottom:1px solid var(--sf-border);font-size:12px}
+.action-row:last-child{border-bottom:none}
+.action-who{color:var(--sf-blue);font-weight:700;min-width:120px}
+
+/* ── PAGE HEADER ── */
+.page-hd{margin-bottom:20px}
+.page-hd h1{font-size:18px;font-weight:700;color:var(--sf-dark);margin-bottom:4px}
+.page-hd p{font-size:12px;color:var(--sf-label)}
+.status-strip{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;padding:10px 14px;
+  background:var(--sf-white);border:1px solid var(--sf-border);border-radius:4px}
+.status-strip .item{font-size:12px}
+.status-strip .item span{font-weight:700;color:var(--sf-text)}
+.status-strip .item label{color:var(--sf-label);font-size:11px;text-transform:uppercase;
+  display:block}
+</style>
+</head>
+<body>
+
+<div class="app-bar">
+  <span class="app-bar-title">Venta Programática — Discovery Entregables</span>
+  <span class="app-bar-sub">TV Azteca × Salesforce Media Cloud | Release 2 | v1.2 — Jun 2026</span>
+  <a href="../../../index.html" title="Inicio" style="margin-left:auto;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;text-decoration:none;flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.12)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="show('e1',this)">E1 — Contexto Negocio</div>
+  <div class="tab" onclick="show('e2',this)">E2 — Diagrama Proceso</div>
+  <div class="tab" onclick="show('e3',this)">E3 — BRD Requisitos</div>
+  <div class="tab" onclick="show('e4',this)">E4 — RAID Log</div>
+  <div class="tab" onclick="show('e5',this)">E5 — Artefactos</div>
+  <div class="tab" onclick="show('e6',this)">E6 — Diseño Solución</div>
+  <div class="tab" onclick="show('e7',this)">E7 — Minuta Sesiones</div>
+  <div class="tab" onclick="show('e8',this)">E8 — Diagramas BPMN</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E1 — BUSINESS CONTEXT BRIEF
+════════════════════════════════════════════════════════════ -->
+<div id="e1" class="content active">
+  <div class="page-hd">
+    <h1>E1 — Business Context Brief: Venta Programática</h1>
+    <p>Captura del estado actual (AS-IS) y estado futuro deseado (TO-BE) del proceso de venta programática digital en TV Azteca.</p>
+    <div class="status-strip">
+      <div class="item"><label>Versión</label><span>1.2</span></div>
+      <div class="item"><label>Fecha</label><span>17-Jun-2026</span></div>
+      <div class="item"><label>Sesiones base</label><span>18-May / 19-May / 25-May / 17-Jun 2026</span></div>
+      <div class="item"><label>Estado</label><span class="badge badge-done">Cerrado — diseño confirmado</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">1</div>Objetivo del Proceso e Impacto en el Negocio</div>
+    <div class="card-body">
+      <p>El proceso de <strong>Venta Programática</strong> permite a TV Azteca comercializar su inventario digital mediante acuerdos automatizados con compradores (DSPs / Exchanges), diferenciándose de la venta directa en que el precio y/o la entrega son gestionados por el exchange (GAM). Cubre tres modalidades: <strong>Programática Garantizada (PG)</strong>, <strong>Acuerdo Preferente (PD)</strong> y <strong>Subasta Abierta (Open)</strong>.</p>
+      <br>
+      <p>Hoy la programática representa entre el <strong>20–30%</strong> del volumen de impresiones (vs. 70–80% de venta directa) y la tendencia es de crecimiento sostenido. El proceso actual es enteramente manual en GAM sin registro centralizado en un CRM — lo que genera falta de trazabilidad comercial, riesgo de conciliación y ausencia de visibilidad para la Dirección de Ventas.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">2</div>Actores / Personas Involucradas</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Persona</th><th>Rol en el Proceso</th><th>Sistema Actual</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ejecutivo de Ventas</strong></td><td>Cierra el acuerdo comercial con el anunciante / agencia; define tipo de deal, CPM, impresiones, fechas</td><td>SBD (sistema de ventas)</td></tr>
+          <tr><td><strong>Implementador / AdOps</strong></td><td>Hub central que recibe todas las ventas programáticas y las distribuye a los equipos de traffickers. <strong>No ejecuta directamente en GAM.</strong> Coordina la activación, distribuye deals entre gerencias y gestiona el flujo entre ejecutivos y traffickers.</td><td>Salesforce + coordinación GAM</td></tr>
+          <tr><td><strong>Trafficker</strong></td><td>Ejecuta directamente en GAM: configura Seat IDs, sube creatividades, activa el deal, monitorea la entrega diaria (PG/PD) y gestiona ajustes de segmentación y targeting internos. <strong>1 trafficker por gerencia de ventas</strong> (con 2 excepciones donde hay más de uno). Requiere credenciales individuales en GAM — no se comparten entre traffickers.</td><td>Google Ad Manager (GAM)</td></tr>
+          <tr><td><strong>Contraloría / Administración</strong></td><td>Valida conciliación mensual de ingresos reales vs. comprometidos; base para facturación</td><td>SBD + reportes GAM</td></tr>
+          <tr><td><strong>Comprador DSP</strong></td><td>Recibe notificación del deal activado; configura y activa desde su plataforma</td><td>DSP externo (The Trade Desk, DV360, etc.)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">3</div>Pain Points AS-IS</div>
+    <div class="card-body">
+      <div class="alert alert-err">⛔ <div><strong>Sin registro CRM:</strong> Los deals programáticos se crean directamente en GAM sin pasar por ningún sistema de ventas. No hay trazabilidad del proceso comercial previo a la activación.</div></div>
+      <div class="alert alert-err">⛔ <div><strong>Conciliación manual:</strong> La conciliación de impresiones entregadas vs. contratadas se hace manualmente con reportes exportados de GAM y procesados en Excel/Google Data Studio. No existe automatización.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Fuente de verdad de montos:</strong> Para venta directa, el monto de facturación viene del SBD (no de GAM). Los valores en GAM son referencia. Para programática, el monto viene del exchange — pero no hay un proceso formal que asegure la coincidencia entre SBD y GAM.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Sin proceso de amendment formal:</strong> Los cambios a órdenes activas (impresiones, fechas, targeting) se ejecutan directamente en GAM sin un proceso documentado ni aprobación del cliente registrada.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Notificación manual al comprador DSP:</strong> Hoy el Implementador notifica manualmente al comprador DSP con el Deal ID una vez activado el deal. Sin automatización ni registro.</div></div>
+      <div class="alert alert-warn">⚠️ <div><strong>Contratos dispersos:</strong> Los contratos por plataforma (Google, Amazon, Magnite, Equativ) no están centralizados en ningún sistema. Targetcast como razón social pagadora no está modelada.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">4</div>Expectativas TO-BE</div>
+    <div class="card-body">
+      <div class="fgrid">
+        <div>
+          <div class="sec-hd">Proceso Comercial</div>
+          <ul style="margin-left:16px;font-size:12px;line-height:1.8">
+            <li>El Ejecutivo registra el deal programático en Salesforce como parte de la ODS (Cotización)</li>
+            <li>Los campos programáticos (Tipo de venta, Floor Price, Seat ID / Buyer ID del DSP) son atributos de la Ad Order Item</li>
+            <li>Al aprobar y activar la Cotización, Salesforce <strong>llama directamente la Media Cloud AdTech API</strong> para ingresar la Proposal en GAM — <strong>sin pasar por DRO ni por el proceso estándar de Order</strong> (confirmado por equipo de producto Salesforce, 17-Jun-2026 — D-16)</li>
+            <li>Los <strong>3 IDs generados por GAM</strong> (Deal ID, Marketplace ID, Line Item ID) se escriben automáticamente de vuelta en la Ad Order Item. Email automático RN-063 notifica al comprador DSP con los 3 IDs.</li>
+            <li>Tras aprobación del comprador DSP, GAM convierte la Proposal en Order. Salesforce <strong>hace polling de estado en GAM</strong> y, al detectar la conversión, <strong>cierra el Quote-to-Order en Salesforce</strong> para completar el registro (D-19)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sec-hd">Conciliación y Monitoreo</div>
+          <ul style="margin-left:16px;font-size:12px;line-height:1.8">
+            <li><strong>PG/PD actuals:</strong> el <strong>GAM Data Cloud Connector</strong> ingesta los datos de entrega de GAM en Data Cloud. El cálculo de facturación (impresiones entregadas, valor neto con comisión AdServer) se lee desde Data Cloud — los datos de entrega <strong>no se escriben de vuelta en campos CRM</strong>.</li>
+            <li>Dashboard en Salesforce muestra avance de entrega vs. comprometido por línea de pedido (datos desde Data Cloud)</li>
+            <li><strong>Open Auction: no hay ODS previa ni Proposal en GAM.</strong> AdOps configura Inventory Rules directamente en GAM. La Order en Salesforce se crea post-facto en la conciliación mensual con base en actuals de Data Cloud.</li>
+            <li>Contratos por plataforma programática centralizados en Salesforce</li>
+            <li><strong>Arquitectura de actuals confirmada:</strong> GAM Connector → Data Cloud (no Scheduled Flow directo a GAM API). El campo de estadísticas de entrega en el conector está serializado en un solo campo — se requiere engagement con equipo Data Cloud para conocer el schema (Q-08).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">5</div>Restricciones Conocidas</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Tipo</th><th>Restricción</th><th>Impacto</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Contractual</strong></td><td>SOW limita integración a GAM y Meta. Amazon, Magnite, Equativ requieren Change Order.</td><td>Alto — define alcance</td></tr>
+          <tr><td><strong>Contractual</strong></td><td>SOW limita a los 50 productos ya configurados en Release 1</td><td>Medio</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>No hay MuleSoft disponible — integración con GAM es directa desde SFDC via Media Cloud AdTech API</td><td>Alto — define arquitectura</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>GAM no soporta webhooks — los actuals de entrega se ingestan via GAM Data Cloud Connector (pull). El estado de aprobación del comprador requiere polling periódico al GAM para detectar la conversión de Proposal a Order (D-19)</td><td>Medio — define cadencia de polling y arquitectura del conector</td></tr>
+          <tr><td><strong>Operativa</strong></td><td>Anunciantes con contratos directos con Azteca no pueden redirigir presupuesto existente a programática — requieren pago adicional</td><td>Bajo — no impacta sistema</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>Plataformas de compra deben estar registradas en GAM para poder enviar solicitudes. Si no están, requiere solicitud de inclusión.</td><td>Medio — impacta onboarding de nuevos DSPs</td></tr>
+          <tr><td><strong>Operativa</strong></td><td>Una vez que una propuesta GAM es directa, no puede volverse programática y viceversa</td><td>Bajo — aplica a GAM, no a SFDC</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">6</div>Itens Pendientes para Cierre de Análisis y Diseño de Solución</div>
+    <div class="card-body">
+      <div class="alert alert-info">ℹ️ <div>Esta sección distingue dos categorías: <strong>(A) Pendientes para cerrar el diseño de solución</strong> — deben resolverse antes de redactar User Stories técnicas; <strong>(B) Pendientes para refinamiento</strong> — puntos que la squad definirá en la etapa de refinamiento como parte normal del proceso, sin bloquear la apertura de las User Stories.</div></div>
+
+      <div class="sec-hd">A — Pendientes para Cerrar el Diseño de Solución</div>
+      <table>
+        <thead><tr><th>#</th><th>Pendiente</th><th>Quién</th><th>Impacto si no se cierra</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-open">Q-08</span></td>
+            <td><strong>Schema del campo serializado en el GAM Data Cloud Connector</strong><br>El campo de estadísticas de entrega (<em>stats delivery information</em>) llega serializado en un único campo cuyo formato es desconocido. Sin este schema no es posible diseñar el dashboard de conciliación ni el cálculo de facturación desde Data Cloud.</td>
+            <td>Equipo Data Cloud — Salesforce</td>
+            <td>Bloquea diseño de dashboard de conciliación y cálculo de valor facturable para PG/PD y Open Auction</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-open">Q-09</span></td>
+            <td><strong>Field mapping materials: objetos Salesforce → atributos GAM</strong><br>Goutham Kandregula se comprometió a compartir los materiales de mapeo de campos (source objects en Salesforce → atributos de Proposal y ProposalLineItem en GAM). Sin este mapeo, el payload de la Integration Procedure no puede diseñarse con precisión.</td>
+            <td>Goutham Kandregula — Salesforce Product</td>
+            <td>Bloquea diseño técnico del payload de integración y definición de campos custom en Ad Quote Item</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-open">ART-01</span></td>
+            <td><strong>Service Account Google Cloud (GAM) para entornos prod y QA</strong><br>Necesaria para configurar Named Credentials en Salesforce y habilitar los callouts autenticados a la GAM API desde la Integration Procedure.</td>
+            <td>TV Azteca TI</td>
+            <td>Bloquea desarrollo y pruebas de integración en sandbox</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sec-hd" style="margin-top:20px">B — Pendientes para la Etapa de Refinamiento (Squad)</div>
+      <div class="alert alert-ok" style="margin-bottom:12px">✅ <div>Estos puntos <strong>no bloquean la apertura de User Stories</strong>. Son detalles de diseño técnico e implementación que la squad resolverá en los sprints de refinamiento como parte normal del proceso de desarrollo.</div></div>
+      <table>
+        <thead><tr><th>#</th><th>Punto pendiente</th><th>Contexto</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Secuencia de llamada GAM</strong></td>
+            <td>¿La Integration Procedure crea Proposal y ProposalLineItem en una sola llamada simultánea o en llamadas secuenciales? La decisión impacta el diseño del manejo de errores parciales.</td>
+            <td>Define &amp; Build — Daniel Murcia con base en field mapping de Goutham (Q-09)</td>
+          </tr>
+          <tr>
+            <td><strong>Cadencia del polling de estado GAM</strong></td>
+            <td>¿Con qué frecuencia Salesforce consulta el estado de la Proposal en GAM para detectar la conversión a Order? (D-19). Opciones: Apex Schedulable horario, Queueable con reintentos, o acción manual del Trafficker.</td>
+            <td>Define &amp; Build — decisión técnica de implementación</td>
+          </tr>
+          <tr>
+            <td><strong>Campo AdServerOrderIdentifier</strong></td>
+            <td>Validar si el campo estándar <code>AdServerOrderIdentifier</code> en AdItem es el candidato correcto para almacenar el GAM Order ID al cerrar el loop Quote-to-Order, evitando un campo custom (Q-10).</td>
+            <td>Refinamiento — Edgar / Daniel</td>
+          </tr>
+          <tr>
+            <td><strong>Modelo de permisos del Trafficker</strong></td>
+            <td>Diseño detallado del Permission Set del Trafficker en Salesforce para operar el flujo programático sin necesidad de acceder directamente a GAM (Q-07, D-11). Incluye asociación automática del Trafficker al deal.</td>
+            <td>Refinamiento — equipo GPS</td>
+          </tr>
+          <tr>
+            <td><strong>Proceso de conciliación de plataformas no-GAM</strong></td>
+            <td>Definir cómo se concilia Amazon, Magnite y Equativ, que operan de forma diferente en GAM (Q-05, R-05). Especialmente Equativ, que no consume "oportunidades" de manera estándar.</td>
+            <td>Refinamiento — GPS investiga antes del sprint de conciliación</td>
+          </tr>
+          <tr>
+            <td><strong>Diseño del dashboard de conciliación</strong></td>
+            <td>Métricas específicas, granularidad (por deal, por plataforma, por período), y formato del reporte para Contraloría (RN-010). Depende de Q-08 para el schema de Data Cloud.</td>
+            <td>Refinamiento — después de cerrar Q-08</td>
+          </tr>
+          <tr>
+            <td><strong>Proceso de notificación a Contraloría (RN-064)</strong></td>
+            <td>Canal de notificación pendiente de confirmar: email directo vs. Chatter vs. notificación in-app Salesforce.</td>
+            <td>Refinamiento — TV Azteca Contraloría</td>
+          </tr>
+          <tr>
+            <td><strong>Modelo de contactos DSP múltiples por cuenta</strong></td>
+            <td>Una misma agencia puede tener contactos diferentes para venta directa y programática. Diseño del modelo de datos para múltiples contactos tipificados por cuenta (RN-014).</td>
+            <td>Refinamiento — equipo GPS / Edgar</td>
+          </tr>
+          <tr>
+            <td><strong>Valores de comisión AdServer por plataforma (ART-10)</strong></td>
+            <td>El diseño ya define el campo <code>Comision_AdServer__c</code> en el contrato de plataforma y la lógica de cálculo del valor neto. Los valores reales negociados por TV Azteca (ej. 10% para GAM, porcentaje diferente para Magnite) son datos de configuración — se cargan antes de UAT, no bloquean el diseño ni el desarrollo.</td>
+            <td>Refinamiento / pre-UAT — Rafa (TV Azteca Administración)</td>
+          </tr>
+          <tr>
+            <td><strong>User Stories del proceso de Amendment programático</strong></td>
+            <td>El proceso Order-to-Quote para modificar deals activos (D-05) requiere su propia User Story. El re-trigger de la Integration Procedure con acción "UpdateOrderWithSellerData" en GAM debe detallarse en Define &amp; Build.</td>
+            <td>Refinamiento — User Story separada</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E2 — PROCESS FLOW DIAGRAM
+════════════════════════════════════════════════════════════ -->
+<div id="e2" class="content">
+  <div class="page-hd">
+    <h1>E2 — Process Flow Diagram: Venta Programática TO-BE</h1>
+    <p>Flujo punta a punta del proceso de Venta Programática en Salesforce Media Cloud + GAM. Cubre PG y PD (deals con Seat ID). Open Auction tiene flujo simplificado al final.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">A</div>Flujo Principal — Deal Garantizado (PG) y Acuerdo Preferente (PD)</div>
+    <div class="card-body">
+
+      <!-- Swimlane -->
+      <div class="swimlane">
+        <div class="sl-header" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell-hd">Actor</div>
+          <div class="sl-cell-hd">Actividad</div>
+          <div class="sl-cell-hd">Sistema</div>
+          <div class="sl-cell-hd">Regla de Negocio</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Ejecutivo de Ventas</strong></div>
+          <div class="sl-cell"><strong>1. Crea Cotización con Ad Order Items programáticas</strong><br>
+            Selecciona producto con <code>Es_Programatico__c = true</code>. Completa: Tipo de Venta (PG/PD), Floor Price, Seat ID del comprador DSP, fechas, producto/inventario, moneda.</div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (ODS)</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-001</span> Tipo de venta define campos obligatorios. PG/PD requieren Seat ID. Open no.</div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Gerente / Director</strong></div>
+          <div class="sl-cell"><strong>2. Aprueba la Cotización</strong><br>
+            Proceso de aprobación estándar de SFDC. Si floor price está bajo mínimo, requiere aprobación de Director Comercial.</div>
+          <div class="sl-cell"><span class="actor-box">Salesforce (Approval Process)</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-002</span> Floor price mínimo por tipo de inventario definido en Custom Metadata.</div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Sistema SFDC</strong></div>
+          <div class="sl-cell"><strong>3. Cotización aprobada → Salesforce llama Media Cloud AdTech API → Crea Proposal en GAM</strong><br>
+            Al aprobar y activar la Cotización, Salesforce invoca directamente la <strong>Media Cloud AdTech API</strong> para crear la Proposal en GAM. <strong>No se genera una Order en Salesforce en este punto</strong> — el deal permanece como Cotización en Salesforce hasta que el comprador apruebe en GAM (D-16, D-17). El payload mapea: nombre del deal, <code>buyerAccountId</code> (Seat ID del comprador DSP), floor price, fechas, inventario. Solo PG y PD incluyen buyerAccountId — Open Auction no pasa por este flujo (D-12).
+            <div class="alert alert-info" style="margin-top:8px">ℹ️ <div>El patrón sigue el Managed Package (GAMP). En on-core, la invocación a la Media Cloud AdTech API se implementa vía una <strong>Integration Procedure</strong> — componente estándar de Salesforce Industries disponible sin OmniStudio Studio.</div></div></div>
+          <div class="sl-cell"><span class="actor-box">Salesforce → Media Cloud AdTech API → GAM</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-003</span> Solo PG y PD disparan creación de Proposal en GAM. Open Auction no — AdOps configura Inventory Rules directo en GAM (D-12).</div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>GAM → Salesforce</strong></div>
+          <div class="sl-cell"><strong>4. GAM retorna los 3 IDs → se escriben en la Ad Quote Item (Cotización aún activa)</strong><br>
+            Al crear la Proposal y ProposalLineItem en GAM, el sistema retorna tres identificadores que se escriben (read-only) en la <strong>Ad Quote Item</strong> de la Cotización — en este punto <strong>aún no existe una Order en Salesforce</strong>:
+            <ul style="margin:4px 0 0 16px;font-size:11px;line-height:1.8">
+              <li><code>GAM_Deal_ID__c</code> — identificador principal del deal</li>
+              <li><code>GAM_Marketplace_ID__c</code> — ID del marketplace en GAM</li>
+              <li><code>GAM_LineItem_ID__c</code> — ID del line item de la Proposal en GAM</li>
+            </ul>
+            Estado GAM cambia a "Propuesta enviada". Si GAM no responde, <code>Status_GAM__c</code> = "Pendiente GAM" + notificación a AdOps.</div>
+          <div class="sl-cell"><span class="actor-box">GAM → Salesforce (Ad Quote Item)</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-004</span> Los 3 IDs se almacenan en la Cotización, no en la Order — la Order se crea al cerrar el loop en el paso 7.</div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Sistema SFDC</strong></div>
+          <div class="sl-cell"><strong>5. Dispara Email automático RN-063 al comprador DSP</strong><br>
+            Email con: <strong>Deal ID + Marketplace ID + Line Item ID</strong>, tipo de deal, floor price, fechas, inventario e instrucciones de activación. Los 3 IDs son obligatorios — el comprador necesita los tres porque dependiendo de su plataforma es más fácil localizar el deal con uno u otro.<br><br>
+            Destinatario: contacto operativo programático del comprador (<code>Contacto_DSP_Comprador__c</code> en la Ad Order Item — puede diferir del contacto de venta directa de la misma cuenta).</div>
+          <div class="sl-cell"><span class="actor-box">Salesforce Flow (Email)</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-063</span> El email debe llegar directo al contacto operativo DSP. Los contactos programáticos pueden ser distintos a los de venta directa en la misma cuenta (RN-014).</div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Comprador DSP</strong></div>
+          <div class="sl-cell"><strong>6. Comprador revisa y acepta/rechaza el deal en su plataforma DSP</strong><br>
+            La Proposal en GAM entra en estado "En revisión del comprador". El comprador la localiza usando el Deal ID (o Marketplace ID o Line Item ID, según su plataforma) y acepta y configura desde su DSP. Confirmación manual preferida por TV Azteca (no automática).</div>
+          <div class="sl-cell"><span class="actor-box">GAM (Marketplace) + DSP externo</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-006</span> Confirmación manual del tráfico es requerida para validación final antes de activar entrega.</div>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>GAM → Sistema SFDC</strong></div>
+          <div class="sl-cell"><strong>7. GAM convierte Proposal en Order → Salesforce hace polling y cierra Quote-to-Order</strong><br>
+            Tras la aprobación del comprador DSP, GAM convierte automáticamente la Proposal en Order/Campaign. Salesforce <strong>hace polling periódico al GAM</strong> consultando el estado de la Proposal. Al detectar la conversión, Salesforce <strong>cierra el Quote-to-Order</strong> internamente para completar el registro formal del acuerdo (D-19). Estado de la Ad Order Item cambia a "Activo". Se notifica a Contraloría (RN-064).
+            <div class="alert alert-info" style="margin-top:8px">ℹ️ <div>El Quote-to-Order en Salesforce <strong>no precede</strong> la creación de la Proposal en GAM — ocurre <strong>después</strong>, como cierre del loop una vez que GAM confirma la aceptación del comprador. Este es el patrón correcto confirmado por equipo de producto (D-16, D-19).</div></div></div>
+          <div class="sl-cell"><span class="actor-box">GAM API → Salesforce (polling)</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-064</span> Notificación a Contraloría con datos del deal activado para registro contable. El polling reemplaza los webhooks (GAM no soporta webhooks — D, R-04).</div>
+        </div>
+
+        <!-- Step 8 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>AdOps / Trafficker</strong></div>
+          <div class="sl-cell"><strong>8. Trafficker confirma tráfico en GAM (opcional — validación final)</strong><br>
+            Si se requiere confirmación manual adicional, el Trafficker verifica en GAM que el deal está activo y en entrega. El estado en Salesforce ya fue actualizado automáticamente por el polling (paso 7). Esta confirmación es la única acción que puede requerir acceso directo a GAM por parte del Trafficker.</div>
+          <div class="sl-cell"><span class="actor-box">GAM + Salesforce</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-006</span> TV Azteca prefiere confirmación manual del tráfico para validación final antes de considerar el deal activo.</div>
+        </div>
+
+        <!-- Step 9 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>GAM → Data Cloud → Salesforce</strong></div>
+          <div class="sl-cell"><strong>9. GAM Data Cloud Connector ingesta actuals → Cálculo de facturación desde Data Cloud</strong><br>
+            El <strong>GAM Data Cloud Connector</strong> (estándar) ingesta datos de entrega de GAM en Data Cloud. Las métricas de entrega (impresiones entregadas, clicks, CTR, BTR, VDR, revenue) <strong>viven en Data Cloud</strong> — no se escriben de vuelta en campos del CRM. El cálculo de facturación (valor neto con comisión AdServer) se lee desde Data Cloud.
+            <div class="alert alert-warn" style="margin-top:8px">⚠️ <div><strong>Pendiente técnico (Q-08):</strong> El campo de estadísticas de entrega en el GAM Connector llega serializado en un solo campo — el schema exacto de ese campo es desconocido. Se requiere engagement con el equipo de Data Cloud para obtener la documentación del campo antes del sprint de integración.</div></div></div>
+          <div class="sl-cell"><span class="actor-box">GAM → Data Cloud Connector → Data Cloud</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-007</span> Métricas por línea de pedido (agrupado, no día a día). Delta = comprometido − entregado. Lectura desde Data Cloud, no desde campos CRM.</div>
+        </div>
+
+        <!-- Step 10 -->
+        <div class="sl-row" style="grid-template-columns:140px 1fr 160px 160px">
+          <div class="sl-cell"><strong>Contraloría / Admin</strong></div>
+          <div class="sl-cell"><strong>10. Conciliación administrativa mensual</strong><br>
+            Reporte de conciliación en SFDC mostrando: inversión contratada vs. entregada (datos de Data Cloud), facturación aplicable (under → sobre entregado; over → sobre tope acordado). Valor neto = revenue bruto − <code>Comision_AdServer__c</code> del contrato de plataforma. Base para cierre mensual.</div>
+          <div class="sl-cell"><span class="actor-box">Salesforce Reports + Data Cloud</span></div>
+          <div class="sl-cell"><span class="rn-ref">RN-008</span> Para programática, fuente de verdad del monto es el exchange (GAM via Data Cloud), no SBD.</div>
+        </div>
+      </div>
+
+      <div class="sec-hd" style="margin-top:16px">Flujo de Amendment / Modificación de Deal Activo</div>
+      <div class="alert alert-info">ℹ️ <div>TV Azteca hoy hace cambios directamente en GAM sin proceso formal. El estándar Salesforce es <strong>Order-to-Quote</strong>: reabrir la orden, crear nueva cotización con los cambios, aprobar y re-enviar a GAM. Se adoptará el estándar SFDC.</div></div>
+      <table>
+        <thead><tr><th>Tipo de Cambio</th><th>¿Requiere aprobación cliente?</th><th>¿Requiere re-sync con GAM?</th></tr></thead>
+        <tbody>
+          <tr><td>Segmentación interna (género, dispositivo, targeting)</td><td>No</td><td>Sí (cambio en Line Item GAM)</td></tr>
+          <tr><td>Cambio de fechas, impresiones, floor price</td><td><strong>Sí</strong></td><td>Sí (re-abrir Proposal GAM)</td></tr>
+          <tr><td>Adición de nuevas líneas (deal extendido)</td><td>Sí — afecta presupuesto total</td><td>Sí (nueva ProposalLineItem)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">B</div>Flujo — Open Auction (Subasta Abierta)</div>
+    <div class="card-body">
+      <div class="alert alert-info">ℹ️ <div><strong>Open Auction — flujo diferente al de PG/PD (D-12, D-20):</strong> No se crea una ODS en Salesforce antes de la entrega. AdOps configura Inventory Rules directamente en GAM. Al cierre del mes, el <strong>GAM Data Cloud Connector</strong> provee los actuals de la subasta en Data Cloud. Con base en esos actuals (y aplicando el % de comisión del contrato), Salesforce crea automáticamente las Orders para registro contable y facturación. No hay extracción manual de reportes por parte de AdOps.</div></div>
+
+      <div class="sec-hd">Flujo Detallado — Open Auction</div>
+      <div class="flow">
+        <div class="flow-step step-orange"><div class="step-num">1</div><div class="step-body"><strong>AdOps configura Inventory Rules directamente en GAM</strong><p>Floor price mínimo, unidad de negocio, segmentación y categorías configuradas en la pestaña de Inventario de GAM. No hay ODS ni cotización en Salesforce en este momento.</p></div></div>
+        <div class="flow-step step-purple"><div class="step-num">2</div><div class="step-body"><strong>GAM subasta el inventario remanente durante el mes</strong><p>El inventario no vendido en PG/PD/venta directa es ofertado dinámicamente. Compradores anónimos (~15,000 anunciantes; aparecen como "Google Exchange" en reportes).</p></div></div>
+        <div class="flow-step step-blue"><div class="step-num">3</div><div class="step-body"><strong>GAM Data Cloud Connector ingesta actuals en Data Cloud</strong><p>El conector estándar de GAM para Data Cloud ingesta los datos de entrega de la subasta (impresiones entregadas, revenue bruto por unidad de negocio). Los actuals viven en Data Cloud — no se escriben de vuelta en campos CRM (D-20). El schema del campo serializado de estadísticas de entrega requiere validación con el equipo Data Cloud (Q-08 / R-08).</p></div></div>
+        <div class="flow-step step-blue"><div class="step-num">4</div><div class="step-body"><strong>Salesforce crea automáticamente las Orders post-facto con base en actuals de Data Cloud</strong><p>Con base en los actuals leídos de Data Cloud, el sistema aplica el <strong>% de comisión del AdServer</strong> (<code>Comision_AdServer__c</code>) del contrato de plataforma para calcular el valor neto facturable, y crea automáticamente las Orders en Salesforce como registro formal de lo entregado, asociadas al contrato de plataforma correspondiente (RN-004). Estas Orders son la base para la facturación a Contraloría. Proceso 100% automático, sin extracción manual de reportes.</p></div></div>
+      </div>
+
+      <div class="sec-hd" style="margin-top:16px">Diferencias clave vs. PG / PD</div>
+      <table>
+        <thead><tr><th>Aspecto</th><th>PG / PD</th><th>Open Auction</th></tr></thead>
+        <tbody>
+          <tr><td>ODS / Cotización previa en Salesforce</td><td>Sí — el ejecutivo crea la ODS antes de la entrega</td><td><strong>No</strong> — no hay ODS previa</td></tr>
+          <tr><td>Proposal en GAM desde Salesforce</td><td>Sí, vía Media Cloud AdTech API (directo, sin DRO) — D-16, D-17</td><td><strong>No</strong> — AdOps configura Inventory Rules directamente en GAM</td></tr>
+          <tr><td>Seat ID / Buyer ID</td><td>Obligatorio</td><td>No aplica — compradores anónimos</td></tr>
+          <tr><td>Precio registrado en ODS</td><td>Floor Price real (CPM contratado)</td><td>No hay ODS previa. En la Order post-conciliación: valor neto entregado.</td></tr>
+          <tr><td>Incluye en reportes de ingreso comprometido</td><td>Sí</td><td>No (excluido — no hay compromiso previo)</td></tr>
+          <tr><td>Monitoreo</td><td>Diario (actuals vía Data Cloud)</td><td>Mensual (actuals vía GAM Data Cloud Connector → Data Cloud)</td></tr>
+          <tr><td>Notificación al comprador</td><td>Email RN-063 automático (3 IDs)</td><td>No aplica (subasta pública, compradores anónimos)</td></tr>
+          <tr><td>Cuándo se crea la Order en SFDC</td><td>Loop se cierra <em>después</em> de la aprobación del comprador en GAM (polling — D-19)</td><td><strong>Post-facto</strong> al cierre del mes, con base en actuals de Data Cloud</td></tr>
+          <tr><td>Comisión AdServer</td><td>Aplicada en la ODS (valor neto en Floor Price)</td><td>Aplicada automáticamente al calcular valor neto desde Data Cloud según <code>Comision_AdServer__c</code> del contrato</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E3 — BRD
+════════════════════════════════════════════════════════════ -->
+<div id="e3" class="content">
+  <div class="page-hd">
+    <h1>E3 — Business Requirements Document (BRD): Venta Programática</h1>
+    <p>Lista numerada y priorizada de requisitos funcionales y no-funcionales. <strong>Must Have</strong> = bloqueante para el sprint. <strong>Should Have</strong> = importante pero con workaround. <strong>Nice to Have</strong> = deseable.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">RF</div>Requisitos Funcionales</div>
+    <div class="card-body">
+
+      <div class="sec-hd">Modelo de Datos y Catálogo</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-001</div>
+        <div class="rn-desc">
+          El <strong>Flag Programático debe ubicarse en el objeto <code>AdSpaceSpecification</code></strong> (ej. campo: <code>Es_Programatico__c</code> — checkbox, ejemplo: "Producto Adultos Digital PG"). Al incluir un <code>AdSpaceSpecification</code> con el flag activo en la Media Planning Grid, la ODS despliega automáticamente la sección "Detalles Programáticos" en la Ad Order Item.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Ejecutivo de Ventas</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-002</div>
+        <div class="rn-desc">
+          La Ad Order Item debe incluir los campos programáticos (campos custom sugeridos entre paréntesis como ejemplo):
+          <ul style="margin:6px 0 0 16px;font-size:12px;line-height:1.9">
+            <li><code>Tipo_Venta__c</code> — picklist: Directa / Garantizado / Preferente / Open (ej. "PG")</li>
+            <li><code>Floor_Price__c</code> — moneda (ej. "$0.50 CPM")</li>
+            <li><code>Seat_ID_DSP__c</code> — texto, máx. 200 chars (ej. "4572-DV360-MX")</li>
+            <li><code>GAM_Deal_ID__c</code> — texto, read-only, escritura automática por integración (ej. "PRG-000042")</li>
+            <li><code>GAM_Marketplace_ID__c</code> — texto, read-only, escritura automática por integración</li>
+            <li><code>GAM_LineItem_ID__c</code> — texto, read-only, escritura automática por integración (ID del ProposalLineItem en GAM)</li>
+            <li><code>Es_Open_Subasta__c</code> — checkbox</li>
+            <li><code>Status_GAM__c</code> — picklist: Pendiente / Activo / Error (ej. "Activo")</li>
+            <li><code>Plataforma_Programatica__c</code> — picklist: GAM / Amazon / Magnite / Equativ (ej. "GAM")</li>
+            <li><code>Contacto_DSP_Comprador__c</code> — lookup Contact (ej. "ops@thetradedesk.com")</li>
+          </ul>
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: AdOps / Ejecutivo</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-003</div>
+        <div class="rn-desc">
+          El catálogo debe incluir flag de programática para YouTube programático. YouTube tiene formatos con precios distintos (skippable vs. non-skippable); cada formato debe ser una línea de pedido independiente.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-pend">Pendiente definición cliente</span>
+            <span>Actor: TV Azteca Producto</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-004</div>
+        <div class="rn-desc">
+          Los contratos programáticos deben estar separados por plataforma: un contrato por Google/GAM, Amazon, Magnite, Equativ. Estructura padre (Targetcast como razón social) con hijos por plataforma. El contrato Google opera bajo esquema anual abierto con crédito mensual basado en consumo estimado.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Integración con GAM</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-005</div>
+        <div class="rn-desc">
+          Al aprobar y activar una Cotización con Ad Quote Items de tipo PG o PD, Salesforce invoca directamente la <strong>Media Cloud AdTech API</strong> (via Integration Procedure — confirmado D-16, D-17, D-18) para crear automáticamente una Proposal + ProposalLineItem en GAM. Los <strong>tres identificadores retornados por GAM</strong> deben escribirse automáticamente (read-only) en la <strong>Ad Quote Item</strong> de la Cotización. <strong>En este punto no se crea aún una Order en Salesforce</strong> — la Order se genera al cerrar el loop tras la aprobación del comprador (D-19):
+          <ul style="margin:4px 0 0 16px;font-size:11px;line-height:1.8">
+            <li><code>GAM_Deal_ID__c</code> — Deal ID principal</li>
+            <li><code>GAM_Marketplace_ID__c</code> — Marketplace ID</li>
+            <li><code>GAM_LineItem_ID__c</code> — Line Item ID del ProposalLineItem en GAM</li>
+          </ul>
+          Si GAM no responde, el campo de estado GAM (ej. <code>Status_GAM__c</code>) debe quedar en "Pendiente GAM" y notificar al AdOps responsable.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-integ">Integración</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Sistema</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-006</div>
+        <div class="rn-desc">
+          La creación de la Proposal en GAM debe incluir la ProposalLineItem correspondiente. Los campos requeridos por GAM (nombre, buyerAccountId vía Seat ID, floor price, fechas, inventario) deben mapearse desde la Ad Order Item de SFDC.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-integ">Integración</span>
+            <span class="badge badge-pend">Pendiente validación técnica API</span>
+            <span>Actor: Sistema</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-007</div>
+        <div class="rn-desc">
+          El sistema debe soportar el flujo de modificación de deal activo (amendment): reabrir la ODS, crear nueva cotización con los cambios y re-enviar a GAM. Cambios de segmentación interna no requieren aprobación del cliente. Cambios de fechas, impresiones o tarifas requieren aprobación del cliente.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración + Custom</span>
+            <span class="badge badge-pend">En análisis</span>
+            <span>Actor: AdOps</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Notificaciones</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-063</div>
+        <div class="rn-desc">
+          Al activarse el deal en GAM y retornarse los IDs, el sistema debe enviar automáticamente un email al comprador DSP con los <strong>tres identificadores GAM: Deal ID + Marketplace ID + Line Item ID</strong> (obligatorios — el comprador los necesita todos porque dependiendo de su plataforma DSP es más fácil localizar el deal con uno u otro), además de: tipo de deal, floor price, fechas, inventario e instrucciones de activación.<br><br>
+          El destinatario debe ser el contacto operativo programático del DSP (campo <code>Contacto_DSP_Comprador__c</code> en la ODS). Este contacto puede ser distinto al contacto de cuenta del anunciante para venta directa — una misma agencia puede tener personas diferentes para programática y venta directa.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (Flow + Email Template)</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Sistema → Comprador DSP</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-064</div>
+        <div class="rn-desc">
+          Al activarse el deal, el sistema debe notificar a Contraloría informando el deal activado para registro contable. Canal pendiente de definición (email o Chatter).
+          <div class="rn-tags">
+            <span class="badge badge-should">Should Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-pend">Pendiente definición canal</span>
+            <span>Actor: Sistema → Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Conciliación y Reportes</div>
+      <div class="alert alert-warn">⚠️ <div><strong>Nota — Proceso de conciliación en definición:</strong> El proceso de conciliación está siendo definido y deberá considerar tanto <strong>venta directa</strong> como <strong>venta programática</strong>. Los requisitos RN-008 y RN-010 a continuación reflejan el entendimiento actual y están sujetos a revisión.</div></div>
+      <div class="rn-item">
+        <div class="rn-id">RN-008</div>
+        <div class="rn-desc">
+          El sistema obtiene los actuals de entrega vía <strong>GAM Data Cloud Connector</strong> (D-20). Los datos viven en Data Cloud y son leídos desde allí para facturación y reportes:
+          <ul style="margin:6px 0 0 16px;font-size:12px;line-height:1.9">
+            <li><strong>PG / PD — monitoreo continuo:</strong> El GAM Data Cloud Connector ingesta los datos de entrega de cada deal. Dashboard y cálculo de facturación leen desde Data Cloud. Métricas por línea de pedido: impresiones entregadas, clicks, CTR, BTR, VDR, revenue actual.</li>
+            <li><strong>Open Auction — mensual (cierre de período):</strong> Con base en los actuals de Data Cloud, el sistema aplica automáticamente el <strong>% de comisión del AdServer</strong> (<code>Comision_AdServer__c</code>) del contrato de plataforma para calcular el valor neto facturable, y <strong>crea automáticamente las Orders en Salesforce</strong> post-facto. No requiere intervención manual ni extracción de reportes.</li>
+          </ul>
+          <div class="alert alert-warn" style="margin-top:8px">⚠️ <div><strong>Pendiente técnico (Q-08 / R-08):</strong> El campo de estadísticas de entrega en el GAM Data Cloud Connector llega serializado en un solo campo — schema desconocido. Se requiere engagement con equipo Data Cloud antes del sprint para definir cómo leer las métricas individuales.</div></div>
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-integ">Integración</span>
+            <span class="badge badge-warn">Q-08 abierto — schema Data Cloud pendiente</span>
+            <span>Actor: Sistema</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-009</div>
+        <div class="rn-desc">
+          Las líneas de Open Auction deben quedar <strong>excluidas de los reportes de ingresos comprometidos</strong> porque en este modelo no existe un compromiso previo de entrega — la Order en Salesforce se crea post-facto en la conciliación mensual. El flag <code>Es_Open_Subasta__c = true</code> en la Ad Order Item (o equivalente en la Order post-conciliación) debe ser el criterio de filtrado. La regla de facturación para PG/PD es: si under-delivery → factura sobre lo entregado; si over-delivery → factura sobre el tope acordado.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (Reports filter)</span>
+            <span class="badge badge-pend">Pendiente confirmación mecanismo Open</span>
+            <span>Actor: Contraloría / Dirección Comercial</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-010</div>
+        <div class="rn-desc">
+          El reporte de conciliación en SFDC debe mostrar por línea de pedido: anunciante, order, line item, fecha inicio/fin, impresiones contratadas, impresiones entregadas, % avance (calculado: entregadas/contratadas × 100), clicks, CTR, BTR, VDR. Métricas de video (VDR) aplican a líneas de video.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (Reports & Dashboards)</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Trafficker / Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Comisión del AdServer / Fee de Plataforma</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-013</div>
+        <div class="rn-desc">
+          Las plataformas programáticas cobran una <strong>comisión por uso del AdServer</strong> (fee de tecnología programática) negociada por TV Azteca (~10% actualmente, puede variar por plataforma/servidor). El sistema debe soportar el registro de este porcentaje en el contrato de cada plataforma (campo <code>Comision_AdServer__c</code> en el contrato programático).
+          <br><br>Este porcentaje es utilizado de dos formas:
+          <ul style="margin:6px 0 0 16px;font-size:12px;line-height:1.9">
+            <li><strong>Open Auction:</strong> el sistema lee el revenue bruto del período desde Data Cloud (vía GAM Connector), aplica automáticamente <code>Comision_AdServer__c</code> para calcular el valor neto facturable, y crea las Orders en Salesforce (D-15, D-20).</li>
+            <li><strong>PG / PD:</strong> el valor de la Order debe reflejar el monto neto (descontada la comisión) para evitar confusión en Contraloría al comparar con el monto entregado por el exchange.</li>
+          </ul>
+          <strong>Ejemplo:</strong> revenue bruto del mes en GAM = $100,000 con comisión de 10% → valor neto facturable = $90,000. La Order en Salesforce debe mostrar $90,000.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (campo en contrato) + </span><span class="badge badge-integ">Integración (cálculo automático desde Data Cloud)</span>
+            <span class="badge badge-pend">Pendiente: Rafa enviará lista de comisiones negociadas por plataforma (ART-10)</span>
+            <span>Actor: Sistema / Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Gestión de Contactos DSP</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-014</div>
+        <div class="rn-desc">
+          Los contactos programáticos (compradores DSP) <strong>no son necesariamente los mismos</strong> que los contactos de venta directa de la cuenta. Una misma agencia puede tener personas distintas para venta directa y para programática, o incluso contactos diferentes por marca o producto. El modelo de datos debe soportar:
+          <ul style="margin:6px 0 0 16px;font-size:12px;line-height:1.8">
+            <li>Múltiples contactos por cuenta/marca con tipificación (venta directa vs. programática)</li>
+            <li>El ejecutivo debe poder seleccionar qué contacto(s) recibirán el email automático RN-063 con los IDs del deal</li>
+            <li>Campo dedicado en la Ad Order Item: <code>Contacto_DSP_Comprador__c</code> (lookup a Contact)</li>
+          </ul>
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración + Modelo de Datos</span>
+            <span class="badge badge-pend">En análisis — requiere diseño de modelo de contactos</span>
+            <span>Actor: Ejecutivo / AdOps</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Cancelaciones y Ciclo de Vida del Deal</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-015</div>
+        <div class="rn-desc">
+          El comportamiento técnico de cancelación de deals en GAM es el siguiente: los deals <strong>solo se pausan</strong>, nunca se cancelan definitivamente en GAM. Un deal puede siempre reactivarse creando un nuevo Line Item que extienda el período. Las impresiones ya entregadas son siempre facturables, independientemente del estado. El sistema debe respetar este comportamiento:
+          <ul style="margin:6px 0 0 16px;font-size:12px;line-height:1.8">
+            <li>"Cancelación" en Salesforce = cambio a estado "Pausado" (no finalización definitiva)</li>
+            <li>Criterios para dar una orden por finalizada: <strong>fecha de fin alcanzada</strong> O <strong>todas las impresiones comprometidas consumidas</strong></li>
+            <li>Las impresiones entregadas antes de la cancelación/pausa son siempre registrables y facturables</li>
+          </ul>
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (Status values)</span>
+            <span class="badge badge-pend">En análisis</span>
+            <span>Actor: AdOps / Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Nomenclatura y Trazabilidad</div>
+      <div class="rn-item">
+        <div class="rn-id">RN-011</div>
+        <div class="rn-desc">
+          La nomenclatura de pedidos programáticos debe seguir el estándar: <code>[PG/PD/Open]-[Plataforma]-[Cliente]-[Campaña]</code>. Para venta directa: <code>[UdN]-[Cliente]-[Campaña]-[Mes]-[IDVenta]</code>.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración (Validation Rule / Formula)</span>
+            <span class="badge badge-done">Confirmado</span>
+            <span>Actor: Ejecutivo / AdOps</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RN-012</div>
+        <div class="rn-desc">
+          Las líneas de pedido de plataformas externas (Amazon, Magnite, Equativ) deben incluir un campo flag <code>Es_Tercero__c</code> (checkbox) y un campo <code>Plataforma_Programatica__c</code> para identificar la plataforma de entrega. Estos campos permiten el cruce correcto en conciliación y la asociación al contrato correspondiente.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-config">Configuración</span>
+            <span class="badge badge-pend">En análisis</span>
+            <span>Actor: AdOps / Contraloría</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-hd">Requisitos No-Funcionales</div>
+      <div class="rn-item">
+        <div class="rn-id">RNF-001</div>
+        <div class="rn-desc">
+          Si el callout a GAM falla, el sistema no debe bloquear la activación de la ODS. Debe registrar el error, marcar <code>Status_GAM__c = "Error"</code> y notificar al AdOps para reintento manual. El deal puede activarse de forma asincrónica.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-custom">Customización (Apex error handling)</span>
+            <span class="badge badge-done">Confirmado</span>
+          </div>
+        </div>
+      </div>
+      <div class="rn-item">
+        <div class="rn-id">RNF-002</div>
+        <div class="rn-desc">
+          La cuenta de servicio de Google Cloud para integración técnica debe tener permisos mínimos necesarios. Debe existir un entorno productivo y uno de pruebas (sandbox) debidamente documentados.
+          <div class="rn-tags">
+            <span class="badge badge-must">Must Have</span>
+            <span class="badge badge-custom">TV Azteca TI</span>
+            <span class="badge badge-open">Abierto — pendiente creación</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E4 — RAID LOG
+════════════════════════════════════════════════════════════ -->
+<div id="e4" class="content">
+  <div class="page-hd">
+    <h1>E4 — Open Questions &amp; Decisions Log (RAID)</h1>
+    <p>Registro de preguntas abiertas, decisiones tomadas, assumptions y riesgos del tema de Venta Programática. Actualizado al 27-May-2026.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">D</div>Decisiones Tomadas</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Decisión</th><th>Fecha</th><th>Responsable</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>D-01</td>
+            <td><span class="badge badge-decision">Decisión</span><br>No se crean productos separados para programática. Se usan los productos existentes del catálogo con el campo <code>Es_Programatico__c</code> como atributo.</td>
+            <td>18-May-2026</td><td>equipo Salesforce / TV Azteca</td>
+          </tr>
+          <tr>
+            <td>D-02</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Buyer ID / Seat ID es obligatorio para PG y PD. En Open Auction no aplica porque el Exchange gestiona las pujas sin comprador específico.</td>
+            <td>18-May-2026</td><td>TV Azteca AdOps</td>
+          </tr>
+          <tr>
+            <td>D-03</td>
+            <td><span class="badge badge-decision">Decisión</span><br>El path de creación de deals en GAM es via Proposal API (no Order API directa). La Proposal se convierte automáticamente en Order en GAM tras aprobación del comprador.</td>
+            <td>19-May-2026</td><td>Rafa (TV Azteca AdOps) / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-04</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Para programática, la fuente de verdad del monto a facturar es el exchange (GAM), no SBD. Los montos en GAM y SBD deben coincidir al cierre. Para venta directa, la fuente es SBD.</td>
+            <td>19-May-2026</td><td>Rafa / Contraloría</td>
+          </tr>
+          <tr>
+            <td>D-05</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Modificaciones a deals activos adoptarán el estándar SFDC Order-to-Quote (reabrir → nueva cotización → re-enviar a GAM). TV Azteca actualmente hace cambios directos en GAM sin proceso formal.</td>
+            <td>19-May-2026</td><td>equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-06</td>
+            <td><span class="badge badge-decision">Decisión</span><br>El Seat ID es un campo de texto alfanumérico (~20–200 chars) a crear como campo custom en la Ad Order Item. No se gestiona como catálogo en esta fase.</td>
+            <td>19-May-2026</td><td>Rafa (confirmó formato) / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-07</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Monitoreo: campañas PG/PD con frecuencia diaria; Open Auction con reportes mensuales.</td>
+            <td>18-May-2026</td><td>TV Azteca AdOps</td>
+          </tr>
+          <tr>
+            <td>D-08</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Sin MuleSoft disponible. La integración con GAM se realiza directamente desde SFDC via Media Cloud AdTech API (Integration Procedure). Se requiere ADR para documentar la desviación del principio Passive Core.</td>
+            <td>19-May-2026</td><td>equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-09</td>
+            <td><span class="badge badge-decision">Decisión</span> <span class="badge badge-open">Actualizado 17-Jun-2026</span><br>~~El proceso de activación utilizará DRO para orquestar el flujo~~ — <strong>CORREGIDO</strong>: Para PG/PD, Salesforce <strong>no utiliza DRO</strong> ni genera una Order antes de activar el deal en GAM. El flujo es: Cotización aprobada → llamada directa a <strong>Media Cloud AdTech API</strong> → Proposal en GAM. No pasa por el proceso estándar de Order/DRO. Ver D-16 y D-17 para el diseño completo confirmado por equipo de producto Salesforce (Goutham Kandregula, 17-Jun-2026).</td>
+            <td>20-May-2026 / act. 17-Jun-2026</td><td>equipo Salesforce / Goutham Kandregula</td>
+          </tr>
+          <tr>
+            <td>D-10</td>
+            <td><span class="badge badge-decision">Decisión</span><br>El <strong>ID auto-incremental</strong> de los pedidos programáticos se implementará usando el campo nativo de SFDC tipo <strong>AutoNumber</strong> (ej. formato "PRG-{000000}"). No es desarrollo custom — es configuración estándar. Está dentro del alcance del proyecto.</td>
+            <td>20-May-2026</td><td>equipo Salesforce / TV Azteca</td>
+          </tr>
+          <tr>
+            <td>D-11</td>
+            <td><span class="badge badge-decision">Decisión</span><br>El Flag Programático (ej. <code>Es_Programatico__c</code>) se ubica en el objeto <strong>AdSpaceSpecification</strong>, no en Product2. Confirmado en sesión 20-May-2026.</td>
+            <td>20-May-2026</td><td>equipo Salesforce / TV Azteca</td>
+          </tr>
+          <tr>
+            <td>D-12</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>Open Auction NO genera Proposal en GAM desde Salesforce.</strong> El flujo correcto: AdOps configura Inventory Rules directamente en GAM (floor price, segmentación). El inventario remanente se subasta dinámicamente. La Order en Salesforce se crea <strong>post-facto</strong> en la conciliación mensual, a partir de los actuals extraídos de GAM, para registro contable y facturación. No hay ODS previa ni integración DRO→GAM para Open Auction.</td>
+            <td>25-May-2026</td><td>TV Azteca AdOps / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-13</td>
+            <td><span class="badge badge-decision">Decisión</span><br>Los <strong>3 IDs retornados por GAM</strong> (Deal ID, Marketplace ID, Line Item ID) se escriben automáticamente (read-only) en la Ad Order Item de Salesforce y son <strong>analíticos, no transaccionales</strong> — no bloquean la transición de la ODS. Cumplen dos funciones:<br>1. <strong>Notificación automatizada al comprador DSP</strong> — los 3 IDs son obligatorios en el email RN-063 (dependiendo de la plataforma del comprador es más fácil localizar el deal con uno u otro).<br>2. <strong>Llave de conciliación</strong> — el <code>Line Item ID</code> es el campo de <em>join</em> entre la Ad Order Item (SF) y los actuals ingestados desde GAM en Data Cloud para la conciliación mensual de delivery y facturación.<br><em>Precisado por cliente el 30-Jun-2026: los 3 IDs son sólo analíticos, no transaccionales.</em></td>
+            <td>25-May-2026 / act. 30-Jun-2026</td><td>equipo Salesforce / TV Azteca AdOps</td>
+          </tr>
+          <tr>
+            <td>D-14</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>CPM = 0 (o $1 placeholder) no puede enviarse a GAM</strong> en programática. Los contratos con plataformas exigen precios declarados reales (de ahí calculan el fee del 10%). Toda línea en GAM debe tener precio real declarado. No existen "líneas bonus con CPM=0" en programática.</td>
+            <td>25-May-2026</td><td>TV Azteca AdOps / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-15</td>
+            <td><span class="badge badge-decision">Decisión</span><br>La conciliación de <strong>Open Auction</strong> se basa en los actuals ingestados por el <strong>GAM Data Cloud Connector</strong> en Data Cloud. El cálculo del valor neto (revenue bruto − <code>Comision_AdServer__c</code>) se realiza desde Data Cloud. Las Orders post-facto se crean en Salesforce con el valor neto calculado. <strong>No hay extracción manual de reportes</strong>. El campo <code>Comision_AdServer__c</code> (%) debe estar configurado en cada contrato de plataforma programática.<br><br><strong>Vista de revisión de conciliación (precisado 30-Jun-2026):</strong> además del proceso automático, se implementa una vista de revisión mediante <strong>Report + Dashboard nativos de Salesforce sobre el DMO de Ad Exchange en Data Cloud</strong> — con filtros por mes / seat / advertiser / line item y export nativo a Excel/CSV. Un botón "Ver conciliación" en la ODS abre el Dashboard filtrado. <strong>No requiere ETL adicional, LWC custom ni CRM Analytics</strong> (no licenciado). Objetivo declarado por el cliente: cuadrar el pago mensual de Google contra la factura emitida por TV Azteca (Ad Exchange).</td>
+            <td>27-May-2026 / act. 30-Jun-2026</td><td>equipo Salesforce / TV Azteca Contraloría</td>
+          </tr>
+          <tr>
+            <td>D-16</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>Quote-to-Proposal flow confirmado para PG/PD:</strong> El deal programático (PG/PD) se ingresa directamente como <strong>Proposal en GAM</strong> mediante la <strong>Media Cloud AdTech API</strong>. Este flujo <strong>no pasa por el proceso estándar de Quote-to-Order de Salesforce</strong> ni por DRO antes de la creación en GAM. El quote-to-order en Salesforce se completa <em>después</em> como cierre del loop (ver D-19). Fuente: Goutham Kandregula (equipo de producto Salesforce Media Cloud), sesión 17-Jun-2026.</td>
+            <td>17-Jun-2026</td><td>Goutham Kandregula / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-17</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>DRO NO es requerido para venta programática:</strong> El flujo programático (PG/PD) <em>no utiliza DRO</em>. El media plan construct en Salesforce es similar al de venta directa, con campos adicionales obligatorios (<code>DSP_Buyer_ID__c</code> / Seat ID). La integración con GAM se realiza directamente mediante la Media Cloud AdTech API. Fuente: Goutham Kandregula, 17-Jun-2026.</td>
+            <td>17-Jun-2026</td><td>Goutham Kandregula / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-18</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>Media Cloud AdTech APIs son el path de integración recomendado:</strong> El equipo de producto confirma que las Media Cloud AdTech APIs son el camino correcto para la integración con GAM en on-core. El Managed Package (GAMP) usa OmniStudio Integration Procedures sobre estas mismas APIs. En on-core se implementa vía Apex o Integration Procedure nativa (sin OmniStudio). Este patrón está en el <em>roadmap de Salesforce</em> para soporte nativo futuro — adoptar hoy via APIs <strong>future-proofs</strong> la implementación. Fuente: Goutham Kandregula, 17-Jun-2026.</td>
+            <td>17-Jun-2026</td><td>Goutham Kandregula / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-19</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>Quote-to-Order cierra el loop DESPUÉS de la aprobación del comprador en GAM:</strong> El flujo completo es: (1) Cotización aprobada → Proposal creada en GAM via Media Cloud AdTech API; (2) Comprador DSP acepta en su plataforma → GAM convierte Proposal en Order/Campaign; (3) Salesforce hace <strong>polling periódico al GAM</strong> consultando el estado de la Proposal; (4) Al detectar conversión a Order en GAM, Salesforce <strong>cierra el Quote-to-Order</strong> internamente para completar el registro formal. Este diseño refleja el patrón del Managed Package. Fuente: Goutham Kandregula, 17-Jun-2026.</td>
+            <td>17-Jun-2026</td><td>Goutham Kandregula / equipo Salesforce</td>
+          </tr>
+          <tr>
+            <td>D-20</td>
+            <td><span class="badge badge-decision">Decisión</span><br><strong>Actuals de entrega viven en Data Cloud, no en campos CRM:</strong> Los datos de entrega (impresiones, clicks, CTR, BTR, VDR, revenue) ingestados por el <strong>GAM Data Cloud Connector</strong> permanecen en Data Cloud. <strong>No se hace write-back a campos del CRM</strong>. El cálculo de facturación y la visualización en dashboards leen desde Data Cloud. Fuente: sesión de análisis de arquitectura, 17-Jun-2026.</td>
+            <td>17-Jun-2026</td><td>equipo Salesforce</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">Q</div>Preguntas Abiertas (Open Questions)</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Pregunta</th><th>Impacto</th><th>Responsable</th><th>SLA</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Q-01</td>
+            <td><span class="badge badge-done">Cerrado</span><br><strong>Decisión (actualizada 25-May):</strong> Open Auction <strong>NO genera Proposal en GAM desde Salesforce</strong> y <strong>no hay ODS previa</strong>. AdOps configura Inventory Rules directamente en GAM. La Order en Salesforce se crea post-facto en la conciliación mensual a partir de actuals de GAM. Ver D-12. El proceso detallado de conciliación sigue en definición (aplica también a venta directa).</td>
+            <td>Alto — define flujo y configuración de Open Auction</td>
+            <td>Dirección Comercial / Contraloría</td>
+            <td>25-May-2026</td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td>Q-02</td>
+            <td><span class="badge badge-done">Cerrado parcialmente — orientación de solución definida</span><br><strong>Orientación de solución (17-Jun-2026):</strong> Seguir el patrón del Managed Package usando las <strong>Media Cloud AdTech APIs</strong> directamente (D-16, D-18). Las APIs de GAM están disponibles. Se crearán Proposal y ProposalLineItem en GAM via Integration Procedure. El payload de integración se desarrolla de forma custom (sin InterfaceContext nativo para Proposals). La secuencia Proposal → ProposalLineItem (simultánea vs. secuencial) se define en Define &amp; Build. Goutham Kandregula enviará materiales de field mapping (Q-09).</td>
+            <td>Alto — define diseño técnico del callout y manejo de errores</td>
+            <td>equipo Salesforce (Daniel Murcia)</td>
+            <td>Define &amp; Build</td>
+            <td><span class="badge badge-warn">Orientación definida — blocker activo</span></td>
+          </tr>
+          <tr>
+            <td>Q-03</td>
+            <td><span class="badge badge-done">Cerrado</span><br><strong>Decisión:</strong> La frecuencia de consulta de actuals desde GAM para PG/PD es <strong>diaria</strong>. Confirmado por TV Azteca AdOps.</td>
+            <td>Medio — define cadencia del Scheduled Flow</td>
+            <td>TV Azteca AdOps</td>
+            <td>22-May-2026</td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td>Q-04</td>
+            <td><span class="badge badge-done">Cerrado</span><br><strong>Decisión:</strong> En caso de under-delivery en un Deal Garantizado (PG), el proceso es: <strong>conciliar y facturar únicamente lo que fue efectivamente entregado</strong>. TV Azteca realiza un ajuste financiero de cobro (no make-good ni nota de crédito) — se factura el monto real entregado, no el comprometido. Este comportamiento debe reflejarse en el reporte de conciliación y en la lógica de generación de la Order definitiva.</td>
+            <td>Medio — impacta conciliación y facturación</td>
+            <td>Dirección Comercial / Contraloría</td>
+            <td>25-May-2026</td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td>Q-05</td>
+            <td>¿Cuál es el proceso exacto de conciliación mensual para plataformas no-GAM (Amazon, Magnite, Equativ) que se conectan a través de GAM? Específicamente, Equativ tiene un comportamiento diferente en GAM y no aparece/consume "oportunidades" de la misma manera. Hoy TV Azteca entra manualmente a cada plataforma para la conciliación. ¿Cómo se resolverá esto en Salesforce?</td>
+            <td>Alto — define si aplica customización o integración adicional para estas plataformas</td>
+            <td>equipo Salesforce</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Abierto — GPS investigando</span></td>
+          </tr>
+          <tr>
+            <td>Q-07</td>
+            <td><span class="badge badge-done">Cerrado</span><br><strong>Decisión:</strong> Se otorgarán los <strong>permisos necesarios al perfil de Trafficker</strong> en Salesforce para que pueda operar dentro del sistema sin necesidad de acceder directamente a GAM para crear deals. El diseño de permisos quedará definido en la fase de Define &amp; Design, garantizando que el flujo completo pase por Salesforce (evitando la doble creación de deals — ver R-06).</td>
+            <td>Medio — define modelo de acceso del Trafficker</td>
+            <td>equipo Salesforce</td>
+            <td>25-May-2026</td>
+            <td><span class="badge badge-done">Cerrado</span></td>
+          </tr>
+          <tr>
+            <td>Q-08</td>
+            <td><strong>Schema del campo de estadísticas de entrega en el GAM Data Cloud Connector:</strong> El GAM Data Cloud Connector ingesta datos de entrega, pero el campo <em>stats delivery information</em> llega <strong>serializado en un solo campo</strong> (según Goutham Kandregula, 17-Jun-2026). El formato exacto (JSON, CSV delimitado, otra estructura) y los sub-campos disponibles (impresiones, clicks, revenue, etc.) son desconocidos. Este schema es indispensable para el diseño del dashboard de conciliación y el cálculo de facturación desde Data Cloud.<br><br><strong>Orientación de solución:</strong> Contactar al equipo de Data Cloud de Salesforce para obtener la documentación del schema del campo antes del sprint de integración. Este punto no bloquea el diseño de la integración con GAM, pero sí bloquea el diseño del dashboard y el cálculo de facturación desde Data Cloud.</td>
+            <td>Alto — bloquea diseño del dashboard de conciliación y cálculo de facturación</td>
+            <td>equipo Data Cloud Salesforce</td>
+            <td>Antes del sprint de integración</td>
+            <td><span class="badge badge-open">Abierto — requiere engagement Data Cloud</span></td>
+          </tr>
+          <tr>
+            <td>Q-09</td>
+            <td><strong>Field mapping materials: objetos Salesforce → atributos GAM:</strong> Goutham Kandregula se comprometió a compartir materiales de mapeo de campos (source objects en Salesforce → atributos de Proposal/ProposalLineItem en GAM). Estos materiales son necesarios para diseñar el payload de la integración y validar que los campos custom propuestos (D-16, RN-002) están correctamente mapeados.<br><br><strong>Orientación de solución:</strong> Dar follow-up a Goutham vía email/Slack para recibir los materiales. Mientras tanto, usar la documentación del Managed Package (GAMP) como referencia inicial.</td>
+            <td>Alto — define el diseño técnico del payload de integración</td>
+            <td>Goutham Kandregula (Salesforce Product)</td>
+            <td>Semana 22-Jun-2026</td>
+            <td><span class="badge badge-open">Abierto — pendiente follow-up a Goutham</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">A</div>Assumptions (Supuestos)</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Supuesto</th><th>Riesgo si no se cumple</th></tr></thead>
+        <tbody>
+          <tr><td>A-01</td><td><span class="badge badge-custom">Confirmado</span> <strong>Se requiere desarrollo custom</strong> para crear el payload de integración de Proposals con GAM. No existe <strong>InterfaceContext</strong> disponible para las APIs de Proposals que se utilizarán; la creación del payload deberá desarrollarse de forma custom. Este punto será detallado en la fase de Define &amp; Design.</td><td>Alto — define el nivel de esfuerzo de desarrollo de integración</td></tr>
+          <tr><td>A-02</td><td><span class="badge badge-assumption">Supuesto</span> TV Azteca proveerá la Service Account de Google Cloud con permisos necesarios antes del inicio del sprint de Integración.</td><td>Alto — bloquea desarrollo de integración</td></tr>
+          <tr><td>A-03</td><td><span class="badge badge-assumption">Supuesto</span> Las plataformas Amazon, Magnite y Equativ son gestionadas via GAM (no como Exchanges independientes). Su integración directa está fuera de alcance del SOW.</td><td>Medio — si requieren integración directa, es Change Order</td></tr>
+          <tr><td>A-04</td><td><span class="badge badge-assumption">Supuesto</span> Disney no será integrado con GAM. Sus espacios publicitarios deberán configurarse con un <strong>AdServer diferente a GAM</strong> para que no sean integrados en el proceso de fulfillment. Sus productos en el catálogo serán diferenciados con prefijo/sufijo en el nombre.</td><td>Bajo — impacta catálogo y configuración de AdServer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">R</div>Riesgos</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Riesgo</th><th>Probabilidad</th><th>Impacto</th><th>Mitigación</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>R-01</td>
+            <td><span class="badge badge-risk">RIESGO</span> La Media Cloud AdTech API cubre el flujo de creación de Proposal en GAM para PG/PD, pero el <strong>mapeo de campos específico</strong> puede diferir del diseño propuesto. Pendiente recibir materiales de field mapping de Goutham (Q-09).</td>
+            <td>Media</td><td>Alto</td>
+            <td>Esperar materiales de field mapping de Goutham (Q-09). Usar documentación GAMP como referencia inicial. Validar API en sandbox antes del sprint. Fallback: Apex Queueable con llamada REST directa a GAM API si Media Cloud AdTech API no cubre el caso.</td>
+          </tr>
+          <tr>
+            <td>R-02</td>
+            <td><span class="badge badge-risk">RIESGO</span> TV Azteca no entrega la Service Account de Google Cloud antes del sprint de integración.</td>
+            <td>Alta</td><td>Alto</td>
+            <td>Bloquear sprint de conciliación. Avanzar con Integration Procedure usando mock. Escalar a PM.</td>
+          </tr>
+          <tr>
+            <td>R-03</td>
+            <td><span class="badge badge-done">Resuelto</span> ~~Las líneas Open Auction a $1.00 contaminan reportes de ingresos comprometidos~~. <strong>Riesgo eliminado por D-12 y D-14:</strong> Open Auction no genera ODS previa en Salesforce (no hay línea con $1 ni CPM=0 — ver D-12). Toda línea en GAM debe tener precio real declarado (D-14). La Order de Open Auction se crea post-facto en la conciliación mensual con el valor neto real entregado — no hay riesgo de contaminación de reportes de ingresos comprometidos.</td>
+            <td>N/A</td><td>N/A</td>
+            <td>Riesgo eliminado. No requiere mitigación adicional.</td>
+          </tr>
+          <tr>
+            <td>R-04</td>
+            <td><span class="badge badge-risk">RIESGO</span> El estado de la Proposal en GAM puede cambiar sin que SFDC sea notificado (cambios del comprador DSP). Los actuals en SFDC pueden desincronizarse.</td>
+            <td>Media</td><td>Medio</td>
+            <td>Scheduled Flow de conciliación diaria. Implementar campo <code>Last_Sync_Date__c</code> visible en la ODS para que AdOps detecte desincronización.</td>
+          </tr>
+          <tr>
+            <td>R-05</td>
+            <td><span class="badge badge-risk">RIESGO</span> <strong>Conciliación de plataformas no-GAM (Equativ, Amazon, Magnite):</strong> Estas plataformas se conectan a través de GAM pero tienen comportamientos diferentes. Equativ específicamente no opera de la misma manera que el GAM estándar al consumir "oportunidades". Hoy TV Azteca entra manualmente a cada plataforma para la conciliación — este proceso manual es opaco para Salesforce.</td>
+            <td>Alta</td><td>Alto</td>
+            <td>GPS investigará cómo abordar la conciliación de estas plataformas. Documentar en Q-05. Si no es posible automatizar, se registrará como entrada manual en Salesforce.</td>
+          </tr>
+          <tr>
+            <td>R-06</td>
+            <td><span class="badge badge-risk">RIESGO</span> <strong>Doble creación de deals:</strong> Si Rafa (Administración) o cualquier usuario crea deals directamente en GAM (sin pasar por Salesforce) y también los registra en Salesforce, se generarán duplicados y se perderá trazabilidad comercial — uno de los principales pain points AS-IS que este proyecto busca resolver.</td>
+            <td>Alta</td><td>Alto</td>
+            <td>Definir política operativa clara: <strong>todo deal debe originarse en Salesforce</strong>. Perfil/PS de Rafa debe permitir acceso en Salesforce sin necesitar ir a GAM directamente. Validar en UAT el flujo completo con los perfiles de los usuarios clave.</td>
+          </tr>
+          <tr>
+            <td>R-08</td>
+            <td><span class="badge badge-risk">RIESGO</span> <strong>Schema del campo serializado en GAM Data Cloud Connector:</strong> El campo de estadísticas de entrega en el GAM Data Cloud Connector está serializado en un solo campo de formato desconocido (Q-08). Si el schema no está documentado o si la estructura no permite extraer métricas individuales (impresiones, revenue), el diseño del dashboard de conciliación y el cálculo de facturación desde Data Cloud quedan bloqueados.</td>
+            <td>Alta</td><td>Alto</td>
+            <td>Contactar equipo de Data Cloud de Salesforce para obtener documentación del schema del campo antes del sprint de integración. Si el campo no es parseable, evaluar alternativa: consultar la GAM Reporting API directamente desde Salesforce para obtener los actuals.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E5 — ARTIFACT REQUEST LIST
+════════════════════════════════════════════════════════════ -->
+<div id="e5" class="content">
+  <div class="page-hd">
+    <h1>E5 — Artifact Request List: Venta Programática</h1>
+    <p>Documentos y datos que el equipo Salesforce necesita recibir de TV Azteca para configurar y desarrollar el tema.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">!</div>Artefactos Bloqueantes (impiden inicio de desarrollo)</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Artefacto</th><th>Finalidad</th><th>Responsable TVA</th><th>Fecha esperada</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>ART-01</strong></td>
+            <td><strong>Service Account Google Cloud (GAM) para entornos prod y QA</strong></td>
+            <td>Configurar Named Credentials en SFDC para que la Integration Procedure pueda hacer callouts autenticados a GAM API</td>
+            <td>TV Azteca TI</td>
+            <td>27-May-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td><strong>ART-02</strong></td>
+            <td><strong>Ejemplo de email de notificación al comprador DSP + campos de Proposal y LineItem en GAM</strong></td>
+            <td>Solicitar un ejemplo del email que hoy envían al comprador DSP al activar un deal, y cuáles son los campos que se llenan en la Proposal y ProposalLineItem de GAM a partir de esa información. Esto permitirá definir el mapeo de campos en la integración.</td>
+            <td>AdOps (Rafa)</td>
+            <td>27-May-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td><strong>ART-03</strong></td>
+            <td><strong>Acceso al GAM de TV Azteca para el equipo Salesforce</strong></td>
+            <td>Revisar estructura de Proposals existentes, campos usados, y tipos de deal configurados para validar el diseño TO-BE</td>
+            <td>AdOps (Rafa)</td>
+            <td>22-May-2026</td>
+            <td><span class="badge badge-open">Solicitado (informal)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">2</div>Artefactos Importantes (requeridos antes de UAT)</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>#</th><th>Artefacto</th><th>Finalidad</th><th>Responsable TVA</th><th>Fecha esperada</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>ART-04</td>
+            <td>Template del email RN-063 (notificación actual al comprador DSP)</td>
+            <td>Base para diseño del email template automático en SFDC. Incluir campos actuales, remitente y destinatario típico.</td>
+            <td>AdOps</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td>ART-05</td>
+            <td>Ejemplos de tipos de Deal programático activos en GAM</td>
+            <td>Ejemplos representativos de deals PG, PD y Open: tipo, floor price aproximado y condiciones comerciales. No se requiere lista completa.</td>
+            <td>AdOps / Equipo Programático</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td>ART-06</td>
+            <td>Ejemplos de Seat IDs por plataforma DSP</td>
+            <td>Ejemplos del formato del Seat ID para las principales plataformas (DV360, The Trade Desk, Amazon DSP). No se requiere catálogo completo.</td>
+            <td>AdOps (Rafa)</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td>ART-07</td>
+            <td>Acceso al Dashboard de DataStudio de TV Azteca para monitoreo de campañas</td>
+            <td>Acceso de lectura al Dashboard de DataStudio que TV Azteca utiliza actualmente para monitorear las campañas programáticas. Esto permitirá replicar las métricas y visualizaciones en SFDC Reports &amp; Dashboards.</td>
+            <td>AdOps (Rafa)</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td>ART-08</td>
+            <td>Catálogo de productos con flag "apto para programática" (incluir YouTube)</td>
+            <td>Actualizar el catálogo PCM con el campo <code>Es_Programatico__c</code> correctamente asignado. Incluir confirmación de qué formatos de YouTube aplican.</td>
+            <td>TV Azteca Producto</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Pendiente</span></td>
+          </tr>
+          <tr>
+            <td>ART-09</td>
+            <td>Tarifario de productos Disney (lógica de segmentación + 10%)</td>
+            <td>Entender la lógica de precio variable de Disney para modelar correctamente en el catálogo PCM</td>
+            <td>TV Azteca Producto</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado</span></td>
+          </tr>
+          <tr>
+            <td>ART-10</td>
+            <td><strong>Lista de tarifas negociadas por plataforma programática (fee de tecnología)</strong></td>
+            <td>Configurar el campo <code>Comision_AdServer__c</code> (% de comisión negociada) en los contratos por plataforma (Google/GAM, Amazon, Magnite, Equativ). El Scheduled Flow mensual usa este valor para calcular automáticamente el valor neto facturable en la conciliación de Open Auction (RN-008, RN-013).</td>
+            <td>Rafa (Administración)</td>
+            <td>03-Jun-2026</td>
+            <td><span class="badge badge-open">Solicitado — pendiente 25-May</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E6 — SOLUTION DESIGN SUMMARY
+════════════════════════════════════════════════════════════ -->
+<div id="e6" class="content">
+  <div class="page-hd">
+    <h1>E6 — Solution Design Summary: Venta Programática</h1>
+    <p>Describe CÓMO Salesforce Media Cloud implementará los requisitos de venta programática.</p>
+    <div class="alert alert-done" style="background:#f3faed;border-left:4px solid #04844b">✅ <div><strong>Estado (v1.2 — 17-Jun-2026):</strong> Diseño confirmado por equipo de producto Salesforce Media Cloud (Goutham Kandregula, sesión 17-Jun-2026). Cambios principales: Quote-to-Proposal flow directo (sin DRO), polling de GAM para cierre de loop, actuals vía GAM Data Cloud Connector en Data Cloud. Dos puntos técnicos abiertos: field mapping materials (Q-09) y schema del campo serializado en Data Cloud Connector (Q-08 / R-08).</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">1</div>Componentes de Solución</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Componente</th><th>Feature Salesforce</th><th>Tipo</th><th>Complejidad</th><th>Dependencias</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Flag programática en catálogo</strong><br><small>RN-001</small></td>
+            <td>Campo custom <code>Es_Programatico__c</code> en Product2 / PCM</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Baja</td>
+            <td>Catálogo de productos Release 1</td>
+          </tr>
+          <tr>
+            <td><strong>Campos programáticos en Ad Order Item</strong><br><small>RN-002</small></td>
+            <td>Custom Fields en Ad Order Item: Tipo_Venta__c, Floor_Price__c, Seat_ID_DSP__c, GAM_Deal_ID__c, Es_Open_Subasta__c, Status_GAM__c, Plataforma_Programatica__c</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Baja</td>
+            <td>Modelo de datos ODS</td>
+          </tr>
+          <tr>
+            <td><strong>Sección condicional en Media Planning Grid</strong><br><small>RN-001</small></td>
+            <td>Dynamic Forms / OmniStudio OmniLayout — muestra sección "Detalles Programáticos" solo si producto tiene flag activo</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Media</td>
+            <td>RN-001, RN-002</td>
+          </tr>
+          <tr>
+            <td><strong>Creación de Proposal + ProposalLineItem en GAM (vía Media Cloud AdTech API directo) y retroescritura de 3 IDs</strong><br><small>RN-005, D-16, D-17, D-18</small></td>
+            <td>Al aprobar y activar la Cotización, Salesforce llama directamente la <strong>Media Cloud AdTech API</strong> para crear la Proposal en GAM. <strong>No usa DRO</strong>. El payload mapea: nombre del deal, <code>buyerAccountId</code> (Seat ID del comprador DSP), floor price, fechas, inventario. GAM retorna Proposal ID, Deal ID, Marketplace ID y Line Item ID. <strong>Los 3 IDs se escriben automáticamente en la Ad Order Item (read-only)</strong>. PG/PD incluyen buyerAccountId — Open Auction no pasa por este flujo (D-12). El patrón replica el Managed Package (GAMP) usando las mismas APIs. Está en roadmap Salesforce para soporte nativo futuro (D-18).</td>
+            <td><span class="badge badge-integ">Integración</span></td>
+            <td>Alta</td>
+            <td>ART-01 (Service Account), Q-09 (field mapping materials), D-16, D-17, D-18</td>
+          </tr>
+          <tr>
+            <td><strong>Polling de estado GAM → cierre de Quote-to-Order en Salesforce</strong><br><small>D-19</small></td>
+            <td>Después de crear la Proposal en GAM, Salesforce hace <strong>polling periódico</strong> al GAM consultando el estado de la Proposal. Al detectar que el comprador DSP aceptó y GAM convirtió la Proposal en Order/Campaign, Salesforce <strong>cierra el Quote-to-Order internamente</strong>. El Quote-to-Order se completa <em>después</em> de la aceptación del comprador, no antes. Implementación sugerida: Apex Schedulable o Queueable con reintentos.</td>
+            <td><span class="badge badge-integ">Integración</span></td>
+            <td>Media</td>
+            <td>ART-01, D-19, R-04</td>
+          </tr>
+          <tr>
+            <td><strong>Manejo de errores de integración GAM</strong><br><small>RNF-001</small></td>
+            <td>Apex Queueable para retry async + Platform Event para notificación a AdOps</td>
+            <td><span class="badge badge-custom">Customización (Apex)</span></td>
+            <td>Media</td>
+            <td>RN-005</td>
+          </tr>
+          <tr>
+            <td><strong>Email automático RN-063</strong><br><small>RN-063</small></td>
+            <td>Flow (Record-Triggered) → Email Alert con Custom Email Template. Campo "Contacto DSP Comprador" en Ad Order Item como destinatario.</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Baja</td>
+            <td>ART-04 (template), RN-005</td>
+          </tr>
+          <tr>
+            <td><strong>Notificación Contraloría RN-064</strong><br><small>RN-064</small></td>
+            <td>Flow → Email Alert (pendiente confirmación canal: email o Chatter).</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Baja</td>
+            <td>Canal por confirmar</td>
+          </tr>
+          <tr>
+            <td><strong>GAM Data Cloud Connector + conciliación y dashboard desde Data Cloud</strong><br><small>RN-008, D-20, Q-08</small></td>
+            <td><strong>Arquitectura de actuals confirmada (D-20):</strong> El <strong>GAM Data Cloud Connector</strong> (estándar) ingesta datos de entrega de GAM en Data Cloud. Los actuals (impresiones, clicks, CTR, BTR, VDR, revenue) <strong>viven en Data Cloud</strong> — no se hace write-back a campos CRM.<br><br>
+            <strong>PG/PD:</strong> Dashboard y cálculo de facturación leen desde Data Cloud. El valor neto = revenue bruto − <code>Comision_AdServer__c</code> del contrato de plataforma.<br><br>
+            <strong>Open Auction — mensual:</strong> Con base en los actuals de Data Cloud, se crean automáticamente las <strong>Orders post-facto en Salesforce</strong> con el valor neto calculado. Proceso automático, sin extracción manual.
+            <div class="alert alert-warn" style="margin-top:8px">⚠️ <div><strong>Pendiente técnico (Q-08 / R-08):</strong> El campo de estadísticas de entrega en el GAM Connector llega serializado en un solo campo — schema desconocido. Requiere engagement con equipo Data Cloud antes del sprint.</div></div></td>
+            <td><span class="badge badge-integ">Integración</span></td>
+            <td>Alta</td>
+            <td>ART-10 (comisiones por plataforma), Q-08 (schema Data Cloud), D-15, D-20, R-08</td>
+          </tr>
+          <tr>
+            <td><strong>Reporte de conciliación y Dashboard</strong><br><small>RN-010</small></td>
+            <td>Salesforce Reports & Dashboards nativos. Filtros estándar para excluir Open Auction de reportes de ingresos comprometidos.</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Media</td>
+            <td>ART-07 (DataStudio access), RN-009</td>
+          </tr>
+          <tr>
+            <td><strong>Proceso de Amendment (Order-to-Quote)</strong><br><small>RN-007</small></td>
+            <td>SFDC OOB Order Amendment process. Para cambios que impactan GAM: re-trigger de Integration Procedure con acción "UpdateOrderWithSellerData" en GAM.</td>
+            <td><span class="badge badge-config">Configuración + </span><span class="badge badge-integ">Integración</span></td>
+            <td>Media</td>
+            <td>RN-005, D-05</td>
+          </tr>
+          <tr>
+            <td><strong>Contratos por plataforma programática</strong><br><small>RN-004</small></td>
+            <td>Objetos Contract nativos de SFDC con estructura padre (Targetcast) / hijo (plataforma). Campos para tipo de plataforma y razón social pagadora.</td>
+            <td><span class="badge badge-config">Configuración</span></td>
+            <td>Media</td>
+            <td>Diseño de cuentas y contratos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">2</div>Limitaciones y Fuera de Alcance</div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Item</th><th>Razón</th></tr></thead>
+        <tbody>
+          <tr><td>Integración directa con Amazon, Magnite, Equativ como Exchanges independientes</td><td>Fuera de SOW — requiere Change Order. Se cubren como sub-canales via GAM con flag en la ODS.</td></tr>
+          <tr><td>Integración con Disney Ad Server</td><td>Disney gestiona su propio server. No se integra en Release 2. Productos Disney en catálogo con prefijo diferenciador.</td></tr>
+          <tr><td>Gestión de Protecciones (exclusiones de anunciantes competidores en GAM)</td><td>Administrado directamente en GAM. No requiere modelado en SFDC en esta fase.</td></tr>
+          <tr><td>Open Auction — configuración de Inventory Rules en GAM</td><td>AdOps configura floor prices y segmentación directamente en la pestaña de Inventario de GAM. SFDC no origina la configuración. La Order en SFDC se crea post-facto en la conciliación mensual (ver D-12).</td></tr>
+          <tr><td>Automatización de ID auto-incremental adicional (sobre el nativo)</td><td>El ID auto-number nativo de SFDC (campo tipo AutoNumber, ej. formato "PRG-{000000}") está confirmado. No requiere desarrollo custom — es configuración. Si se necesita lógica adicional de folio, evaluar en fase de construcción.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E7 — MINUTA DE SESIONES
+════════════════════════════════════════════════════════════ -->
+<div id="e7" class="content">
+  <div class="page-hd">
+    <h1>E7 — Minuta de Sesiones: Venta Programática</h1>
+    <p>Actas formales de las sesiones de discovery realizadas. Publicadas dentro de las 24h posteriores a cada sesión.</p>
+  </div>
+
+  <!-- SESSION 1 -->
+  <div class="card">
+    <div class="card-header"><div class="num">S1</div>Sesión 1 — Venta Programática: Deals GAM y Operación — 18-May-2026</div>
+    <div class="card-body">
+      <div class="minutes-meta">
+        <div class="item"><strong>Fecha</strong>18 de Mayo 2026, 10:51 CST</div>
+        <div class="item"><strong>Duración</strong>~90 minutos</div>
+        <div class="item"><strong>Modalidad</strong>Videoconferencia</div>
+        <div class="item"><strong>Estado acta</strong><span class="badge badge-pend">Pendiente aprobación</span></div>
+      </div>
+
+      <div class="sec-hd">Participantes</div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Empresa</th></tr></thead>
+        <tbody>
+          <tr><td>Gustavo Sant'Anna</td><td>Salesforce</td></tr>
+          <tr><td>Daniel Murcia</td><td>Salesforce</td></tr>
+          <tr><td>Nicolas Papa</td><td>Salesforce</td></tr>
+          <tr><td>Gustavo Richter</td><td>Salesforce</td></tr>
+          <tr><td>José Carlos Padilla</td><td>Salesforce</td></tr>
+          <tr><td>Edgar Azeka</td><td>Salesforce</td></tr>
+          <tr><td>Gia Diaz</td><td>Salesforce</td></tr>
+          <tr><td>Ana Ruth Salinas</td><td>Salesforce</td></tr>
+          <tr><td>Saul Ricardo Hernandez</td><td>Salesforce</td></tr>
+          <tr><td>Carlos Rojas</td><td>TV Azteca</td></tr>
+          <tr><td>Maria Tavira</td><td>TV Azteca</td></tr>
+          <tr><td>Jorge Pedro Ramirez Solis</td><td>TV Azteca</td></tr>
+          <tr><td>Rafael Martinez Castro</td><td>TV Azteca</td></tr>
+          <tr><td>Ana Isabel Vazquez Rodriguez</td><td>TV Azteca</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-hd">Resumen de Temas Discutidos</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li>Estrategia de integración: usar productos existentes del catálogo con atributo Buyer ID en lugar de crear productos específicos para programática</li>
+        <li>Distinción operativa de los tres tipos de venta programática: PG, PD y Open</li>
+        <li>Buyer ID / Seat ID: obligatorio para PG y PD; no aplica para Open Auction</li>
+        <li>Amazon, Magnite y Equativ se enrutan a través de GAM como hub central — no son Exchanges independientes en este modelo</li>
+        <li>Estructura de contratos: separados por plataforma; Targetcast como razón social pagadora</li>
+        <li>Nomenclatura de pedidos estandarizada para conciliación y trazabilidad</li>
+        <li>Monitoreo: diario para PG/PD; mensual para Open</li>
+        <li>Necesidad de Service Account en Google Cloud para integración técnica</li>
+        <li>Regla de facturación: under → sobre entregado; over → sobre tope acordado</li>
+        <li>Automatización de notificaciones: al aprobarse el deal, se dispara email automático al comprador DSP</li>
+      </ul>
+
+      <div class="sec-hd">Decisiones Tomadas</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>D-01:</strong> No crear productos separados para programática — usar flag en catálogo existente</li>
+        <li><strong>D-02:</strong> Buyer ID obligatorio para PG y PD; no aplica en Open</li>
+        <li><strong>D-07:</strong> Monitoreo diario para garantizados; mensual para Open</li>
+      </ul>
+
+      <div class="sec-hd">Acciones Pendientes</div>
+      <div class="action-row"><div class="action-who">TV Azteca Impl/Tráfico</div><div>Preparar demo o documentación del flujo programático actual en GAM (AS-IS)</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">equipo Salesforce</div><div>Definir matriz RACI Vendedor / Implementador / Tráfico</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">TV Azteca Producto</div><div>Actualizar catálogo de productos con flag programática + confirmar YouTube</div><div style="margin-left:auto;color:var(--sf-label)">03-Jun-2026</div></div>
+      <div class="action-row"><div class="action-who">TV Azteca TI</div><div>Crear Service Account en Google Cloud para integración técnica (prod/QA)</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">equipo Salesforce</div><div>Agendar sesión específica de Conciliación Programática</div><div style="margin-left:auto;color:var(--sf-label)">22-May-2026</div></div>
+
+      <div class="sec-hd">Próximos Pasos</div>
+      <p style="font-size:12px">Sesión de seguimiento (19-May-2026) para revisar el proceso de amendments en órdenes activas, flujo de propuestas en GAM y conciliación. Pendiente: demo del flujo AS-IS en GAM por parte del equipo de AdOps.</p>
+    </div>
+  </div>
+
+  <!-- SESSION 2 -->
+  <div class="card">
+    <div class="card-header"><div class="num">S2</div>Sesión 2 — Venta Programática: Amendments, Propuestas GAM y Conciliación — 19-May-2026</div>
+    <div class="card-body">
+      <div class="minutes-meta">
+        <div class="item"><strong>Fecha</strong>19 de Mayo 2026, 14:06 GMT-3</div>
+        <div class="item"><strong>Duración</strong>~45 minutos</div>
+        <div class="item"><strong>Modalidad</strong>Videoconferencia</div>
+        <div class="item"><strong>Estado acta</strong><span class="badge badge-pend">Pendiente aprobación</span></div>
+      </div>
+
+      <div class="sec-hd">Participantes</div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Empresa</th></tr></thead>
+        <tbody>
+          <tr><td>Gustavo Sant'Anna</td><td>Salesforce</td></tr>
+          <tr><td>Daniel Murcia</td><td>Salesforce</td></tr>
+          <tr><td>Ana Ruth Salinas</td><td>Salesforce</td></tr>
+          <tr><td>Rafael Martinez Castro (Rafa)</td><td>TV Azteca</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-hd">Resumen de Temas Discutidos</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>Amendments en órdenes activas:</strong> Actualmente TV Azteca modifica directamente en GAM sin proceso formal (sin cancelar la orden original). El estándar SFDC (Order-to-Quote) será adoptado.</li>
+        <li><strong>Líneas Bonus:</strong> Cuando hay under-delivery sin querer mover fechas, se agrega una línea adicional a la misma orden con CPM=0 y nomenclatura "bonus". Esta línea tiene su propio targeting y target de impresiones.</li>
+        <li><strong>Fuente de verdad de montos:</strong> Para venta directa: SBD. Para programática: el Exchange (GAM) define el monto — los valores de GAM y SBD deben coincidir al cierre.</li>
+        <li><strong>Ruta programática en GAM:</strong> Siempre via Proposal. La Proposal se convierte automáticamente en Order en GAM tras validación interna y aprobación del comprador. El Order en GAM es transparente para el usuario (todo se gestiona en ProposalLineItem).</li>
+        <li><strong>Estados de la Proposal en GAM:</strong> Reserva de inventario → En revisión → Aceptación → Finalizada. Una vez directa no puede volverse programática y viceversa.</li>
+        <li><strong>Conciliación:</strong> Se trabaja a nivel de Line Item (agrupado, no día a día). Métricas principales: impresiones entregadas, clicks, CTR, BTR, VDR. El reporte de Data Studio de TV Azteca calcula: impresiones por día = (contratadas / días del período); avance = (entregadas / (días transcurridos × imp/día)) × 100. Objetivo: estar en 100%. Por debajo = riesgo; por arriba = sobreentrega.</li>
+        <li><strong>Seat ID (City ID):</strong> Confirmado como campo alfanumérico, ~20–200 caracteres. Crear como texto custom. Puede haber múltiples por Exchange.</li>
+        <li><strong>Reportes de monitoreo:</strong> TV Azteca tiene dashboard en Data Studio conectado directamente con GAM. Métricas: impressions, clicks, CTR, BTR, VDR. Solicitud de compartir acceso al equipo Salesforce.</li>
+        <li><strong>Productos Disney:</strong> Dos productos con el mismo nombre pero distintas propiedades (uno para streaming en vivo; otro para Disney+ que no se captura en su server). Solución: añadir prefijo/sufijo para diferenciar. Disney no será integrado con GAM en Release 2.</li>
+        <li><strong>YouTube programático:</strong> Formatos con precios distintos (skippable vs. non-skippable, diferencia de 1 pixel). Un formato por línea de pedido.</li>
+        <li><strong>Tarifario Disney:</strong> Ciertas segmentaciones gratuitas; otras con costo adicional (+10% tarifa base). TV Azteca compartirá el tarifario.</li>
+      </ul>
+
+      <div class="sec-hd">Decisiones Tomadas</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>D-03:</strong> Path de creación de deals en GAM siempre via Proposal API</li>
+        <li><strong>D-04:</strong> Fuente de verdad del monto programático es el Exchange (GAM)</li>
+        <li><strong>D-05:</strong> Amendments adoptarán el estándar SFDC Order-to-Quote</li>
+        <li><strong>D-06:</strong> Seat ID = campo de texto alfanumérico, máx. ~200 chars</li>
+        <li><strong>D-08:</strong> Sin MuleSoft — integración directa desde SFDC via Media Cloud AdTech API</li>
+      </ul>
+
+      <div class="sec-hd">Acciones Pendientes</div>
+      <div class="action-row"><div class="action-who">Rafa (AdOps)</div><div>Compartir acceso de lectura al GAM de TV Azteca al equipo Salesforce</div><div style="margin-left:auto;color:var(--sf-label)">22-May-2026</div></div>
+      <div class="action-row"><div class="action-who">Rafa (AdOps)</div><div>Compartir dashboard de Data Studio de monitoreo de campañas</div><div style="margin-left:auto;color:var(--sf-label)">22-May-2026</div></div>
+      <div class="action-row"><div class="action-who">TV Azteca Producto</div><div>Compartir tarifario de productos Disney (lógica de segmentación + 10%)</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">equipo Salesforce</div><div>Validar capacidades de la Media Cloud AdTech API para Proposal + ProposalLineItem con equipo técnico Salesforce</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">equipo Salesforce</div><div>Registrar ADR documentando integración directa SFDC→GAM sin MuleSoft (desviación de Passive Core)</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+
+      <div class="sec-hd">Próximos Pasos</div>
+      <p style="font-size:12px">Pendiente agendar sesión de Conciliación Programática (punto crítico y complejo, identificado en ambas sesiones). Pendiente recibir ART-01 (Service Account) para avanzar con diseño técnico de integración. El equipo Salesforce completará el diseño de solución (E6) una vez validada la API.</p>
+    </div>
+  </div>
+
+  <!-- SESSION 3 -->
+  <div class="card">
+    <div class="card-header"><div class="num">S3</div>Sesión 3 — Validación del Documento de Solución de Venta Programática — 25-May-2026</div>
+    <div class="card-body">
+      <div class="minutes-meta">
+        <div class="item"><strong>Fecha</strong>25 de Mayo 2026, 15:35 CST</div>
+        <div class="item"><strong>Duración</strong>~54 minutos</div>
+        <div class="item"><strong>Modalidad</strong>Videoconferencia</div>
+        <div class="item"><strong>Estado acta</strong><span class="badge badge-pend">Pendiente aprobación</span></div>
+      </div>
+
+      <div class="sec-hd">Participantes</div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Empresa</th></tr></thead>
+        <tbody>
+          <tr><td>Gustavo Sant'Anna</td><td>Salesforce</td></tr>
+          <tr><td>Gustavo Richter</td><td>Salesforce</td></tr>
+          <tr><td>Daniel Murcia</td><td>Salesforce</td></tr>
+          <tr><td>Nicolas Papa</td><td>Salesforce</td></tr>
+          <tr><td>Felippe Vance</td><td>Salesforce</td></tr>
+          <tr><td>Ana Ruth Salinas</td><td>Salesforce</td></tr>
+          <tr><td>José Carlos Padilla</td><td>Salesforce</td></tr>
+          <tr><td>Hector Guerrero</td><td>TV Azteca</td></tr>
+          <tr><td>María Fernanda Tavira</td><td>TV Azteca</td></tr>
+          <tr><td>Carlos Rojas</td><td>TV Azteca</td></tr>
+          <tr><td>Rafa (Rafael) — Administración/Contraloría</td><td>TV Azteca</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-hd">Contexto</div>
+      <p style="font-size:12px">GPS presentó el documento de diseño de solución elaborado con base en las sesiones del 18–19 de mayo para validación de TV Azteca. El objetivo de la sesión fue revisar el avance del diseño y obtener retroalimentación, no resolver todos los pendientes.</p>
+
+      <div class="sec-hd">Temas Discutidos y Decisiones</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>Estructura de actores confirmada:</strong> Implementador = hub central distribuidor (no ejecuta en GAM). Trafficker = quien ejecuta en GAM directamente. 1 trafficker por gerencia (con 2 excepciones). Credenciales GAM individuales por trafficker — no se comparten. Se requiere asociación automática del trafficker al deal en Salesforce (no selección manual).</li>
+        <li><strong>3 IDs en el email al comprador DSP (D-13):</strong> El email RN-063 debe incluir obligatoriamente Deal ID + Marketplace ID + Line Item ID. Los tres son necesarios porque dependiendo de la plataforma del comprador es más fácil encontrar el deal con uno u otro. Los 3 IDs deben escribirse automáticamente en la ODS al retornar de GAM.</li>
+        <li><strong>Fee de plataforma programática — DATO NUEVO (RN-013):</strong> Las plataformas cobran ~10% de tarifa por tecnología programática (negociada para toda TV Azteca, puede variar por plataforma). El valor en conciliación debe mostrar monto neto después del fee para evitar confusión en Contraloría. Rafa enviará lista de tarifas por plataforma.</li>
+        <li><strong>Open Auction — flujo correcto confirmado (D-12):</strong> No hay ODS previa ni Proposal en GAM desde Salesforce. AdOps configura Inventory Rules en GAM directamente. La Order en Salesforce se crea post-facto en la conciliación mensual a partir de actuals de GAM. El inventario en Open no es "vendido" por un ejecutivo — es el remanente ofertado al mercado abierto.</li>
+        <li><strong>CPM=0 cancelado (D-14):</strong> No puede enviarse $1 placeholder a GAM. Los contratos con plataformas exigen precios reales (base del cálculo del fee). Toda línea en GAM debe tener precio real declarado.</li>
+        <li><strong>Amendment confirmado — cambios con/sin aprobación:</strong> Sin aprobación: segmentación interna (dispositivo, targeting, geo). Con aprobación: fechas, impresiones, floor price, adición de líneas que afectan presupuesto. Creatividades no pueden modificarse después de alojarlas en el deal (limitación técnica GAM).</li>
+        <li><strong>Cancelaciones = pausas (RN-015):</strong> En GAM los deals solo se pausan, nunca se cancelan definitivamente. Un deal puede reactivarse. Criterios de finalización: fecha de término O todas las impresiones consumidas.</li>
+        <li><strong>Contactos DSP distintos de venta directa (RN-014):</strong> Una misma agencia puede tener personas diferentes para programática y venta directa. Se necesita modelo de múltiples contactos por cuenta/marca con tipificación y selección de destinatario del email automático.</li>
+        <li><strong>Conciliación plataformas no-GAM — RIESGO (R-05):</strong> Amazon, Magnite, Equativ se conectan via GAM pero tienen comportamientos diferentes. Equativ en particular no opera igual que GAM estándar. TV Azteca hoy entra manualmente a cada plataforma. GPS investigará cómo abordar la conciliación de estas plataformas.</li>
+        <li><strong>Rafa (Administración) y acceso en Salesforce (Q-07):</strong> Discusión sobre perfil vs. Permission Set adicional. Preocupación central: evitar creación de deals por dos caminos (GAM directo + Salesforce) que genera duplicados y pierde trazabilidad.</li>
+        <li><strong>Pregunta técnica pendiente GPS (Q-06):</strong> ¿Crear Proposal + ProposalLineItem simultáneamente o en llamadas secuenciales? Quedó como análisis técnico interno de GPS.</li>
+      </ul>
+
+      <div class="sec-hd">Decisiones Tomadas en esta Sesión</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>D-12:</strong> Open Auction NO genera Proposal en GAM desde Salesforce. Order se crea post-facto en conciliación mensual.</li>
+        <li><strong>D-13:</strong> Los 3 IDs de GAM (Deal ID, Marketplace ID, Line Item ID) se escriben automáticamente en la ODS y son obligatorios en el email RN-063.</li>
+        <li><strong>D-14:</strong> CPM=0 o $1 placeholder cancelado — toda línea en GAM debe tener precio real.</li>
+      </ul>
+
+      <div class="sec-hd">Acciones Pendientes</div>
+      <div class="action-row"><div class="action-who">Team Salesforce (GPS)</div><div>Actualizar el documento de diseño de solución con los puntos discutidos y compartir con el grupo para revisión y validación</div><div style="margin-left:auto;color:var(--sf-label)">27-May-2026</div></div>
+      <div class="action-row"><div class="action-who">Rafa (TV Azteca)</div><div>Enviar lista de tarifas negociadas por plataforma (fees programáticos) — ART-10</div><div style="margin-left:auto;color:var(--sf-label)">03-Jun-2026</div></div>
+      <div class="action-row"><div class="action-who">Grupo TV Azteca</div><div>Compartir acceso al reporte de Data Studio presentado anteriormente (en construcción) para que GPS pueda analizarlo — ART-07</div><div style="margin-left:auto;color:var(--sf-label)">03-Jun-2026</div></div>
+      <div class="action-row"><div class="action-who">Grupo</div><div>Revisar y validar el documento de solución una vez compartido por GPS</div><div style="margin-left:auto;color:var(--sf-label)">03-Jun-2026</div></div>
+
+      <div class="sec-hd">Próximos Pasos</div>
+      <p style="font-size:12px">GPS actualizará el documento de solución y lo compartirá para validación. Pendiente: sesión específica de Conciliación Programática (punto crítico identificado en las tres sesiones). Pendiente recibir ART-10 (tarifas por plataforma) y ART-07 (Data Studio). El equipo Salesforce completará el diseño técnico de integración (Q-06) internamente.</p>
+    </div>
+  </div>
+
+  <!-- SESSION 4 -->
+  <div class="card">
+    <div class="card-header"><div class="num">S4</div>Sesión 4 — Consulta Técnica con Equipo de Producto Salesforce Media Cloud — 17-Jun-2026</div>
+    <div class="card-body">
+      <div class="minutes-meta">
+        <div class="item"><strong>Fecha</strong>17 de Junio 2026</div>
+        <div class="item"><strong>Duración</strong>~60 minutos</div>
+        <div class="item"><strong>Modalidad</strong>Videoconferencia</div>
+        <div class="item"><strong>Estado acta</strong><span class="badge badge-done">Cerrado</span></div>
+      </div>
+
+      <div class="sec-hd">Participantes</div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Empresa / Rol</th></tr></thead>
+        <tbody>
+          <tr><td>Gustavo Sant'Anna</td><td>Salesforce — TA / GPS</td></tr>
+          <tr><td>Jerry Popescu</td><td>Salesforce — Media Cloud Product (AE/SE)</td></tr>
+          <tr><td>Goutham Kandregula</td><td>Salesforce — Media Cloud Product Engineering</td></tr>
+          <tr><td>Saul Ricardo Hernandez</td><td>Salesforce — GPS</td></tr>
+          <tr><td>Daniel Murcia</td><td>Salesforce — GPS</td></tr>
+          <tr><td>Edgar Azeka</td><td>Salesforce — GPS</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-hd">Contexto de la Sesión</div>
+      <p style="font-size:12px">Sesión técnica con el equipo de producto de Salesforce Media Cloud (Goutham Kandregula) para validar el diseño de la integración de venta programática (PG/PD) en on-core. El equipo GPS presentó el diseño propuesto y recibió orientación técnica directa sobre el patrón correcto de implementación, la arquitectura del Managed Package y el roadmap del producto.</p>
+
+      <div class="sec-hd">Temas Discutidos y Decisiones</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>Quote-to-Proposal flow (D-16):</strong> Goutham confirmó que para PG/PD el flujo correcto es ingresar el deal directamente como Proposal en GAM usando la Media Cloud AdTech API — sin pasar por DRO ni generar una Order en Salesforce antes. Cita textual: <em>"you don't even need to go through DRRO and all because as I said we're not going through an ordering process. You just need to ingest or integrate the code directly."</em></li>
+        <li><strong>DRO NO requerido para programática (D-17):</strong> El media plan construct en Salesforce es similar al de venta directa, con campos adicionales obligatorios (DSP Buyer ID / Seat ID). No se usa DRO. El flujo es cotización → Media Cloud AdTech API → Proposal en GAM.</li>
+        <li><strong>Media Cloud AdTech APIs como path recomendado (D-18):</strong> El patrón del Managed Package (GAMP) usa OmniStudio Integration Procedures sobre estas mismas APIs. En on-core se implementa vía Apex o Integration Procedure nativa. Goutham confirmó que la implementación nativa está en el roadmap de Salesforce — adoptar las APIs hoy future-proofs la implementación.</li>
+        <li><strong>Quote-to-Order cierra el loop DESPUÉS (D-19):</strong> Después de que el comprador DSP acepta en su plataforma, GAM convierte la Proposal en Order/Campaign. Salesforce hace polling periódico al GAM y, al detectar la conversión, cierra el Quote-to-Order internamente. El Quote-to-Order se completa <em>después</em>, como cierre del loop.</li>
+        <li><strong>GAM Data Cloud Connector para actuals (D-20):</strong> Los actuals de entrega se ingestan via GAM Data Cloud Connector (estándar). Los datos viven en Data Cloud — no se hace write-back a campos CRM. El campo de estadísticas de entrega llega serializado en un solo campo — schema pendiente de documentar (Q-08).</li>
+        <li><strong>Field mapping materials (Q-09):</strong> Goutham se comprometió a compartir materiales de mapeo de campos (source objects Salesforce → atributos de Proposal/ProposalLineItem en GAM).</li>
+        <li><strong>AdServerOrderIdentifier (Q-10):</strong> Goutham mencionó el campo estándar <code>AdServerOrderIdentifier</code> en AdItem como candidato para almacenar el GAM Order ID, en lugar de un campo custom. Por confirmar con Edgar / Daniel en la fase de diseño de datos.</li>
+      </ul>
+
+      <div class="sec-hd">Decisiones Tomadas en esta Sesión</div>
+      <ul class="decision-list" style="margin-left:16px">
+        <li><strong>D-16:</strong> Quote-to-Proposal flow confirmado — PG/PD se ingresa directo como Proposal en GAM via Media Cloud AdTech API, sin DRO ni Order previa en Salesforce.</li>
+        <li><strong>D-17:</strong> DRO NO requerido para programática.</li>
+        <li><strong>D-18:</strong> Media Cloud AdTech APIs son el path de integración recomendado — future-proofs para soporte nativo en roadmap.</li>
+        <li><strong>D-19:</strong> Quote-to-Order cierra el loop después: Salesforce hace polling al GAM y cierra Quote-to-Order al detectar conversión de Proposal a Order en GAM.</li>
+        <li><strong>D-20:</strong> Actuals de entrega viven en Data Cloud (GAM Connector) — no write-back a campos CRM.</li>
+      </ul>
+
+      <div class="sec-hd">Acciones Pendientes</div>
+      <div class="action-row"><div class="action-who">equipo GPS</div><div>Follow-up a Goutham para recibir field mapping materials (Q-09) — objetos Salesforce → atributos GAM</div><div style="margin-left:auto;color:var(--sf-label)">22-Jun-2026</div></div>
+      <div class="action-row"><div class="action-who">equipo GPS</div><div>Contactar equipo de Data Cloud para obtener schema del campo serializado en GAM Data Cloud Connector (Q-08 / R-08)</div><div style="margin-left:auto;color:var(--sf-label)">22-Jun-2026</div></div>
+      <div class="action-row"><div class="action-who">Edgar / Daniel</div><div>Validar campo <code>AdServerOrderIdentifier</code> en AdItem como candidato para almacenar GAM Order ID (Q-10) — evita campo custom</div><div style="margin-left:auto;color:var(--sf-label)">Define &amp; Build</div></div>
+      <div class="action-row"><div class="action-who">equipo GPS</div><div>Actualizar documento de diseño E6 con arquitectura confirmada (Quote-to-Proposal flow, no DRO, polling, Data Cloud Connector)</div><div style="margin-left:auto;color:var(--sf-label)">17-Jun-2026 — Completado</div></div>
+
+      <div class="sec-hd">Próximos Pasos</div>
+      <p style="font-size:12px">El diseño de la integración de venta programática está <strong>confirmado y cerrado</strong> en sus aspectos principales. Los únicos puntos técnicos abiertos son: field mapping materials de Goutham (Q-09) y schema del campo serializado en el GAM Data Cloud Connector (Q-08). Proceder a la fase de Define &amp; Build con el diseño validado por el equipo de producto Salesforce.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     E8 — BPMN DIAGRAMS
+════════════════════════════════════════════════════════════ -->
+<div id="e8" class="content">
+  <div class="page-hd">
+    <h1>E8 — Diagramas de Proceso BPMN: Venta Programática TO-BE</h1>
+    <p>Diagramas en notación BPMN con raias (swimlanes) para apoyar la explicación del proceso.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">A</div>Flujo Principal — Garantizado (PG) y Acuerdo Preferente (PD)</div>
+    <div class="card-body" style="overflow-x:auto">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520"
+           font-family="Arial, Helvetica, sans-serif" font-size="10">
+        <defs>
+          <marker id="d1-seq" viewBox="0 0 10 10" markerWidth="7" markerHeight="7"
+                  refX="9" refY="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 Z" fill="#3e3e3c"/>
+          </marker>
+          <marker id="d1-msg" viewBox="0 0 10 10" markerWidth="7" markerHeight="7"
+                  refX="9" refY="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 Z" fill="#0070d2"/>
+          </marker>
+          <marker id="d1-up" viewBox="0 0 10 10" markerWidth="7" markerHeight="7"
+                  refX="5" refY="0" orient="0">
+            <path d="M 0 10 L 5 0 L 10 10 Z" fill="#3e3e3c"/>
+          </marker>
+          <marker id="d1-msg-start" viewBox="0 0 10 10" markerWidth="6" markerHeight="6"
+                  refX="5" refY="5" orient="auto">
+            <circle cx="5" cy="5" r="4" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="1" y="1" width="1198" height="518" rx="4" fill="#fafafa" stroke="#032d60" stroke-width="2"/>
+        <rect x="1" y="1" width="28" height="518" rx="4" fill="#032d60"/>
+        <text transform="rotate(-90) translate(-260,18)" fill="white" font-size="10.5" font-weight="bold" text-anchor="middle">TV Azteca — Venta Programática PG / PD</text>
+        <rect x="29" y="1" width="155" height="29" fill="#032d60"/>
+        <rect x="184" y="1" width="1015" height="29" fill="#032d60"/>
+        <text x="106" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Participante</text>
+        <text x="692" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Venta Programática PG / Acuerdo Preferente (PD) — Flujo Principal</text>
+        <line x1="29" y1="30"  x2="1199" y2="30"  stroke="#dddbda" stroke-width="1"/>
+        <line x1="29" y1="110" x2="1199" y2="110" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29" y1="190" x2="1199" y2="190" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29" y1="270" x2="1199" y2="270" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29" y1="350" x2="1199" y2="350" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29" y1="430" x2="1199" y2="430" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="184" y1="30" x2="184" y2="518" stroke="#c9c7c5" stroke-width="1"/>
+        <rect x="184" y="110" width="1015" height="80" fill="#f9f9f9"/>
+        <rect x="29"  y="190" width="1170" height="80" fill="#f0f7ff"/>
+        <rect x="29"  y="270" width="1170" height="80" fill="#f5f0ff"/>
+        <rect x="29"  y="430" width="1170" height="80" fill="#fffbf0"/>
+        <text x="111" y="65"  text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Ejecutivo</text>
+        <text x="111" y="79"  text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">de Ventas</text>
+        <rect x="29" y="110" width="155" height="80" fill="#f9f9f9"/>
+        <text x="111" y="145" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Gerente /</text>
+        <text x="111" y="159" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Director</text>
+        <rect x="29" y="190" width="155" height="80" fill="#e8f4fd"/>
+        <text x="111" y="225" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Sistema</text>
+        <text x="111" y="239" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">SFDC / MC API</text>
+        <rect x="29" y="270" width="155" height="80" fill="#ede8fa"/>
+        <text x="111" y="314" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">GAM API</text>
+        <rect x="29" y="350" width="155" height="80" fill="#f0f0f0"/>
+        <text x="111" y="385" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">DSP</text>
+        <text x="111" y="399" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Comprador</text>
+        <rect x="29" y="430" width="155" height="80" fill="#fff3d6"/>
+        <text x="111" y="465" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">AdOps /</text>
+        <text x="111" y="479" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Contraloría</text>
+        <!-- Arrows -->
+        <line x1="224" y1="70" x2="233" y2="70" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <polyline points="355,70 378,70 378,150 355,150" fill="none" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="355" y1="150" x2="411" y2="150" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="430" y1="133" x2="430" y2="110" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-up)"/>
+        <polyline points="430,167 430,230 458,230" fill="none" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <polyline points="580,230 592,230 592,310 598,310" fill="none" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <polyline points="720,310 733,310 733,230 738,230" fill="none" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="850" y1="230" x2="863" y2="230" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="920" y1="250" x2="920" y2="368" stroke="#0070d2" stroke-width="1.5" stroke-dasharray="5,3" marker-start="url(#d1-msg-start)" marker-end="url(#d1-msg)"/>
+        <line x1="975" y1="390" x2="1001" y2="390" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="1020" y1="373" x2="1020" y2="354" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-up)"/>
+        <polyline points="1020,407 1020,470 1043,470" fill="none" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <line x1="1170" y1="470" x2="1171" y2="470" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/>
+        <!-- Start -->
+        <circle cx="210" cy="70" r="14" fill="#e8f9ee" stroke="#04844b" stroke-width="2.5"/>
+        <!-- T1 -->
+        <rect x="235" y="50" width="120" height="40" rx="5" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="295" y="66" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Crea ODS /</text>
+        <text x="295" y="80" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Items Programáticas</text>
+        <!-- T2 -->
+        <rect x="235" y="130" width="120" height="40" rx="5" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="295" y="146" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Revisa y Aprueba</text>
+        <text x="295" y="160" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Cotización</text>
+        <!-- GW1 -->
+        <polygon points="430,133 447,150 430,167 413,150" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="430" y="184" text-anchor="middle" fill="#706e6b" font-size="8.5">¿Aprobada?</text>
+        <text x="438" y="122" fill="#c23934" font-size="8.5" font-weight="bold">No</text>
+        <text x="438" y="132" fill="#706e6b" font-size="7.5">→ Fin</text>
+        <text x="437" y="210" fill="#04844b" font-size="8.5" font-weight="bold">Sí</text>
+        <!-- T3 -->
+        <rect x="458" y="210" width="122" height="40" rx="5" fill="#ddf0ff" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="519" y="226" text-anchor="middle" fill="#032d60" font-size="9.5" font-weight="600">MC AdTech API</text>
+        <text x="519" y="240" text-anchor="middle" fill="#032d60" font-size="9.5" font-weight="600">→ GAM Proposal</text>
+        <!-- T4 -->
+        <rect x="598" y="290" width="122" height="40" rx="5" fill="#ede8fa" stroke="#7b5ea7" stroke-width="1.5"/>
+        <text x="659" y="306" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Crea Proposal +</text>
+        <text x="659" y="320" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">ProposalLineItem</text>
+        <text x="741" y="272" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">3 IDs</text>
+        <text x="741" y="282" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">retornados</text>
+        <!-- T5 -->
+        <rect x="738" y="210" width="112" height="40" rx="5" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="794" y="223" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">3 IDs → ODS</text>
+        <text x="794" y="236" text-anchor="middle" fill="#706e6b" font-size="8">Deal ID · Mktpl ID</text>
+        <text x="794" y="247" text-anchor="middle" fill="#706e6b" font-size="8">LineItem ID (auto)</text>
+        <!-- T6 -->
+        <rect x="863" y="210" width="114" height="40" rx="5" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="920" y="226" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Email automático</text>
+        <text x="920" y="240" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">RN-063</text>
+        <!-- Envelope icon on message flow -->
+        <rect x="908" y="302" width="24" height="16" rx="2" fill="white" stroke="#0070d2" stroke-width="1.2"/>
+        <polyline points="908,302 920,312 932,302" fill="none" stroke="#0070d2" stroke-width="1.2"/>
+        <text x="937" y="313" fill="#0070d2" font-size="7.5" font-style="italic">notif.</text>
+        <!-- T7 -->
+        <rect x="863" y="370" width="112" height="40" rx="5" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="919" y="386" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">DSP: Revisa</text>
+        <text x="919" y="400" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">y Acepta</text>
+        <!-- GW2 -->
+        <polygon points="1020,373 1037,390 1020,407 1003,390" fill="white" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="1020" y="422" text-anchor="middle" fill="#706e6b" font-size="8.5">¿Acepta?</text>
+        <text x="1028" y="365" fill="#c23934" font-size="8.5" font-weight="bold">No</text>
+        <text x="1028" y="375" fill="#706e6b" font-size="7.5">→ Fin</text>
+        <text x="1027" y="447" fill="#04844b" font-size="8.5" font-weight="bold">Sí</text>
+        <!-- T8 -->
+        <rect x="1043" y="450" width="127" height="40" rx="5" fill="#fff3d6" stroke="#e8a700" stroke-width="1.5"/>
+        <text x="1106" y="465" text-anchor="middle" fill="#3e3e3c" font-size="9" font-weight="600">AdOps: Confirma</text>
+        <text x="1106" y="478" text-anchor="middle" fill="#3e3e3c" font-size="9" font-weight="600">Activación + Conciliación*</text>
+        <!-- End -->
+        <circle cx="1185" cy="470" r="14" fill="#fce8e8" stroke="#c23934" stroke-width="4"/>
+        <!-- Footnote -->
+        <line x1="186" y1="505" x2="510" y2="505" stroke="#dddbda" stroke-width="0.5"/>
+        <text x="186" y="514" fill="#706e6b" font-size="8.5" font-style="italic">* Proceso de conciliación en definición — aplica también a venta directa</text>
+        <line x1="690" y1="510" x2="720" y2="510" stroke="#0070d2" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="724" y="514" fill="#706e6b" font-size="8.5">Flujo de mensaje (notificación externa)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">B</div>Flujo — Open Auction (Subasta Abierta)</div>
+    <div class="card-body" style="overflow-x:auto">
+      <div class="alert alert-info" style="margin-bottom:12px">ℹ️ <div><strong>Open Auction — flujo automático (D-12, D-15):</strong> No hay ODS previa en Salesforce. AdOps configura Inventory Rules en GAM. Al cierre del mes, un <strong>Scheduled Flow automático</strong> consulta GAM, aplica la <code>Comision_AdServer__c</code> del contrato y crea las Orders en Salesforce. Sin extracción manual de reportes.</div></div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1060" height="380" viewBox="0 0 1060 380"
+           font-family="Arial, Helvetica, sans-serif" font-size="10">
+        <defs>
+          <marker id="d2-seq" viewBox="0 0 10 10" markerWidth="7" markerHeight="7"
+                  refX="9" refY="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 Z" fill="#3e3e3c"/>
+          </marker>
+          <marker id="d2-auto" viewBox="0 0 10 10" markerWidth="7" markerHeight="7"
+                  refX="9" refY="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 Z" fill="#0070d2"/>
+          </marker>
+        </defs>
+
+        <!-- Outer border -->
+        <rect x="1" y="1" width="1058" height="378" rx="4" fill="#fafafa" stroke="#032d60" stroke-width="2"/>
+
+        <!-- Vertical label -->
+        <rect x="1" y="1" width="28" height="378" rx="4" fill="#032d60"/>
+        <text transform="rotate(-90) translate(-190,18)" fill="white" font-size="10.5" font-weight="bold" text-anchor="middle">TV Azteca — Open Auction (Subasta Abierta)</text>
+
+        <!-- Header row -->
+        <rect x="29" y="1" width="155" height="29" fill="#032d60"/>
+        <rect x="184" y="1" width="875" height="29" fill="#032d60"/>
+        <text x="106" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Participante</text>
+        <text x="622" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Open Auction — Conciliación Automática Mensual (D-12, D-15)</text>
+
+        <!-- Swimlane separators -->
+        <line x1="29"  y1="30"  x2="1059" y2="30"  stroke="#dddbda" stroke-width="1"/>
+        <line x1="29"  y1="115" x2="1059" y2="115" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29"  y1="210" x2="1059" y2="210" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="29"  y1="300" x2="1059" y2="300" stroke="#c9c7c5" stroke-width="1"/>
+        <line x1="184" y1="30"  x2="184"  y2="378" stroke="#c9c7c5" stroke-width="1"/>
+
+        <!-- Swimlane fills -->
+        <rect x="184" y="30"  width="875" height="85"  fill="#fff3e0"/>
+        <rect x="29"  y="115" width="1030" height="95" fill="#ede8fa"/>
+        <rect x="29"  y="210" width="1030" height="90" fill="#e8f4fd"/>
+        <rect x="29"  y="300" width="1030" height="78" fill="#fffbf0"/>
+
+        <!-- Actor labels -->
+        <text x="106" y="68"  text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">AdOps</text>
+        <rect x="29" y="115" width="155" height="95" fill="#ede8fa"/>
+        <text x="106" y="155" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">GAM</text>
+        <text x="106" y="170" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">(Exchange)</text>
+        <rect x="29" y="210" width="155" height="90" fill="#ddf0ff"/>
+        <text x="106" y="250" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">SFDC</text>
+        <text x="106" y="265" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Scheduled Flow</text>
+        <rect x="29" y="300" width="155" height="78" fill="#fff3d6"/>
+        <text x="106" y="334" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Contraloría /</text>
+        <text x="106" y="349" text-anchor="middle" fill="#032d60" font-size="10.5" font-weight="bold">Facturación</text>
+
+        <!-- START -->
+        <circle cx="215" cy="72" r="14" fill="#e8f9ee" stroke="#04844b" stroke-width="2.5"/>
+
+        <!-- T1: AdOps configura Inventory Rules -->
+        <rect x="240" y="52" width="150" height="42" rx="5" fill="#fff3e0" stroke="#e07000" stroke-width="1.5"/>
+        <text x="315" y="68" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">AdOps configura</text>
+        <text x="315" y="82" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Inventory Rules en GAM</text>
+        <text x="315" y="105" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Floor price · segmentación · unidad de negocio</text>
+
+        <!-- T1 → T2 -->
+        <line x1="390" y1="73" x2="416" y2="73" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d2-seq)"/>
+
+        <!-- T2: GAM subasta remanente -->
+        <rect x="416" y="52" width="150" height="42" rx="5" fill="#fff3e0" stroke="#e07000" stroke-width="1.5"/>
+        <text x="491" y="68" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">GAM subasta inventario</text>
+        <text x="491" y="82" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">remanente del mes</text>
+        <text x="491" y="105" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Compradores anónimos · acumulado mensual</text>
+
+        <!-- T2 down → GAM row -->
+        <line x1="491" y1="94" x2="491" y2="123" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d2-seq)"/>
+
+        <!-- T3: GAM entrega (swimlane GAM) -->
+        <rect x="416" y="125" width="150" height="42" rx="5" fill="#ede8fa" stroke="#7b5ea7" stroke-width="1.5"/>
+        <text x="491" y="141" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">GAM registra entrega</text>
+        <text x="491" y="155" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">acumulada</text>
+        <text x="491" y="178" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Revenue bruto · impresiones · por UdN</text>
+
+        <!-- Clock: fin de mes (automático) -->
+        <circle cx="648" cy="160" r="17" fill="white" stroke="#0070d2" stroke-width="2"/>
+        <circle cx="648" cy="160" r="14" fill="none" stroke="#0070d2" stroke-width="0.8"/>
+        <line x1="648" y1="160" x2="648" y2="149" stroke="#0070d2" stroke-width="1.5"/>
+        <line x1="648" y1="160" x2="656" y2="160" stroke="#0070d2" stroke-width="1.5"/>
+        <text x="648" y="190" text-anchor="middle" fill="#0070d2" font-size="8" font-weight="bold">Cierre de mes</text>
+        <text x="648" y="201" text-anchor="middle" fill="#0070d2" font-size="7.5">(automático)</text>
+
+        <!-- T3 → clock -->
+        <line x1="566" y1="146" x2="627" y2="146" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d2-seq)"/>
+
+        <!-- Clock down → SFDC row -->
+        <line x1="648" y1="177" x2="648" y2="218" stroke="#0070d2" stroke-width="1.5" marker-end="url(#d2-auto)"/>
+
+        <!-- T4: SFDC Scheduled Flow consulta GAM -->
+        <rect x="416" y="220" width="150" height="52" rx="5" fill="#ddf0ff" stroke="#0070d2" stroke-width="2"/>
+        <text x="491" y="235" text-anchor="middle" fill="#032d60" font-size="9.5" font-weight="700">Scheduled Flow</text>
+        <text x="491" y="248" text-anchor="middle" fill="#032d60" font-size="9">consulta GAM API</text>
+        <text x="491" y="262" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Obtiene actuals del período</text>
+        <text x="491" y="283" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Automático · sin intervención manual</text>
+
+        <!-- T4 → T5 -->
+        <line x1="566" y1="246" x2="596" y2="246" stroke="#0070d2" stroke-width="1.5" marker-end="url(#d2-auto)"/>
+
+        <!-- T5: Aplica Comision_AdServer y crea Orders -->
+        <rect x="596" y="220" width="186" height="52" rx="5" fill="#ddf0ff" stroke="#0070d2" stroke-width="2"/>
+        <text x="689" y="235" text-anchor="middle" fill="#032d60" font-size="9.5" font-weight="700">Aplica Comision_AdServer__c</text>
+        <text x="689" y="248" text-anchor="middle" fill="#032d60" font-size="9">y crea Orders automáticamente</text>
+        <text x="689" y="262" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Valor neto = Revenue bruto × (1 − Comision_AdServer__c)</text>
+        <text x="689" y="283" text-anchor="middle" fill="#706e6b" font-size="8" font-style="italic">Asocia al contrato de plataforma (RN-004)</text>
+
+        <!-- T5 down → Contraloría -->
+        <line x1="689" y1="272" x2="689" y2="308" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d2-seq)"/>
+
+        <!-- T6: Contraloría factura -->
+        <rect x="596" y="310" width="186" height="40" rx="5" fill="#fff3d6" stroke="#e8a700" stroke-width="1.5"/>
+        <text x="689" y="328" text-anchor="middle" fill="#3e3e3c" font-size="9.5" font-weight="600">Contraloría: factura</text>
+        <text x="689" y="341" text-anchor="middle" fill="#3e3e3c" font-size="9">sobre valor neto entregado</text>
+
+        <!-- T6 → End -->
+        <line x1="782" y1="330" x2="814" y2="330" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d2-seq)"/>
+
+        <!-- END -->
+        <circle cx="829" cy="330" r="14" fill="#fce8e8" stroke="#c23934" stroke-width="4"/>
+
+        <!-- Nota under-delivery -->
+        <rect x="840" y="218" width="200" height="66" rx="4" fill="#fef3cd" stroke="#e07000" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="940" y="234" text-anchor="middle" fill="#8a6000" font-size="8.5" font-weight="bold">Under-delivery (D-15 / Q-04)</text>
+        <text x="940" y="248" text-anchor="middle" fill="#8a6000" font-size="8">Se factura lo entregado.</text>
+        <text x="940" y="261" text-anchor="middle" fill="#8a6000" font-size="8">TV Azteca hace ajuste</text>
+        <text x="940" y="274" text-anchor="middle" fill="#8a6000" font-size="8">financiero de cobro.</text>
+
+        <!-- Footnote -->
+        <line x1="186" y1="360" x2="1040" y2="360" stroke="#dddbda" stroke-width="0.5"/>
+        <text x="186" y="372" fill="#706e6b" font-size="8.5" font-style="italic">* Sin extracción manual de reportes. La Order en SFDC se crea automáticamente post-conciliación (D-12, D-15). Proceso de conciliación en definición.</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="num">!</div>Leyenda BPMN</div>
+    <div class="card-body">
+      <div class="fgrid cols3">
+        <div>
+          <div class="sec-hd">Eventos</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px">
+            <svg width="28" height="28"><circle cx="14" cy="14" r="12" fill="#e8f9ee" stroke="#04844b" stroke-width="2.5"/></svg>
+            <span>Evento de inicio</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <svg width="28" height="28"><circle cx="14" cy="14" r="12" fill="#fce8e8" stroke="#c23934" stroke-width="4"/></svg>
+            <span>Evento de fin</span>
+          </div>
+        </div>
+        <div>
+          <div class="sec-hd">Tareas y Gateways</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px">
+            <svg width="70" height="28"><rect x="1" y="4" width="68" height="22" rx="4" fill="white" stroke="#0070d2" stroke-width="1.5"/></svg>
+            <span>Tarea / Actividad</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <svg width="28" height="28"><polygon points="14,2 26,14 14,26 2,14" fill="white" stroke="#0070d2" stroke-width="1.5"/></svg>
+            <span>Gateway (decisión)</span>
+          </div>
+        </div>
+        <div>
+          <div class="sec-hd">Flujos</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px">
+            <svg width="60" height="10"><line x1="0" y1="5" x2="50" y2="5" stroke="#3e3e3c" stroke-width="1.5" marker-end="url(#d1-seq)"/></svg>
+            <span>Flujo de secuencia</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <svg width="60" height="10"><line x1="0" y1="5" x2="50" y2="5" stroke="#0070d2" stroke-width="1.5" stroke-dasharray="5,3"/></svg>
+            <span>Flujo de mensaje (externo)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, tab) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+}
+</script>
+</body>
+</html>
