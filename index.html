@@ -86,6 +86,17 @@
     .card-footer svg{transition:transform .18s}
     .pres-card:hover .card-footer svg{transform:translateX(4px)}
 
+    /* ── Search ── */
+    .search-wrap{position:relative;margin-bottom:20px}
+    .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+    #search{width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border);border-radius:8px;font:13px "Segoe UI",system-ui;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+    #search:focus{border-color:var(--blue)}
+    #search::placeholder{color:var(--muted)}
+    .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;display:none;padding:2px 4px}
+    .search-clear:hover{color:var(--text)}
+    .search-count{font-size:11px;color:var(--muted);margin-top:6px;min-height:16px}
+    mark{background:#fff3b0;color:inherit;border-radius:2px;padding:0 1px}
+
     /* ── Empty state ── */
     .empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:12px}
 
@@ -171,6 +182,14 @@
 
     <!-- Section title + filter -->
     <div class="section-title">Presentaciones disponibles</div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="text" placeholder="Buscar presentación…" oninput="onSearch(this.value)" autocomplete="off"/>
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
+    </div>
+    <div class="search-count" id="search-count"></div>
 
     <div class="filter-bar">
       <button class="f-tab active" onclick="filterCategory('all',this)">Todas</button>
@@ -340,24 +359,107 @@
 </div>
 
 <script>
+  let currentCategory = 'all';
+
+  // ── Category filter ──────────────────────────────────────
   function filterCategory(cat, el) {
-    // Update sidebar links
+    currentCategory = cat;
+
+    // Reset search when switching category
+    const searchEl = document.getElementById('search');
+    searchEl.value = '';
+    document.getElementById('search-clear').style.display = 'none';
+    document.getElementById('search-count').textContent = '';
+
     document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
     const navEl = document.getElementById('nav-' + cat);
     if (navEl) navEl.classList.add('active');
 
-    // Update filter tabs
     document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
     if (el && el.classList.contains('f-tab')) el.classList.add('active');
 
-    // Filter cards
+    applyFilters('');
+  }
+
+  // ── Search ───────────────────────────────────────────────
+  function onSearch(query) {
+    const clearBtn = document.getElementById('search-clear');
+    clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+
+    // Reset category to "all" when typing
+    if (query.length > 0) {
+      currentCategory = 'all';
+      document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
+      document.getElementById('nav-all').classList.add('active');
+      document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.f-tab').classList.add('active');
+    }
+
+    applyFilters(query);
+  }
+
+  function clearSearch() {
+    const searchEl = document.getElementById('search');
+    searchEl.value = '';
+    searchEl.focus();
+    document.getElementById('search-clear').style.display = 'none';
+    document.getElementById('search-count').textContent = '';
+    applyFilters('');
+  }
+
+  // ── Core filter + highlight logic ────────────────────────
+  function applyFilters(query) {
+    const q = query.trim().toLowerCase();
+    const cards = document.querySelectorAll('.pres-card');
     let visible = 0;
-    document.querySelectorAll('.pres-card').forEach(card => {
-      const match = cat === 'all' || card.dataset.category === cat;
-      card.style.display = match ? 'flex' : 'none';
-      if (match) visible++;
+
+    cards.forEach(card => {
+      const titleEl  = card.querySelector('.card-title');
+      const descEl   = card.querySelector('.card-desc');
+      const tagEl    = card.querySelector('.card-tag');
+      const catMatch = currentCategory === 'all' || card.dataset.category === currentCategory;
+
+      // Restore original text before re-evaluating
+      if (titleEl._orig) titleEl.innerHTML = titleEl._orig;
+      if (descEl._orig)  descEl.innerHTML  = descEl._orig;
+
+      // Save originals once
+      if (!titleEl._orig) titleEl._orig = titleEl.innerHTML;
+      if (!descEl._orig)  descEl._orig  = descEl.innerHTML;
+
+      const titleText = titleEl._orig.toLowerCase();
+      const descText  = descEl._orig.toLowerCase();
+      const tagText   = tagEl ? tagEl.textContent.toLowerCase() : '';
+      const textMatch = q === '' || titleText.includes(q) || descText.includes(q) || tagText.includes(q);
+
+      const show = catMatch && textMatch;
+      card.style.display = show ? 'flex' : 'none';
+
+      if (show) {
+        visible++;
+        if (q) {
+          titleEl.innerHTML = highlight(titleEl._orig, query);
+          descEl.innerHTML  = highlight(descEl._orig,  query);
+        }
+      }
     });
+
     document.getElementById('kpi-total').textContent = visible;
+
+    // Result count message
+    const countEl = document.getElementById('search-count');
+    if (q) {
+      countEl.textContent = visible === 0
+        ? 'Sin resultados para "' + query + '"'
+        : visible + ' resultado' + (visible !== 1 ? 's' : '') + ' para "' + query + '"';
+    } else {
+      countEl.textContent = '';
+    }
+  }
+
+  function highlight(html, query) {
+    const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return html.replace(new RegExp('(' + q + ')', 'gi'), '<mark>$1</mark>');
   }
 </script>
 
