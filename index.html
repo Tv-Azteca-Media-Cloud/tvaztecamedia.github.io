@@ -97,6 +97,14 @@
     .search-count{font-size:11px;color:var(--muted);margin-top:6px;min-height:16px}
     mark{background:#fff3b0;color:inherit;border-radius:2px;padding:0 1px}
 
+    /* ── Content hit snippet ── */
+    .content-hit{font-size:10.5px;color:var(--muted);background:#f0faf9;border-left:3px solid var(--teal);padding:6px 10px;border-radius:0 6px 6px 0;line-height:1.6;display:none;margin-top:-2px}
+    .content-hit.visible{display:block}
+    .content-hit .hit-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:3px}
+    .content-hit mark{background:#b2f5ea;color:inherit}
+    .content-hit-loading{font-size:9px;color:var(--muted);opacity:.5;margin-top:8px;text-align:center;display:none}
+    .content-hit-loading.visible{display:block}
+
     /* ── Empty state ── */
     .empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:12px}
 
@@ -220,6 +228,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Presentación del portal de tracking para TV Azteca Media Cloud. Visión general, alcance y próximos pasos.</div>
+          <div class="content-hit" id="hit-0"></div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -241,6 +250,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Análisis del KA 005321561: qué cambia, a quién afecta, fechas de enforcement, impacto con OKTA y acciones recomendadas para TV Azteca.</div>
+          <div class="content-hit" id="hit-1"></div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -262,6 +272,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Recomendación de asignación de Permission Sets por perfil de usuario. Segregación de funciones (SoD) para el entorno Media Cloud.</div>
+          <div class="content-hit" id="hit-2"></div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -283,6 +294,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">El usuario completa MFA en Okta pero Salesforce vuelve a solicitar registro de Passkey. Diagnóstico de causa raíz y pasos de resolución en Okta y Salesforce Setup.</div>
+          <div class="content-hit" id="hit-3"></div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -304,6 +316,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Estándares, modelo de ambientes, gestión de cambios y lineamientos de desarrollo para TV Azteca Media Cloud.</div>
+          <div class="content-hit" id="hit-4"></div>
           <div class="card-footer">
             Ver presentación
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -322,6 +335,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Propuesta de solución para la conciliación operativa de campañas en TV Azteca × Salesforce. Personas, visión, ciclos y modelo de datos.</div>
+          <div class="content-hit" id="hit-5"></div>
           <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
       </a>
@@ -335,6 +349,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Business Context Brief, diagrama TO-BE, decisiones de diseño, mockup del PDF y RAID Log para la generación automatizada de cotizaciones.</div>
+          <div class="content-hit" id="hit-6"></div>
           <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
       </a>
@@ -348,6 +363,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Catálogo de épicos y features del proyecto. Plan de entrega por Release y Sprint organizado por squads de Salesforce Media Cloud.</div>
+          <div class="content-hit" id="hit-7"></div>
           <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
       </a>
@@ -361,6 +377,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Consolidado de discovery: rentabilidad, descuentos & bonificaciones, portal de costos y autorización. Sesiones mayo 2026.</div>
+          <div class="content-hit" id="hit-8"></div>
           <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
       </a>
@@ -374,6 +391,7 @@
         </div>
         <div class="card-desc-wrap">
           <div class="card-desc">Business Context Brief, proceso TO-BE, BRD de requisitos, RAID Log, artefactos y diagramas BPMN para Venta Programática.</div>
+          <div class="content-hit" id="hit-9"></div>
           <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
       </a>
@@ -388,32 +406,66 @@
 <script>
   let currentCategory = 'all';
 
-  // ── Category filter ──────────────────────────────────────
+  // ── Full-text index: fetch each presentation's HTML in background ──
+  // contentIndex[i] = plain text of the i-th card's presentation
+  const cards = Array.from(document.querySelectorAll('.pres-card'));
+  const contentIndex = new Array(cards.length).fill(null); // null = not yet loaded
+  const contentLoading = new Array(cards.length).fill(false);
+
+  function loadContentIndex() {
+    cards.forEach((card, i) => {
+      if (contentLoading[i]) return;
+      contentLoading[i] = true;
+      const url = card.getAttribute('href');
+      fetch(url)
+        .then(r => r.text())
+        .then(html => {
+          // Strip tags, collapse whitespace → plain searchable text
+          const tmp = document.createElement('div');
+          tmp.innerHTML = html;
+          // Remove script/style nodes
+          tmp.querySelectorAll('script,style').forEach(n => n.remove());
+          contentIndex[i] = tmp.textContent.replace(/\s+/g, ' ').toLowerCase();
+        })
+        .catch(() => { contentIndex[i] = ''; });
+    });
+  }
+
+  // Start fetching immediately so index is ready when user types
+  loadContentIndex();
+
+  // ── Snippet: extract ~120 chars around first match ──────────────────
+  function getSnippet(text, query) {
+    const q = query.trim().toLowerCase();
+    const pos = text.toLowerCase().indexOf(q);
+    if (pos === -1) return null;
+    const start = Math.max(0, pos - 55);
+    const end   = Math.min(text.length, pos + q.length + 55);
+    let snippet = text.slice(start, end).trim();
+    if (start > 0) snippet = '…' + snippet;
+    if (end < text.length) snippet = snippet + '…';
+    // Highlight match inside snippet
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return snippet.replace(new RegExp('(' + escaped + ')', 'gi'), '<mark>$1</mark>');
+  }
+
+  // ── Category filter ──────────────────────────────────────────────────
   function filterCategory(cat, el) {
     currentCategory = cat;
-
-    // Reset search when switching category
-    const searchEl = document.getElementById('search');
-    searchEl.value = '';
+    document.getElementById('search').value = '';
     document.getElementById('search-clear').style.display = 'none';
     document.getElementById('search-count').textContent = '';
-
     document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
     const navEl = document.getElementById('nav-' + cat);
     if (navEl) navEl.classList.add('active');
-
     document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
     if (el && el.classList.contains('f-tab')) el.classList.add('active');
-
     applyFilters('');
   }
 
-  // ── Search ───────────────────────────────────────────────
+  // ── Search input ─────────────────────────────────────────────────────
   function onSearch(query) {
-    const clearBtn = document.getElementById('search-clear');
-    clearBtn.style.display = query.length > 0 ? 'block' : 'none';
-
-    // Reset category to "all" when typing
+    document.getElementById('search-clear').style.display = query.length > 0 ? 'block' : 'none';
     if (query.length > 0) {
       currentCategory = 'all';
       document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
@@ -421,64 +473,101 @@
       document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
       document.querySelector('.f-tab').classList.add('active');
     }
-
     applyFilters(query);
   }
 
   function clearSearch() {
-    const searchEl = document.getElementById('search');
-    searchEl.value = '';
-    searchEl.focus();
+    const el = document.getElementById('search');
+    el.value = ''; el.focus();
     document.getElementById('search-clear').style.display = 'none';
     document.getElementById('search-count').textContent = '';
     applyFilters('');
   }
 
-  // ── Core filter + highlight logic ────────────────────────
+  // ── Core filter + highlight + content snippet ────────────────────────
   function applyFilters(query) {
     const q = query.trim().toLowerCase();
-    const cards = document.querySelectorAll('.pres-card');
     let visible = 0;
 
-    cards.forEach(card => {
-      const titleEl  = card.querySelector('.card-title');
-      const descEl   = card.querySelector('.card-desc');
-      const tagEl    = card.querySelector('.card-tag');
+    cards.forEach((card, i) => {
+      const titleEl = card.querySelector('.card-title');
+      const descEl  = card.querySelector('.card-desc');
+      const tagEl   = card.querySelector('.card-tag');
+      const hitEl   = card.querySelector('.content-hit');
       const catMatch = currentCategory === 'all' || card.dataset.category === currentCategory;
 
-      // Restore original text before re-evaluating
-      if (titleEl._orig) titleEl.innerHTML = titleEl._orig;
-      if (descEl._orig)  descEl.innerHTML  = descEl._orig;
-
-      // Save originals once
+      // Cache originals once
       if (!titleEl._orig) titleEl._orig = titleEl.innerHTML;
       if (!descEl._orig)  descEl._orig  = descEl.innerHTML;
+      // Restore before re-evaluating
+      titleEl.innerHTML = titleEl._orig;
+      descEl.innerHTML  = descEl._orig;
 
       const titleText = titleEl._orig.toLowerCase();
       const descText  = descEl._orig.toLowerCase();
       const tagText   = tagEl ? tagEl.textContent.toLowerCase() : '';
-      const textMatch = q === '' || titleText.includes(q) || descText.includes(q) || tagText.includes(q);
 
-      const show = catMatch && textMatch;
+      const cardMatch = q === '' || titleText.includes(q) || descText.includes(q) || tagText.includes(q);
+
+      // Check full content only when card itself doesn't match
+      const fullText    = contentIndex[i];
+      const contentMatch = !cardMatch && q !== '' && fullText !== null && fullText.includes(q);
+
+      const show = catMatch && (cardMatch || contentMatch);
       card.style.display = show ? 'flex' : 'none';
+
+      // Update hit snippet
+      if (hitEl) {
+        hitEl.classList.remove('visible');
+        hitEl.innerHTML = '';
+      }
 
       if (show) {
         visible++;
-        if (q) {
+        if (q && cardMatch) {
+          // Highlight title + desc
           titleEl.innerHTML = highlight(titleEl._orig, query);
-          descEl.innerHTML  = highlight(descEl._orig,  query);
+          descEl.innerHTML  = highlight(descEl._orig, query);
+        }
+        if (q && contentMatch && hitEl) {
+          // Content-only match: show teal snippet
+          const snippet = getSnippet(fullText, q);
+          if (snippet) {
+            hitEl.innerHTML = '<div class="hit-label">Encontrado en el contenido</div>' + snippet;
+            hitEl.classList.add('visible');
+          }
+        }
+        if (q && cardMatch && contentMatch && hitEl) {
+          // Also found in content even though card matched — still show snippet
+          const snippet = getSnippet(fullText, q);
+          if (snippet) {
+            hitEl.innerHTML = '<div class="hit-label">También en el contenido</div>' + snippet;
+            hitEl.classList.add('visible');
+          }
         }
       }
     });
 
     document.getElementById('kpi-total').textContent = visible;
 
-    // Result count message
     const countEl = document.getElementById('search-count');
     if (q) {
-      countEl.textContent = visible === 0
-        ? 'Sin resultados para "' + query + '"'
-        : visible + ' resultado' + (visible !== 1 ? 's' : '') + ' para "' + query + '"';
+      // Break down by source
+      const cardHits    = cards.filter((c,i) => c.style.display !== 'none' && contentIndex[i] !== null
+        && (c.querySelector('.card-title')._orig.toLowerCase().includes(q)
+         || c.querySelector('.card-desc')._orig.toLowerCase().includes(q))).length;
+      const contentHits = cards.filter((c,i) => c.style.display !== 'none'
+        && contentIndex[i] !== null && contentIndex[i].includes(q)
+        && !c.querySelector('.card-title')._orig.toLowerCase().includes(q)
+        && !c.querySelector('.card-desc')._orig.toLowerCase().includes(q)).length;
+
+      if (visible === 0) {
+        countEl.textContent = 'Sin resultados para "' + query + '"';
+      } else {
+        let msg = visible + ' resultado' + (visible !== 1 ? 's' : '') + ' para "' + query + '"';
+        if (contentHits > 0) msg += ' — ' + contentHits + ' encontrado' + (contentHits !== 1 ? 's' : '') + ' solo en el contenido';
+        countEl.textContent = msg;
+      }
     } else {
       countEl.textContent = '';
     }
