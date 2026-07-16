@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Sprint 1 — Arquitecturas Generales, PCM y Flujo Media Plan</title>
+<style>
+/* ─── RESET & BASE ─────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#112240;
+  color:#d4d4e0;
+  min-height:100vh;
+  display:flex;
+}
+
+/* ─── SIDEBAR ──────────────────────────────────────────────────────────── */
+.sidebar{
+  width:260px;
+  flex-shrink:0;
+  background: linear-gradient(180deg, #001a4a 0%, #002060 35%, #0a0a1a 100%);
+  position:fixed;
+  top:0;bottom:0;left:0;
+  overflow-y:auto;overflow-x:hidden;
+  border-right:1px solid rgba(0,80,200,0.35);
+  display:flex;flex-direction:column;
+  z-index:100;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(232,184,75,.2);border-radius:2px}
+.sb-logo-wrap{padding:20px 20px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{width:140px;display:block}
+.sb-sprint-label{margin-top:10px;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.85}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0 8px}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(232,184,75,0.2);border-radius:2px}
+.sb-group-label{padding:12px 16px 4px;font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(232,184,75,0.35)}
+.sb-link{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 16px 6px 14px;
+  font-size:11px;font-weight:400;
+  color:rgba(232,232,240,0.52);
+  text-decoration:none;
+  border-left:2px solid transparent;
+  transition:all .15s;
+  cursor:pointer;
+  line-height:1.35;
+}
+.sb-link:hover{color:rgba(232,232,240,0.9);background:rgba(232,184,75,0.05);border-left-color:rgba(232,184,75,0.3)}
+.sb-link.active{color:var(--gold);background:rgba(232,184,75,0.08);border-left-color:var(--gold);font-weight:600}
+.sb-link.parent{font-weight:600;font-size:11.5px;color:rgba(232,232,240,0.7);padding-left:14px}
+.sb-link.child{padding-left:26px;font-size:10.5px}
+.sb-link .sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:currentColor;opacity:0.5}
+.sb-link.active .sb-dot{opacity:1;background:var(--gold)}
+.sb-link.sub2{padding-left:38px;font-size:10px;color:rgba(232,232,240,0.4)}
+.sb-link.sub2:hover{color:rgba(232,232,240,0.7)}
+.sb-link.sub2.active{color:var(--gold);border-left-color:var(--gold);background:rgba(232,184,75,0.08)}
+.sb-bottom{
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.sb-nav-btn{
+  display:block;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  transition:all .2s ease;
+  letter-spacing:.4px;
+  flex:1;
+}
+.sb-nav-btn.back{
+  background:rgba(79,142,247,.18);
+  color:#7eb8ff;
+  border:1px solid rgba(79,142,247,.45);
+  box-shadow:0 2px 8px rgba(79,142,247,.12);
+}
+.sb-nav-btn.back:hover{
+  background:rgba(79,142,247,.32);
+  color:#a8d0ff;
+  border-color:rgba(79,142,247,.7);
+  box-shadow:0 4px 16px rgba(79,142,247,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.fwd{
+  background:rgba(232,184,75,.18);
+  color:#f5cc6a;
+  border:1px solid rgba(232,184,75,.5);
+  box-shadow:0 2px 8px rgba(232,184,75,.12);
+}
+.sb-nav-btn.fwd:hover{
+  background:rgba(232,184,75,.32);
+  color:#ffe08a;
+  border-color:rgba(232,184,75,.75);
+  box-shadow:0 4px 16px rgba(232,184,75,.22);
+  transform:translateY(-1px);
+}
+.sb-home-btn{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  color:#ffd764;text-decoration:none;
+  border:1px solid rgba(232,184,75,0.55);border-radius:6px;
+  background:rgba(232,184,75,0.18);
+  box-shadow:0 2px 8px rgba(232,184,75,0.12);
+  transition:all .2s ease;
+}
+.sb-home-btn:hover{border-color:rgba(232,184,75,0.8);color:#ffe899;background:rgba(232,184,75,0.28);transform:translateY(-1px);}
+
+/* ─── MAIN CONTENT ─────────────────────────────────────────────────────── */
+#main{
+  margin-left:260px;
+  flex:1;
+  padding:0 48px 80px;
+  max-width:calc(100% - 260px);
+}
+
+/* ─── HEADER ───────────────────────────────────────────────────────────── */
+.page-header{
+  padding:52px 0 40px;
+  border-bottom:1px solid #1e1e2e;
+  margin-bottom:52px;
+  position:relative;
+}
+.sprint-badge{
+  font-size:96px;
+  font-weight:900;
+  color:rgba(232,184,75,.08);
+  position:absolute;
+  top:10px;right:0;
+  line-height:1;
+  letter-spacing:-4px;
+  user-select:none;
+  pointer-events:none;
+}
+.eyebrow{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#4f8ef7;
+  margin-bottom:14px;
+}
+.page-title{
+  font-size:34px;
+  font-weight:700;
+  color:#ffffff;
+  line-height:1.15;
+  margin-bottom:8px;
+}
+.page-title span{color:#e8b84b}
+.page-subtitle{
+  font-size:15px;
+  color:#6868a0;
+  margin-bottom:24px;
+  font-weight:400;
+}
+.header-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+.meta-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 14px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  background:rgba(232,184,75,.1);
+  color:#e8b84b;
+  border:1px solid rgba(232,184,75,.2);
+}
+.meta-pill.blue{
+  background:rgba(79,142,247,.1);
+  color:#4f8ef7;
+  border-color:rgba(79,142,247,.2);
+}
+.milestone-box{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 18px;
+  background:rgba(232,184,75,.06);
+  border:1px solid rgba(232,184,75,.2);
+  border-radius:8px;
+  font-size:13px;
+  color:#d4c89e;
+}
+.milestone-box .icon{font-size:16px}
+
+/* ─── SECTION ──────────────────────────────────────────────────────────── */
+.section{
+  margin-bottom:64px;
+}
+.section-header{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  border-left:4px solid #e8b84b;
+  padding-left:16px;
+  margin-bottom:28px;
+}
+.section-num{
+  font-size:13px;
+  font-weight:700;
+  color:#e8b84b;
+  letter-spacing:1px;
+}
+.section-title{
+  font-size:22px;
+  font-weight:700;
+  color:#ffffff;
+  line-height:1.2;
+}
+.subsection{
+  margin-bottom:36px;
+}
+.subsection-title{
+  font-size:15px;
+  font-weight:600;
+  color:#c0c0d8;
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:1px solid #1e1e2e;
+}
+.subsection-title .tag{
+  display:inline-block;
+  margin-left:10px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  padding:2px 8px;
+  border-radius:4px;
+  background:rgba(232,184,75,.12);
+  color:#e8b84b;
+  vertical-align:middle;
+}
+
+/* ─── CODE BLOCK ───────────────────────────────────────────────────────── */
+.code-block{
+  background:#1a1a2e;
+  border:1px solid #2a2a3e;
+  border-radius:8px;
+  padding:16px 20px;
+  font-family:'Cascadia Code','Consolas','Courier New',monospace;
+  font-size:12px;
+  color:#a0d8ef;
+  line-height:1.7;
+  margin-bottom:16px;
+  overflow-x:auto;
+}
+.code-block .path{color:#e8b84b}
+.code-block .comment{color:#4a4a6a}
+.code-block .value{color:#7ec8a0}
+
+/* ─── INFO BOXES ───────────────────────────────────────────────────────── */
+.info-box{
+  border-radius:8px;
+  padding:14px 18px;
+  margin-bottom:16px;
+  border-left:4px solid;
+  font-size:13px;
+  line-height:1.6;
+}
+.info-box.warning{
+  background:rgba(232,100,50,.08);
+  border-color:#e86432;
+  color:#f0a080;
+}
+.info-box.critical{
+  background:rgba(220,50,50,.08);
+  border-color:#dc3232;
+  color:#f09090;
+}
+.info-box.tip{
+  background:rgba(79,142,247,.08);
+  border-color:#4f8ef7;
+  color:#90b8f8;
+}
+.info-box.success{
+  background:rgba(80,180,100,.08);
+  border-color:#50b464;
+  color:#90d890;
+}
+.info-box strong{display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+
+/* ─── TABLE ────────────────────────────────────────────────────────────── */
+.ktable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12.5px;
+  margin-bottom:16px;
+  border-radius:8px;
+  overflow:hidden;
+}
+.ktable thead th{
+  background:#131323;
+  color:#e8b84b;
+  padding:11px 16px;
+  text-align:left;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  border-bottom:1px solid #2a2a3e;
+}
+.ktable tbody tr:nth-child(odd){background:#0f0f1a}
+.ktable tbody tr:nth-child(even){background:#111120}
+.ktable tbody tr:hover{background:rgba(232,184,75,.04)}
+.ktable td{
+  padding:10px 16px;
+  border-bottom:1px solid #1a1a2e;
+  color:#c0c0d8;
+  vertical-align:top;
+  line-height:1.5;
+}
+.ktable td:first-child{
+  font-family:'Cascadia Code','Consolas',monospace;
+  font-size:11.5px;
+  color:#7ec8a0;
+  white-space:nowrap;
+}
+.ktable td strong{color:#e8b84b}
+.ktable .critical-cell{color:#f09090;font-weight:700}
+.ktable .note-cell{color:#90b8f8;font-size:11.5px}
+
+/* ─── STEPS ────────────────────────────────────────────────────────────── */
+.steps-list{
+  list-style:none;
+  counter-reset:step;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.steps-list li{
+  counter-increment:step;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+.steps-list li::before{
+  content:counter(step);
+  flex-shrink:0;
+  width:28px;height:28px;
+  border-radius:50%;
+  background:rgba(232,184,75,.12);
+  border:1px solid rgba(232,184,75,.3);
+  color:#e8b84b;
+  font-size:12px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:1px;
+}
+.steps-list li .step-content{
+  font-size:13px;
+  color:#c0c0d8;
+  line-height:1.6;
+  padding-top:4px;
+}
+.steps-list li .step-content strong{color:#ffffff}
+
+/* ─── FLOW STEPS ───────────────────────────────────────────────────────── */
+.flow-steps{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  margin-bottom:16px;
+}
+.flow-step{
+  display:flex;
+  gap:0;
+  position:relative;
+}
+.flow-step-num{
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:40px;
+}
+.flow-step-circle{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:#131323;
+  border:2px solid #e8b84b;
+  color:#e8b84b;
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  z-index:1;
+}
+.flow-step-line{
+  flex:1;
+  width:2px;
+  background:linear-gradient(#e8b84b44, #e8b84b22);
+  min-height:24px;
+}
+.flow-step-body{
+  flex:1;
+  padding:6px 0 24px 16px;
+}
+.flow-step-title{
+  font-size:14px;
+  font-weight:600;
+  color:#ffffff;
+  margin-bottom:4px;
+}
+.flow-step-desc{
+  font-size:12.5px;
+  color:#8888a8;
+  line-height:1.6;
+}
+.flow-step-desc .pill{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:10px;
+  font-weight:700;
+  background:rgba(79,142,247,.12);
+  color:#4f8ef7;
+  border:1px solid rgba(79,142,247,.2);
+  margin:2px 2px 0;
+}
+
+/* ─── LAYERS ───────────────────────────────────────────────────────────── */
+.layer-cards{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  margin-bottom:16px;
+}
+.layer-card{
+  border-radius:10px;
+  border:1px solid #2a2a3e;
+  padding:18px 22px;
+  background:#0f0f1a;
+  position:relative;
+  overflow:hidden;
+}
+.layer-card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+}
+.layer-card.l1::before{background:#e8b84b}
+.layer-card.l2::before{background:#4f8ef7}
+.layer-card.l3::before{background:#50b464}
+.layer-badge{
+  display:inline-block;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:4px;
+  margin-bottom:8px;
+}
+.layer-card.l1 .layer-badge{background:rgba(232,184,75,.15);color:#e8b84b}
+.layer-card.l2 .layer-badge{background:rgba(79,142,247,.15);color:#4f8ef7}
+.layer-card.l3 .layer-badge{background:rgba(80,180,100,.15);color:#50b464}
+.layer-title{
+  font-size:15px;
+  font-weight:700;
+  color:#ffffff;
+  margin-bottom:4px;
+}
+.layer-q{
+  font-size:11px;
+  color:#6868a0;
+  margin-bottom:12px;
+  font-style:italic;
+}
+.layer-objects{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+.obj-tag{
+  font-size:10.5px;
+  padding:3px 10px;
+  border-radius:4px;
+  font-family:'Cascadia Code','Consolas',monospace;
+  background:#1a1a2e;
+  color:#a0d8ef;
+  border:1px solid #2a2a3e;
+}
+.layer-notes{
+  font-size:12px;
+  color:#8888a8;
+  line-height:1.6;
+}
+
+/* ─── QUOTE STAGES ─────────────────────────────────────────────────────── */
+.stages-flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+  margin-bottom:16px;
+}
+.stage-node{
+  padding:7px 14px;
+  border-radius:6px;
+  font-size:11.5px;
+  font-weight:600;
+  background:#131323;
+  border:1px solid #2a2a3e;
+  color:#c0c0d8;
+}
+.stage-node.active{
+  background:rgba(79,142,247,.1);
+  border-color:#4f8ef7;
+  color:#4f8ef7;
+}
+.stage-node.end-ok{
+  background:rgba(80,180,100,.1);
+  border-color:#50b464;
+  color:#50b464;
+}
+.stage-node.end-no{
+  background:rgba(220,50,50,.08);
+  border-color:#dc3232;
+  color:#f09090;
+}
+.stage-arrow{
+  color:#4a4a6a;
+  font-size:14px;
+}
+
+/* ─── IMAGE BLOCK ──────────────────────────────────────────────────────── */
+/* ── DTF INLINE IMAGES ── */
+.dtf-img-block {
+  margin: 20px 0 28px;
+}
+.dtf-img-block img {
+  display: block;
+  width: 100%;
+  max-width: 780px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(232,184,75,0.12);
+  background: #0f0f1a;
+}
+.dtf-img-block.half img {
+  max-width: 480px;
+}
+.dtf-img-block.third img {
+  max-width: 340px;
+}
+.dtf-img-caption {
+  margin-top: 7px;
+  font-size: 11.5px;
+  color: #6868a0;
+  font-style: italic;
+  padding-left: 4px;
+}
+.dtf-img-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0 28px;
+}
+.dtf-img-row .dtf-img-block { margin: 0; }
+.dtf-img-row .dtf-img-block img { max-width: 100%; }
+@media (max-width: 700px) { .dtf-img-row { grid-template-columns: 1fr; } }
+
+.mockup-section{
+  background:#0f0f1a;
+  border:1px solid #2a2a3e;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:24px;
+}
+.mockup-img{
+  width:100%;
+  display:block;
+}
+.mockup-caption{
+  padding:14px 20px;
+  border-top:1px solid #1e1e2e;
+  font-size:12px;
+  color:#6868a0;
+  font-style:italic;
+}
+.img-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-bottom:16px;
+}
+.img-card{
+  background:#0f0f1a;
+  border:1px solid #2a2a3e;
+  border-radius:10px;
+  overflow:hidden;
+}
+.img-card img{
+  width:100%;
+  display:block;
+}
+.img-card-caption{
+  padding:10px 14px;
+  font-size:11.5px;
+  color:#6868a0;
+  border-top:1px solid #1e1e2e;
+}
+
+/* ─── MOCKUP COLUMNS ───────────────────────────────────────────────────── */
+.mockup-cols{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+.mcol{
+  background:#0f0f1a;
+  border:1px solid #2a2a3e;
+  border-radius:10px;
+  padding:16px 18px;
+}
+.mcol-title{
+  font-size:12px;
+  font-weight:700;
+  color:#e8b84b;
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:1px solid #1e1e2e;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.mcol ul{
+  list-style:none;
+  padding:0;
+}
+.mcol ul li{
+  font-size:12px;
+  color:#8888a8;
+  padding:5px 0;
+  border-bottom:1px solid #131323;
+  line-height:1.4;
+}
+.mcol ul li::before{
+  content:'› ';
+  color:#e8b84b;
+  font-weight:700;
+}
+
+/* ─── USER STORIES ─────────────────────────────────────────────────────── */
+.us-grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.us-card{
+  background:#0f0f1a;
+  border:1px solid #2a2a3e;
+  border-radius:10px;
+  padding:16px 20px;
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+}
+.us-id{
+  font-family:'Cascadia Code','Consolas',monospace;
+  font-size:11px;
+  font-weight:700;
+  color:#e8b84b;
+  background:rgba(232,184,75,.1);
+  border:1px solid rgba(232,184,75,.2);
+  border-radius:6px;
+  padding:4px 10px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.us-body{}
+.us-title{
+  font-size:13.5px;
+  font-weight:600;
+  color:#ffffff;
+  margin-bottom:4px;
+}
+.us-desc{
+  font-size:12px;
+  color:#6868a0;
+  line-height:1.6;
+}
+
+/* ─── CAROUSEL ─────────────────────────────────────────────────────────── */
+.carousel {
+  position: relative;
+  background: #0f0f1a;
+  border: 1px solid rgba(232,184,75,0.14);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  padding: 16px 24px 14px;
+}
+.carousel-slide img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 460px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(232,184,75,0.1);
+  margin: 0 auto;
+  object-fit: contain;
+}
+.carousel-caption {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: #6868a0;
+  font-style: italic;
+  text-align: center;
+}
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(232,184,75,0.08);
+  background: rgba(0,0,0,0.18);
+}
+.carousel-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: 1px solid rgba(232,184,75,0.35);
+  background: rgba(232,184,75,0.08);
+  color: #e8b84b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.carousel-btn:hover {
+  background: rgba(232,184,75,0.2);
+  border-color: rgba(232,184,75,0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(232,184,75,0.15);
+}
+.carousel-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+.carousel-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.carousel-counter {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,184,75,0.8);
+  letter-spacing: 0.5px;
+}
+.carousel-dots {
+  display: flex;
+  gap: 5px;
+}
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(232,184,75,0.25);
+  cursor: pointer;
+  transition: all 0.18s;
+  border: none;
+  padding: 0;
+}
+.carousel-dot.active {
+  background: #e8b84b;
+  transform: scale(1.3);
+}
+.carousel-lg .carousel-slide img {
+  max-height: 580px;
+}
+
+/* ─── GRID HELPERS ─────────────────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.col-span-full{grid-column:1/-1}
+
+/* ─── SMALL UTILS ──────────────────────────────────────────────────────── */
+p{font-size:13.5px;color:#9090b8;line-height:1.7;margin-bottom:12px}
+ul.default{padding-left:20px;margin-bottom:16px}
+ul.default li{font-size:13px;color:#9090b8;line-height:1.7;margin-bottom:4px}
+ul.default li strong{color:#d4d4e0}
+.mb8{margin-bottom:8px}
+.mb16{margin-bottom:16px}
+.mb24{margin-bottom:24px}
+
+/* ─── STICKY HEADER ANCHOR OFFSET ──────────────────────────────────────── */
+[id]{scroll-margin-top:24px}
+
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:transform .65s cubic-bezier(0.4,0,0.2,1);
+}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);
+  pointer-events:none;
+}
+#sprint-cover::after{
+  content:'';position:absolute;top:-200px;left:-200px;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:420px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-20px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-cta svg{transition:transform .22s ease}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">01</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">Arquitecturas Generales,<br><span>PCM y Flujo Media Plan</span></h1>
+    <p class="sc-subtitle">Fundamentos de la plataforma — habilitación inicial</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">Sprint 1 de 5</span>
+      <span class="sc-pill blue">PR1066114-120</span>
+      <span class="sc-pill blue">PR1066114-69</span>
+      <span class="sc-pill blue">PR1066114-76</span>
+      <span class="sc-pill blue">PR1066114-88</span>
+      <span class="sc-pill blue">PR1066114-99</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">Arquitecturas Generales</span><span class="lbl">Tema central</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">PCM · ARM · ASM</span><span class="lbl">Módulos</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">5 User Stories</span><span class="lbl">Entregables</span></div>
+    </div>
+    <a href="#resumen" class="sc-cta" id="sc-cta-btn">
+      Ver contenido
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SIDEBAR ══ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sb-logo-wrap">
+    <img class="sb-logo" src="imgs/logo_tvazteca.png" alt="TV Azteca">
+    <div class="sb-sprint-label">KT R1 · Sprint 1</div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-group-label">Contenido</div>
+
+    <a class="sb-link parent" href="#resumen">Resumen del Sprint</a>
+
+    <a class="sb-link parent" href="#sec1">§ 1. Arquitecturas Generales</a>
+    <a class="sb-link child" href="#sec1-arm"><span class="sb-dot"></span>ARM — Revenue Management</a>
+
+    <a class="sb-link parent" href="#sec-modelo">§ 2. Modelo de Datos</a>
+    <a class="sb-link child" href="#sec1-asm"><span class="sb-dot"></span>ASM — Ad Sales Management</a>
+    <a class="sb-link child" href="#sec1-arm-data"><span class="sb-dot"></span>ARM — Modelo de Datos</a>
+
+    <a class="sb-link parent" href="#sec0">§ 3. Configuraciones Pre-Requisito</a>
+    <a class="sb-link child" href="#sec0-1"><span class="sb-dot"></span>3.1 Roles y Terminología</a>
+    <a class="sb-link child" href="#sec0-2"><span class="sb-dot"></span>3.2 Permission Sets TVAM_*</a>
+    <a class="sb-link child" href="#sec0-3"><span class="sb-dot"></span>3.3 Habilitar funciones ASM</a>
+    <a class="sb-link child" href="#sec1-1"><span class="sb-dot"></span>3.4 Media Cloud Config</a>
+    <a class="sb-link child" href="#sec0-rc"><span class="sb-dot"></span>3.5 Revenue Cloud Settings</a>
+    <a class="sb-link child" href="#sec0-4"><span class="sb-dot"></span>3.6 Habilitar ARM + Picklists</a>
+    <a class="sb-link child" href="#sec0-5"><span class="sb-dot"></span>3.7 Registros objeto requeridos</a>
+
+    <a class="sb-link parent" href="#sec3">§ 4. PCM — Catálogo Digital</a>
+    <a class="sb-link child" href="#sec3-1"><span class="sb-dot"></span>4.1 Estructura del Catálogo</a>
+    <a class="sb-link child" href="#sec3-2"><span class="sb-dot"></span>4.2 Modelo 3 Capas</a>
+    <a class="sb-link child" href="#sec3-3"><span class="sb-dot"></span>4.3 Campos Product2</a>
+    <a class="sb-link child" href="#sec3-4"><span class="sb-dot"></span>4.4 Pricing Models</a>
+
+    <a class="sb-link parent" href="#sec5">§ 5. Flujo Base Media Plan</a>
+    <a class="sb-link child" href="#sec5-1"><span class="sb-dot"></span>5.1 Pricing Procedure</a>
+    <a class="sb-link child" href="#sec5-2"><span class="sb-dot"></span>5.2 Transaction Types</a>
+    <a class="sb-link child" href="#sec5-3"><span class="sb-dot"></span>5.3 Quote to Order</a>
+
+    <a class="sb-link parent" href="#sec-video2">§ 6. Demo — Video</a>
+    <a class="sb-link parent" href="#sec7">§ 7. User Stories</a>
+  </div>
+
+  <div class="sb-bottom">
+    <a class="sb-nav-btn back" href="kt-r1-index.html">← Índice R1</a>
+    <a class="sb-home-btn" href="kt-r1-index.html" title="Inicio KT R1">⌂</a>
+    <a class="sb-nav-btn fwd" href="kt-r1-sprint2.html">Sprint 2 →</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════ MAIN CONTENT ══ -->
+<main id="main">
+
+  <!-- ── PAGE HEADER ── -->
+  <div id="resumen" class="page-header">
+    <div class="sprint-badge">01</div>
+    <div class="eyebrow">Salesforce Media Cloud · TV Azteca · KT R1</div>
+    <h1 class="page-title">Arquitecturas Generales,<br><span>PCM y Flujo Media Plan</span></h1>
+    <p class="page-subtitle">Fundamentos de la plataforma — habilitación inicial</p>
+
+    <div class="header-meta">
+      <span class="meta-pill">Sprint 1 de 5</span>
+      <span class="meta-pill blue">PR1066114-120</span>
+      <span class="meta-pill blue">PR1066114-69</span>
+      <span class="meta-pill blue">PR1066114-76</span>
+      <span class="meta-pill blue">PR1066114-88</span>
+      <span class="meta-pill blue">PR1066114-99</span>
+    </div>
+
+
+  </div>
+
+  <!-- ═══════════════════════════════════ SECTION 1 ══ -->
+  <section id="sec1" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 1</span>
+      <h2 class="section-title">Arquitecturas Generales</h2>
+    </div>
+    <p>Esta sección cubre la arquitectura TO BE de la plataforma y los pasos de habilitación inicial.</p>
+
+    <!-- Arquitectura principal — ancho completo -->
+    <div class="dtf-img-block" style="margin-bottom:24px;text-align:center;">
+      <img src="imgs/dtf/p08_img02_w2048.jpg" alt="Arquitectura TO BE — 3 capas" style="display:inline-block;width:100%;max-width:780px;height:auto;border-radius:8px;border:1px solid rgba(232,184,75,0.12);background:#0f0f1a;">
+      <div class="dtf-img-caption" style="text-align:left;">DTF p.8 — Arquitectura TO BE: Capa 1 Modelo de Datos · Capa 2 Motores Comerciales · Capa 3 Integración DRO</div>
+    </div>
+
+    <!-- ARM subsection -->
+    <div id="sec1-arm" class="subsection">
+      <div class="subsection-title">Agentforce Revenue Management</div>
+      <p>Motor comercial central de la plataforma: orquesta el ciclo de cotización, configuración de productos, pricing y aprovisionamiento hacia sistemas externos.</p>
+
+      <div class="dtf-img-row">
+        <div class="dtf-img-block">
+          <img src="imgs/dtf/p10_img02_w2048.jpg" alt="Agentforce Revenue Management">
+          <div class="dtf-img-caption">DTF p.10 — Agentforce Revenue Management: Context Service, Product Configurator, CPQ/Media Planning Grid y Salesforce Pricing</div>
+        </div>
+        <div class="dtf-img-block">
+          <img src="imgs/dtf/p09_img02_w2048.jpg" alt="Catálogo Centralizado PCM">
+          <div class="dtf-img-caption">DTF p.9 — Catálogo Centralizado PCM: Product Classification, Pricebook, Ad Target Category y segmentos geográficos</div>
+        </div>
+      </div>
+
+      <div class="dtf-img-block" style="margin-bottom:8px;text-align:center;">
+        <img src="imgs/dtf/p10_img03_w2048.jpg" alt="DRO — Capa de Integración" style="display:inline-block;width:100%;max-width:780px;height:auto;border-radius:8px;border:1px solid rgba(232,184,75,0.12);background:#0f0f1a;">
+        <div class="dtf-img-caption" style="text-align:left;">DTF p.10 — DRO como nodo central: conecta Salesforce CRM (Oportunidades / Quotes) con APIs REST de backoffice (DS Multiad / Sistema Financiero) sin intervención manual</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 2 — MODELO DE DATOS ══ -->
+  <section id="sec-modelo" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 2</span>
+      <h2 class="section-title">Modelo de Datos de la Solución</h2>
+    </div>
+    <p>Diagramas relacionales y modelos de datos que documentan la estructura de objetos de la implementación: módulo ASM y Agentforce Revenue Management.</p>
+
+    <!-- ASM subsection -->
+    <div id="sec1-asm" class="subsection">
+      <div class="subsection-title">ASM — Advertising Sales Management</div>
+      <p>Modelos de datos relacionales que componen el núcleo del módulo ASM: Customer/Ad Server, Productos y Precios, Media Property y Targeting.</p>
+
+      <div class="carousel" id="carousel-asm">
+        <div class="carousel-track" id="carousel-asm-track">
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p11_img02_w1542.jpg" alt="ERD Customer and Ad Server">
+            <div class="carousel-caption">ERD Customer and Ad Server — Account, Contact, Ad Server, Ad Server Account y relaciones M:M</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p13_img02_w1534.jpg" alt="ERD Products and Pricing">
+            <div class="carousel-caption">ERD Productos y Precios — Catalog, Category, Product, Price Book, Price Book Entry, Product Classification</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p15_img02_w1558.jpg" alt="ERD Media Property">
+            <div class="carousel-caption">ERD Media Property — Media Channel, Ad Space Specification, Ad Creative Size Type, Ad Space Spec Product</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p16_img02_w1316.jpg" alt="ERD Targeting Options">
+            <div class="carousel-caption">ERD Targeting Options — Ad Target Category, Segment, Segment Value y junction objects de habilitación por producto</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p17_img02_w1574.jpg" alt="ERD Ad Opportunity">
+            <div class="carousel-caption">ERD Ad Opportunity — Ad Opportunity Product → Ad Opportunity → Opportunity (extensión del objeto estándar de Salesforce)</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p19_img02_w1116.jpg" alt="ERD Media Plan — Ad Quote">
+            <div class="carousel-caption">ERD Media Plan — Quote → Ad Quote → Ad Quote Line con schedules, targeting, hiatus y delivery frequency</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p21_img02_w1546.jpg" alt="ERD Advertising Campaign Order">
+            <div class="carousel-caption">ERD Ad Order — Order → Ad Order Item hereda schedules, targeting y delivery de Ad Quote Line sin reconfiguración manual</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="carousel-asm-prev" onclick="carouselMove('asm',-1)">← Anterior</button>
+          <div class="carousel-center">
+            <span class="carousel-counter" id="carousel-asm-counter">1 / 7</span>
+            <div class="carousel-dots" id="carousel-asm-dots"></div>
+          </div>
+          <button class="carousel-btn" id="carousel-asm-next" onclick="carouselMove('asm',1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARM Modelo de Datos -->
+    <div id="sec1-arm-data" class="subsection">
+      <div class="subsection-title">Agentforce Revenue Management — Modelo de Datos</div>
+      <p>Diagrama del modelo de datos de Agentforce Revenue Management para TV Azteca. Define los objetos y relaciones que soportan el ciclo completo de gestión de catálogo, cotización y orden.</p>
+      <div class="carousel carousel-lg" id="carousel-arm">
+        <div class="carousel-track" id="carousel-arm-track">
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p46_img02_w800.jpg" alt="Modelo de datos ARM">
+            <div class="carousel-caption">Modelo de datos Agentforce Revenue Management — objetos y relaciones del catálogo de productos, cotización y gestión de pedidos</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p48_img02_w1670.jpg" alt="Modelo de datos de cotización">
+            <div class="carousel-caption">Modelo de datos de cotización — arquitectura de 3 capas (PCM · Ad Specification · Targeting) convergiendo en AdQuoteLine</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p65_img02_w800.jpg" alt="Modelo de datos de precios">
+            <div class="carousel-caption">Precios de Salesforce — Pricebook, Price Adjustment Schedule, Pricing Procedure Resolution, Expression Set y Attribute Based Adjustment</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="carousel-arm-prev" onclick="carouselMove('arm',-1)">← Anterior</button>
+          <div class="carousel-center">
+            <span class="carousel-counter" id="carousel-arm-counter">1 / 3</span>
+            <div class="carousel-dots" id="carousel-arm-dots"></div>
+          </div>
+          <button class="carousel-btn" id="carousel-arm-next" onclick="carouselMove('arm',1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 3 — PRE-REQUISITO ══ -->
+  <section id="sec0" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 3</span>
+      <h2 class="section-title">Configuraciones Pre-Requisito</h2>
+    </div>
+    <p>Conjunto de habilitaciones y registros base que deben existir en el org antes de iniciar cualquier flujo funcional.</p>
+
+    <!-- ── 0.1 Roles y Terminología ── -->
+    <div id="sec0-1" class="subsection">
+      <div class="subsection-title">2.1 ASM on Platform — Roles y Terminología</div>
+      <p>Advertising Sales Management define dos grupos de roles con responsabilidades diferenciadas sobre la plataforma.</p>
+
+      <div class="grid-2" style="margin-bottom:20px">
+        <div>
+          <div class="subsection-title mb8">Roles de Implementación</div>
+          <ul class="default">
+            <li><strong>Admin:</strong> configura objetos, picklists, permission sets, page layouts y activaciones en Setup</li>
+            <li><strong>System Integrator:</strong> desarrolla y mantiene integraciones técnicas con Ad Servers externos (GAM)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="subsection-title mb8">Roles de Operación</div>
+          <ul class="default">
+            <li><strong>Ad Sales Admin:</strong> gestión completa del proceso de venta publicitaria</li>
+            <li><strong>Media Planner:</strong> creación y configuración de Media Plans y placements</li>
+            <li><strong>Sales Rep:</strong> gestión de oportunidades y propuestas comerciales</li>
+            <li><strong>Ad Operations Specialist:</strong> ejecución y seguimiento de campañas</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="subsection-title mb8">Terminología clave</div>
+      <table class="ktable mb16">
+        <thead><tr><th>Término</th><th>Definición</th></tr></thead>
+        <tbody>
+          <tr><td>Publisher</td><td>Entidad que vende espacios publicitarios — TV Azteca</td></tr>
+          <tr><td>Advertiser</td><td>Marca o empresa que compra espacios publicitarios</td></tr>
+          <tr><td>Agency</td><td>Intermediario que actúa en nombre del anunciante</td></tr>
+          <tr><td>RFP</td><td>Request For Proposal — solicitud formal de cotización</td></tr>
+          <tr><td>Media Plan</td><td>Propuesta de placements de campaña representada como Quote en Salesforce</td></tr>
+          <tr><td>Ad Server</td><td>Sistema externo (GAM) que sirve y trackea los anuncios en producción</td></tr>
+          <tr><td>Media Channel</td><td>Propiedad editorial donde TV Azteca sirve publicidad (TVAzteca Uno, ADN40…)</td></tr>
+          <tr><td>Ad Space</td><td>Unidad de inventario disponible para venta en un canal (AdSpaceSpecification)</td></tr>
+          <tr><td>Product Classification</td><td>Atributo que vincula un Product2 con su Ad Space — clave para la selección en el Media Plan</td></tr>
+          <tr><td>Pricing Model</td><td>Modelo de cobro: CPM (por mil impresiones) o CPC (por clic) o FIJO (tarifa plana)</td></tr>
+          <tr><td>Price Impacting Attribute</td><td>Atributo de producto que modifica el precio calculado por el Price Waterfall</td></tr>
+          <tr><td>Targeting</td><td>Criterios de segmentación de audiencia: Geografía, Unidades de Anuncio, Audience</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 0.2 Permission Sets ── -->
+    <div id="sec0-2" class="subsection">
+      <div class="subsection-title">2.2 Permission Sets TVAM_*</div>
+      <p>9 Permission Sets desplegados para la implementación TV Azteca Media. Cada PS agrupa objetos, campos y acciones de un rol funcional o técnico específico.</p>
+      <table class="ktable mb16">
+        <thead><tr><th>API Name</th><th>Label</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><code>TVA_DevOpsUser</code></td><td>DevOps User</td><td>Permisos para despliegue y automatización CI/CD</td></tr>
+          <tr><td><code>TVAI_AccesoIntegraciones</code></td><td>Acceso Integraciones</td><td>Acceso al Permission Set Group de integraciones</td></tr>
+          <tr><td><code>TVAM_AdOperations</code></td><td>Ad Operations</td><td>Ejecución y seguimiento de campañas publicitarias</td></tr>
+          <tr><td><code>TVAM_AdSalesAdmin</code></td><td>Ad Sales Admin</td><td>Gestión completa del proceso de ventas publicitarias</td></tr>
+          <tr><td><code>TVAM_AsmSystemAdmin</code></td><td>ASM System Admin</td><td>Acceso administrativo completo a ASM</td></tr>
+          <tr><td><code>TVAM_AsmSystemIntegrator</code></td><td>ASM System Integrator</td><td>Acceso técnico de integración ASM</td></tr>
+          <tr><td><code>TVAM_DroFulfillment</code></td><td>DRO Fulfillment</td><td>Gestión de DRO, fulfillment y obligaciones de campaña</td></tr>
+          <tr><td><code>TVAM_MediaPlanner</code></td><td>Media Planner</td><td>Planificación de medios e inventario publicitario</td></tr>
+          <tr><td><code>TVAM_ProductPricingAdmin</code></td><td>Product &amp; Pricing Admin</td><td>Administración del catálogo de productos y precios</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 0.3 Habilitar funciones ASM ── -->
+    <div id="sec0-3" class="subsection">
+      <div class="subsection-title">2.3 Habilitar funciones de venta publicitaria</div>
+      <p>Pasos de habilitación en Salesforce Setup requeridos antes de operar cualquier flujo de Media Plan.</p>
+      <ol class="steps-list mb16">
+        <li><div class="step-content"><strong>Media Cloud Configuration</strong><br>Activar la configuración de disponibilidad de anuncios por defecto. Habilita el botón "Create Media Plan" en Opportunity.</div></li>
+        <li><div class="step-content"><strong>Context Service</strong><br>Activar Context Service para <code>MediaPlanTransactionContext</code> — requerido por el motor de cotización y pricing en tiempo real.</div></li>
+        <li><div class="step-content"><strong>Revenue Cloud Features</strong><br>Habilitar funciones de Revenue Cloud: quotes, orders, Salesforce Pricing, Instant Pricing, Runtime Product Configuration y Business Rules Engine.</div></li>
+      </ol>
+    </div>
+
+    <!-- ── Media Cloud Configuration ── -->
+    <div id="sec1-1" class="subsection">
+      <div class="subsection-title">2.4 Media Cloud Configuration</div>
+
+      <div class="code-block">
+<span class="comment">// Ruta de activación</span>
+<span class="path">Setup</span> → <span class="path">Media Cloud Configuration</span> → <span class="value">Activar</span>
+      </div>
+
+      <p><strong>Efecto de la activación:</strong> carga el paquete de metadata JSON base que incluye páginas, componentes, pestañas y modales del plan de medios. Este proceso instala los elementos de interfaz necesarios para operar dentro de las Opportunities.</p>
+
+      <div class="info-box critical">
+        <strong>Crítico</strong>
+        Sin habilitar Media Cloud Configuration, el botón <em>"Create Media Plan"</em> NO aparece en la Opportunity. Esta configuración es el punto de partida absoluto de la implementación.
+      </div>
+    </div>
+
+    <!-- ── 0.RC Revenue Cloud Settings ── -->
+    <div id="sec0-rc" class="subsection">
+      <div class="subsection-title">2.5 Revenue Cloud Settings</div>
+
+      <p>Los siguientes 5 pasos deben ejecutarse en <strong>orden estricto</strong>. El primer paso es obligatorio y desbloquea los pasos subsecuentes.</p>
+
+      <ol class="steps-list mb24">
+        <li>
+          <div class="step-content">
+            <strong>Enable Revenue Cloud Features</strong><br>
+            <span style="font-family:monospace;font-size:11.5px;color:#7ec8a0">Setup → Revenue Settings</span><br>
+            Primer paso obligatorio. Activa el motor Revenue Lifecycle Management y expone todos los settings posteriores.
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>Salesforce Pricing</strong><br>
+            Habilita el Price Waterfall completo — permite que los precios se calculen en cascada según las reglas definidas en la Pricing Procedure.
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>Instant Pricing</strong><br>
+            Recalcula montos en la UI sin necesidad de guardar el registro. Indispensable para la experiencia fluida en el Media Planning Grid.
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>Configure Products at Runtime</strong><br>
+            Habilita la visualización de los flujos UI de configuración de productos en la línea de cotización (Line Item Configuration panel).
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>Business Rules Engine (BRE)</strong><br>
+            Activa las tablas de decisión y Expression Sets utilizados en reglas de negocio personalizadas de TV Azteca.
+          </div>
+        </li>
+      </ol>
+
+      <div class="grid-2">
+        <div>
+          <div class="subsection-title mb8">Quote Settings</div>
+          <ul class="default">
+            <li><strong>Enable Quotes</strong> — habilita el objeto Quote en el org</li>
+            <li><strong>Crear cotizaciones sin oportunidad relacionada</strong> — permite flexibilidad operativa</li>
+            <li><strong>Agregar Quotes a Page Layout de Opportunity</strong> — visibilidad del panel de cotizaciones</li>
+          </ul>
+        </div>
+        <div>
+          <div class="subsection-title mb8">Order Settings</div>
+          <ul class="default">
+            <li><strong>Enable Orders</strong> — habilita el objeto Order</li>
+            <li><strong>Enable Negative Quantity</strong> — necesario para ajustes y créditos</li>
+            <li><strong>Enable Zero Quantity</strong> — permite líneas de cortesía</li>
+            <li><strong style="color:#f09090">Enable Enhanced Commerce Orders</strong> — ver nota crítica</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box critical">
+        <strong>Crítico — Enhanced Commerce Orders</strong>
+        Sin este setting habilitado, la línea de cotización no puede convertirse a Order correctamente. Su activación expone el campo <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">Total Line Amount</code> y hace opcional el campo <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">Unit Price</code>, ambos requeridos en el flujo de media plan.
+      </div>
+    </div>
+
+    <!-- ── 0.5 Habilitar ARM + Configuraciones Setup ── -->
+    <div id="sec0-4" class="subsection">
+      <div class="subsection-title">2.6 Habilitar Agentforce Revenue Management</div>
+      <p>Configuraciones adicionales requeridas en Revenue Cloud Settings. Imágenes de referencia del entorno de configuración:</p>
+
+      <div class="carousel" id="carousel-arm-cfg">
+        <div class="carousel-track" id="carousel-arm-cfg-track">
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p38_img02_w2048.jpg" alt="Revenue Cloud Settings">
+            <div class="carousel-caption">Revenue Cloud Settings — Enable Revenue Cloud Features habilitado</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p38_img03_w2048.jpg" alt="Revenue Cloud Settings cont.">
+            <div class="carousel-caption">Configuración de Quote Settings y Order Settings</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p38_img04_w2048.jpg" alt="Salesforce Pricing Setup">
+            <div class="carousel-caption">Salesforce Pricing, Instant Pricing y Runtime Product Configuration habilitados</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p39_img02_w2048.jpg" alt="Business Rules Engine">
+            <div class="carousel-caption">Business Rules Engine (BRE) habilitado para reglas de negocio TV Azteca</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p39_img03_w2048.jpg" alt="Configure Orders">
+            <div class="carousel-caption">Configure Orders — Enable Orders, Negative Quantity, Enhanced Commerce Orders</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p39_img05_w2048.jpg" alt="Order Settings adicionales">
+            <div class="carousel-caption">Zero Quantity y configuraciones adicionales de Order</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p40_img02_w2048.jpg" alt="Pricing Configuration">
+            <div class="carousel-caption">Configuración de precios — Pricing Procedure y Context Service vinculados</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="carousel-arm-cfg-prev" onclick="carouselMove('arm-cfg',-1)">← Anterior</button>
+          <div class="carousel-center">
+            <span class="carousel-counter" id="carousel-arm-cfg-counter">1 / 7</span>
+            <div class="carousel-dots" id="carousel-arm-cfg-dots"></div>
+          </div>
+          <button class="carousel-btn" id="carousel-arm-cfg-next" onclick="carouselMove('arm-cfg',1)">Siguiente →</button>
+        </div>
+      </div>
+
+      <div class="subsection-title mb8">Picklists requeridas</div>
+      <p style="margin-bottom:12px">Valores de listas de selección que deben existir en el org antes de activar flujos de cotización:</p>
+      <table class="ktable mb16">
+        <thead><tr><th>Objeto</th><th>Campo</th><th>Valores requeridos</th></tr></thead>
+        <tbody>
+          <tr><td>Ad Opportunity</td><td>Campaign Strategy</td><td>Brand Awareness, Conversion</td></tr>
+          <tr><td>Ad Server Account</td><td>Account Type</td><td>Media Buyer, Distributor</td></tr>
+          <tr><td>Product</td><td>Product Family</td><td>Digital</td></tr>
+          <tr><td>Ad Quote</td><td>Media Type</td><td>Digital</td></tr>
+          <tr><td>Ad Quote Line</td><td>Pricing Model</td><td>CPC, CPM</td></tr>
+          <tr><td>Ad Quote Line</td><td>Sponsorship Type</td><td>Standard, Sponsorship, Network, Preferred</td></tr>
+          <tr><td>Ad Quote Line</td><td>Delivery Frequency</td><td>Frontloaded, Evenly, As fast as possible</td></tr>
+          <tr><td>Ad Quote Line</td><td>Delivery Period Unit</td><td>Hours, Days, Weeks, Months</td></tr>
+          <tr><td>Ad Quote Line Schedule</td><td>Delivery Days</td><td>Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday</td></tr>
+        </tbody>
+      </table>
+
+      <div class="subsection-title mb8">Page Layout — Campos adicionales requeridos</div>
+      <ul class="default mb16">
+        <li><strong>Ad Space Creative Size Type:</strong> Price Adjustment Type, Price Adjustment Value, Rank</li>
+        <li><strong>Ad Space Spec Product:</strong> Price Adjustment Type, Price Adjustment Value, Rank</li>
+        <li><strong>Ad Target Segment Value:</strong> Price Adjustment Type, Price Adjustment Value, Rank</li>
+      </ul>
+    </div>
+
+    <!-- ── 0.6 Registros objeto requeridos ── -->
+    <div id="sec0-5" class="subsection">
+      <div class="subsection-title">2.7 Registros de objetos requeridos</div>
+      <p>Registros base que deben crearse en el org antes de iniciar el flujo de cotización. Las propuestas y media plans se representan como Quotes en Salesforce; los admins deben crear los Sales Transaction Types y Attribute Definitions correspondientes.</p>
+
+      <div class="carousel" id="carousel-reg">
+        <div class="carousel-track" id="carousel-reg-track">
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p44_img02_w1084.jpg" alt="Ad Availability View Config">
+            <div class="carousel-caption">Ad Availability View Configuration Records — selección de pricing model</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p44_img03_w1626.jpg" alt="Ad Availability View Config 2">
+            <div class="carousel-caption">Configuración de vistas de disponibilidad por tipo de producto</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p45_img02_w2048.jpg" alt="Ad Availability View final">
+            <div class="carousel-caption">Ad Availability View Configuration — vista completa de registros configurados</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p42_img02_w2048.jpg" alt="Pricing Procedure TV Azteca">
+            <div class="carousel-caption">Pricing Procedure creado para TV Azteca con su Context Definition asociada</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p42_img03_w1942.jpg" alt="Context Definitions">
+            <div class="carousel-caption">Context Definitions configuradas para el motor de cotización</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p43_img02_w2048.jpg" alt="Sales Transaction Types">
+            <div class="carousel-caption">Sales Transaction Type records creados para TV Azteca</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/dtf/p43_img03_w2048.jpg" alt="Attribute Definitions">
+            <div class="carousel-caption">Attribute Definitions para el modelo de precios de productos publicitarios</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="carousel-reg-prev" onclick="carouselMove('reg',-1)">← Anterior</button>
+          <div class="carousel-center">
+            <span class="carousel-counter" id="carousel-reg-counter">1 / 7</span>
+            <div class="carousel-dots" id="carousel-reg-dots"></div>
+          </div>
+          <button class="carousel-btn" id="carousel-reg-next" onclick="carouselMove('reg',1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 4 — PCM ══ -->
+  <section id="sec3" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 4</span>
+      <h2 class="section-title">PCM Inicial — Product Catalog Management</h2>
+    </div>
+    <p>Configuración del catálogo de productos digitales. El PCM es la capa de configuración que define qué se vende, cómo se presenta y cómo se tarifica en el flujo de Media Plan.</p>
+
+    <!-- 3.1 -->
+
+    <div id="sec3-1" class="subsection">
+      <div class="subsection-title">3.1 Estructura del Catálogo</div>
+
+      <div class="grid-2 mb16">
+        <div>
+          <table class="ktable">
+            <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+            <tbody>
+              <tr><td>Catalog Name</td><td><strong>Catálogo Digital TV Azteca</strong></td></tr>
+              <tr><td>Categorías</td><td>Streaming, Digital Display, Patrocinio, Servicios</td></tr>
+              <tr><td>Scope inicial</td><td>Base catalog — productos de lanzamiento</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="info-box tip">
+            <strong>Alcance Sprint 1</strong>
+            El catálogo inicial cubre los productos digitales necesarios para activar el primer flujo de Create Media Plan. Los productos adicionales se incorporan en sprints posteriores conforme se valida el modelo de precios.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.2 -->
+    <div id="sec3-2" class="subsection">
+      <div class="subsection-title">3.2 Modelo de 3 Capas</div>
+      <p>El PCM opera con un modelo de tres capas. Las tres deben estar correctamente configuradas para que un producto sea visible, cotizable y orquestable en el flujo de ventas.</p>
+
+      <div class="layer-cards">
+        <!-- Layer 1 -->
+        <div class="layer-card l1">
+          <div class="layer-badge">Capa 1</div>
+          <div class="layer-title">PCM Comercial</div>
+          <div class="layer-q">¿QUÉ se vende?</div>
+          <div class="layer-objects">
+            <span class="obj-tag">Product Catalog</span>
+            <span class="obj-tag">ProductCategory</span>
+            <span class="obj-tag">Product2</span>
+            <span class="obj-tag">ProductSellingModel</span>
+            <span class="obj-tag">PricebookEntry</span>
+            <span class="obj-tag">ProductAttributeDefinition</span>
+          </div>
+          <div class="layer-notes">
+            <strong style="color:#e8b84b">Selling Models:</strong><br>
+            &bull; <strong>Term-Based (CPM)</strong> — vigencia definida, prorrateo automático mid-cycle<br>
+            &bull; <strong>One-Time (FIJO)</strong> — pago único, sin prorrateo
+          </div>
+        </div>
+
+        <!-- Layer 2 -->
+        <div class="layer-card l2">
+          <div class="layer-badge">Capa 2</div>
+          <div class="layer-title">Ad Specification</div>
+          <div class="layer-q">¿DÓNDE y CÓMO?</div>
+          <div class="layer-objects">
+            <span class="obj-tag">MediaChannel</span>
+            <span class="obj-tag">AdSpaceSpecification</span>
+            <span class="obj-tag">AdCreativeSizeType</span>
+            <span class="obj-tag">AdSpaceSpecProduct</span>
+          </div>
+          <div class="layer-notes">
+            <strong style="color:#4f8ef7">Nomenclatura:</strong> [Canal] - [AdSpaceType] - [Dispositivo]<br>
+            Ejemplo: <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">"TV Azteca Uno - Pre-roll - Desktop"</code>
+          </div>
+          <div class="info-box critical" style="margin-top:12px;margin-bottom:0">
+            <strong>Crítico — AdServerId</strong>
+            El campo <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">AdServerId</code> es OBLIGATORIO en AdSpaceSpecification. Sin él se produce un error de runtime al cargar el Media Plan — el panel no se renderiza.
+          </div>
+        </div>
+
+        <!-- Layer 3 -->
+        <div class="layer-card l3">
+          <div class="layer-badge">Capa 3</div>
+          <div class="layer-title">Targeting</div>
+          <div class="layer-q">¿A QUIÉN?</div>
+          <div class="layer-objects">
+            <span class="obj-tag">AdTargetCategory</span>
+            <span class="obj-tag">AdTargetCategorySegment</span>
+            <span class="obj-tag">AdTargetSegmentValue</span>
+            <span class="obj-tag">AdAvailableTargetSegment</span>
+            <span class="obj-tag">AdAvailableTargetSegmentValue</span>
+          </div>
+          <div class="layer-notes">
+            <strong style="color:#50b464">Cascading:</strong> Campo <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">DependantSegmentValueId</code> en <code style="font-size:11px;background:#1a1a2e;padding:1px 6px;border-radius:3px">AdTargetSegmentValue</code> permite valores de segmento dependientes (cascada).<br><br>
+            <strong style="color:#50b464">Regla de visibilidad:</strong> Un producto debe cumplir las 3 capas completas para ser visible, cotizable y orquestable.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.3 -->
+    <div id="sec3-3" class="subsection">
+      <div class="subsection-title">3.3 Campos Requeridos en Product2</div>
+      <p>Todos los campos listados deben estar correctamente configurados. Un campo faltante o con valor incorrecto genera fallos silenciosos en la UI o errores en el motor de precios.</p>
+
+      <table class="ktable mb16">
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Valor requerido</th>
+            <th>Impacto si falta / es incorrecto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>IsActive</td>
+            <td><strong>true</strong></td>
+            <td class="note-cell">No aparece en Browse Product Catalog</td>
+          </tr>
+          <tr>
+            <td>ConfigureDuringSale</td>
+            <td><strong>Allowed</strong></td>
+            <td class="note-cell">No configurable en Line Item Configuration panel</td>
+          </tr>
+          <tr>
+            <td>CanUseRevenueSchedule</td>
+            <td><strong>true</strong></td>
+            <td class="note-cell">Sin prorrateo automático en Term-Based</td>
+          </tr>
+          <tr>
+            <td>ProductPurpose</td>
+            <td><strong>Sell</strong></td>
+            <td class="note-cell">No reconocido por motor de precios</td>
+          </tr>
+          <tr>
+            <td>ProductSellingModel</td>
+            <td><strong>Term-Based / One-Time</strong></td>
+            <td class="critical-cell">Sin modelo de venta no se asocia PricebookEntry</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3.4 -->
+    <div id="sec3-4" class="subsection">
+      <div class="subsection-title">3.4 Pricing Models</div>
+
+      <table class="ktable mb16">
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>Fórmula</th>
+            <th>Selling Model</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CPM</td>
+            <td><strong>Precio × (Impresiones / 1,000)</strong></td>
+            <td>Term-Based</td>
+          </tr>
+          <tr>
+            <td>CPC</td>
+            <td><strong>Precio × Número de clics</strong></td>
+            <td>Term-Based</td>
+          </tr>
+          <tr>
+            <td>FIJO</td>
+            <td><strong>Tarifa plana (flat fee)</strong></td>
+            <td>One-Time</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 5 — FLUJO ══ -->
+  <section id="sec5" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 5</span>
+      <h2 class="section-title">Flujo Base Media Plan</h2>
+    </div>
+    <p>Configuración del flujo comercial completo desde la oportunidad hasta la creación de la orden firme. Cubre pricing procedure, transaction types y el proceso Quote to Order.</p>
+
+    <!-- 5.1 -->
+    <div id="sec5-1" class="subsection">
+      <div class="subsection-title">5.1 Pricing Procedure</div>
+
+      <div class="grid-2 mb16">
+        <table class="ktable">
+          <thead><tr><th>Atributo</th><th>Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Name</td><td><strong>TVAM Ad Sales Pricing Procedure</strong></td></tr>
+            <tr><td>Context</td><td><strong>TVAM_MediaPlanTransactionCtx</strong></td></tr>
+            <tr><td>Proration</td><td>Proration Settings activas</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box tip" style="margin-bottom:0">
+          <strong>Proration Settings</strong>
+          Configuradas para habilitar el prorrateo mid-cycle automático en productos Term-Based. Cuando se activa o pausa una línea en mitad de un ciclo, el sistema calcula el monto proporcional sin intervención manual.
+        </div>
+      </div>
+    </div>
+
+    <!-- 5.2 -->
+    <div id="sec5-2" class="subsection">
+      <div class="subsection-title">5.2 Sale Transaction Types</div>
+
+      <div class="grid-2 mb16">
+        <div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:10px;padding:16px 20px">
+          <div style="font-size:13px;font-weight:700;color:#e8b84b;margin-bottom:6px">Media Plan Digital</div>
+          <div style="font-size:12.5px;color:#8888a8;line-height:1.6">Propuesta estándar de ventas digitales. Se usa para todos los Media Plans generados desde una Opportunity activa.</div>
+        </div>
+        <div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:10px;padding:16px 20px">
+          <div style="font-size:13px;font-weight:700;color:#4f8ef7;margin-bottom:6px">Media Plan Template</div>
+          <div style="font-size:12.5px;color:#8888a8;line-height:1.6">Plantilla reutilizable para planificadores. Permite crear estructuras base de plan que se clonan para múltiples clientes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5.3 -->
+    <div id="sec5-3" class="subsection">
+      <div class="subsection-title">5.3 Quote to Order — Flujo Completo</div>
+
+      <div class="flow-steps mb24">
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">1</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Oportunidad (RFP)</div>
+            <div class="flow-step-desc">El vendedor abre la Opportunity y hace clic en el botón <span class="pill">Create Media Plan</span>. Este botón es habilitado por la Media Cloud Configuration.</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">2</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Modal Nuevo Plan</div>
+            <div class="flow-step-desc">Se ingresan: nombre del plan, Budget (ej: <strong style="color:#e8b84b">$1,000,000</strong>), Media Type → El sistema genera automáticamente un registro <span class="pill">Quote</span> ligado a la Opportunity.</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">3</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Quote Record Page — Media Planning Grid</div>
+            <div class="flow-step-desc">La página del Quote carga el <span class="pill">Media Planning Grid</span> con los Ad Placements. Este es el espacio de trabajo principal del planificador.</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">4</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Add Placements</div>
+            <div class="flow-step-desc">El planificador selecciona el <span class="pill">Standard Price Book</span> y el tipo <span class="pill">Digital</span> para acceder al catálogo de productos PCM.</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">5</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Browse Products</div>
+            <div class="flow-step-desc">Se navega el catálogo PCM organizado por categorías. Al seleccionar un producto y guardar → el sistema genera un <span class="pill">Ad Quote Line</span>.</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">6</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body">
+            <div class="flow-step-title">Line Item Configuration</div>
+            <div class="flow-step-desc">
+              Panel de 3 pestañas:<br>
+              &bull; <span class="pill">Line Item</span> — modelo de precio (CPC/CPM), importes, fechas<br>
+              &bull; <span class="pill">Delivery</span> — frecuencia, días, distribución temporal<br>
+              &bull; <span class="pill">Targeting</span> — segmentos de audiencia<br>
+              <em style="color:#6868a0">Instant Pricing recalcula en background sin guardar.</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">
+            <div class="flow-step-circle">7</div>
+            <div class="flow-step-line"></div>
+          </div>
+          <div class="flow-step-body" style="padding-bottom:0">
+            <div class="flow-step-title">Create Order</div>
+            <div class="flow-step-desc">Invoca el flujo <span class="pill">TVAM_ProcesarOrden</span>. La Quote se convierte en Order firme e inicia el aprovisionamiento DRO. Requiere que la Quote esté en etapa <span class="pill">Approved</span>.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 6 — VIDEO ══ -->
+  <section id="sec-video2" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 6</span>
+      <h2 class="section-title">Demo — Configuraciones Pre-Requisito</h2>
+    </div>
+    <p>Continuación del recorrido en pantalla de las configuraciones base requeridas para activar el flujo de Media Plan en Salesforce.</p>
+
+    <div style="background:#0f0f1a;border:1px solid rgba(232,184,75,0.18);border-radius:12px;overflow:hidden;margin-top:8px;">
+      <video
+        controls
+        preload="metadata"
+        style="display:block;width:100%;max-height:540px;background:#000;"
+      >
+        <source src="Clips Video/SP1 Configuraciones pre requisito 2.mp4" type="video/mp4">
+      </video>
+      <div style="padding:12px 20px;border-top:1px solid rgba(232,184,75,0.08);font-size:11.5px;color:#6868a0;font-style:italic;">
+        Sprint 1 — Configuraciones Pre-Requisito (parte 2) · Salesforce Media Cloud on Core · TV Azteca
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ SECTION 8 — USER STORIES ══ -->
+  <section id="sec7" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 7</span>
+      <h2 class="section-title">User Stories — Resumen Sprint 1</h2>
+    </div>
+    <p>Historias de usuario entregadas en este sprint. Cada historia representa un bloque de configuración independiente pero interconectado.</p>
+
+    <div class="us-grid">
+      <div class="us-card">
+        <div class="us-id">PR1066114-120</div>
+        <div class="us-body">
+          <div class="us-title">Configuraciones Generales — Revenue Settings habilitado</div>
+          <div class="us-desc">Activación de Revenue Cloud Features, Salesforce Pricing, Instant Pricing, Configure Products at Runtime y BRE. Habilita Quote Settings y Order Settings incluyendo Enhanced Commerce Orders.</div>
+        </div>
+      </div>
+
+      <div class="us-card">
+        <div class="us-id">PR1066114-69</div>
+        <div class="us-body">
+          <div class="us-title">Configuraciones PCM — Catálogo inicial y Product2</div>
+          <div class="us-desc">Creación del Catálogo Digital TV Azteca con categorías y productos base. Configuración de campos requeridos en Product2: IsActive, ConfigureDuringSale, CanUseRevenueSchedule, ProductPurpose y ProductSellingModel.</div>
+        </div>
+      </div>
+
+      <div class="us-card">
+        <div class="us-id">PR1066114-76</div>
+        <div class="us-body">
+          <div class="us-title">Configuraciones PCM — Price Book y entries</div>
+          <div class="us-desc">Configuración del Standard Price Book y creación de PricebookEntry para los productos del catálogo inicial. Asociación de modelos de precios CPM, CPC y FIJO.</div>
+        </div>
+      </div>
+
+      <div class="us-card">
+        <div class="us-id">PR1066114-88</div>
+        <div class="us-body">
+          <div class="us-title">Configuraciones Flujo Media Plan — Create Media Plan button</div>
+          <div class="us-desc">Activación de Media Cloud Configuration para exponer el botón Create Media Plan en la Opportunity. Configuración de la Pricing Procedure TVAM Ad Sales y Sale Transaction Types.</div>
+        </div>
+      </div>
+
+      <div class="us-card">
+        <div class="us-id">PR1066114-99</div>
+        <div class="us-body">
+          <div class="us-title">Configuraciones Flujo Media Plan — Quote stages y Create Order</div>
+          <div class="us-desc">Personalización de Quote Stages al flujo TV Azteca (Borrador → En Autorización → En Presentación → Aceptada / Denegada). Configuración del flujo Create Order mediante TVAM_ProcesarOrden.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════ JS — Carousels ══ -->
+<script>
+var carousels = {
+  asm:     { index: 0, total: 7 },
+  arm:     { index: 0, total: 3 },
+  reg:     { index: 0, total: 7 },
+  'arm-cfg': { index: 0, total: 7 }
+};
+
+function carouselInit(id) {
+  var c = carousels[id];
+  var dotsEl = document.getElementById('carousel-' + id + '-dots');
+  dotsEl.innerHTML = '';
+  for (var i = 0; i < c.total; i++) {
+    var dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ir a imagen ' + (i+1));
+    (function(idx) {
+      dot.onclick = function() { carouselGoTo(id, idx); };
+    })(i);
+    dotsEl.appendChild(dot);
+  }
+  carouselRender(id);
+}
+
+function carouselGoTo(id, idx) {
+  var c = carousels[id];
+  c.index = idx;
+  carouselRender(id);
+}
+
+function carouselMove(id, dir) {
+  var c = carousels[id];
+  c.index = Math.max(0, Math.min(c.total - 1, c.index + dir));
+  carouselRender(id);
+}
+
+function carouselRender(id) {
+  var c = carousels[id];
+  var track = document.getElementById('carousel-' + id + '-track');
+  var counter = document.getElementById('carousel-' + id + '-counter');
+  var prevBtn = document.getElementById('carousel-' + id + '-prev');
+  var nextBtn = document.getElementById('carousel-' + id + '-next');
+  var dots = document.querySelectorAll('#carousel-' + id + '-dots .carousel-dot');
+
+  track.style.transform = 'translateX(-' + (c.index * 100) + '%)';
+  counter.textContent = (c.index + 1) + ' / ' + c.total;
+  prevBtn.disabled = c.index === 0;
+  nextBtn.disabled = c.index === c.total - 1;
+  dots.forEach(function(d, i) {
+    d.classList.toggle('active', i === c.index);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  carouselInit('asm');
+  carouselInit('arm');
+  carouselInit('reg');
+  carouselInit('arm-cfg');
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════ JS — Active Nav ══ -->
+<script>
+const sections = document.querySelectorAll('section[id], div[id]');
+const links = document.querySelectorAll('.sb-link');
+
+function updateActiveLink() {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.getBoundingClientRect().top;
+    if (top <= 60) current = s.id;
+  });
+  if (!current && sections.length) current = sections[0].id;
+  links.forEach(a => {
+    const href = a.getAttribute('href');
+    a.classList.toggle('active', href === '#' + current);
+  });
+}
+
+window.addEventListener('scroll', updateActiveLink, { passive: true });
+updateActiveLink();
+</script>
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover = document.getElementById('sprint-cover');
+  var dismissed = false;
+  function dismiss(){
+    if(dismissed) return;
+    dismissed = true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend', function(){ cover.style.display='none'; }, {once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click', function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){ var t=document.getElementById('resumen'); if(t) t.scrollIntoView({behavior:'smooth'}); }, 300);
+  });
+  window.addEventListener('scroll', function(){ if(window.scrollY > 80) dismiss(); }, {passive:true, once:true});
+})();
+</script>
+</body>
+</html>

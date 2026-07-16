@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Sprint 2 — PCM Extendido, Diseño de Campaña y Segmentación · TV Azteca</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#112240;
+  --surface:#13131f;
+  --surface2:#1a1a2e;
+  --gold:#e8b84b;
+  --gold-dim:rgba(232,184,75,.15);
+  --gold-border:rgba(232,184,75,.35);
+  --blue:#4f8ef7;
+  --blue-dim:rgba(79,142,247,.12);
+  --blue-border:rgba(79,142,247,.35);
+  --text:#e8e8f0;
+  --text-muted:#8888a8;
+  --text-dim:#555570;
+  --border:rgba(255,255,255,.07);
+  --red:#f05a5a;
+  --red-dim:rgba(240,90,90,.12);
+  --green:#52c97e;
+  --green-dim:rgba(82,201,126,.12);
+  --sidebar-w:260px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  background: linear-gradient(180deg, #001a4a 0%, #002060 35%, #0a0a1a 100%);
+  position:fixed;
+  top:0;bottom:0;left:0;
+  overflow-y:auto;overflow-x:hidden;
+  border-right:1px solid rgba(0,80,200,0.35);
+  display:flex;flex-direction:column;
+  z-index:100;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(232,184,75,.2);border-radius:2px}
+
+.sb-logo-wrap{padding:20px 20px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{width:140px;display:block}
+.sb-sprint-label{margin-top:10px;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.85}
+
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0 8px}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(232,184,75,0.2);border-radius:2px}
+.sb-group-label{padding:12px 16px 4px;font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(232,184,75,0.35)}
+.sb-link{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 16px 6px 14px;
+  font-size:11px;font-weight:400;
+  color:rgba(232,232,240,0.52);
+  text-decoration:none;
+  border-left:2px solid transparent;
+  transition:all .15s;
+  cursor:pointer;
+  line-height:1.35;
+}
+.sb-link:hover{color:rgba(232,232,240,0.9);background:rgba(232,184,75,0.05);border-left-color:rgba(232,184,75,0.3)}
+.sb-link.active{color:var(--gold);background:rgba(232,184,75,0.08);border-left-color:var(--gold);font-weight:600}
+.sb-link.parent{font-weight:600;font-size:11.5px;color:rgba(232,232,240,0.7);padding-left:14px}
+.sb-link.sub,.sb-link.child{padding-left:26px;font-size:10.5px}
+.sb-link .sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:currentColor;opacity:0.5}
+.sb-link.active .sb-dot{opacity:1;background:var(--gold)}
+.sb-link.sub2{padding-left:38px;font-size:10px;color:rgba(232,232,240,0.4)}
+.sb-link.sub2:hover{color:rgba(232,232,240,0.7)}
+.sb-link.sub2.active{color:var(--gold);border-left-color:var(--gold);background:rgba(232,184,75,0.08)}
+
+.sb-bottom{
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.sb-nav-btn{
+  display:block;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  transition:all .2s ease;
+  letter-spacing:.4px;
+}
+.sb-nav-btn.back{
+  background:rgba(79,142,247,.18);
+  color:#7eb8ff;
+  border:1px solid rgba(79,142,247,.45);
+  box-shadow:0 2px 8px rgba(79,142,247,.12);
+}
+.sb-nav-btn.back:hover{
+  background:rgba(79,142,247,.32);
+  color:#a8d0ff;
+  border-color:rgba(79,142,247,.7);
+  box-shadow:0 4px 16px rgba(79,142,247,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.fwd{
+  background:rgba(232,184,75,.18);
+  color:#f5cc6a;
+  border:1px solid rgba(232,184,75,.5);
+  box-shadow:0 2px 8px rgba(232,184,75,.12);
+}
+.sb-nav-btn.fwd:hover{
+  background:rgba(232,184,75,.32);
+  color:#ffe08a;
+  border-color:rgba(232,184,75,.75);
+  box-shadow:0 4px 16px rgba(232,184,75,.22);
+  transform:translateY(-1px);
+}
+.sb-home-btn{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  color:#ffd764;text-decoration:none;
+  border:1px solid rgba(232,184,75,0.55);border-radius:6px;
+  background:rgba(232,184,75,0.18);
+  box-shadow:0 2px 8px rgba(232,184,75,0.12);
+  transition:all .2s ease;
+}
+.sb-home-btn:hover{border-color:rgba(232,184,75,0.8);color:#ffe899;background:rgba(232,184,75,0.28);transform:translateY(-1px);}
+
+/* ── MAIN CONTENT ── */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  padding:48px 56px 100px;
+  max-width:1080px;
+}
+
+/* ── HEADER HERO ── */
+.sprint-hero{
+  margin-bottom:56px;
+  padding-bottom:40px;
+  border-bottom:1px solid var(--border);
+}
+.sprint-number{
+  font-size:100px;
+  font-weight:900;
+  color:var(--gold);
+  line-height:1;
+  opacity:.18;
+  letter-spacing:-4px;
+  position:absolute;
+  right:0;top:-12px;
+  pointer-events:none;
+  user-select:none;
+}
+.sprint-hero-inner{position:relative}
+.sprint-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:9.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+  padding:4px 10px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;
+}
+.sprint-title{
+  font-size:32px;font-weight:800;line-height:1.2;
+  color:var(--text);margin-bottom:8px;
+}
+.sprint-subtitle{
+  font-size:14px;color:var(--text-muted);line-height:1.6;
+  max-width:640px;margin-bottom:20px;
+}
+.sprint-meta{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;
+}
+.sprint-jira{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:9px;font-weight:700;letter-spacing:.5px;
+  padding:3px 8px;
+  border-radius:4px;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text-muted);
+}
+.sprint-milestone{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px;
+  font-size:12px;font-weight:600;color:var(--gold);
+  max-width:660px;
+}
+.sprint-milestone::before{content:"🏁";font-size:14px}
+
+/* ── SECTION ── */
+.section{margin-bottom:64px;scroll-margin-top:32px}
+.section-header{margin-bottom:28px}
+.section-eyebrow-row{
+  display:flex;align-items:center;gap:10px;
+  font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+}
+.section-eyebrow-row::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title{
+  font-size:22px;font-weight:800;
+  color:var(--text);line-height:1.25;
+  border-left:3px solid var(--gold);
+  padding-left:14px;
+  margin-bottom:10px;
+}
+.section-lead{
+  font-size:13px;color:var(--text-muted);line-height:1.65;
+  max-width:700px;
+  padding:10px 14px;
+  background:var(--surface2);border-left:2px solid var(--blue-border);border-radius:0 6px 6px 0;
+}
+
+/* ── SUBSECTION ── */
+.subsection{margin-bottom:36px;scroll-margin-top:32px}
+.sub-title{
+  font-size:15px;font-weight:700;color:var(--text);
+  margin-bottom:12px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.sub-badge{
+  font-size:9px;font-weight:800;letter-spacing:1px;
+  padding:2px 8px;border-radius:20px;
+  background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--blue);
+}
+
+/* ── TABLES ── */
+.data-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:20px}
+.data-table thead tr{background:var(--surface2)}
+.data-table th{
+  padding:9px 14px;text-align:left;
+  font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gold);border-bottom:1px solid var(--gold-border);
+}
+.data-table td{
+  padding:8px 14px;
+  border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;line-height:1.5;
+}
+.data-table tr:hover td{background:rgba(255,255,255,.02)}
+.data-table td:first-child{color:var(--text);font-weight:600}
+.data-table td code,.data-table th code{
+  font-family:'SF Mono',Consolas,monospace;
+  font-size:10.5px;background:var(--surface2);
+  padding:1px 6px;border-radius:3px;color:var(--blue);
+  border:1px solid var(--border);
+}
+
+/* ── CODE / CONFIG BLOCK ── */
+.code-block{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  font-family:'SF Mono',Consolas,monospace;
+  font-size:11px;color:var(--text-muted);
+  line-height:1.7;margin-bottom:16px;
+  overflow-x:auto;
+}
+.code-block .ck{color:var(--text-dim)}
+.code-block .cv{color:var(--gold)}
+.code-block .cb{color:var(--blue)}
+
+/* ── INFO / WARNING / CRITICAL BOXES ── */
+.box{
+  border-radius:8px;
+  padding:14px 18px;
+  margin-bottom:18px;
+  font-size:12.5px;line-height:1.6;
+}
+.box-label{
+  font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.box-info{background:var(--blue-dim);border:1px solid var(--blue-border)}
+.box-info .box-label{color:var(--blue)}
+.box-info p{color:var(--text-muted)}
+.box-warning{background:rgba(232,184,75,.08);border:1px solid var(--gold-border)}
+.box-warning .box-label{color:var(--gold)}
+.box-warning p{color:var(--text-muted)}
+.box-critical{background:var(--red-dim);border:1px solid rgba(240,90,90,.4)}
+.box-critical .box-label{color:var(--red)}
+.box-critical p{color:var(--text-muted)}
+.box-critical strong{color:var(--red)}
+.box-success{background:var(--green-dim);border:1px solid rgba(82,201,126,.3)}
+.box-success .box-label{color:var(--green)}
+.box-success p{color:var(--text-muted)}
+.box-success strong{color:var(--green)}
+
+/* ── CARDS GRID ── */
+.cards{display:grid;gap:14px;margin-bottom:24px}
+.cards-2{grid-template-columns:1fr 1fr}
+.cards-3{grid-template-columns:1fr 1fr 1fr}
+.cards-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:16px;
+}
+.card-gold{border-top:2px solid var(--gold)}
+.card-blue{border-top:2px solid var(--blue)}
+.card-red{border-top:2px solid var(--red)}
+.card-green{border-top:2px solid var(--green)}
+.card-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.card-body{font-size:11.5px;color:var(--text-muted);line-height:1.6}
+.card-body code{
+  font-family:'SF Mono',Consolas,monospace;font-size:10.5px;
+  background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--blue);
+}
+
+/* ── HIERARCHY TREE ── */
+.tree{list-style:none;padding:0;margin-bottom:16px}
+.tree li{padding:5px 0 5px 20px;border-left:2px solid var(--border);margin-left:8px;font-size:12px;color:var(--text-muted);position:relative}
+.tree li::before{content:'';position:absolute;left:-2px;top:50%;width:12px;height:1px;background:var(--border)}
+.tree li .tree-label{color:var(--text);font-weight:600}
+.tree li .tree-badge{
+  display:inline-block;font-size:9px;font-weight:700;
+  padding:1px 6px;border-radius:3px;
+  background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);margin-left:6px;
+}
+.tree-level{margin:0 0 4px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim)}
+.tree-root{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.tree-root .level-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tree-root .level-num{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;flex-shrink:0;
+}
+.level-1 .level-num{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.level-2 .level-num{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.level-3 .level-num{background:var(--green-dim);color:var(--green);border:1px solid rgba(82,201,126,.3)}
+.level-header .lh-name{font-size:13px;font-weight:700;color:var(--text)}
+.level-header .lh-obj{font-size:9.5px;color:var(--text-dim);font-family:'SF Mono',Consolas,monospace}
+.level-values{display:flex;flex-wrap:wrap;gap:6px}
+.lv{
+  font-size:10px;font-weight:600;
+  padding:2px 9px;border-radius:4px;
+  border:1px solid var(--border);color:var(--text-muted);background:var(--surface2);
+}
+
+/* ── IMAGE BLOCKS ── */
+.img-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:18px}
+.img-wrap img{width:100%;display:block}
+.img-caption{font-size:10px;color:var(--text-dim);padding:7px 12px;background:var(--surface);border-top:1px solid var(--border);font-style:italic}
+
+.img-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.img-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+.img-grid-4 .img-wrap{margin-bottom:0}
+
+/* ── USER STORIES ── */
+.story-list{display:grid;gap:10px;margin-bottom:20px}
+.story{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;display:flex;align-items:flex-start;gap:12px;
+}
+.story-id{
+  font-size:9px;font-weight:800;letter-spacing:.5px;
+  padding:3px 8px;border-radius:4px;
+  background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);
+  white-space:nowrap;flex-shrink:0;font-family:'SF Mono',Consolas,monospace;
+}
+.story-text{font-size:12px;color:var(--text-muted);line-height:1.5}
+
+/* ── FLOW ── */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0 24px}
+.flow-step{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:6px;
+  padding:7px 13px;font-size:11px;font-weight:700;color:var(--text-muted);
+  text-align:center;min-width:80px;
+}
+.flow-step.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border)}
+.flow-arrow{font-size:12px;color:var(--text-dim);padding:0 6px}
+
+/* ── BACK TO TOP ── */
+.back-top{
+  position:fixed;bottom:28px;right:28px;
+  width:36px;height:36px;
+  background:var(--surface);border:1px solid var(--gold-border);
+  color:var(--gold);border-radius:50%;
+  font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);
+  opacity:0;transition:opacity .2s;z-index:90;
+}
+.back-top.visible{opacity:1}
+
+/* ── MOCKUP COLUMNS ── */
+.mockup-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:24px}
+.mockup-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.mockup-col-title{
+  font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.mockup-item{
+  font-size:10.5px;color:var(--text-muted);padding:5px 0;
+  border-bottom:1px solid var(--border);line-height:1.4;
+}
+.mockup-item:last-child{border-bottom:none}
+
+/* ── FIELD LIST ── */
+.field-list{list-style:none;padding:0;margin-bottom:16px}
+.field-list li{
+  display:flex;align-items:baseline;gap:10px;
+  padding:6px 0;border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.field-name{font-weight:700;color:var(--text);min-width:180px;font-family:'SF Mono',Consolas,monospace;font-size:11px}
+.field-desc{color:var(--text-muted);line-height:1.4}
+
+/* ── RESPONSIVE GRID ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-bottom:24px}
+.two-col-wide{display:grid;grid-template-columns:3fr 2fr;gap:24px;align-items:start;margin-bottom:24px}
+
+@media(max-width:1100px){
+  .mockup-grid{grid-template-columns:1fr 1fr}
+  .cards-4{grid-template-columns:1fr 1fr}
+  .img-grid-4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .two-col,.two-col-wide,.cards-2,.cards-3{grid-template-columns:1fr}
+  .mockup-grid{grid-template-columns:1fr}
+}
+
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:transform .65s cubic-bezier(0.4,0,0.2,1)}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);pointer-events:none}
+#sprint-cover::after{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);pointer-events:none}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:420px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-20px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta svg{transition:transform .22s ease}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">02</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">PCM Extendido, Diseño de Campaña<br><span>y Segmentación</span></h1>
+    <p class="sc-subtitle">Media Channels, Line Item Configuration y Targeting de audiencias</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">Sprint 2 de 5</span>
+      <span class="sc-pill blue">PR1066114-78</span>
+      <span class="sc-pill blue">PR1066114-80</span>
+      <span class="sc-pill blue">PR1066114-176</span>
+      <span class="sc-pill blue">PR1066114-182</span>
+      <span class="sc-pill blue">PR1066114-89</span>
+      <span class="sc-pill blue">PR1066114-92</span>
+      <span class="sc-pill blue">PR1066114-193</span>
+      <span class="sc-pill blue">PR1066114-194</span>
+      <span class="sc-pill blue">PR1066114-196</span>
+      <span class="sc-pill blue">PR1066114-63</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">PCM Extendido</span><span class="lbl">Tema central</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">PCM · Line Item · Targeting</span><span class="lbl">Módulos</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">10 User Stories</span><span class="lbl">Entregables</span></div>
+    </div>
+    <a href="#hero" class="sc-cta" id="sc-cta-btn">
+      Ver contenido
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sb-logo-wrap">
+    <img class="sb-logo" src="imgs/logo_tvazteca.png" alt="TV Azteca">
+    <div class="sb-sprint-label">KT R1 · Sprint 2</div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-group-label">Contenido</div>
+
+    <a class="sb-link parent" href="#hero">Resumen del Sprint</a>
+
+    <a class="sb-link parent" href="#s1">§ 1. PCM Extendido</a>
+    <a class="sb-link child" href="#s1-1"><span class="sb-dot"></span>1.1 Media Channels (9 canales)</a>
+    <a class="sb-link child" href="#s1-2"><span class="sb-dot"></span>1.2 Ad Space Specifications</a>
+    <a class="sb-link child" href="#s1-3"><span class="sb-dot"></span>1.3 Ad Creative Size Types</a>
+    <a class="sb-link child" href="#s1-4"><span class="sb-dot"></span>1.4 Ad Space Spec Product</a>
+
+    <a class="sb-link parent" href="#s2">§ 2. Line Item Configuration</a>
+    <a class="sb-link child" href="#s2-1"><span class="sb-dot"></span>2.1 Pestaña Line Item</a>
+    <a class="sb-link child" href="#s2-3"><span class="sb-dot"></span>2.2 Pestaña Targeting</a>
+    <a class="sb-link sub2" href="#s3-1"><span class="sb-dot"></span>2.2.1 Estructura 3 niveles</a>
+    <a class="sb-link sub2" href="#s3-2"><span class="sb-dot"></span>2.2.2 Junction Objects</a>
+
+    <a class="sb-link parent" href="#s4">§ 3. Modelo de Datos</a>
+    <a class="sb-link parent" href="#s5">§ 4. Ajustes Etiquetas</a>
+    <a class="sb-link parent" href="#sec-video-s2">§ 6. Demo — Video</a>
+    <a class="sb-link parent" href="#s6">§ 7. User Stories</a>
+  </div>
+
+  <div class="sb-bottom">
+    <a class="sb-nav-btn back" href="kt-r1-sprint1.html">← Sprint 1</a>
+    <a class="sb-home-btn" href="kt-r1-index.html" title="Inicio KT R1">⌂</a>
+    <a class="sb-nav-btn fwd" href="kt-r1-sprint3.html">Sprint 3 →</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     MAIN
+══════════════════════════════════════ -->
+<main class="main" id="main">
+
+<!-- ── HERO ── -->
+<section class="sprint-hero section" id="hero">
+  <div class="sprint-hero-inner">
+    <div class="sprint-number">02</div>
+    <div class="sprint-eyebrow">KT R1 · Release 1 · Salesforce Media Cloud</div>
+    <h1 class="sprint-title">PCM Extendido, Diseño de Campaña<br>y Segmentación</h1>
+    <p class="sprint-subtitle">Media Channels, Line Item Configuration completa y Targeting de audiencias — configuración avanzada del catálogo, entrega de placements y segmentación geográfica y demográfica.</p>
+
+    <div class="sprint-meta">
+      <span class="sprint-jira">PR1066114-78</span>
+      <span class="sprint-jira">PR1066114-80</span>
+      <span class="sprint-jira">PR1066114-176</span>
+      <span class="sprint-jira">PR1066114-182</span>
+      <span class="sprint-jira">PR1066114-89</span>
+      <span class="sprint-jira">PR1066114-92</span>
+      <span class="sprint-jira">PR1066114-193</span>
+      <span class="sprint-jira">PR1066114-194</span>
+      <span class="sprint-jira">PR1066114-196</span>
+      <span class="sprint-jira">PR1066114-63</span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     § 1 — PCM EXTENDIDO
+══════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 1</span> PCM Extendido</div>
+    <h2 class="section-title">PCM Extendido</h2>
+    <p class="section-lead">En este sprint se completa la configuración de las propiedades de medios de TV Azteca: los 9 canales que conforman su ecosistema digital, sus especificaciones de espacio publicitario con integración a GAM, los formatos creativos soportados y el objeto puente que vincula productos con espacios.</p>
+  </div>
+
+  <!-- 1.1 Media Channels -->
+  <div class="subsection" id="s1-1">
+    <div class="sub-title">1.1 Media Channels TV Azteca <span class="sub-badge">9 canales</span></div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Cada Media Channel representa una propiedad editorial donde TV Azteca publica publicidad. La distinción entre canales Broadcast+Digital y canales puramente digitales determina las plataformas disponibles para la segmentación de entrega.</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre del Canal</th>
+          <th>Tipo</th>
+          <th>Plataformas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TV Azteca Uno</td>
+          <td>Broadcast + Digital</td>
+          <td>Desktop, Mobile, CTV</td>
+        </tr>
+        <tr>
+          <td>ADN40</td>
+          <td>Broadcast + Digital</td>
+          <td>Desktop, Mobile</td>
+        </tr>
+        <tr>
+          <td>A+</td>
+          <td>Digital</td>
+          <td>Desktop, Mobile, CTV</td>
+        </tr>
+        <tr>
+          <td>Canal 13</td>
+          <td>Broadcast + Digital</td>
+          <td>Desktop, Mobile</td>
+        </tr>
+        <tr>
+          <td>Azteca 7</td>
+          <td>Broadcast + Digital</td>
+          <td>Desktop, Mobile</td>
+        </tr>
+        <tr>
+          <td>UnoTV</td>
+          <td>Digital News</td>
+          <td>Desktop, Mobile</td>
+        </tr>
+        <tr>
+          <td>ClaroSports</td>
+          <td>Sports Streaming</td>
+          <td>Desktop, Mobile, CTV</td>
+        </tr>
+        <tr>
+          <td>Tubi</td>
+          <td>AVOD Streaming</td>
+          <td>CTV, Desktop, Mobile</td>
+        </tr>
+        <tr>
+          <td>Pluto TV</td>
+          <td>FAST Streaming</td>
+          <td>CTV, Desktop</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 1.2 Ad Space Specifications -->
+  <div class="subsection" id="s1-2">
+    <div class="sub-title">1.2 Ad Space Specifications</div>
+
+    <div class="two-col-wide">
+      <div>
+        <div class="box box-info">
+          <div class="box-label">Objeto</div>
+          <p><code>AdSpaceSpecification</code> — representa una ubicación publicitaria concreta dentro de un Media Channel. Cada Ad Space Spec tiene un canal, tipo de espacio, dispositivo y su conexión con GAM.</p>
+        </div>
+
+        <div class="box box-critical">
+          <div class="box-label">⚠ CRÍTICO — AdServerId es OBLIGATORIO</div>
+          <p><strong>AdServerId en AdSpaceSpecification es OBLIGATORIO.</strong> Sin él el componente Ad Placement genera error en runtime al cargar el Media Plan. El Media Planner no podrá seleccionar el espacio publicitario en el Line Item Configuration.</p>
+        </div>
+
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">El campo <strong style="color:var(--text)">AdServerId</strong> mapea esta Ad Space Specification con el inventario correspondiente en Google Ad Manager (GAM). Es el vínculo técnico que permite al DRO aprovisionar el placement correctamente.</p>
+
+        <div class="code-block">
+          <span class="ck">Nomenclatura:</span> <span class="cv">[Canal] - [AdSpaceType] - [Dispositivo]</span>
+          <br><br>
+          <span class="ck">Ejemplo:</span><br>
+          <span class="cb">TV Azteca Uno - Pre-roll - Desktop</span><br>
+          <span class="cb">ADN40 - Banner 300x250 - Mobile</span><br>
+          <span class="cb">A+ - Skin - Desktop</span>
+        </div>
+
+        <ul class="field-list">
+          <li><span class="field-name">AdServerId</span><span class="field-desc">Obligatorio. Mapea con GAM. Sin este campo el Ad Placement falla en runtime.</span></li>
+          <li><span class="field-name">Media Channel</span><span class="field-desc">Lookup al canal propietario del espacio publicitario.</span></li>
+          <li><span class="field-name">Ad Space Type</span><span class="field-desc">Tipo de formato (Pre-roll, Banner, Skin, etc.).</span></li>
+          <li><span class="field-name">Device</span><span class="field-desc">Desktop, Mobile, CTV.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="img-wrap">
+          <img src="imgs/sf_mapeo_catalogo.jpg" alt="Mapeo catálogo y Ad Space Specs">
+          <div class="img-caption">Mapeo en tiempo de diseño — catálogos, Ad Space Specifications y productos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 Ad Creative Size Types -->
+  <div class="subsection" id="s1-3">
+    <div class="sub-title">1.3 Ad Creative Size Types</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Los Ad Creative Size Types definen los formatos de creatividad que pueden entregarse en los espacios publicitarios de TV Azteca. Cada formato está disponible como atributo seleccionable en la Line Item Configuration.</p>
+    <div class="cards cards-3">
+      <div class="card card-blue">
+        <div class="card-title">300×250</div>
+        <div class="card-body">Medium Rectangle. Formato display estándar IAB para posiciones de alto rendimiento en artículos.</div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-title">728×90</div>
+        <div class="card-body">Leaderboard. Formato horizontal para posiciones superiores de página en sitios de noticias.</div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Pre-roll 15s</div>
+        <div class="card-body">Video pre-roll de 15 segundos. Utilizado en A+, Tubi, ClaroSports y Pluto TV.</div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Pre-roll 30s</div>
+        <div class="card-body">Video pre-roll de 30 segundos. Formato premium para campañas de branding de alto impacto.</div>
+      </div>
+      <div class="card card-red">
+        <div class="card-title">Skin</div>
+        <div class="card-body">Formato envolvente de página completa. Alta visibilidad en TV Azteca Uno y portales de noticias.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 Ad Space Spec Product -->
+  <div class="subsection" id="s1-4">
+    <div class="sub-title">1.4 Ad Space Spec Product <span class="sub-badge">PUENTE CRÍTICO</span></div>
+
+    <div class="box box-critical">
+      <div class="box-label">⚠ CRÍTICO — Sin este objeto el producto NO aparece</div>
+      <p><strong>Sin Ad Space Spec Product, el producto NO aparece en Ad Placement aunque el PCM esté completamente configurado.</strong> Este objeto es el vínculo obligatorio que habilita el producto en el selector de espacios del Media Plan Builder.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="box box-warning">
+          <div class="box-label">Objeto</div>
+          <p><code>AdSpaceSpecProduct</code> — objeto de unión que vincula <code>AdSpaceSpecification</code> con <code>Product2</code>. Sin este registro el sistema no sabe qué producto puede entregarse en qué espacio.</p>
+        </div>
+        <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Adicionalmente, este objeto aloja los campos de ajuste de precio específicos por espacio-producto, permitiendo diferencias de tarifa por canal o formato sin modificar el Price Book base.</p>
+        <ul class="field-list">
+          <li><span class="field-name">AdSpaceSpecificationId</span><span class="field-desc">Lookup al espacio publicitario.</span></li>
+          <li><span class="field-name">ProductId</span><span class="field-desc">Lookup al producto del catálogo (Product2).</span></li>
+          <li><span class="field-name">Price Adjustment Type</span><span class="field-desc">Tipo de ajuste de precio: Amount, Percent, Override.</span></li>
+          <li><span class="field-name">Price Adjustment Value</span><span class="field-desc">Valor del ajuste aplicable en el Line Item.</span></li>
+          <li><span class="field-name">Rank</span><span class="field-desc">Orden de prioridad cuando múltiples reglas aplican.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="box box-info">
+          <div class="box-label">Flujo de dependencias PCM</div>
+          <p>Para que un producto sea seleccionable en el Media Plan Builder deben existir los tres registros en cadena:</p>
+        </div>
+        <div class="flow" style="flex-direction:column;align-items:flex-start;gap:6px">
+          <div class="flow-step active">Product2 (PCM)</div>
+          <div class="flow-arrow" style="padding:0 0 0 12px">↓</div>
+          <div class="flow-step">AdSpaceSpecification + AdServerId</div>
+          <div class="flow-arrow" style="padding:0 0 0 12px">↓</div>
+          <div class="flow-step active">AdSpaceSpecProduct (puente)</div>
+          <div class="flow-arrow" style="padding:0 0 0 12px">↓</div>
+          <div class="flow-step">Visible en Ad Placement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════
+     § 2 — LINE ITEM CONFIGURATION
+══════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 2</span> Diseño de Campaña</div>
+    <h2 class="section-title">Diseño de Campaña — Line Item Configuration</h2>
+    <p class="section-lead">La Line Item Configuration es el corazón del Media Plan. Concentra toda la información operativa de un placement: precio, modelo, fechas de vuelo, programación de entrega y criterios de segmentación. Se accede desde el Media Plan Builder a través de 3 pestañas principales.</p>
+  </div>
+
+  <div class="flow" style="margin-bottom:28px">
+    <div class="flow-step">Oportunidad</div><div class="flow-arrow">→</div>
+    <div class="flow-step">Browse Products</div><div class="flow-arrow">→</div>
+    <div class="flow-step active">Line Item Config</div><div class="flow-arrow">→</div>
+    <div class="flow-step">Pestaña Targeting</div><div class="flow-arrow">→</div>
+    <div class="flow-step">Quote Aprobada</div>
+  </div>
+
+  <!-- 2.1 Pestaña Line Item -->
+  <div class="subsection" id="s2-1">
+    <div class="sub-title">2.1 Pestaña Line Item</div>
+    <div class="two-col">
+      <div>
+        <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">La pestaña principal define los parámetros económicos y temporales del placement. El motor de precios calcula el Total Amount automáticamente a partir del Pricing Model, Unit Price y Quantity.</p>
+        <ul class="field-list">
+          <li><span class="field-name">Pricing Model</span><span class="field-desc">CPC o CPM (picklist). Determina el modelo de cobro del placement.</span></li>
+          <li><span class="field-name">Unit Price</span><span class="field-desc">Tarifa base del producto. Obtenida del Price Book, modificable en el Line Item.</span></li>
+          <li><span class="field-name">Quantity</span><span class="field-desc">Impresiones (CPM) o clics (CPC) comprometidos en el placement.</span></li>
+          <li><span class="field-name">Total Amount</span><span class="field-desc">Calculado automáticamente: Unit Price × Quantity / 1000 (CPM) o × Quantity (CPC).</span></li>
+          <li><span class="field-name">Start Date</span><span class="field-desc">Fecha de inicio del placement en el Media Plan.</span></li>
+          <li><span class="field-name">End Date</span><span class="field-desc">Fecha de fin del placement. Define el período de vuelo.</span></li>
+          <li><span class="field-name">Sponsorship Type</span><span class="field-desc">Standard, Sponsorship, Network o Preferred. Afecta prioridad en GAM.</span></li>
+          <li><span class="field-name">Instant Pricing</span><span class="field-desc">Recalcula el precio en background sin necesidad de guardar el registro.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="box box-info">
+          <div class="box-label">Instant Pricing</div>
+          <p>Al modificar Unit Price o Quantity, el Total Amount se recalcula en tiempo real en background. No es necesario guardar para ver el impacto económico del cambio.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-wrap" style="margin-top:20px;max-width:900px">
+      <img src="imgs/sf_mpg_line_item.jpg" alt="Line Item Configuration UI">
+      <div class="img-caption">UI Line Item — configuración de producto, modelo de precio y segmentación</div>
+    </div>
+  </div>
+
+  <!-- 2.2 Pestaña Targeting -->
+  <div class="subsection" id="s2-3">
+    <div class="sub-title">2.2 Pestaña Targeting</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">La pestaña Targeting expone una interfaz jerárquica para seleccionar los criterios de segmentación de cada placement. La disponibilidad de categorías y valores depende de los junction objects configurados por producto.</p>
+
+    <div class="two-col-wide">
+      <div>
+        <div class="box box-info">
+          <div class="box-label">Categorías de Targeting disponibles</div>
+          <p>Tres categorías principales habilitadas para los productos de TV Azteca:</p>
+        </div>
+        <div class="cards">
+          <div class="card card-gold">
+            <div class="card-title">1. Geografía</div>
+            <div class="card-body">32 estados de México disponibles para geo-targeting. Selección múltiple permitida por placement.</div>
+          </div>
+          <div class="card card-blue">
+            <div class="card-title">2. Unidades de Anuncio</div>
+            <div class="card-body">12 canales GAM de TV Azteca. Permite segmentar la entrega por canal específico de la red digital.</div>
+          </div>
+          <div class="card card-red">
+            <div class="card-title">3. Audience Targeting</div>
+            <div class="card-body">Segmentación demográfica: edad (grupos etarios) y género. Criterios de audiencia para campañas de performance.</div>
+          </div>
+        </div>
+        <div class="box box-warning">
+          <div class="box-label">Objetos de unión requeridos</div>
+          <p>Para que los criterios de targeting aparezcan en el Line Item Configuration, cada producto debe tener configurados sus junction objects:</p>
+          <ul style="margin-top:8px;padding-left:18px;font-size:11.5px;line-height:1.8">
+            <li><code>AdAvailableTargetSegment</code> — habilita el segmento para el producto</li>
+            <li><code>AdAvailableTargetSegmentValue</code> — habilita el valor específico</li>
+          </ul>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.6">El objeto que almacena la selección del Media Planner es <code>Ad Quote Line Target Value</code> — un registro por criterio seleccionado en el targeting del placement.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2.1 Estructura 3 niveles -->
+  <div class="subsection" id="s3-1">
+    <div class="sub-title">2.2.1 Estructura de 3 niveles</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">La segmentación opera sobre una jerarquía de 3 niveles — desde la categoría general hasta el valor concreto seleccionable. Esta estructura es independiente por producto.</p>
+
+    <div class="two-col-wide">
+      <div>
+        <!-- Nivel 1 -->
+        <div class="tree-root level-1">
+          <div class="level-header">
+            <div class="level-num">1</div>
+            <div>
+              <div class="lh-name">Ad Target Category</div>
+              <div class="lh-obj">AdTargetCategory</div>
+            </div>
+          </div>
+          <div class="level-values">
+            <span class="lv">Geografía</span>
+            <span class="lv">Unidades de Anuncio</span>
+            <span class="lv">Audience Targeting</span>
+          </div>
+        </div>
+
+        <!-- Nivel 2 -->
+        <div class="tree-root level-2">
+          <div class="level-header">
+            <div class="level-num">2</div>
+            <div>
+              <div class="lh-name">Ad Target Category Segment</div>
+              <div class="lh-obj">AdTargetCategorySegment</div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Dimensiones dentro de cada categoría:</p>
+          <div class="level-values">
+            <span class="lv">México (32 estados)</span>
+            <span class="lv">Canal</span>
+            <span class="lv">Sub-sección</span>
+            <span class="lv">Edad</span>
+            <span class="lv">Género</span>
+          </div>
+        </div>
+
+        <!-- Nivel 3 -->
+        <div class="tree-root level-3">
+          <div class="level-header">
+            <div class="level-num">3</div>
+            <div>
+              <div class="lh-name">Ad Target Segment Value</div>
+              <div class="lh-obj">AdTargetSegmentValue</div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Valores concretos seleccionables:</p>
+          <div class="level-values" style="gap:5px">
+            <span class="lv">CDMX</span>
+            <span class="lv">Jalisco</span>
+            <span class="lv">Nuevo León</span>
+            <span class="lv">+29 estados</span>
+            <span class="lv">12 canales GAM</span>
+            <span class="lv">18-24</span>
+            <span class="lv">25-34</span>
+            <span class="lv">35-44</span>
+            <span class="lv">45-54</span>
+            <span class="lv">55+</span>
+            <span class="lv">Masculino</span>
+            <span class="lv">Femenino</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="box box-info">
+          <div class="box-label">Valores de targeting configurados</div>
+          <p>Los 32 estados de México están configurados en <code>AdTargetSegmentValue</code> bajo la categoría Geografía. Los 12 canales GAM de TV Azteca están configurados bajo Unidades de Anuncio.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2.2 Junction Objects -->
+  <div class="subsection" id="s3-2">
+    <div class="sub-title">2.2.2 Junction Objects — Habilitación por producto</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:16px">El targeting no es global — cada producto tiene su propio conjunto de segmentos disponibles. Los junction objects son los que hacen visible el targeting en la pestaña de la Line Item Configuration para cada producto específico.</p>
+
+    <div class="cards-2 cards" style="margin-bottom:16px">
+      <div class="card card-blue">
+        <div class="card-title"><code>AdAvailableTargetSegment</code></div>
+        <div class="card-body">Habilita un segmento completo (ej. Geografía, Edad) para un producto específico. Sin este registro, la categoría no aparece en el Targeting Panel del Media Planner.</div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title"><code>AdAvailableTargetSegmentValue</code></div>
+        <div class="card-body">Habilita un valor específico de segmento (ej. Jalisco, 18-24) por producto. Permite que distintos productos ofrezcan distintos estados o rangos de edad.</div>
+      </div>
+    </div>
+
+    <div class="box box-critical">
+      <div class="box-label">⚠ Requerimiento por producto</div>
+      <p>Cada producto debe tener sus junction objects configurados individualmente para que el targeting aparezca en Line Item Configuration. <strong>Un producto sin junction objects muestra el panel de targeting vacío</strong>, incluso si los valores de segmento existen globalmente en el org.</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Junction Object</th>
+          <th>Propósito</th>
+          <th>Relaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>AdAvailableTargetSegment</code></td>
+          <td>Habilita un segmento para el Media Planner en Ad Quote Line</td>
+          <td>Product2 → AdTargetCategorySegment</td>
+        </tr>
+        <tr>
+          <td><code>AdAvailableTargetSegmentValue</code></td>
+          <td>Habilita un valor específico de segmento por producto</td>
+          <td>Product2 → AdTargetSegmentValue</td>
+        </tr>
+        <tr>
+          <td><code>Ad Quote Line Target Value</code></td>
+          <td>Almacena la selección de targeting del Media Planner</td>
+          <td>AdQuoteLine → AdTargetSegmentValue</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     § 3 — MODELO DE DATOS
+══════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 3</span> Modelo de Datos</div>
+    <h2 class="section-title">Modelo de Datos — Bloque Cliente y Ad Server</h2>
+    <p class="section-lead">El bloque Cliente define la estructura de anunciantes, agencias y sus relaciones M:M en Salesforce. El bloque Ad Server conecta Salesforce con los servidores externos de publicidad como GAM, estableciendo los vínculos técnicos necesarios para el aprovisionamiento.</p>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="sub-title" style="margin-bottom:14px">Objetos Cliente</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Objeto</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Account</code></td>
+            <td>Anunciante o agencia. Record Types: <strong>Advertiser</strong>, <strong>Agency</strong>.</td>
+          </tr>
+          <tr>
+            <td><code>Contact</code></td>
+            <td>Punto de contacto del cliente (anunciante o agencia).</td>
+          </tr>
+          <tr>
+            <td><code>Party Role Relationship</code></td>
+            <td>Relaciones M:M cliente-agencia. Permite que un anunciante tenga múltiples agencias.</td>
+          </tr>
+          <tr>
+            <td><code>Account Relationship</code></td>
+            <td>Vincula dos cuentas (anunciante ↔ agencia) en una relación directa.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="box box-info" style="margin-top:4px">
+        <div class="box-label">Picklist values — Account.Type</div>
+        <p>Configurar los valores de picklist: <code>Advertiser</code>, <code>Agency</code></p>
+      </div>
+    </div>
+
+    <div>
+      <div class="sub-title" style="margin-bottom:14px">Objetos Ad Server</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Objeto</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Ad Server</code></td>
+            <td>Parámetros técnicos del servidor externo (GAM, Advantage Serve).</td>
+          </tr>
+          <tr>
+            <td><code>Ad Server Account</code></td>
+            <td>Vincula el Ad Server con una cuenta o marca específica del anunciante.</td>
+          </tr>
+          <tr>
+            <td><code>Ad Server Account Contact</code></td>
+            <td>Conecta Ad Server Account con el contacto responsable.</td>
+          </tr>
+          <tr>
+            <td><code>Ad Server User</code></td>
+            <td>Mapea el Ad Server con un Media Planner o Sales Rep interno de TV Azteca.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="box box-warning" style="margin-top:4px">
+        <div class="box-label">Picklist values — Ad_Server_Account.Account_Type</div>
+        <p>Configurar los valores de picklist: <code>Media Buyer</code>, <code>Distributor</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign Lifecycle -->
+  <div class="sub-title" style="margin-top:8px;margin-bottom:14px">Objetos del Ciclo de Vida de Campaña</div>
+
+  <div class="box box-success">
+    <div class="box-label">Principio de herencia</div>
+    <p><strong>Ad Order Item hereda idénticamente toda la metadata de Ad Quote Line</strong> incluyendo schedules, hiatus y targeting — sin reconfiguración manual. Al convertir la Quote en Order, todos los criterios de entrega y segmentación se propagan automáticamente.</p>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Objeto</th><th>Datos clave</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Opportunity</code></td>
+        <td>Campaign Strategy: Brand Awareness, Conversion. Punto de origen del ciclo comercial.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Opportunity</code></td>
+        <td>Ad Type, Deal Type, Flight Period. Extiende la Oportunidad con datos específicos de medios.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Opportunity Product</code></td>
+        <td>Producto de interés del anunciante vinculado a la oportunidad de venta.</td>
+      </tr>
+      <tr>
+        <td><code>Quote / Ad Quote</code></td>
+        <td>Budget, Start/End Date, Media Type: Digital. El Media Plan como cotización formal.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Quote Line</code></td>
+        <td>CPC/CPM, Creative Size, Targeting, Schedule. Un placement configurado dentro del Media Plan.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Quote Line Delivery Schedule</code></td>
+        <td>Período y días de entrega (ej. Lun-Vier). Detalla la programación de entrega del placement.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Quote Line Delivery Frequency</code></td>
+        <td>Frontloaded / Evenly / As fast as possible. Define el ritmo de distribución de impresiones.</td>
+      </tr>
+      <tr>
+        <td><code>Ad Quote Line Hiatus</code></td>
+        <td>Fechas excluidas durante el vuelo de campaña (festivos, mantenimientos, paros de pauta).</td>
+      </tr>
+      <tr>
+        <td><code>Ad Quote Line Target Value</code></td>
+        <td>Criterio de targeting seleccionado: Estado, Canal GAM, Segmento de edad.</td>
+      </tr>
+      <tr>
+        <td><code>Order / Ad Order Item</code></td>
+        <td>Orden firme. Hereda toda la metadata del Media Plan incluyendo schedules, hiatus y targeting.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     § 4 — AJUSTES ETIQUETAS
+══════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 4</span> Ajustes Generales</div>
+    <h2 class="section-title">Ajustes Generales de Etiquetas Quote y Order</h2>
+    <p class="section-lead">Para alinear la interfaz de Salesforce con las convenciones comerciales de TV Azteca, se realizaron ajustes de etiquetas en español en los objetos Quote y Order. Esto asegura que los Media Planners y ejecutivos de ventas trabajen con terminología familiar y consistente.</p>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="sub-title" style="margin-bottom:12px">Etiquetas Quote — Campo → Español</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Campo Original</th><th>Etiqueta en Español</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Budget</td><td>Presupuesto</td></tr>
+          <tr><td>Media Type</td><td>Tipo de Medio</td></tr>
+          <tr><td>Start Date</td><td>Fecha de Inicio</td></tr>
+          <tr><td>End Date</td><td>Fecha de Fin</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="box box-info">
+        <div class="box-label">Order Labels</div>
+        <p>Las etiquetas equivalentes en español se aplicaron también al objeto Order, manteniendo consistencia terminológica a lo largo de todo el ciclo Quote → Order.</p>
+      </div>
+      <div class="box box-warning">
+        <div class="box-label">Nota de configuración</div>
+        <p>Los ajustes de etiquetas se realizan en Salesforce Setup bajo <strong>Rename Tabs and Labels</strong> o mediante <strong>Custom Labels</strong> por perfil de usuario. El equipo DevOps debe incluir estos metadatos en los paquetes de despliegue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     § 5 — USER STORIES
+══════════════════════════════════════ -->
+
+
+<!-- ══════════════════════════════════════
+     § 6 — VIDEO
+══════════════════════════════════════ -->
+<section class="section" id="sec-video-s2">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 6</span> Demo</div>
+    <h2 class="section-title">Demo — Sprint 2</h2>
+  </div>
+  <p style="font-size:13px;color:#8888a8;margin-bottom:16px;">Recorrido en pantalla de las configuraciones del Sprint 2: PCM Extendido, Line Item Configuration y Segmentación.</p>
+
+  <div style="background:#0f0f1a;border:1px solid rgba(232,184,75,0.18);border-radius:12px;overflow:hidden;margin-top:8px;">
+    <video
+      controls
+      preload="metadata"
+      style="display:block;width:100%;max-height:540px;background:#000;"
+    >
+      <source src="Clips Video/SP2.mp4" type="video/mp4">
+    </video>
+    <div style="padding:12px 20px;border-top:1px solid rgba(232,184,75,0.08);font-size:11.5px;color:#6868a0;font-style:italic;">
+      Sprint 2 — PCM Extendido · Line Item Configuration · Salesforce Media Cloud on Core · TV Azteca
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     § 7 — USER STORIES
+══════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="section-eyebrow-row"><span>§ 7</span> User Stories</div>
+    <h2 class="section-title">User Stories Sprint 2</h2>
+    <p class="section-lead">Las 10 historias de usuario del Sprint 2 cubren la configuración extendida del PCM (canales, espacios, formatos y puentes), la Line Item Configuration completa en sus tres pestañas, y los ajustes de etiquetas de interfaz.</p>
+  </div>
+
+  <div class="story-list">
+    <div class="story">
+      <div class="story-id">PR1066114-78</div>
+      <div class="story-text">PCM — Media Channels configurados. Los 9 canales de TV Azteca (Broadcast + Digital y solo Digital) creados en Salesforce con sus plataformas y tipos correspondientes.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-80</div>
+      <div class="story-text">PCM — Ad Space Specifications con AdServerId. Cada espacio publicitario tiene su AdServerId mapeado a GAM. Campo obligatorio validado en configuración.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-176</div>
+      <div class="story-text">PCM — Ad Creative Size Types configurados. Los 5 formatos creativos soportados (300×250, 728×90, Pre-roll 15s, Pre-roll 30s, Skin) disponibles en el catálogo.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-182</div>
+      <div class="story-text">PCM — Ad Space Spec Products (puentes). Junction objects que vinculan Product2 con AdSpaceSpecification. Sin estos registros el producto no aparece en Ad Placement.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-89</div>
+      <div class="story-text">Line Item Configuration — pestaña Line Item habilitada. Campos Pricing Model (CPC/CPM), Unit Price, Quantity, Total Amount, Start/End Date, Sponsorship Type e Instant Pricing operativos.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-92</div>
+      <div class="story-text">Line Item Configuration — pestaña Delivery habilitada. Flight Dates, Delivery Days, Delivery Frequency, Delivery Period Unit, Ad Quote Line Delivery Schedule y Ad Quote Line Hiatus configurados.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-193</div>
+      <div class="story-text">Line Item Configuration — pestaña Targeting habilitada. Interfaz de selección jerárquica disponible para las categorías Geografía, Unidades de Anuncio y Audience Targeting.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-194</div>
+      <div class="story-text">Audience Targeting panel completo. Panel de demográficos con grupos etarios (18-24, 25-34, 35-44, 45-54, 55+) y género disponibles para todos los productos digitales de TV Azteca.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-196</div>
+      <div class="story-text">Geo Targeting — 32 estados de México. Todos los estados configurados como AdTargetSegmentValue bajo la categoría Geografía. Disponibles en el Targeting Panel del Media Plan Builder.</div>
+    </div>
+    <div class="story">
+      <div class="story-id">PR1066114-63</div>
+      <div class="story-text">Ajustes generales de etiquetas Quote y Order. Campos Budget, Media Type, Start Date y End Date traducidos al español (Presupuesto, Tipo de Medio, Fecha de Inicio, Fecha de Fin) en la interfaz de usuario.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── BACK TO TOP ── -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Back to top visibility
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 300);
+  updateActiveLink();
+});
+
+// Intersection Observer for sidebar active state
+const sections = document.querySelectorAll('.section, .subsection');
+const links = document.querySelectorAll('.sb-link');
+
+function updateActiveLink() {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.getBoundingClientRect().top;
+    if (top <= 60) current = s.id;
+  });
+  if (!current && sections.length) current = sections[0].id;
+  links.forEach(a => {
+    const href = a.getAttribute('href');
+    a.classList.toggle('active', href === '#' + current);
+  });
+}
+
+// Initial call
+updateActiveLink();
+</script>
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover=document.getElementById('sprint-cover');
+  var dismissed=false;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend',function(){cover.style.display='none';},{once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click',function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){var t=document.getElementById('hero');if(t)t.scrollIntoView({behavior:'smooth'});},300);
+  });
+  window.addEventListener('scroll',function(){if(window.scrollY>80)dismiss();},{passive:true,once:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Sprint 3 — PCM 12 Productos, DRO Setup y Aprovisionamiento Ad Server · TV Azteca</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #112240;
+  --surface:   #12121a;
+  --surface2:  #1a1a26;
+  --surface3:  #1e1e2e;
+  --border:    rgba(232,184,75,0.15);
+  --border2:   rgba(232,232,240,0.08);
+  --gold:      #e8b84b;
+  --gold-dim:  rgba(232,184,75,0.12);
+  --gold-glow: rgba(232,184,75,0.30);
+  --blue:      #4f8ef7;
+  --blue-dim:  rgba(79,142,247,0.12);
+  --red:       #f7604f;
+  --red-dim:   rgba(247,96,79,0.12);
+  --green:     #4fca84;
+  --green-dim: rgba(79,202,132,0.12);
+  --text:      #e8e8f0;
+  --muted:     rgba(232,232,240,0.52);
+  --muted2:    rgba(232,232,240,0.28);
+  --sidebar-w: 260px;
+  --code-bg:   #1a1a2e;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(79,142,247,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 85%, rgba(232,184,75,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 55% 45%, rgba(232,184,75,0.03) 0%, transparent 60%);
+}
+.bg-canvas::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(232,184,75,0.4) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79,142,247,0.25) 1px, transparent 1px);
+  background-size: 80px 80px, 120px 120px;
+  background-position: 0 0, 40px 40px;
+  animation: drift 28s linear infinite;
+  opacity: 0.3;
+}
+@keyframes drift {
+  0%   { transform: translateY(0) translateX(0); }
+  50%  { transform: translateY(-18px) translateX(10px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #001a4a 0%, #002060 35%, #0a0a1a 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0,80,200,0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.sb-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(232,184,75,0.1);
+  flex-shrink: 0;
+}
+.sb-logo {
+  height: 28px;
+  margin-bottom: 12px;
+  filter: brightness(1.1);
+  display: block;
+}
+.sb-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.85;
+  margin-bottom: 2px;
+}
+.sb-sprint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: 8px;
+  padding: 5px 10px;
+  margin-top: 6px;
+}
+.sb-sprint-num {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.sb-sprint-txt {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(232,184,75,0.7);
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+}
+
+.sb-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0 8px;
+}
+.sb-nav::-webkit-scrollbar { width: 3px; }
+.sb-nav::-webkit-scrollbar-thumb { background: rgba(232,184,75,0.2); border-radius: 2px; }
+
+.sb-group-label {
+  padding: 12px 16px 4px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(232,184,75,0.35);
+}
+
+.sb-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px 6px 14px;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(232,232,240,0.52);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+  line-height: 1.35;
+}
+.sb-link:hover {
+  color: rgba(232,232,240,0.9);
+  background: rgba(232,184,75,0.05);
+  border-left-color: rgba(232,184,75,0.3);
+}
+.sb-link.active {
+  color: var(--gold);
+  background: rgba(232,184,75,0.08);
+  border-left-color: var(--gold);
+  font-weight: 600;
+}
+.sb-link.parent {
+  font-weight: 600;
+  font-size: 11.5px;
+  color: rgba(232,232,240,0.7);
+  padding-left: 14px;
+}
+.sb-link.child {
+  padding-left: 26px;
+  font-size: 10.5px;
+}
+.sb-link .sb-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: 0.5;
+}
+.sb-link.active .sb-dot { opacity: 1; background: var(--gold); }
+
+.sb-footer {
+  padding: 12px 12px;
+  border-top: 1px solid rgba(232,184,75,0.1);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.sb-nav-btn{
+  display:block;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  transition:all .2s ease;
+  letter-spacing:.4px;
+}
+.sb-nav-btn.back{
+  background:rgba(79,142,247,.18);
+  color:#7eb8ff;
+  border:1px solid rgba(79,142,247,.45);
+  box-shadow:0 2px 8px rgba(79,142,247,.12);
+}
+.sb-nav-btn.back:hover{
+  background:rgba(79,142,247,.32);
+  color:#a8d0ff;
+  border-color:rgba(79,142,247,.7);
+  box-shadow:0 4px 16px rgba(79,142,247,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.fwd{
+  background:rgba(232,184,75,.18);
+  color:#f5cc6a;
+  border:1px solid rgba(232,184,75,.5);
+  box-shadow:0 2px 8px rgba(232,184,75,.12);
+}
+.sb-nav-btn.fwd:hover{
+  background:rgba(232,184,75,.32);
+  color:#ffe08a;
+  border-color:rgba(232,184,75,.75);
+  box-shadow:0 4px 16px rgba(232,184,75,.22);
+  transform:translateY(-1px);
+}
+.sb-home-btn{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  color:#ffd764;text-decoration:none;
+  border:1px solid rgba(232,184,75,0.55);border-radius:6px;
+  background:rgba(232,184,75,0.18);
+  box-shadow:0 2px 8px rgba(232,184,75,0.12);
+  transition:all .2s ease;
+}
+.sb-home-btn:hover{border-color:rgba(232,184,75,0.8);color:#ffe899;background:rgba(232,184,75,0.28);transform:translateY(-1px);}
+.sb-nav-btn span { display: inline; }
+
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+  padding: 56px 52px 100px;
+  max-width: calc(100% - var(--sidebar-w));
+}
+
+/* ── SPRINT HEADER ── */
+.sprint-header {
+  margin-bottom: 52px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(232,184,75,0.12);
+}
+.sprint-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.sprint-eyebrow-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sprint-eyebrow-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(232,184,75,0.2);
+  max-width: 200px;
+}
+.sprint-num-big {
+  font-size: 110px;
+  font-weight: 900;
+  color: var(--gold);
+  opacity: .18;
+  line-height: 0.85;
+  letter-spacing: -4px;
+  float: right;
+  margin-top: -10px;
+  margin-left: 24px;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+.sprint-title {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+.sprint-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 680px;
+  margin-bottom: 20px;
+}
+.sprint-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+.pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+.pill-gold {
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.3);
+  color: var(--gold);
+}
+.pill-blue {
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.3);
+  color: var(--blue);
+}
+.pill-dim {
+  background: rgba(232,232,240,0.05);
+  border: 1px solid rgba(232,232,240,0.1);
+  color: var(--muted);
+}
+.jira-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.jira-pill {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.2);
+  color: var(--blue);
+  letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.milestone-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232,184,75,0.07);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+.milestone-icon { font-size: 14px; }
+.milestone-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 72px;
+  scroll-margin-top: 24px;
+}
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(232,184,75,0.12);
+}
+.section-num {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.3);
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.section-title-wrap {}
+.section-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(232,184,75,0.55);
+  margin-bottom: 4px;
+}
+.section-title {
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+.section-lead {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 780px;
+  margin-bottom: 28px;
+  margin-top: 4px;
+}
+
+/* ── SUBSECTION ── */
+.subsection {
+  margin-bottom: 40px;
+  scroll-margin-top: 24px;
+}
+.subsection-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  border-left: 3px solid var(--gold);
+  padding-left: 12px;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.subsection-title .sub-num {
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-right: 6px;
+  opacity: 0.8;
+}
+
+/* ── CARDS ── */
+.cards { display: grid; gap: 14px; margin-bottom: 24px; }
+.cards-2 { grid-template-columns: 1fr 1fr; }
+.cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cards-4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: rgba(232,184,75,0.2); }
+.card.gold-accent { border-left: 3px solid var(--gold); }
+.card.blue-accent { border-left: 3px solid var(--blue); }
+.card-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  opacity: 0.75;
+}
+.card-label.blue { color: var(--blue); }
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 6px;
+}
+.card-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ── PHASE STEPS ── */
+.phase-list {
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.phase-item {
+  display: flex;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  align-items: flex-start;
+  transition: border-color 0.15s;
+}
+.phase-item:hover { border-color: rgba(232,184,75,0.2); }
+.phase-num {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.25);
+  min-width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.phase-content {}
+.phase-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 2px;
+}
+.phase-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid rgba(79,142,247,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(79,142,247,0.07);
+  border-bottom: 1px solid rgba(79,142,247,0.12);
+}
+.code-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.5px;
+}
+.code-lang {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(79,142,247,0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.code-body {
+  padding: 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: rgba(232,232,240,0.82);
+  overflow-x: auto;
+  tab-size: 2;
+}
+.code-body .c-comment { color: rgba(232,232,240,0.3); }
+.code-body .c-gold { color: var(--gold); }
+.code-body .c-blue { color: var(--blue); }
+.code-body .c-green { color: var(--green); }
+.code-body .c-red { color: #f97f6e; }
+.code-body .c-string { color: #a8d8a8; }
+
+/* ── OUTPUT INDICATORS ── */
+.output-block {
+  background: #0d1117;
+  border: 1px solid rgba(79,202,132,0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+.out-created { color: var(--green); }
+.out-skipped { color: rgba(232,232,240,0.45); }
+.out-updated { color: var(--gold); }
+.out-error   { color: var(--red); }
+.out-summary { color: var(--blue); font-weight: 700; }
+
+/* ── TABLES ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+.data-table th {
+  background: rgba(232,184,75,0.1);
+  color: var(--gold);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(232,184,75,0.2);
+}
+.data-table th:first-child { border-radius: 8px 0 0 0; }
+.data-table th:last-child  { border-radius: 0 8px 0 0; }
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(232,232,240,0.06);
+  color: var(--text);
+  vertical-align: top;
+}
+.data-table tr:hover td { background: rgba(232,184,75,0.03); }
+.data-table td:first-child {
+  font-weight: 600;
+  color: rgba(232,232,240,0.9);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.data-table td .desc { color: var(--muted); font-size: 11.5px; }
+
+/* ── NOTICE BOXES ── */
+.notice {
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.notice-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+.notice-body {}
+.notice-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.notice-text {
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.notice.critical {
+  background: rgba(247,96,79,0.08);
+  border: 1px solid rgba(247,96,79,0.3);
+}
+.notice.critical .notice-label { color: var(--red); }
+.notice.critical .notice-text  { color: rgba(232,232,240,0.82); }
+.notice.warning {
+  background: rgba(232,184,75,0.07);
+  border: 1px solid rgba(232,184,75,0.3);
+}
+.notice.warning .notice-label { color: var(--gold); }
+.notice.warning .notice-text  { color: rgba(232,232,240,0.75); }
+.notice.info {
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.25);
+}
+.notice.info .notice-label { color: var(--blue); }
+.notice.info .notice-text  { color: rgba(232,232,240,0.78); }
+
+/* ── KEY-VALUE LIST ── */
+.kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.kv-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 1px solid rgba(232,232,240,0.06);
+}
+.kv-row:last-child { border-bottom: none; }
+.kv-key {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.6);
+  background: rgba(232,184,75,0.04);
+  border-right: 1px solid rgba(232,232,240,0.06);
+  display: flex;
+  align-items: center;
+}
+.kv-val {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: rgba(232,232,240,0.85);
+  display: flex;
+  align-items: center;
+}
+.kv-val code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.15);
+  color: var(--blue);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* ── TOGGLE LIST (on/off) ── */
+.toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 10px 16px;
+}
+.toggle-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(232,232,240,0.85);
+}
+.toggle-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.toggle-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.toggle-badge.on  { background: rgba(79,202,132,0.15); border: 1px solid rgba(79,202,132,0.3); color: var(--green); }
+.toggle-badge.off { background: rgba(247,96,79,0.1);   border: 1px solid rgba(247,96,79,0.2);  color: rgba(247,96,79,0.7); }
+
+/* ── FLOW STEPS ── */
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 20px;
+  position: relative;
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  margin-bottom: 4px;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.flow-step:hover { border-color: rgba(79,142,247,0.25); }
+.flow-step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--blue);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.flow-step-content {}
+.flow-step-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 3px;
+}
+.flow-step-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── MOCKUP GALLERY ── */
+.mockup-main {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(232,184,75,0.15);
+  display: block;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+.mockup-refs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.mockup-ref-img {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(79,142,247,0.15);
+  display: block;
+}
+.img-caption {
+  font-size: 10px;
+  color: var(--muted2);
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* ── MOCKUP COLS ── */
+.mockup-cols {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.mockup-col-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 12px;
+  transition: border-color 0.2s;
+}
+.mockup-col-card:hover { border-color: rgba(232,184,75,0.2); }
+.mc-num {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+.mc-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.85);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.mc-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mc-items li {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+  padding-left: 10px;
+  position: relative;
+}
+.mc-items li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: rgba(232,184,75,0.3);
+}
+
+/* ── USER STORIES ── */
+.us-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.us-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+.us-card:hover { border-color: rgba(79,142,247,0.25); }
+.us-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.2);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 7px;
+}
+.us-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(232,232,240,0.85);
+  line-height: 1.4;
+}
+
+/* ── EXCEL COLUMNS ── */
+.excel-cols {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.excel-col-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 11px;
+  background: rgba(232,184,75,0.07);
+  border: 1px solid rgba(232,184,75,0.2);
+  border-radius: 6px;
+  color: rgba(232,184,75,0.8);
+  font-family: 'JetBrains Mono', monospace;
+}
+.excel-col-pill .col-num {
+  color: rgba(232,184,75,0.4);
+  margin-right: 5px;
+  font-size: 9px;
+}
+
+/* ── PERMISSIONS LIST ── */
+.perms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+.perm-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  font-size: 11.5px;
+  color: rgba(232,232,240,0.78);
+}
+.perm-icon { color: var(--green); font-size: 12px; flex-shrink: 0; }
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent);
+  margin: 52px 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .mockup-cols { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  :root { --sidebar-w: 220px; }
+  .main { padding: 40px 32px 80px; }
+  .cards-3, .cards-4 { grid-template-columns: 1fr 1fr; }
+  .mockup-cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; max-width: 100%; padding: 32px 20px 80px; }
+  .cards-2, .cards-3, .cards-4 { grid-template-columns: 1fr; }
+  .us-grid { grid-template-columns: 1fr; }
+  .mockup-refs { grid-template-columns: 1fr; }
+  .mockup-cols { grid-template-columns: 1fr 1fr; }
+}
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:transform .65s cubic-bezier(0.4,0,0.2,1)}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);pointer-events:none}
+#sprint-cover::after{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);pointer-events:none}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:420px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-20px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta svg{transition:transform .22s ease}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">03</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">PCM 12 Productos, DRO Setup<br><span>y Aprovisionamiento Ad Server</span></h1>
+    <p class="sc-subtitle">Catálogo expandido y primera integración end-to-end con Google Ad Manager</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">Sprint 3 de 5</span>
+      <span class="sc-pill blue">PR1066114-79</span>
+      <span class="sc-pill blue">PR1066114-81</span>
+      <span class="sc-pill blue">PR1066114-265</span>
+      <span class="sc-pill blue">PR1066114-267</span>
+      <span class="sc-pill blue">PR1066114-91</span>
+      <span class="sc-pill blue">PR1066114-94</span>
+      <span class="sc-pill blue">PR1066114-285</span>
+      <span class="sc-pill blue">PR1066114-101</span>
+      <span class="sc-pill blue">PR1066114-114</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">PCM 12 Productos</span><span class="lbl">Tema central</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">Context Service · DRO · GAM</span><span class="lbl">Módulos</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">9 User Stories</span><span class="lbl">Entregables</span></div>
+    </div>
+    <a href="#resumen" class="sc-cta" id="sc-cta-btn">
+      Ver contenido
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<div class="bg-canvas"></div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="imgs/logo_tvazteca.png" alt="TV Azteca" class="sb-logo">
+      <div class="sb-label">KT R1 · Sprint 3</div>
+      <div class="sb-sprint-badge">
+        <div class="sb-sprint-num">03</div>
+        <div class="sb-sprint-txt">PCM 12 Productos<br>DRO + Ad Server</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+
+      <div class="sb-group-label">Navegación</div>
+      <a class="sb-link parent" href="#resumen">
+        <span class="sb-dot"></span>Resumen del Sprint
+      </a>
+
+      <div class="sb-group-label">Secciones</div>
+      <a class="sb-link parent" href="#s1">
+        <span class="sb-dot"></span>§ 1. PCM — 12 Productos
+      </a>
+      <a class="sb-link child" href="#s1-1">
+        <span class="sb-dot"></span>1.1 Catálogo Expandido
+      </a>
+      <a class="sb-link child" href="#s1-2">
+        <span class="sb-dot"></span>1.2 Script Python Idempotente
+      </a>
+
+      <a class="sb-link parent" href="#s2">
+        <span class="sb-dot"></span>§ 2. Context Service
+      </a>
+      <a class="sb-link child" href="#s2-1">
+        <span class="sb-dot"></span>2.1 Context Service Setup
+      </a>
+      <a class="sb-link child" href="#s2-2">
+        <span class="sb-dot"></span>2.2 Context Definition
+      </a>
+
+      <a class="sb-link parent" href="#s3">
+        <span class="sb-dot"></span>§ 3. DRO Setup
+      </a>
+      <a class="sb-link child" href="#s3-1">
+        <span class="sb-dot"></span>3.1 Qué es DRO
+      </a>
+      <a class="sb-link child" href="#s3-2">
+        <span class="sb-dot"></span>3.2 Settings DRO
+      </a>
+      <a class="sb-link child" href="#s3-3">
+        <span class="sb-dot"></span>3.3 DRO Flows
+      </a>
+
+      <a class="sb-link parent" href="#s4">
+        <span class="sb-dot"></span>§ 4. Ad Server Integration (GAM)
+      </a>
+      <a class="sb-link child" href="#s4-1">
+        <span class="sb-dot"></span>4.1 GAM Integration Setup
+      </a>
+      <a class="sb-link child" href="#s4-2">
+        <span class="sb-dot"></span>4.2 Aprovisionamiento Flow
+      </a>
+      <a class="sb-link child" href="#s4-3">
+        <span class="sb-dot"></span>4.3 Modelo de Datos
+      </a>
+
+      <a class="sb-link parent" href="#s5">
+        <span class="sb-dot"></span>§ 5. Modelo de Datos Productos
+      </a>
+      <a class="sb-link parent" href="#sec-video-s3">
+        <span class="sb-dot"></span>§ 6. Demo — Video
+      </a>
+      <a class="sb-link parent" href="#s6">
+        <span class="sb-dot"></span>§ 7. User Stories
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <a class="sb-nav-btn back" href="kt-r1-sprint2.html">&#8592; <span>Sprint 2</span></a>
+      <a class="sb-home-btn" href="kt-r1-index.html" title="Índice KT R1">⌂</a>
+      <a class="sb-nav-btn fwd" href="kt-r1-sprint4.html"><span>Sprint 4</span> &#8594;</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- SPRINT HEADER -->
+    <div class="sprint-header" id="resumen">
+      <div class="sprint-eyebrow">
+        <span class="sprint-eyebrow-text">Knowledge Transfer · Release 1</span>
+        <div class="sprint-eyebrow-line"></div>
+      </div>
+
+      <div class="sprint-num-big">03</div>
+
+      <div class="sprint-title">PCM 12 Productos, DRO Setup<br>y Aprovisionamiento Ad Server</div>
+      <div class="sprint-subtitle">Catálogo expandido a 12 productos digitales completos y primera integración real con Google Ad Manager — primer aprovisionamiento end-to-end activo en la Org.</div>
+
+      <div class="sprint-pills">
+        <span class="pill pill-gold">Sprint 3</span>
+        <span class="pill pill-blue">DRO Activo</span>
+        <span class="pill pill-blue">GAM Integration</span>
+        <span class="pill pill-dim">12 Productos PCM</span>
+        <span class="pill pill-dim">Context Service</span>
+        <span class="pill pill-dim">Context Definitions</span>
+      </div>
+
+      <div class="jira-pills">
+        <span class="jira-pill">PR1066114-79</span>
+        <span class="jira-pill">PR1066114-81</span>
+        <span class="jira-pill">PR1066114-265</span>
+        <span class="jira-pill">PR1066114-267</span>
+        <span class="jira-pill">PR1066114-91</span>
+        <span class="jira-pill">PR1066114-94</span>
+        <span class="jira-pill">PR1066114-285</span>
+        <span class="jira-pill">PR1066114-101</span>
+        <span class="jira-pill">PR1066114-114</span>
+      </div>
+
+      <div style="margin-top: 28px;">
+        <div class="cards cards-4">
+          <div class="card gold-accent">
+            <div class="card-label">PCM</div>
+            <div class="card-title">12 Productos</div>
+            <div class="card-body">Catálogo digital completo: Streaming, Display, Patrocinio, Servicios</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label blue">Context Service</div>
+            <div class="card-title">Context Definitions</div>
+            <div class="card-body">TVAM_MediaPlanTransactionCtx habilitado y vinculado a Pricing Procedure</div>
+          </div>
+          <div class="card gold-accent">
+            <div class="card-label">DRO</div>
+            <div class="card-title">Dynamic Revenue Orchestrator</div>
+            <div class="card-body">Flujos de fulfillment, amendment y cancelación configurados</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label blue">Ad Server</div>
+            <div class="card-title">GAM End-to-End</div>
+            <div class="card-body">Primer aprovisionamiento a Google Ad Manager vía REST API OAuth 2.0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 1 ── -->
+    <section class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">§1</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">PCM · Product Catalog Management</div>
+          <h2 class="section-title">PCM Expandido a 12 Productos</h2>
+        </div>
+      </div>
+
+      <!-- 1.1 Catálogo Expandido -->
+      <div class="subsection" id="s1-1">
+        <div class="subsection-title">
+          <span class="sub-num">1.1</span>Catálogo Expandido
+        </div>
+
+        <div class="cards cards-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-label">Scope anterior (Sprint 1–2)</div>
+            <div class="card-body" style="color: var(--muted);">Productos base configurados. Estructura de 3 capas establecida: Product2 / Ad Space Spec / Price Book Entry.</div>
+          </div>
+          <div class="card gold-accent">
+            <div class="card-label">Sprint 3 — Expansión</div>
+            <div class="card-title">12 productos digitales completos</div>
+            <div class="card-body">Todas las categorías del catálogo digital cubiertos con specs completos y pricing configurado.</div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.65;">
+          El catálogo cubre cuatro categorías principales de comercialización digital:
+        </p>
+
+        <div class="cards cards-4" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-label">Categoría</div>
+            <div class="card-title">Streaming</div>
+            <div class="card-body">Video on demand y live streaming en plataformas digitales TVA</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Categoría</div>
+            <div class="card-title">Digital Display</div>
+            <div class="card-body">Banner y display ads en propiedades web y mobile</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Categoría</div>
+            <div class="card-title">Patrocinio</div>
+            <div class="card-body">Patrocinios digitales y branded content</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Categoría</div>
+            <div class="card-title">Servicios</div>
+            <div class="card-body">Servicios digitales adicionales y productos complementarios</div>
+          </div>
+        </div>
+
+        <div class="notice info">
+          <span class="notice-icon">&#128196;</span>
+          <div class="notice-body">
+            <div class="notice-label">Archivo Fuente</div>
+            <div class="notice-text">El catálogo completo de 12 productos se gestiona en el archivo Excel maestro: <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(79,142,247,0.12); border: 1px solid rgba(79,142,247,0.2); color: var(--blue); padding: 2px 7px; border-radius: 4px;">1_CatalogoDigital_devicetype20260507.xlsx</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 Script Python Idempotente -->
+      <div class="subsection" id="s1-2">
+        <div class="subsection-title">
+          <span class="sub-num">1.2</span>Script Python — Idempotencia y Carga Masiva
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Ejecución — Carga de Catálogo</span>
+            <span class="code-lang">bash</span>
+          </div>
+          <div class="code-body"><span class="c-comment"># Ejecución normal</span>
+python3 scripts/catalog-to-salesforce.py \
+  --org <span class="c-gold">TVADevJosue</span> \
+  --input <span class="c-string">catalog.xlsx</span>
+
+<span class="c-comment"># Dry-run — sin modificar la Org</span>
+python3 scripts/catalog-to-salesforce.py \
+  --org <span class="c-gold">TVADevJosue</span> \
+  --input <span class="c-string">catalog.xlsx</span> \
+  --dry-run
+
+<span class="c-comment"># Cleanup — elimina specs no listados en CSVs aprobados</span>
+python3 scripts/catalog-to-salesforce.py \
+  --org <span class="c-gold">TVADevJosue</span> \
+  --input <span class="c-string">catalog.xlsx</span> \
+  --cleanup</div>
+        </div>
+
+        <div class="cards cards-2" style="margin-bottom: 20px;">
+          <div class="card">
+            <div class="card-label">Dependencias</div>
+            <div class="card-body" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 2; color: rgba(232,232,240,0.75);">
+              Python 3.9+<br>
+              Salesforce CLI 2.x<br>
+              simple-salesforce<br>
+              openpyxl
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-label">Flag --cleanup</div>
+            <div class="card-body">Elimina <strong style="color: rgba(232,232,240,0.85);">AdSpaceCreativeSizeType</strong>, <strong style="color: rgba(232,232,240,0.85);">AdSpaceSpecProduct</strong> y <strong style="color: rgba(232,232,240,0.85);">AdSpaceSpecification</strong> cuyos IDs no estén en los CSVs aprobados.</div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: rgba(232,232,240,0.75); margin-bottom: 16px; font-weight: 600;">
+          Fases de ejecución del script:
+        </p>
+
+        <ol class="phase-list">
+          <li class="phase-item">
+            <div class="phase-num">1</div>
+            <div class="phase-content">
+              <div class="phase-title">Preflight SOQL</div>
+              <div class="phase-desc">Carga el estado actual de la Org en memoria. Consulta objetos existentes: Product2, ProductCategory, AdSpaceSpecification y PricebookEntry.</div>
+            </div>
+          </li>
+          <li class="phase-item">
+            <div class="phase-num">2</div>
+            <div class="phase-content">
+              <div class="phase-title">Calcula Hash GUID</div>
+              <div class="phase-desc">Genera un identificador único basado en campos técnicos del producto (nombre, categoría, plataforma, formato). Garantiza idempotencia entre ejecuciones.</div>
+            </div>
+          </li>
+          <li class="phase-item">
+            <div class="phase-num">3</div>
+            <div class="phase-content">
+              <div class="phase-title">Inyecta TVA_GUID__c</div>
+              <div class="phase-desc">Graba el GUID calculado en el campo <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(79,142,247,0.1); color: var(--blue); padding: 1px 5px; border-radius: 3px;">TVA_GUID__c</code> en todos los objetos MC+RC del catálogo.</div>
+            </div>
+          </li>
+          <li class="phase-item">
+            <div class="phase-num">4</div>
+            <div class="phase-content">
+              <div class="phase-title">Lógica Delta</div>
+              <div class="phase-desc">
+                Si GUID <strong style="color: rgba(232,232,240,0.85);">existe</strong>: solo actualiza PricebookEntry si cambia la tarifa.<br>
+                Si GUID <strong style="color: rgba(232,232,240,0.85);">no existe</strong>: crea las 3 capas en bloque transaccional único.
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <p style="font-size: 13px; color: rgba(232,232,240,0.75); margin-bottom: 12px; font-weight: 600;">
+          Indicadores de salida:
+        </p>
+
+        <div class="output-block">
+<span class="out-created">+  created  </span>  → Registro nuevo creado
+<span class="out-skipped">→  skipped  </span>  → Ya existía, no modificado
+<span class="out-updated">~  updated  </span>  → Actualizado (ej. cambio de precio)
+<span class="out-error">✗  ERROR    </span>  → Falló la creación
+<span class="out-summary">   Summary X/Y </span> → Total creados / total skipped</div>
+
+        <p style="font-size: 13px; color: rgba(232,232,240,0.75); margin-bottom: 12px; font-weight: 600;">
+          Columnas requeridas en el Excel:
+        </p>
+
+        <div class="excel-cols">
+          <span class="excel-col-pill"><span class="col-num">A</span>No</span>
+          <span class="excel-col-pill"><span class="col-num">B</span>PRODUCTO</span>
+          <span class="excel-col-pill"><span class="col-num">C</span>CATEGORÍA</span>
+          <span class="excel-col-pill"><span class="col-num">D</span>COMERCIALIZACIÓN</span>
+          <span class="excel-col-pill"><span class="col-num">E</span>TARIFA BASE</span>
+          <span class="excel-col-pill"><span class="col-num">F</span>MEDIO</span>
+          <span class="excel-col-pill"><span class="col-num">G</span>PLATAFORMA</span>
+          <span class="excel-col-pill"><span class="col-num">H</span>UBICACIÓN</span>
+          <span class="excel-col-pill"><span class="col-num">I</span>FORMATO</span>
+          <span class="excel-col-pill"><span class="col-num">J</span>SERVIDORES</span>
+        </div>
+
+        <div class="notice warning">
+          <span class="notice-icon">&#9888;</span>
+          <div class="notice-body">
+            <div class="notice-label">Regla de Gobernanza — Baja de Productos</div>
+            <div class="notice-text"><strong>NUNCA elimina Product2.</strong> La baja de productos equivale a que el Admin edite manualmente <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(232,184,75,0.1); color: var(--gold); padding: 1px 5px; border-radius: 3px;">IsActive = false</code> en el registro, para preservar trazabilidad histórica de órdenes y cotizaciones pasadas.</div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: rgba(232,232,240,0.75); margin-bottom: 12px; font-weight: 600;">
+          Permisos requeridos para ejecutar el script:
+        </p>
+
+        <div class="perms-list">
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> TVA_GUID__c Permission Set</div>
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> Product Pricing Admin</div>
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> System Admin — R/W a Product2</div>
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> System Admin — R/W a ProductCategory</div>
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> System Admin — R/W a PricebookEntry</div>
+          <div class="perm-item"><span class="perm-icon">&#10003;</span> System Admin — R/W a AdSpaceSpecification, AdSpaceSpecProduct, AdSpaceCreativeSizeType</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 2 ── -->
+    <section class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">§2</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Salesforce Media Cloud</div>
+          <h2 class="section-title">Context Service y Context Definitions</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">El Context Service es un prerrequisito crítico para que la Pricing Procedure ejecute correctamente. Sin él, los precios se calculan como $0 en cualquier Quote.</p>
+
+      <!-- 2.1 -->
+      <div class="subsection" id="s2-1">
+        <div class="subsection-title">
+          <span class="sub-num">2.1</span>Context Service Setup
+        </div>
+
+        <div class="kv-list" style="margin-bottom: 20px;">
+          <div class="kv-row">
+            <div class="kv-key">Ruta de configuración</div>
+            <div class="kv-val"><code>Setup → Context Service → Enable</code></div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Efecto al habilitar</div>
+            <div class="kv-val">Hidrata el objeto <code>MediaPlanTransactionContext</code> en runtime</div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Requerido por</div>
+            <div class="kv-val"><code>TVAM Ad Sales Pricing Procedure</code></div>
+          </div>
+        </div>
+
+        <div class="notice critical">
+          <span class="notice-icon">&#128683;</span>
+          <div class="notice-body">
+            <div class="notice-label">Sin Context Service habilitado</div>
+            <div class="notice-text">La Pricing Procedure no puede ejecutarse. Los precios en Quote y Media Plan aparecen como <strong>$0</strong>. Este setting debe estar activo antes de cualquier prueba de cotización.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.2 -->
+      <div class="subsection" id="s2-2">
+        <div class="subsection-title">
+          <span class="sub-num">2.2</span>Context Definition Configurada
+        </div>
+
+        <div class="kv-list">
+          <div class="kv-row">
+            <div class="kv-key">Nombre</div>
+            <div class="kv-val"><code>TVAM_MediaPlanTransactionCtx</code></div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Tipo</div>
+            <div class="kv-val">Transaction Context</div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Referenciada por</div>
+            <div class="kv-val"><code>TVAM Ad Sales Pricing Procedure</code></div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Vinculada a</div>
+            <div class="kv-val">Media Plan workflow y Quote-to-Order flow</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 3 ── -->
+    <section class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">§3</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Salesforce Media Cloud</div>
+          <h2 class="section-title">DRO Setup — Dynamic Revenue Orchestrator</h2>
+        </div>
+      </div>
+
+      <!-- 3.1 -->
+      <div class="subsection" id="s3-1">
+        <div class="subsection-title">
+          <span class="sub-num">3.1</span>Qué es DRO
+        </div>
+
+        <div class="notice info">
+          <span class="notice-icon">&#9881;</span>
+          <div class="notice-body">
+            <div class="notice-label">Dynamic Revenue Orchestrator</div>
+            <div class="notice-text"><strong>DRO</strong> es el módulo de Salesforce Media Cloud responsable de la gestión de aprovisionamiento y la conexión directa con Ad Servers externos.</div>
+          </div>
+        </div>
+
+        <div class="cards cards-2">
+          <div class="card gold-accent">
+            <div class="card-label">Función 1</div>
+            <div class="card-title">Descomposición de Orders</div>
+            <div class="card-body">Descompone la Order en unidades de entrega individuales, mapeando cada Line Item a una unidad ejecutable en el Ad Server.</div>
+          </div>
+          <div class="card gold-accent">
+            <div class="card-label">Función 2</div>
+            <div class="card-title">Enrutamiento a Ad Server</div>
+            <div class="card-body">Enruta cada unidad de entrega al Ad Server correspondiente (GAM, Advantage Serve) según la configuración del AdServerId.</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label">Función 3</div>
+            <div class="card-title">Confirmación de Aprovisionamiento</div>
+            <div class="card-body">Confirma el aprovisionamiento vía REST API y recibe el Line Item ID del Ad Server para vincularlo en Salesforce.</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label">Función 4</div>
+            <div class="card-title">Monitoreo y Reconciliación</div>
+            <div class="card-body">Monitorea la entrega contra el compromiso de la Order y reconcilia discrepancias durante el vuelo de la campaña.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.2 -->
+      <div class="subsection" id="s3-2">
+        <div class="subsection-title">
+          <span class="sub-num">3.2</span>Settings DRO a Habilitar
+        </div>
+
+        <div class="toggle-list">
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">Dynamic Revenue Orchestrator</div>
+              <div class="toggle-sub">Módulo principal de aprovisionamiento</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">In-flight Amendments</div>
+              <div class="toggle-sub">Modificaciones durante vuelo de campaña — definición de flujos en Sprint 4</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.3 -->
+      <div class="subsection" id="s3-3">
+        <div class="subsection-title">
+          <span class="sub-num">3.3</span>DRO Flows Configurados (Activos)
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Flow</th>
+              <th>Trigger</th>
+              <th>Propósito</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DRO Order Fulfillment Flow</td>
+              <td><span class="desc">Al activar una Order</span></td>
+              <td><span class="desc">Primer aprovisionamiento al Ad Server (GAM). Genera el Line Item y obtiene el ID de respuesta.</span></td>
+            </tr>
+            <tr>
+              <td>DRO Amendment Flow</td>
+              <td><span class="desc">Modificación de una Order activa</span></td>
+              <td><span class="desc">Gestiona cambios pre-vuelo o durante el vuelo de la campaña. Flujo definido en Sprint 4.</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 4 ── -->
+    <section class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">§4</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Integración Ad Server</div>
+          <h2 class="section-title">Ad Server Integration — Google Ad Manager</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">Primera integración end-to-end operativa con Google Ad Manager. El DRO Order Fulfillment Flow envía el payload a GAM y recibe el Line Item ID que confirma el aprovisionamiento.</p>
+
+      <!-- 4.1 -->
+      <div class="subsection" id="s4-1">
+        <div class="subsection-title">
+          <span class="sub-num">4.1</span>GAM Integration Setup
+        </div>
+
+        <div class="kv-list">
+          <div class="kv-row">
+            <div class="kv-key">Ad Server Type</div>
+            <div class="kv-val">Google Ad Manager (GAM)</div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Protocolo de conexión</div>
+            <div class="kv-val"><code>REST API</code></div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Autenticación</div>
+            <div class="kv-val"><code>OAuth 2.0 Service Account</code></div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">Objeto de configuración</div>
+            <div class="kv-val">Registro <code>Ad Server</code> en Salesforce</div>
+          </div>
+        </div>
+
+        <div class="notice critical">
+          <span class="notice-icon">&#128683;</span>
+          <div class="notice-body">
+            <div class="notice-label">Prerequisito Crítico — AdServerId en AdSpaceSpecification</div>
+            <div class="notice-text"><strong>AdServerId en AdSpaceSpecification es OBLIGATORIO.</strong> Sin él, el componente Ad Placement genera error en runtime. Debe estar configurado ANTES de Sprint 3 para que DRO funcione correctamente. Verificar en todos los registros de AdSpaceSpecification antes del aprovisionamiento.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.2 -->
+      <div class="subsection" id="s4-2">
+        <div class="subsection-title">
+          <span class="sub-num">4.2</span>Aprovisionamiento Flow — Primer End-to-End
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Order activada en Salesforce</div>
+              <div class="flow-step-desc">El Sales Rep activa la Order en Salesforce. Status cambia de "Draft" a "Activated".</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">DRO Order Fulfillment Flow ejecutado</div>
+              <div class="flow-step-desc">El trigger de activación dispara automáticamente el DRO Order Fulfillment Flow. Se construye el payload con los datos del Line Item.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Payload enviado a GAM REST API</div>
+              <div class="flow-step-desc">Salesforce envía el payload de aprovisionamiento al endpoint REST de Google Ad Manager, autenticado con OAuth 2.0 Service Account.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">GAM crea Line Item en el Ad Server</div>
+              <div class="flow-step-desc">Google Ad Manager procesa el payload y crea el Line Item correspondiente en el sistema de ad serving.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">5</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">GAM responde con Line Item ID</div>
+              <div class="flow-step-desc">GAM devuelve el identificador único del Line Item creado. Este ID es el enlace entre Salesforce y el Ad Server.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">6</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Salesforce actualiza Fulfillment Status: "Provisioned"</div>
+              <div class="flow-step-desc">El campo Fulfillment Status en el registro de Order se actualiza a "Provisioned", confirmando el aprovisionamiento exitoso.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">7</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Ad Order Item vinculado al GAM Line Item ID</div>
+              <div class="flow-step-desc">El Ad Order Item en Salesforce queda vinculado al Line Item ID de GAM, habilitando el monitoreo y reconciliación posterior.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.3 -->
+      <div class="subsection" id="s4-3">
+        <div class="subsection-title">
+          <span class="sub-num">4.3</span>Modelo de Datos Ad Server
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Objeto</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ad Server</td>
+              <td><span class="desc">Parámetros técnicos del servidor externo. Contiene URL, credenciales OAuth, tipo de Ad Server (GAM, Advantage Serve) y configuración de conexión.</span></td>
+            </tr>
+            <tr>
+              <td>Ad Server Account</td>
+              <td><span class="desc">Vincula el Ad Server con una cuenta o marca específica del anunciante. Permite múltiples cuentas por Ad Server.</span></td>
+            </tr>
+            <tr>
+              <td>Ad Server Account Contact</td>
+              <td><span class="desc">Conecta el Ad Server Account con el contacto de la agencia o anunciante responsable del Ad Server.</span></td>
+            </tr>
+            <tr>
+              <td>Ad Server User</td>
+              <td><span class="desc">Mapea el Ad Server con el usuario interno de Salesforce (Media Planner o Sales Rep) que gestiona las campañas.</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 5 ── -->
+    <section class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">§5</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Arquitectura de Datos</div>
+          <h2 class="section-title">Modelo de Datos — Bloque Productos y Precios</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">El catálogo de 12 productos se estructura sobre 7 objetos del modelo de datos de Salesforce Media Cloud. Cada capa tiene una responsabilidad específica en la jerarquía de producto.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Objeto</th>
+            <th>Descripción y rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Product Catalog</td>
+            <td><span class="desc">Agrupación de alto nivel. Define el catálogo completo al que pertenecen los productos. Ejemplo: <em>'Catálogo Digital TV Azteca'</em>.</span></td>
+          </tr>
+          <tr>
+            <td>ProductCategory</td>
+            <td><span class="desc">Grupos temáticos dentro del catálogo: <strong>Streaming, Digital Display, Patrocinio, Servicios</strong>. Permite clasificación y filtrado en Browse Products.</span></td>
+          </tr>
+          <tr>
+            <td>Product2</td>
+            <td><span class="desc">Ítem vendible. Puede ser un producto simple o un paquete (Bundle). Es el objeto central del catálogo — <strong>nunca se elimina</strong>.</span></td>
+          </tr>
+          <tr>
+            <td>Product Classification</td>
+            <td><span class="desc">Plantilla reutilizable de atributos compartidos entre productos de la misma categoría o tipo comercial.</span></td>
+          </tr>
+          <tr>
+            <td>Product Attribute Definition</td>
+            <td><span class="desc">Variables configurables del producto: Rate Type (CPM/CPC/FIJO), Es omitible, Duración, Plataforma, Formato.</span></td>
+          </tr>
+          <tr>
+            <td>Price Book</td>
+            <td><span class="desc">Standard Price Book — lista maestra de precios. Contiene todas las tarifas base del catálogo digital.</span></td>
+          </tr>
+          <tr>
+            <td>Price Book Entry</td>
+            <td><span class="desc">Tarifa base de un producto específico en el Price Book. Actualizada por el script cuando el precio cambia (lógica delta).</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════════════════════════
+         § 6 — DEMO VIDEO
+    ══════════════════════════════════════ -->
+    <section class="section" id="sec-video-s3">
+      <div class="section-header">
+        <div class="section-eyebrow-row"><span>§ 6</span> Demo</div>
+        <h2 class="section-title">Demo — Sprint 3</h2>
+      </div>
+      <p style="font-size:13px;color:#8888a8;margin-bottom:16px;">Recorrido en pantalla de las configuraciones del Sprint 3: Context Service, DRO Setup y Aprovisionamiento GAM.</p>
+
+      <div style="background:#0f0f1a;border:1px solid rgba(232,184,75,0.18);border-radius:12px;overflow:hidden;margin-top:8px;">
+        <video
+          controls
+          preload="metadata"
+          style="display:block;width:100%;max-height:540px;background:#000;"
+        >
+          <source src="Clips Video/SP3.mp4" type="video/mp4">
+        </video>
+        <div style="padding:12px 20px;border-top:1px solid rgba(232,184,75,0.08);font-size:11.5px;color:#6868a0;font-style:italic;">
+          Sprint 3 — Context Service · DRO Setup · GAM · Salesforce Media Cloud on Core · TV Azteca
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 7 ── -->
+    <section class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">§7</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Jira · Sprint 3</div>
+          <h2 class="section-title">User Stories</h2>
+        </div>
+      </div>
+
+      <div class="us-grid">
+        <div class="us-card">
+          <div class="us-id">PR1066114-79</div>
+          <div class="us-title">PCM — Catálogo expandido a 12 productos digitales completos</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-81</div>
+          <div class="us-title">PCM — Ad Space Specs configuradas para los 12 productos</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-265</div>
+          <div class="us-title">Context Service — Habilitación en la Org</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-267</div>
+          <div class="us-title">Context Definitions — TVAM_MediaPlanTransactionCtx configurado</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-91</div>
+          <div class="us-title">DRO Setup — Dynamic Revenue Orchestrator habilitado</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-94</div>
+          <div class="us-title">DRO Setup — Fulfillment Flows configurados (Fulfillment, Amendment, Cancellation)</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-285</div>
+          <div class="us-title">Ad Server Integration — GAM REST API con OAuth 2.0 Service Account</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-101</div>
+          <div class="us-title">Primer aprovisionamiento end-to-end a Google Ad Manager</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-114</div>
+          <div class="us-title">Segmentaciones de productos expandidas — Geo Targeting 32 estados, Audience Segment</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── JS: Sidebar active highlight on scroll ── -->
+<script>
+(function() {
+  const links = document.querySelectorAll('.sb-link');
+  const sections = Array.from(document.querySelectorAll('section[id], div[id="resumen"]'));
+
+  function getActive() {
+    const scrollY = window.scrollY + 80;
+    let current = null;
+    for (const sec of sections) {
+      if (sec.offsetTop <= scrollY) current = sec.id;
+    }
+    return current;
+  }
+
+  function updateActive() {
+    const active = getActive();
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href === '#' + active) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover=document.getElementById('sprint-cover');
+  var dismissed=false;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend',function(){cover.style.display='none';},{once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click',function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){var t=document.getElementById('resumen');if(t)t.scrollIntoView({behavior:'smooth'});},300);
+  });
+  window.addEventListener('scroll',function(){if(window.scrollY>80)dismiss();},{passive:true,once:true});
+})();
+</script>
+</body>
+</html>

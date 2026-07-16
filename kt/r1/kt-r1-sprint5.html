@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Sprint 5 — Lógica de Precios, Permisos y Etapas de la Order</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:        #112240;
+  --surface:   #12121a;
+  --surface2:  #1a1a26;
+  --border:    rgba(232,184,75,0.15);
+  --gold:      #e8b84b;
+  --gold-dim:  rgba(232,184,75,0.12);
+  --gold-glow: rgba(232,184,75,0.35);
+  --blue:      #4f8ef7;
+  --blue-dim:  rgba(79,142,247,0.12);
+  --red:       #f75f5f;
+  --red-dim:   rgba(247,95,95,0.1);
+  --green:     #4fca7a;
+  --green-dim: rgba(79,202,122,0.1);
+  --text:      #e0e0ec;
+  --text-dim:  rgba(224,224,236,0.55);
+  --sidebar-w: 260px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── ANIMATED BG ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(79,142,247,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 85%, rgba(232,184,75,0.05) 0%, transparent 55%);
+  background-image:
+    radial-gradient(circle, rgba(232,184,75,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79,142,247,0.25) 1px, transparent 1px);
+  background-size: 80px 80px, 130px 130px;
+  background-position: 0 0, 40px 40px;
+  animation: drift 28s linear infinite;
+  opacity: 0.3;
+}
+@keyframes drift {
+  0%,100% { transform: translate(0,0); }
+  50%      { transform: translate(12px,-18px); }
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: linear-gradient(180deg, #001a4a 0%, #002060 35%, #0a0a1a 100%);
+  border-right: 1px solid rgba(0,80,200,0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  overflow: hidden;
+}
+.sb-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(232,184,75,0.1);
+  flex-shrink: 0;
+}
+.sb-logo {
+  height: 22px;
+  margin-bottom: 10px;
+  filter: brightness(1.1);
+}
+.sb-sprint-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.75;
+}
+.sb-badge-last {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.25);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.sb-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 0 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232,184,75,0.2) transparent;
+}
+.sb-nav::-webkit-scrollbar { width: 3px; }
+.sb-nav::-webkit-scrollbar-thumb { background: rgba(232,184,75,0.2); border-radius: 2px; }
+.sb-section-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(232,184,75,0.4);
+  padding: 10px 18px 4px;
+}
+.sb-link {
+  display: block;
+  padding: 5px 18px;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+  line-height: 1.4;
+}
+.sb-link:hover { color: var(--text); background: rgba(232,184,75,0.05); }
+.sb-link.active { color: var(--gold); background: rgba(232,184,75,0.08); border-left: 2px solid var(--gold); padding-left: 16px; }
+.sb-link.sub { padding-left: 30px; font-size: 11px; }
+.sb-link.sub.active { padding-left: 28px; }
+.sb-footer {
+  padding: 12px 12px 16px;
+  border-top: 1px solid rgba(232,184,75,0.1);
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.sb-nav-btn{
+  display:block;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  transition:all .2s ease;
+  letter-spacing:.4px;
+}
+.sb-nav-btn.back{
+  background:rgba(79,142,247,.18);
+  color:#7eb8ff;
+  border:1px solid rgba(79,142,247,.45);
+  box-shadow:0 2px 8px rgba(79,142,247,.12);
+}
+.sb-nav-btn.back:hover{
+  background:rgba(79,142,247,.32);
+  color:#a8d0ff;
+  border-color:rgba(79,142,247,.7);
+  box-shadow:0 4px 16px rgba(79,142,247,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.fwd{
+  background:rgba(232,184,75,.18);
+  color:#f5cc6a;
+  border:1px solid rgba(232,184,75,.5);
+  box-shadow:0 2px 8px rgba(232,184,75,.12);
+}
+.sb-nav-btn.fwd:hover{
+  background:rgba(232,184,75,.32);
+  color:#ffe08a;
+  border-color:rgba(232,184,75,.75);
+  box-shadow:0 4px 16px rgba(232,184,75,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.home { background:rgba(232,184,75,0.22); border:1px solid rgba(232,184,75,0.6); color:#ffd764; box-shadow:0 2px 10px rgba(232,184,75,0.2); }
+.sb-nav-btn.home:hover { background: var(--gold-dim); color: var(--gold); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+  padding: 52px 52px 100px;
+  max-width: calc(100% - var(--sidebar-w));
+  position: relative;
+  z-index: 1;
+}
+
+/* ── SPRINT HEADER ── */
+.sprint-header {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+  position: relative;
+}
+.sprint-number-bg {
+  position: absolute;
+  right: 0; top: 20px;
+  font-size: 140px;
+  font-weight: 900;
+  color: rgba(232,184,75,0.05);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -4px;
+}
+.sprint-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+.sprint-title {
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  max-width: 700px;
+}
+.sprint-subtitle {
+  font-size: 14px;
+  color: var(--text-dim);
+  max-width: 640px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.milestone-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232,184,75,0.08);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 12.5px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.stories-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.story-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── SECTION HEADERS ── */
+.section {
+  margin-bottom: 56px;
+  scroll-margin-top: 24px;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(232,184,75,0.1);
+}
+.section-number {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.6;
+}
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  border-left: 3px solid var(--gold);
+  padding-left: 14px;
+}
+.subsection {
+  margin-bottom: 32px;
+  scroll-margin-top: 24px;
+}
+.subsection-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(232,184,75,0.85);
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+/* ── NOTICE BOXES ── */
+.notice {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-left: 3px solid;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.notice.critical { background: var(--red-dim); border-color: var(--red); color: #ffb3b3; }
+.notice.warning  { background: rgba(255,165,0,0.08); border-color: #f0a832; color: #f0c870; }
+.notice.info     { background: var(--blue-dim); border-color: var(--blue); color: #a0c4ff; }
+.notice.success  { background: var(--green-dim); border-color: var(--green); color: #a0f0c0; }
+.notice strong   { font-weight: 700; }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  background: var(--surface2);
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(232,184,75,0.03); }
+td code, th code { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--gold); background: var(--surface2); padding: 1px 5px; border-radius: 3px; }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1a1a2e;
+  border: 1px solid rgba(232,184,75,0.12);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.code-block .k { color: var(--blue); }
+.code-block .v { color: var(--gold); }
+.code-block .c { color: rgba(255,255,255,0.3); font-style: italic; }
+.code-block .g { color: var(--green); }
+
+/* ── CARDS GRID ── */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 18px 20px;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.card:hover { border-color: rgba(232,184,75,0.25); transform: translateY(-1px); }
+.card-tag { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.card-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.card-body { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
+.card.blue { border-color: rgba(79,142,247,0.2); }
+.card.blue .card-tag { color: var(--blue); }
+
+/* ── FLOW STEPS ── */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 16px; }
+.flow-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  position: relative;
+  padding-bottom: 20px;
+}
+.flow-step::before {
+  content: '';
+  position: absolute;
+  left: 16px; top: 34px;
+  width: 1px; height: calc(100% - 18px);
+  background: linear-gradient(to bottom, rgba(232,184,75,0.3), rgba(232,184,75,0.05));
+}
+.flow-step:last-child::before { display: none; }
+.flow-num {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  z-index: 1;
+}
+.flow-body { padding-top: 6px; }
+.flow-body strong { font-size: 13px; color: #fff; display: block; margin-bottom: 2px; }
+.flow-body span { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── WATERFALL STEPS ── */
+.waterfall { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.wf-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+.wf-step:hover { border-color: rgba(232,184,75,0.2); }
+.wf-step.new { border-color: rgba(232,184,75,0.3); background: rgba(232,184,75,0.05); }
+.wf-num { width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0; }
+.wf-step.new .wf-num { background: var(--gold-dim); color: var(--gold); }
+.wf-label { font-size: 13px; color: var(--text); flex: 1; }
+.wf-new-badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(232,184,75,0.3); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+
+/* ── QUOTE STAGE FLOW ── */
+.stage-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0; margin-bottom: 16px; }
+.stage-box {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  white-space: nowrap;
+}
+.stage-box.gold { background: rgba(232,184,75,0.12); border-color: rgba(232,184,75,0.3); color: var(--gold); }
+.stage-arrow { color: var(--text-dim); font-size: 14px; padding: 0 6px; }
+
+/* ── ORDER LIFECYCLE ── */
+.lifecycle { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 10px; margin-bottom: 20px; }
+.lc-state {
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  position: relative;
+}
+.lc-state.main-path { background: rgba(232,184,75,0.06); border-color: rgba(232,184,75,0.25); }
+.lc-state.amend-path { background: rgba(79,142,247,0.06); border-color: rgba(79,142,247,0.25); }
+.lc-state.cancel-path { background: rgba(247,95,95,0.06); border-color: rgba(247,95,95,0.2); }
+.lc-state-name { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.lc-state-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+.lc-state-badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 8px; margin-bottom: 6px; display: inline-block; }
+.main-path .lc-state-badge { background: rgba(232,184,75,0.15); color: var(--gold); }
+.amend-path .lc-state-badge { background: var(--blue-dim); color: var(--blue); }
+.cancel-path .lc-state-badge { background: var(--red-dim); color: var(--red); }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 8px; margin-bottom: 20px; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--green-dim);
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.checklist li .ck { color: var(--green); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── R2 CARDS ── */
+.r2-cards { display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr)); gap: 12px; margin-bottom: 20px; }
+.r2-card {
+  padding: 14px 16px;
+  background: rgba(79,142,247,0.05);
+  border: 1px dashed rgba(79,142,247,0.3);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: rgba(79,142,247,0.85);
+  display: flex; align-items: center; gap: 10px;
+}
+.r2-card::before { content: '→'; color: var(--blue); font-weight: 700; flex-shrink: 0; }
+
+/* ── GLOSSARY GRID ── */
+.gloss-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 10px; margin-bottom: 16px; }
+.gloss-item { background: var(--surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 7px; padding: 12px 14px; }
+.gloss-term { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
+.gloss-def { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+
+/* ── USER STORIES ── */
+.stories-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 10px; }
+.story-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+.story-card:hover { border-color: rgba(232,184,75,0.2); }
+.story-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); margin-bottom: 5px; }
+.story-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.4; }
+
+/* ── MOCKUP ── */
+.mockup-img { width: 100%; border-radius: 10px; border: 1px solid rgba(232,184,75,0.15); margin-bottom: 10px; }
+.img-caption { font-size: 11px; color: var(--text-dim); text-align: center; margin-bottom: 20px; }
+.ref-imgs { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px; margin-bottom: 20px; }
+.ref-img { width: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); }
+.mockup-cols { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; }
+.mockup-col { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 14px; }
+.mockup-col-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.mockup-col ul { list-style: none; }
+.mockup-col ul li { font-size: 11.5px; color: var(--text-dim); padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); line-height: 1.4; }
+.mockup-col ul li:last-child { border-bottom: none; }
+.mockup-col ul li::before { content: '›'; color: var(--gold); opacity: 0.5; margin-right: 6px; }
+
+/* ── SUMMARY CARDS ── */
+.summary-cards { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 10px; margin-bottom: 32px; }
+.sum-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 16px; text-align: center; }
+.sum-num { font-size: 26px; font-weight: 800; color: var(--gold); line-height: 1; }
+.sum-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:transform .65s cubic-bezier(0.4,0,0.2,1)}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);pointer-events:none}
+#sprint-cover::after{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);pointer-events:none}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:420px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-20px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta svg{transition:transform .22s ease}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">05</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">Lógica de Precios,<br><span>Permisos y Etapas de la Order</span></h1>
+    <p class="sc-subtitle">Price Waterfall con BRE, Permission Set Groups granulares y ciclo de vida completo — cierre del Release 1</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">Sprint 5 de 5</span>
+      <span class="sc-pill blue">PR1066114-74</span>
+      <span class="sc-pill blue">PR1066114-466</span>
+      <span class="sc-pill blue">PR1066114-83</span>
+      <span class="sc-pill blue">PR1066114-104</span>
+      <span class="sc-pill blue">PR1066114-375</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">Price Waterfall · BRE</span><span class="lbl">Tema central</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">PSG · Order Lifecycle</span><span class="lbl">Módulos</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">5 User Stories</span><span class="lbl">Entregables</span></div>
+    </div>
+    <a href="#resumen" class="sc-cta" id="sc-cta-btn">
+      Ver contenido
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <div class="sb-header">
+    <img src="imgs/logo_tvazteca.png" alt="TV Azteca" class="sb-logo">
+    <div class="sb-sprint-label">KT R1 · Sprint 5</div>
+    <span class="sb-badge-last">Último Sprint R1</span>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-section-title">Contenido</div>
+    <a href="#resumen" class="sb-link">Resumen del Sprint</a>
+
+    <a href="#precios" class="sb-link">§ 1. Price Waterfall y BRE</a>
+    <a href="#pw-arch" class="sb-link sub">1.1 Arquitectura</a>
+    <a href="#pw-bre" class="sb-link sub">1.2 BRE Engine</a>
+    <a href="#pw-proc" class="sb-link sub">1.3 Pricing Procedure</a>
+    <a href="#pw-cst" class="sb-link sub">1.4 Creative Size Config</a>
+    <a href="#pw-asp" class="sb-link sub">1.5 Ad Space Spec Pricing</a>
+
+    <a href="#permisos" class="sb-link">§ 2. Permission Set Groups</a>
+    <a href="#psg-mp" class="sb-link sub">2.1 PSG Media Planner</a>
+    <a href="#psg-all" class="sb-link sub">2.2 Todos los PSets</a>
+    <a href="#psg-roles" class="sb-link sub">2.3 Responsabilidades</a>
+
+    <a href="#etapas-order" class="sb-link">§ 3. Etapas de la Order</a>
+    <a href="#eo-ciclo" class="sb-link sub">3.1 Ciclo de Vida</a>
+    <a href="#eo-desc" class="sb-link sub">3.2 Descripción Estados</a>
+    <a href="#eo-comp" class="sb-link sub">3.3 Order vs Quote</a>
+
+    <a href="#arquitectura" class="sb-link">§ 4. Arquitectura Final</a>
+    <a href="#governance" class="sb-link">§ 5. Governance Post-R1</a>
+    <a href="#glosario" class="sb-link">§ 6. Glosario Completo</a>
+    <a href="#sec-video-s5" class="sb-link">§ 7. Demo</a>
+    <a href="#stories" class="sb-link">§ 8. User Stories</a>
+    <a href="#cierre" class="sb-link">§ 9. Cierre R1</a>
+  </div>
+
+  <div class="sb-footer">
+    <a href="kt-r1-sprint4.html" class="sb-nav-btn back">← Sprint 4</a>
+    <a href="kt-r1-index.html" class="sb-nav-btn home">⌂ Inicio</a>
+    <a href="kt-r1-conclusion.html" class="sb-nav-btn fwd">Conclusión →</a>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- SPRINT HEADER -->
+  <div id="resumen" class="sprint-header">
+    <div class="sprint-number-bg">05</div>
+    <div class="sprint-eyebrow">Sprint 5 · KT R1 · Salesforce Media Cloud</div>
+    <h1 class="sprint-title">Lógica de Precios, Refinamiento de Permisos y Etapas de la Order</h1>
+    <p class="sprint-subtitle">Price Waterfall dinámico con BRE, Permission Set Groups granulares y ciclo de vida completo de la Order — cierre del Release 1.</p>
+    <div class="milestone-box">⚑ Hito: Price Waterfall BRE activo · PSG Media Planner granular · Ciclo de vida Order completo</div>
+    <div class="stories-row">
+      <span class="story-pill">PR1066114-74</span>
+      <span class="story-pill">PR1066114-466</span>
+      <span class="story-pill">PR1066114-83</span>
+      <span class="story-pill">PR1066114-104</span>
+      <span class="story-pill">PR1066114-375</span>
+    </div>
+  </div>
+
+  <div class="summary-cards">
+    <div class="sum-card"><div class="sum-num">5</div><div class="sum-label">User Stories</div></div>
+    <div class="sum-card"><div class="sum-num">BRE</div><div class="sum-label">Business Rules Engine activo</div></div>
+    <div class="sum-card"><div class="sum-num">9</div><div class="sum-label">Permission Sets finalizados</div></div>
+    <div class="sum-card"><div class="sum-num">7</div><div class="sum-label">Estados de la Order</div></div>
+  </div>
+
+  <!-- § 1 — PRICE WATERFALL -->
+  <section id="precios" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 1</span>
+      <h2 class="section-title">Price Waterfall y Business Rules Engine</h2>
+    </div>
+
+    <div id="pw-arch" class="subsection">
+      <div class="subsection-title">1.1 — Arquitectura del Price Waterfall</div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.6;">El Price Waterfall define el orden de aplicación de precios y descuentos. Con BRE activado en Sprint 5, reglas automáticas ajustan precios según tipo de formato creativo, sin intervención manual del vendedor.</p>
+      <div class="waterfall">
+        <div class="wf-step"><div class="wf-num">1</div><div class="wf-label"><strong style="color:#fff">Price Book Entry</strong> — tarifa base del producto</div></div>
+        <div class="wf-step"><div class="wf-num">2</div><div class="wf-label"><strong style="color:#fff">Product Attribute Pricing</strong> — ajuste por atributos configurados</div></div>
+        <div class="wf-step new"><div class="wf-num">3</div><div class="wf-label"><strong style="color:#fff">Media Creative Size Type Pricing (BRE)</strong> — descuento automático por formato creativo</div><span class="wf-new-badge">Nuevo S5</span></div>
+        <div class="wf-step new"><div class="wf-num">4</div><div class="wf-label"><strong style="color:#fff">Ad Space Spec Pricing</strong> — ajuste por ubicación y canal</div><span class="wf-new-badge">Nuevo S5</span></div>
+        <div class="wf-step"><div class="wf-num">5</div><div class="wf-label"><strong style="color:#fff">Manual Discount</strong> — descuento aplicado por el vendedor</div></div>
+        <div class="wf-step"><div class="wf-num">6</div><div class="wf-label" style="color:var(--gold);font-weight:600">→ Final Price</div></div>
+      </div>
+    </div>
+
+    <div id="pw-bre" class="subsection">
+      <div class="subsection-title">1.2 — BRE — Business Rules Engine</div>
+      <div class="notice info"><strong>Dónde configurar:</strong> Ad Space Creative Size Type → sección BRE → botón ADD RULE → estado ACTIVE. Se ejecuta durante Instant Pricing al configurar el Line Item.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ad Creative Size Type</th><th>Price Adjustment Type</th><th>Value</th><th>Rank</th></tr></thead>
+          <tbody>
+            <tr><td>300×250</td><td><code>Price Ignore</code></td><td>0</td><td>1</td></tr>
+            <tr><td>728×90</td><td><code>Percentage</code></td><td>-5%</td><td>2</td></tr>
+            <tr><td>Pre-roll 15s</td><td><code>Percentage</code></td><td>+10%</td><td>3</td></tr>
+            <tr><td>Pre-roll 30s</td><td><code>Percentage</code></td><td>+20%</td><td>4</td></tr>
+            <tr><td>Skin</td><td><code>Percentage</code></td><td>+15%</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pw-proc" class="subsection">
+      <div class="subsection-title">1.3 — Pricing Procedure actualizado (NorDefaultRecipe)</div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));">
+        <div class="card"><div class="card-tag">Nombre</div><div class="card-body">TVAM Ad Sales Pricing Procedure</div></div>
+        <div class="card"><div class="card-tag">Contexto</div><div class="card-body">TVAM_MediaPlanTransactionCtx</div></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">Price Adjustment Items agregados en Sprint 5:</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Nombre</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Media Creative Age Type Pricing</td><td><code>Automation</code></td></tr>
+            <tr><td>2</td><td>All Space Creative Size Type Pricing</td><td><code>Standard</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:8px;font-weight:600;">Flujo de adjudicación:</p>
+      <div class="code-block"><span class="v">AdjudicationNode</span>
+  → <span class="g">"Discount Based on Associated Ad Space Creative Spec"</span> (Price Adjustment Item)
+  → <span class="g">"Discount Based on Associated Ad Space Creative Size-Gen Type"</span> (Price Adjustment Item)
+  → <span class="v">Final Price Applied</span></div>
+    </div>
+
+    <div id="pw-cst" class="subsection">
+      <div class="subsection-title">1.4 — Configuración Ad Space Creative Size Type — ejemplo 300×250</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Name</td><td><code>300×250</code></td></tr>
+            <tr><td>Ad Creative Size Type</td><td>Standard</td></tr>
+            <tr><td>Ad Creative Name Type</td><td>Image</td></tr>
+            <tr><td><strong style="color:var(--gold)">Price Adjustment Type</strong></td><td><code style="color:var(--gold)">Price Ignore</code> ← campo clave</td></tr>
+            <tr><td>Price Adjustment Value</td><td>0</td></tr>
+            <tr><td>BRE Status</td><td><span style="color:var(--green);font-weight:700">ACTIVE</span> — ADD RULE (1)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pw-asp" class="subsection">
+      <div class="subsection-title">1.5 — Ad Space Spec Product — campos de ajuste de precio</div>
+      <div class="notice info">Estos campos deben estar en el Page Layout de Ad Space Spec Product para que el Price Waterfall los tome en cuenta durante la cotización.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td>Price Adjustment Type</td><td><code>Picklist</code></td><td>Percentage / Amount / Price Ignore</td></tr>
+            <tr><td>Price Adjustment Value</td><td><code>Number</code></td><td>Valor numérico del ajuste</td></tr>
+            <tr><td>Rank</td><td><code>Number</code></td><td>Orden de aplicación del ajuste</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 2 — PERMISSION SETS -->
+  <section id="permisos" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 2</span>
+      <h2 class="section-title">Permission Set Groups Refinados</h2>
+    </div>
+
+    <div id="psg-mp" class="subsection">
+      <div class="subsection-title">2.1 — PSG Media Planner — detalle completo</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+          <tbody>
+            <tr><td>API Name</td><td><code>TVAM_MediaPlanner</code></td></tr>
+            <tr><td>Namespace Prefix</td><td><code>TVAM</code></td></tr>
+            <tr><td>Description</td><td style="color:var(--text-dim);font-size:12px;">Acceso a la planificación y gestión de medios publicitarios. Crea y administra Media Plans, Ad Order Campaigns y Ad Orders dentro del ciclo de ventas de Medios Digitales de Azteca.</td></tr>
+            <tr><td>Last Modified</td><td>Marcus Rob — 9/19/25, 1:49 PM</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;font-weight:600;">Permisos incluidos en el PSG:</p>
+      <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+        <div class="card"><div class="card-tag">Permiso</div><div class="card-title">Edit Properties</div><div class="card-body">Modificar propiedades de Media Plans</div></div>
+        <div class="card"><div class="card-tag">Permiso</div><div class="card-title">Manage Assignments</div><div class="card-body">Asignar planificadores a campañas</div></div>
+        <div class="card"><div class="card-tag">Permiso</div><div class="card-title">Revenue Management</div><div class="card-body">Acceso lectura/escritura a Quotes y Orders</div></div>
+        <div class="card"><div class="card-tag">Permiso</div><div class="card-title">Finalize Campaigns</div><div class="card-body">Marcar campaña como finalizada</div></div>
+        <div class="card"><div class="card-tag">Permiso</div><div class="card-title">View Elements</div><div class="card-body">Lectura de catálogos y configuraciones</div></div>
+      </div>
+    </div>
+
+    <div id="psg-all" class="subsection">
+      <div class="subsection-title">2.2 — Todos los 9 Permission Sets — estado final</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>API Name</th><th>Label</th><th>Rol asignado</th><th>Sprint</th></tr></thead>
+          <tbody>
+            <tr><td><code>TVA_DevOpsUser</code></td><td>DevOps User</td><td>CI/CD pipeline user</td><td>S1</td></tr>
+            <tr><td><code>TVAI_AccesoIntegraciones</code></td><td>Acceso a Integraciones</td><td>Integration service</td><td>S1</td></tr>
+            <tr><td><code>TVAM_AdOperations</code></td><td>Ad Operations</td><td>Equipo Ad Ops</td><td>S1</td></tr>
+            <tr><td><code>TVAM_AdSalesAdmin</code></td><td>Ad Sales Admin</td><td>Sales Admin</td><td>S1</td></tr>
+            <tr><td><code>TVAM_AsmSystemAdmin</code></td><td>ASM System Admin</td><td>System Admin</td><td>S1</td></tr>
+            <tr><td><code>TVAM_AsmSystemIntegrator</code></td><td>ASM System Integrator</td><td>Integration developer</td><td>S1</td></tr>
+            <tr><td><code>TVAM_DroFulfillment</code></td><td>DRO &amp; Fulfillment</td><td>Fulfillment ops</td><td>S1</td></tr>
+            <tr><td><code>TVAM_MediaPlanner</code></td><td>Media Planner</td><td>Planificadores de medios</td><td style="color:var(--gold);font-weight:600">S1 → S5</td></tr>
+            <tr><td><code>TVAM_ProductPricingAdmin</code></td><td>Product &amp; Pricing Admin</td><td>Pricing admin</td><td>S1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="psg-roles" class="subsection">
+      <div class="subsection-title">2.3 — Responsabilidades por rol</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Rol</th><th>Permission Set</th><th>Responsabilidades</th></tr></thead>
+          <tbody>
+            <tr><td>Ad Sales Admin</td><td><code>TVAM_AdSalesAdmin</code></td><td>Gestiona Ad Server, inventario, pricing, targeting options</td></tr>
+            <tr><td>Media Planner</td><td><code>TVAM_MediaPlanner</code></td><td>Crea Media Plans, diseña propuestas para RFPs, envía para aprobación</td></tr>
+            <tr><td>Ad Operations</td><td><code>TVAM_AdOperations</code></td><td>Gestiona amendments pre-vuelo y durante el vuelo de campaña</td></tr>
+            <tr><td>ASM System Admin</td><td><code>TVAM_AsmSystemAdmin</code></td><td>Config inicial, RBAC, habilita funciones, picklists, flujos preconfigurados</td></tr>
+            <tr><td>System Integrator</td><td><code>TVAM_AsmSystemIntegrator</code></td><td>Integración con Ad Servers, crea integraciones de órdenes, Mulesoft Direct Apps</td></tr>
+            <tr><td>DRO &amp; Fulfillment</td><td><code>TVAM_DroFulfillment</code></td><td>Supervisa fulfillment y reconciliación de derechos y obligaciones</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 3 — ETAPAS ORDER -->
+  <section id="etapas-order" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 3</span>
+      <h2 class="section-title">Etapas Completas de la Order — Ciclo de Vida</h2>
+    </div>
+
+    <div id="eo-ciclo" class="subsection">
+      <div class="subsection-title">3.1 — Ciclo de vida completo</div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Ruta principal (gold) · Amendments (azul)</p>
+      <div class="lifecycle">
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Draft</div><div class="lc-state-desc">Order creada desde Quote. Sin cargos aún.</div></div>
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Needs Review</div><div class="lc-state-desc">Enviada para revisión de detalles y precio.</div></div>
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Approved</div><div class="lc-state-desc">Aprobada — lista para activación operacional.</div></div>
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Activated</div><div class="lc-state-desc">DRO Fulfillment Flow → provisioning a GAM.</div></div>
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Fulfillment Complete</div><div class="lc-state-desc">Todos los Line Items aprovisionados en Ad Server.</div></div>
+        <div class="lc-state main-path"><div class="lc-state-badge">Main Path</div><div class="lc-state-name">Completed</div><div class="lc-state-desc">Campaña terminada. Billing activado.</div></div>
+        <div class="lc-state amend-path"><div class="lc-state-badge">Amendment</div><div class="lc-state-name">In-Flight Amendment</div><div class="lc-state-desc">DRO Amendment Flow → update parcial a GAM sin detener delivery.</div></div>
+      </div>
+    </div>
+
+    <div id="eo-desc" class="subsection">
+      <div class="subsection-title">3.2 — Descripción de estados</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Estado</th><th>Trigger</th><th>Actor</th><th>Qué sucede</th></tr></thead>
+          <tbody>
+            <tr><td>Draft</td><td>Order creada desde Quote</td><td>Auto</td><td>Copia exacta de la data del Quote. Sin cargos.</td></tr>
+            <tr><td>Needs Review</td><td>Enviado por planner</td><td>Ad Sales Admin</td><td>Revisión de detalles y confirmación de precio.</td></tr>
+            <tr><td>Approved</td><td>Aprobado por Admin</td><td>Auto-next</td><td>Lista para activación. Precios fijados.</td></tr>
+            <tr><td>Activated</td><td>Botón Activar</td><td>Operaciones</td><td>DRO Fulfillment Flow ejecutado → provisioning a GAM.</td></tr>
+            <tr><td>Fulfillment Complete</td><td>GAM confirma aprovisionamiento</td><td>DRO auto</td><td>Todos los Line Items confirmados en Ad Server.</td></tr>
+            <tr><td>Completed</td><td>Fecha de fin pasada</td><td>DRO auto</td><td>Campaña terminada. Proceso de billing activado.</td></tr>
+            <tr><td>In-Flight Amendment</td><td>Solicitud de cambio en orden activa</td><td>Ad Operations</td><td>DRO Amendment Flow → actualización parcial a GAM.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="eo-comp" class="subsection">
+      <div class="subsection-title">3.3 — Order vs Quote — comparativa</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Quote (Ad Quote)</th><th>Order (Ad Order)</th></tr></thead>
+          <tbody>
+            <tr><td>Propósito</td><td>Propuesta comercial</td><td>Compromiso firme</td></tr>
+            <tr><td>Stages / Estados</td><td>8 stages comerciales</td><td>5 estados operacionales</td></tr>
+            <tr><td>Editable</td><td>Edición libre</td><td>Solo via Amendment Flow</td></tr>
+            <tr><td>Pricing</td><td>Recalculo en vivo (Instant Pricing)</td><td>Fijo al momento de activar</td></tr>
+            <tr><td>DRO</td><td>No involucrado</td><td>DRO gestiona todo el ciclo</td></tr>
+            <tr><td>Inheritance</td><td>Origen de la data</td><td>Hereda 100% de Ad Quote Line (schedules, hiatus, targeting)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 4 — ARQUITECTURA FINAL -->
+  <section id="arquitectura" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 4</span>
+      <h2 class="section-title">Arquitectura Final — Revisión Completa</h2>
+    </div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;line-height:1.6;">Con Sprint 5 completado, la arquitectura TO BE está operacional. Las 3 capas están activas y conectadas end-to-end.</p>
+    <div class="cards">
+      <div class="card"><div class="card-tag">Capa 3 — Integración</div><div class="card-title">DRO · Ad Server APIs</div><div class="card-body">Conecta la venta comercial con la operación técnica sin intervención manual.</div></div>
+      <div class="card"><div class="card-tag">Capa 2 — Motores Comerciales</div><div class="card-title">PCM · BRE · Salesforce Pricing · CPQ</div><div class="card-body">Ejecución de reglas de negocio, lógica matemática y Price Waterfall completo.</div></div>
+      <div class="card"><div class="card-tag">Capa 1 — Modelo de Datos</div><div class="card-title">Customer · Media Property · Targeting</div><div class="card-body">Base unificada que elimina silos entre ventas, finanzas y operaciones.</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:8px;margin-bottom:12px;font-weight:600;">Módulos Core completados:</p>
+    <div class="cards">
+      <div class="card"><div class="card-tag">ASM</div><div class="card-title">Advertising Sales Management</div><div class="card-body">RFP, Media Plans, Ad Placements, Order Management end-to-end.</div></div>
+      <div class="card"><div class="card-tag">ARM</div><div class="card-title">Agentforce Revenue Management</div><div class="card-body">Price Waterfall CPM/CPC/FIJO, Prorrateo mid-cycle, DRO integration, Billing.</div></div>
+      <div class="card"><div class="card-tag">PCM</div><div class="card-title">Product Catalog Management</div><div class="card-body">12 productos, 9 canales, 3 capas completas (Catálogo → AdSpec → Targeting).</div></div>
+      <div class="card blue"><div class="card-tag">AI — R2</div><div class="card-title">Agentforce Media</div><div class="card-body">Yield Optimization, Decision Matrix, Real-time Alerts. En roadmap R2.</div></div>
+    </div>
+  </section>
+
+  <!-- § 5 — GOVERNANCE -->
+  <section id="governance" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 5</span>
+      <h2 class="section-title">Governance y Mantenimiento Post-R1</h2>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Frecuencia</th><th>Tarea</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td>Mensual</td><td>Actualizar catálogo con Excel maestro (script Python idempotente)</td><td>Ad Sales Admin</td></tr>
+          <tr><td>Mensual</td><td>Verificar límites de API de Salesforce</td><td>System Integrator</td></tr>
+          <tr><td>Trimestral</td><td>Revisar y actualizar Permission Sets</td><td>ASM System Admin</td></tr>
+          <tr><td>Trimestral</td><td>Revisar picklists con nuevos valores de negocio</td><td>ASM System Admin</td></tr>
+          <tr><td>Ad-hoc</td><td>Dar de baja productos: <code>IsActive=false</code> (NUNCA eliminar)</td><td>Ad Sales Admin</td></tr>
+          <tr><td>Ad-hoc</td><td>Revisar y actualizar Context Definitions</td><td>System Admin</td></tr>
+          <tr><td>Ad-hoc</td><td>Actualizar BRE rules si cambian tipos de formatos creativos</td><td>Product Pricing Admin</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 6 — GLOSARIO -->
+  <section id="glosario" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 6</span>
+      <h2 class="section-title">Glosario Completo</h2>
+    </div>
+    <div class="gloss-grid">
+      <div class="gloss-item"><div class="gloss-term">ASM</div><div class="gloss-def">Advertising Sales Management</div></div>
+      <div class="gloss-item"><div class="gloss-term">ARM</div><div class="gloss-def">Agentforce Revenue Management</div></div>
+      <div class="gloss-item"><div class="gloss-term">PCM</div><div class="gloss-def">Product Catalog Management</div></div>
+      <div class="gloss-item"><div class="gloss-term">DRO</div><div class="gloss-def">Dynamic Revenue Orchestrator</div></div>
+      <div class="gloss-item"><div class="gloss-term">CRM</div><div class="gloss-def">Customer Relationship Management</div></div>
+      <div class="gloss-item"><div class="gloss-term">RFP</div><div class="gloss-def">Request for Proposal</div></div>
+      <div class="gloss-item"><div class="gloss-term">CPM</div><div class="gloss-def">Costo Por Mil impresiones</div></div>
+      <div class="gloss-item"><div class="gloss-term">CPC</div><div class="gloss-def">Costo Por Clic</div></div>
+      <div class="gloss-item"><div class="gloss-term">GAM</div><div class="gloss-def">Google Ad Manager</div></div>
+      <div class="gloss-item"><div class="gloss-term">BRE</div><div class="gloss-def">Business Rules Engine</div></div>
+      <div class="gloss-item"><div class="gloss-term">MDS</div><div class="gloss-def">Media Delivery Schedule</div></div>
+      <div class="gloss-item"><div class="gloss-term">GUID</div><div class="gloss-def">Globally Unique Identifier</div></div>
+      <div class="gloss-item"><div class="gloss-term">TVA_GUID__c</div><div class="gloss-def">Campo personalizado para GUID del script Python</div></div>
+      <div class="gloss-item"><div class="gloss-term">DTF</div><div class="gloss-def">Documento Técnico Funcional</div></div>
+      <div class="gloss-item"><div class="gloss-term">AVOD</div><div class="gloss-def">Advertising Video on Demand (Tubi)</div></div>
+      <div class="gloss-item"><div class="gloss-term">FAST</div><div class="gloss-def">Free Ad-Supported Streaming TV (Pluto TV)</div></div>
+    </div>
+  </section>
+
+  <!-- § 7 — Demo -->
+  <section id="sec-video-s5" class="section">
+    <div class="section-header">
+      <div class="section-eyebrow-row"><span>§ 7</span> Demo</div>
+      <h2 class="section-title">Demo — Sprint 5</h2>
+    </div>
+    <p style="font-size:13px;color:#8888a8;margin-bottom:16px;">Recorrido en pantalla de las configuraciones del Sprint 5: Price Waterfall BRE, Permission Sets y Order Lifecycle.</p>
+
+    <div style="background:#0f0f1a;border:1px solid rgba(232,184,75,0.18);border-radius:12px;overflow:hidden;margin-top:8px;">
+      <video
+        controls
+        preload="metadata"
+        style="display:block;width:100%;max-height:540px;background:#000;"
+      >
+        <source src="Clips Video/SP5.mp4" type="video/mp4">
+      </video>
+      <div style="padding:12px 20px;border-top:1px solid rgba(232,184,75,0.08);font-size:11.5px;color:#6868a0;font-style:italic;">
+        Sprint 5 — Price Waterfall BRE · Permission Sets · Order Lifecycle · Salesforce Media Cloud on Core · TV Azteca
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- § 8 — USER STORIES -->
+  <section id="stories" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 7</span>
+      <h2 class="section-title">User Stories</h2>
+    </div>
+    <div class="stories-grid">
+      <div class="story-card"><div class="story-id">PR1066114-74</div><div class="story-desc">Price Waterfall — BRE Media Creative Size Type Pricing habilitado y configurado</div></div>
+      <div class="story-card"><div class="story-id">PR1066114-466</div><div class="story-desc">Pricing — Price Adjustment Items en Pricing Procedure (NorDefaultRecipe)</div></div>
+      <div class="story-card"><div class="story-id">PR1066114-83</div><div class="story-desc">Pricing — descuentos automáticos por Ad Space Spec en el Price Waterfall</div></div>
+      <div class="story-card"><div class="story-id">PR1066114-104</div><div class="story-desc">Permisos — Media Planner PSG refinado con granularidad de 5 permisos</div></div>
+      <div class="story-card"><div class="story-id">PR1066114-375</div><div class="story-desc">Etapas Order — ciclo de vida completo con rutas de Amendment y Cancellation</div></div>
+    </div>
+  </section>
+
+  <!-- § 9 — CIERRE R1 -->
+  <section id="cierre" class="section">
+    <div class="section-header">
+      <span class="section-number">§ 9</span>
+      <h2 class="section-title">Cierre R1 y Próximos Pasos R2</h2>
+    </div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:20px;line-height:1.6;">Con el Sprint 5 completado, el Release 1 está cerrado. Los siguientes entregables fueron implementados y validados:</p>
+    <ul class="checklist">
+      <li><span class="ck">✓</span>Media Cloud Configuration habilitado</li>
+      <li><span class="ck">✓</span>Revenue Cloud completo (5 pasos en orden estricto)</li>
+      <li><span class="ck">✓</span>9 Permission Sets TVAM_* creados y refinados</li>
+      <li><span class="ck">✓</span>PCM: 12 productos, 9 canales, 3 capas completas</li>
+      <li><span class="ck">✓</span>Line Item Configuration: 3 pestañas (Line Item, Delivery, Targeting)</li>
+      <li><span class="ck">✓</span>Audience Targeting: Geografía 32 estados, Canales GAM, Demográficos</li>
+      <li><span class="ck">✓</span>Context Service + Context Definitions configuradas</li>
+      <li><span class="ck">✓</span>DRO Setup + primer aprovisionamiento real a GAM</li>
+      <li><span class="ck">✓</span>In-Flight Amendments habilitados</li>
+      <li><span class="ck">✓</span>Nomenclaturas 2026 formalizadas</li>
+      <li><span class="ck">✓</span>Etapas de Cotización — Venta Directa formalizadas</li>
+      <li><span class="ck">✓</span>Etapas de la Order — ciclo de vida completo (7 estados)</li>
+      <li><span class="ck">✓</span>Price Waterfall BRE activo con descuentos por formato</li>
+      <li><span class="ck">✓</span>Permission Set Groups granulares para todos los roles</li>
+    </ul>
+
+    <div class="notice info" style="margin-top:28px;padding:24px 28px;font-size:16px;font-weight:600;line-height:1.6;letter-spacing:0.1px;">El Release 2 está en desarrollo activo. Los siguientes módulos serán implementados en los sprints de R2.</div>
+  </section>
+
+</main>
+
+<script>
+const links = document.querySelectorAll('.sb-link[href^="#"]');
+const sections = [...links].map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = [...links].find(l => l.getAttribute('href') === '#' + e.target.id);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+sections.forEach(s => obs.observe(s));
+</script>
+
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover=document.getElementById('sprint-cover');
+  var dismissed=false;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend',function(){cover.style.display='none';},{once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click',function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){var t=document.getElementById('resumen');if(t)t.scrollIntoView({behavior:'smooth'});},300);
+  });
+  window.addEventListener('scroll',function(){if(window.scrollY>80)dismiss();},{passive:true,once:true});
+})();
+</script>
+</body>
+</html>

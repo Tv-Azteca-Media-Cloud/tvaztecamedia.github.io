@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Sprint 4 — In-Flight Amendments, Nomenclaturas 2026 y Etapas de Cotización · TV Azteca</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #112240;
+  --surface:   #12121a;
+  --surface2:  #1a1a26;
+  --surface3:  #1e1e2e;
+  --border:    rgba(232,184,75,0.15);
+  --border2:   rgba(232,232,240,0.08);
+  --gold:      #e8b84b;
+  --gold-dim:  rgba(232,184,75,0.12);
+  --gold-glow: rgba(232,184,75,0.30);
+  --blue:      #4f8ef7;
+  --blue-dim:  rgba(79,142,247,0.12);
+  --red:       #f7604f;
+  --red-dim:   rgba(247,96,79,0.12);
+  --green:     #4fca84;
+  --green-dim: rgba(79,202,132,0.12);
+  --purple:    #a78bfa;
+  --purple-dim:rgba(167,139,250,0.12);
+  --text:      #e8e8f0;
+  --muted:     rgba(232,232,240,0.52);
+  --muted2:    rgba(232,232,240,0.28);
+  --sidebar-w: 260px;
+  --code-bg:   #1a1a2e;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(79,142,247,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 85%, rgba(232,184,75,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 55% 45%, rgba(232,184,75,0.03) 0%, transparent 60%);
+}
+.bg-canvas::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(232,184,75,0.4) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79,142,247,0.25) 1px, transparent 1px);
+  background-size: 80px 80px, 120px 120px;
+  background-position: 0 0, 40px 40px;
+  animation: drift 28s linear infinite;
+  opacity: 0.3;
+}
+@keyframes drift {
+  0%   { transform: translateY(0) translateX(0); }
+  50%  { transform: translateY(-18px) translateX(10px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #001a4a 0%, #002060 35%, #0a0a1a 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0,80,200,0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.sb-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(232,184,75,0.1);
+  flex-shrink: 0;
+}
+.sb-logo {
+  height: 28px;
+  margin-bottom: 12px;
+  filter: brightness(1.1);
+  display: block;
+}
+.sb-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.85;
+  margin-bottom: 2px;
+}
+.sb-sprint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: 8px;
+  padding: 5px 10px;
+  margin-top: 6px;
+}
+.sb-sprint-num {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.sb-sprint-txt {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(232,184,75,0.7);
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+}
+
+.sb-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0 8px;
+}
+.sb-nav::-webkit-scrollbar { width: 3px; }
+.sb-nav::-webkit-scrollbar-thumb { background: rgba(232,184,75,0.2); border-radius: 2px; }
+
+.sb-group-label {
+  padding: 12px 16px 4px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(232,184,75,0.35);
+}
+
+.sb-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px 6px 14px;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(232,232,240,0.52);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+  line-height: 1.35;
+}
+.sb-link:hover {
+  color: rgba(232,232,240,0.9);
+  background: rgba(232,184,75,0.05);
+  border-left-color: rgba(232,184,75,0.3);
+}
+.sb-link.active {
+  color: var(--gold);
+  background: rgba(232,184,75,0.08);
+  border-left-color: var(--gold);
+  font-weight: 600;
+}
+.sb-link.parent {
+  font-weight: 600;
+  font-size: 11.5px;
+  color: rgba(232,232,240,0.7);
+  padding-left: 14px;
+}
+.sb-link.child {
+  padding-left: 26px;
+  font-size: 10.5px;
+}
+.sb-link .sb-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: 0.5;
+}
+.sb-link.active .sb-dot { opacity: 1; background: var(--gold); }
+
+.sb-footer {
+  padding: 12px 12px;
+  border-top: 1px solid rgba(232,184,75,0.1);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.sb-nav-btn{
+  display:block;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  text-align:center;
+  transition:all .2s ease;
+  letter-spacing:.4px;
+}
+.sb-nav-btn.back{
+  background:rgba(79,142,247,.18);
+  color:#7eb8ff;
+  border:1px solid rgba(79,142,247,.45);
+  box-shadow:0 2px 8px rgba(79,142,247,.12);
+}
+.sb-nav-btn.back:hover{
+  background:rgba(79,142,247,.32);
+  color:#a8d0ff;
+  border-color:rgba(79,142,247,.7);
+  box-shadow:0 4px 16px rgba(79,142,247,.22);
+  transform:translateY(-1px);
+}
+.sb-nav-btn.fwd{
+  background:rgba(232,184,75,.18);
+  color:#f5cc6a;
+  border:1px solid rgba(232,184,75,.5);
+  box-shadow:0 2px 8px rgba(232,184,75,.12);
+}
+.sb-nav-btn.fwd:hover{
+  background:rgba(232,184,75,.32);
+  color:#ffe08a;
+  border-color:rgba(232,184,75,.75);
+  box-shadow:0 4px 16px rgba(232,184,75,.22);
+  transform:translateY(-1px);
+}
+.sb-home-btn{
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  color:#ffd764;text-decoration:none;
+  border:1px solid rgba(232,184,75,0.55);border-radius:6px;
+  background:rgba(232,184,75,0.18);
+  box-shadow:0 2px 8px rgba(232,184,75,0.12);
+  transition:all .2s ease;
+}
+.sb-home-btn:hover{border-color:rgba(232,184,75,0.8);color:#ffe899;background:rgba(232,184,75,0.28);transform:translateY(-1px);
+}
+.sb-nav-btn span { display: inline; }
+
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+  padding: 56px 52px 100px;
+  max-width: calc(100% - var(--sidebar-w));
+}
+
+/* ── SPRINT HEADER ── */
+.sprint-header {
+  margin-bottom: 52px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(232,184,75,0.12);
+}
+.sprint-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.sprint-eyebrow-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sprint-eyebrow-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(232,184,75,0.2);
+  max-width: 200px;
+}
+.sprint-num-big {
+  font-size: 110px;
+  font-weight: 900;
+  color: var(--gold);
+  opacity: .18;
+  line-height: 0.85;
+  letter-spacing: -4px;
+  float: right;
+  margin-top: -10px;
+  margin-left: 24px;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+.sprint-title {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+.sprint-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 680px;
+  margin-bottom: 20px;
+}
+.sprint-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+.pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+.pill-gold {
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.3);
+  color: var(--gold);
+}
+.pill-blue {
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.3);
+  color: var(--blue);
+}
+.pill-green {
+  background: var(--green-dim);
+  border: 1px solid rgba(79,202,132,0.3);
+  color: var(--green);
+}
+.pill-dim {
+  background: rgba(232,232,240,0.05);
+  border: 1px solid rgba(232,232,240,0.1);
+  color: var(--muted);
+}
+.jira-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.jira-pill {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.2);
+  color: var(--blue);
+  letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.milestone-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232,184,75,0.07);
+  border: 1px solid rgba(232,184,75,0.25);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+.milestone-icon { font-size: 14px; }
+.milestone-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 72px;
+  scroll-margin-top: 24px;
+}
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(232,184,75,0.12);
+}
+.section-num {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.3);
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.section-title-wrap {}
+.section-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(232,184,75,0.55);
+  margin-bottom: 4px;
+}
+.section-title {
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+.section-lead {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 780px;
+  margin-bottom: 28px;
+  margin-top: 4px;
+}
+
+/* ── SUBSECTION ── */
+.subsection {
+  margin-bottom: 40px;
+  scroll-margin-top: 24px;
+}
+.subsection-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  border-left: 3px solid var(--gold);
+  padding-left: 12px;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.subsection-title .sub-num {
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-right: 6px;
+  opacity: 0.8;
+}
+
+/* ── CARDS ── */
+.cards { display: grid; gap: 14px; margin-bottom: 24px; }
+.cards-2 { grid-template-columns: 1fr 1fr; }
+.cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cards-4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: rgba(232,184,75,0.2); }
+.card.gold-accent { border-left: 3px solid var(--gold); }
+.card.blue-accent { border-left: 3px solid var(--blue); }
+.card.green-accent { border-left: 3px solid var(--green); }
+.card-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  opacity: 0.75;
+}
+.card-label.blue { color: var(--blue); }
+.card-label.green { color: var(--green); }
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 6px;
+}
+.card-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ── PHASE STEPS ── */
+.phase-list {
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.phase-item {
+  display: flex;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  align-items: flex-start;
+  transition: border-color 0.15s;
+}
+.phase-item:hover { border-color: rgba(232,184,75,0.2); }
+.phase-num {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 1px solid rgba(232,184,75,0.25);
+  min-width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.phase-content {}
+.phase-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 2px;
+}
+.phase-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid rgba(79,142,247,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(79,142,247,0.07);
+  border-bottom: 1px solid rgba(79,142,247,0.12);
+}
+.code-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.5px;
+}
+.code-lang {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(79,142,247,0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.code-body {
+  padding: 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: rgba(232,232,240,0.82);
+  overflow-x: auto;
+  tab-size: 2;
+}
+.code-body .c-comment { color: rgba(232,232,240,0.3); }
+.code-body .c-gold { color: var(--gold); }
+.code-body .c-blue { color: var(--blue); }
+.code-body .c-green { color: var(--green); }
+.code-body .c-red { color: #f97f6e; }
+.code-body .c-string { color: #a8d8a8; }
+
+/* ── OUTPUT INDICATORS ── */
+.output-block {
+  background: #0d1117;
+  border: 1px solid rgba(79,202,132,0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+.out-created { color: var(--green); }
+.out-skipped { color: rgba(232,232,240,0.45); }
+.out-updated { color: var(--gold); }
+.out-error   { color: var(--red); }
+.out-summary { color: var(--blue); font-weight: 700; }
+
+/* ── TABLES ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+.data-table th {
+  background: rgba(232,184,75,0.1);
+  color: var(--gold);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(232,184,75,0.2);
+}
+.data-table th:first-child { border-radius: 8px 0 0 0; }
+.data-table th:last-child  { border-radius: 0 8px 0 0; }
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(232,232,240,0.06);
+  color: var(--text);
+  vertical-align: top;
+}
+.data-table tr:hover td { background: rgba(232,184,75,0.03); }
+.data-table td:first-child {
+  font-weight: 600;
+  color: rgba(232,232,240,0.9);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.data-table td .desc { color: var(--muted); font-size: 11.5px; }
+.data-table td.normal-font { font-family: inherit; font-size: 12px; white-space: normal; }
+
+/* ── NOTICE BOXES ── */
+.notice {
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.notice-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+.notice-body {}
+.notice-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.notice-text {
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.notice.critical {
+  background: rgba(247,96,79,0.08);
+  border: 1px solid rgba(247,96,79,0.3);
+}
+.notice.critical .notice-label { color: var(--red); }
+.notice.critical .notice-text  { color: rgba(232,232,240,0.82); }
+.notice.warning {
+  background: rgba(232,184,75,0.07);
+  border: 1px solid rgba(232,184,75,0.3);
+}
+.notice.warning .notice-label { color: var(--gold); }
+.notice.warning .notice-text  { color: rgba(232,232,240,0.75); }
+.notice.info {
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.25);
+}
+.notice.info .notice-label { color: var(--blue); }
+.notice.info .notice-text  { color: rgba(232,232,240,0.78); }
+.notice.success {
+  background: var(--green-dim);
+  border: 1px solid rgba(79,202,132,0.25);
+}
+.notice.success .notice-label { color: var(--green); }
+.notice.success .notice-text  { color: rgba(232,232,240,0.78); }
+
+/* ── KEY-VALUE LIST ── */
+.kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.kv-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 1px solid rgba(232,232,240,0.06);
+}
+.kv-row:last-child { border-bottom: none; }
+.kv-key {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.6);
+  background: rgba(232,184,75,0.04);
+  border-right: 1px solid rgba(232,232,240,0.06);
+  display: flex;
+  align-items: center;
+}
+.kv-val {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: rgba(232,232,240,0.85);
+  display: flex;
+  align-items: center;
+}
+.kv-val code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.15);
+  color: var(--blue);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* ── TOGGLE LIST (on/off) ── */
+.toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 10px 16px;
+}
+.toggle-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(232,232,240,0.85);
+}
+.toggle-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.toggle-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.toggle-badge.on  { background: rgba(79,202,132,0.15); border: 1px solid rgba(79,202,132,0.3); color: var(--green); }
+.toggle-badge.off { background: rgba(247,96,79,0.1);   border: 1px solid rgba(247,96,79,0.2);  color: rgba(247,96,79,0.7); }
+
+/* ── FLOW STEPS ── */
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 20px;
+  position: relative;
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  margin-bottom: 4px;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.flow-step:hover { border-color: rgba(79,142,247,0.25); }
+.flow-step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--blue);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.flow-step-content {}
+.flow-step-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.9);
+  margin-bottom: 3px;
+}
+.flow-step-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── MOCKUP GALLERY ── */
+.mockup-main {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(232,184,75,0.15);
+  display: block;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+.mockup-refs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.mockup-ref-img {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(79,142,247,0.15);
+  display: block;
+}
+.img-caption {
+  font-size: 10px;
+  color: var(--muted2);
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* ── MOCKUP COLS ── */
+.mockup-cols {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.mockup-col-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 12px;
+  transition: border-color 0.2s;
+}
+.mockup-col-card:hover { border-color: rgba(232,184,75,0.2); }
+.mc-num {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+.mc-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232,232,240,0.85);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.mc-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mc-items li {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+  padding-left: 10px;
+  position: relative;
+}
+.mc-items li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: rgba(232,184,75,0.3);
+}
+
+/* ── USER STORIES ── */
+.us-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.us-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+.us-card:hover { border-color: rgba(79,142,247,0.25); }
+.us-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.2);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 7px;
+}
+.us-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(232,232,240,0.85);
+  line-height: 1.4;
+}
+
+/* ── PERMISSIONS LIST ── */
+.perms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+.perm-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  font-size: 11.5px;
+  color: rgba(232,232,240,0.78);
+}
+.perm-icon { color: var(--green); font-size: 12px; flex-shrink: 0; }
+
+/* ── QUOTE STAGES FLOW ── */
+.quote-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.qf-stage {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.qf-box {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+.qf-box.draft {
+  background: rgba(232,232,240,0.06);
+  border: 1px solid rgba(232,232,240,0.12);
+  color: rgba(232,232,240,0.7);
+}
+.qf-box.auth {
+  background: rgba(232,184,75,0.12);
+  border: 1px solid rgba(232,184,75,0.3);
+  color: var(--gold);
+}
+.qf-box.present {
+  background: var(--blue-dim);
+  border: 1px solid rgba(79,142,247,0.3);
+  color: var(--blue);
+}
+.qf-box.accepted {
+  background: var(--green-dim);
+  border: 1px solid rgba(79,202,132,0.3);
+  color: var(--green);
+}
+.qf-box.denied {
+  background: var(--red-dim);
+  border: 1px solid rgba(247,96,79,0.25);
+  color: var(--red);
+}
+.qf-label {
+  font-size: 8.5px;
+  color: var(--muted2);
+  text-align: center;
+  margin-top: 4px;
+}
+.qf-arrow {
+  font-size: 14px;
+  color: rgba(232,184,75,0.4);
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+.qf-split {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── SALESFORCE STANDARD STAGES ── */
+.sf-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.sf-stage-pill {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: rgba(232,232,240,0.05);
+  border: 1px solid rgba(232,232,240,0.1);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sf-stage-pill .arrow { color: rgba(232,184,75,0.35); font-size: 12px; }
+
+/* ── BULLET LISTS ── */
+.bullet-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.bullet-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 12.5px;
+  color: rgba(232,232,240,0.78);
+  line-height: 1.55;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+}
+.bullet-list li::before {
+  content: '▸';
+  color: var(--gold);
+  flex-shrink: 0;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent);
+  margin: 52px 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .mockup-cols { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  :root { --sidebar-w: 220px; }
+  .main { padding: 40px 32px 80px; }
+  .cards-3, .cards-4 { grid-template-columns: 1fr 1fr; }
+  .mockup-cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; max-width: 100%; padding: 32px 20px 80px; }
+  .cards-2, .cards-3, .cards-4 { grid-template-columns: 1fr; }
+  .us-grid { grid-template-columns: 1fr; }
+  .mockup-refs { grid-template-columns: 1fr; }
+  .mockup-cols { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:transform .65s cubic-bezier(0.4,0,0.2,1)}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);pointer-events:none}
+#sprint-cover::after{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);pointer-events:none}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:420px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-20px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta svg{transition:transform .22s ease}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">04</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">In-Flight Amendments,<br><span>Nomenclaturas 2026 y Etapas de Cotización</span></h1>
+    <p class="sc-subtitle">Modificaciones de órdenes en vuelo, estándares de nomenclatura y etapas de cotización formalizadas</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">Sprint 4 de 5</span>
+      <span class="sc-pill blue">DRO</span>
+      <span class="sc-pill blue">Nomenclaturas</span>
+      <span class="sc-pill blue">Cotización</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">In-Flight Amendments</span><span class="lbl">Tema central</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">DRO · Nomenclaturas · Cotización</span><span class="lbl">Módulos</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">16 User Stories</span><span class="lbl">Entregables</span></div>
+    </div>
+    <a href="#resumen" class="sc-cta" id="sc-cta-btn">
+      Ver contenido
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<div class="bg-canvas"></div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="imgs/logo_tvazteca.png" alt="TV Azteca" class="sb-logo">
+      <div class="sb-label">KT R1 · Sprint 4</div>
+      <div class="sb-sprint-badge">
+        <div class="sb-sprint-num">04</div>
+        <div class="sb-sprint-txt">In-Flight Amendments<br>Nomenclaturas 2026</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+
+      <div class="sb-group-label">Navegación</div>
+      <a class="sb-link parent" href="#resumen">
+        <span class="sb-dot"></span>Resumen del Sprint
+      </a>
+
+      <div class="sb-group-label">Secciones</div>
+      <a class="sb-link parent" href="#dro">
+        <span class="sb-dot"></span>§ 1. DRO In-Flight Amendments
+      </a>
+      <a class="sb-link child" href="#dro-intro">
+        <span class="sb-dot"></span>1.1 Qué son
+      </a>
+      <a class="sb-link child" href="#dro-amendment">
+        <span class="sb-dot"></span>1.2 Amendment Flow
+      </a>
+      <a class="sb-link child" href="#dro-settings">
+        <span class="sb-dot"></span>1.3 Settings Sprint 4
+      </a>
+      <a class="sb-link child" href="#dro-inflight">
+        <span class="sb-dot"></span>1.4 DRO In-flight Amendments
+      </a>
+
+      <a class="sb-link parent" href="#nomenclaturas">
+        <span class="sb-dot"></span>§ 2. Nomenclaturas 2026
+      </a>
+      <a class="sb-link child" href="#nom-cpm">
+        <span class="sb-dot"></span>2.1 Estándar CPM
+      </a>
+      <a class="sb-link child" href="#nom-pat">
+        <span class="sb-dot"></span>2.2 Estándar Patrocinio
+      </a>
+      <a class="sb-link child" href="#nom-lp">
+        <span class="sb-dot"></span>2.3 Línea de Pedido
+      </a>
+
+      <a class="sb-link parent" href="#etapas-cot">
+        <span class="sb-dot"></span>§ 3. Etapas de Cotización
+      </a>
+      <a class="sb-link child" href="#etapas-sf">
+        <span class="sb-dot"></span>3.1 Salesforce Standard
+      </a>
+      <a class="sb-link child" href="#etapas-tva">
+        <span class="sb-dot"></span>3.2 TV Azteca Custom
+      </a>
+      <a class="sb-link child" href="#etapas-desc">
+        <span class="sb-dot"></span>3.3 Descripción
+      </a>
+
+      <a class="sb-link parent" href="#campana">
+        <span class="sb-dot"></span>§ 4. Diseño Campaña S4
+      </a>
+      <a class="sb-link parent" href="#segmentaciones">
+        <span class="sb-dot"></span>§ 5. Segmentaciones S4
+      </a>
+      <a class="sb-link parent" href="#modelo">
+        <span class="sb-dot"></span>§ 6. Modelo Media Property
+      </a>
+      <a class="sb-link parent" href="#sec-video-s4">
+        <span class="sb-dot"></span>§ 7. Demo
+      </a>
+      <a class="sb-link parent" href="#stories">
+        <span class="sb-dot"></span>§ 8. User Stories
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <a class="sb-nav-btn back" href="kt-r1-sprint3.html">&#8592; <span>Sprint 3</span></a>
+      <a class="sb-home-btn" href="kt-r1-index.html" title="Índice KT R1">⌂</a>
+      <a class="sb-nav-btn fwd" href="kt-r1-sprint5.html"><span>Sprint 5</span> &#8594;</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- SPRINT HEADER -->
+    <div class="sprint-header" id="resumen">
+      <div class="sprint-eyebrow">
+        <span class="sprint-eyebrow-text">Knowledge Transfer · Release 1</span>
+        <div class="sprint-eyebrow-line"></div>
+      </div>
+
+      <div class="sprint-num-big">04</div>
+
+      <div class="sprint-title">In-Flight Amendments, Nomenclaturas 2026<br>y Etapas de Cotización</div>
+      <div class="sprint-subtitle">Modificaciones de órdenes en vuelo, estándares de nomenclatura y etapas de cotización formalizadas</div>
+
+      <div class="sprint-pills">
+        <span class="pill pill-gold">Sprint 4</span>
+        <span class="pill pill-blue">In-Flight Amendments</span>
+        <span class="pill pill-blue">DRO Amendment Flow</span>
+        <span class="pill pill-green">Nomenclaturas 2026</span>
+        <span class="pill pill-dim">Etapas de Cotización</span>
+        <span class="pill pill-dim">Diseño Campaña</span>
+        <span class="pill pill-dim">Segmentaciones</span>
+      </div>
+
+      <div class="jira-pills">
+        <span class="jira-pill">PR1066114-370</span>
+        <span class="jira-pill">PR1066114-371</span>
+        <span class="jira-pill">PR1066114-380</span>
+        <span class="jira-pill">PR1066114-375</span>
+        <span class="jira-pill">PR1066114-376</span>
+        <span class="jira-pill">PR1066114-377</span>
+        <span class="jira-pill">PR1066114-378</span>
+        <span class="jira-pill">PR1066114-379</span>
+        <span class="jira-pill">PR1066114-381</span>
+        <span class="jira-pill">PR1066114-382</span>
+        <span class="jira-pill">PR1066114-383</span>
+        <span class="jira-pill">PR1066114-433</span>
+        <span class="jira-pill">PR1066114-117</span>
+        <span class="jira-pill">PR1066114-387</span>
+        <span class="jira-pill">PR1066114-385</span>
+        <span class="jira-pill">PR1066114-386</span>
+      </div>
+
+      <div class="milestone-box">
+        <span class="milestone-icon">&#9679;</span>
+        <span class="milestone-text">In-Flight Amendments habilitados; Nomenclaturas 2026 formalizadas; Etapas de cotización con diagrama</span>
+      </div>
+
+      <div style="margin-top: 28px;">
+        <div class="cards cards-4">
+          <div class="card gold-accent">
+            <div class="card-label">DRO</div>
+            <div class="card-title">In-Flight Amendments</div>
+            <div class="card-body">Modificaciones de órdenes activas durante el vuelo de campaña sin detener la entrega</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label blue">Nomenclaturas</div>
+            <div class="card-title">Estándares 2026</div>
+            <div class="card-body">CPM, Patrocinio y Línea de Pedido — convenciones formalizadas para TV Azteca</div>
+          </div>
+          <div class="card gold-accent">
+            <div class="card-label">Cotización</div>
+            <div class="card-title">Etapas Personalizadas</div>
+            <div class="card-body">Flujo Borrador → Autorización → Presentación → Aceptada/Denegada con diagrama</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label blue">Diseño Campaña</div>
+            <div class="card-title">Validaciones S4</div>
+            <div class="card-body">Campos adicionales en Quote, validaciones de fechas y budget, UI mejorada</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 1: DRO IN-FLIGHT AMENDMENTS ── -->
+    <section class="section" id="dro">
+      <div class="section-header">
+        <div class="section-num">§1</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">DRO · Dynamic Revenue Orchestrator</div>
+          <h2 class="section-title">In-Flight Amendments</h2>
+        </div>
+      </div>
+
+      <!-- 1.1 Qué son los In-Flight Amendments -->
+      <div class="subsection" id="dro-intro">
+        <div class="subsection-title">
+          <span class="sub-num">1.1</span>Qué son los In-Flight Amendments
+        </div>
+
+        <div class="notice info">
+          <span class="notice-icon">&#9881;</span>
+          <div class="notice-body">
+            <div class="notice-label">Definición</div>
+            <div class="notice-text">Los <strong>In-Flight Amendments</strong> permiten modificar órdenes activas DURANTE el vuelo de campaña sin detener la entrega.</div>
+          </div>
+        </div>
+
+        <div class="cards cards-2">
+          <div class="card gold-accent">
+            <div class="card-label">Antes de Sprint 4</div>
+            <div class="card-title">Solo pre-vuelo</div>
+            <div class="card-body">Las modificaciones a una orden requerían detener la entrega, cancelar el Line Item en GAM y re-aprovisionar. Interrupción inevitable en el delivery.</div>
+          </div>
+          <div class="card green-accent">
+            <div class="card-label green">Sprint 4 — Habilitado</div>
+            <div class="card-title">Cambios en tiempo real</div>
+            <div class="card-body">El DRO calcula el delta entre la configuración actual y la nueva, y envía únicamente la actualización parcial a GAM REST API sin interrumpir el delivery activo.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 DRO Amendment Flow -->
+      <div class="subsection" id="dro-amendment">
+        <div class="subsection-title">
+          <span class="sub-num">1.2</span>DRO Amendment Flow
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Ad Operations recibe solicitud de cambio en orden activa</div>
+              <div class="flow-step-desc">El equipo de Ad Ops recibe la solicitud de modificación del cliente o del equipo de ventas sobre una orden con entrega en curso.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Se accede a Order → Amendment button</div>
+              <div class="flow-step-desc">Desde el registro de Order en Salesforce, se utiliza el botón Amendment disponible en el layout de la orden activa.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">DRO Amendment Flow ejecutado</div>
+              <div class="flow-step-desc">El flujo de Salesforce Media Cloud para amendments es disparado automáticamente al confirmar la modificación.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">GAM actualiza Line Item sin interrumpir delivery</div>
+              <div class="flow-step-desc">Google Ad Manager aplica los cambios al Line Item existente en tiempo real, manteniendo la entrega activa durante todo el proceso.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.3 Settings habilitados en Sprint 4 -->
+      <div class="subsection" id="dro-settings">
+        <div class="subsection-title">
+          <span class="sub-num">1.3</span>Settings Habilitados en Sprint 4
+        </div>
+
+        <div class="toggle-list">
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">In-flight Amendments</div>
+              <div class="toggle-sub">Activado este sprint — modificaciones en órdenes activas sin interrumpir delivery</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">DRO Configuration Record</div>
+              <div class="toggle-sub">Actualizado con parámetros de amendment y cancelación</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">Linked Service Settings</div>
+              <div class="toggle-sub">Configurados para soporte de operaciones in-flight</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+          <div class="toggle-item">
+            <div>
+              <div class="toggle-name">Salesforce Flow Exchange</div>
+              <div class="toggle-sub">Flujos de amendment registrados y activos en la Org</div>
+            </div>
+            <span class="toggle-badge on">ON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.4 DRO In-flight Amendments — imagen -->
+      <div class="subsection" id="dro-inflight">
+        <div class="subsection-title">
+          <span class="sub-num">1.4</span>DRO — In-flight Amendments
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">Referencia visual del flujo de modificaciones en vuelo vía DRO — modificación de órdenes activas durante el vuelo de campaña.</p>
+        <div style="max-width:860px">
+          <img src="imgs/sf_dro_inflight.jpg" alt="DRO In-flight Amendments" style="width:100%;border-radius:8px;border:1px solid rgba(232,184,75,0.15);display:block;box-shadow:0 8px 40px rgba(0,0,0,0.4)">
+          <div style="font-size:10px;color:rgba(232,232,240,0.35);padding:7px 12px;background:var(--surface);border:1px solid rgba(232,184,75,0.15);border-top:none;border-radius:0 0 8px 8px;font-style:italic">DRO — In-flight Amendments: modificación de órdenes activas durante el vuelo de campaña</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 2: NOMENCLATURAS 2026 ── -->
+    <section class="section" id="nomenclaturas">
+      <div class="section-header">
+        <div class="section-num">§2</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Estándares de Nomenclatura</div>
+          <h2 class="section-title">Nomenclaturas 2026</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">Los estándares de nomenclatura 2026 formalizan las convenciones de nombres para órdenes, líneas de pedido y artefactos de Salesforce de TV Azteca Media. Estas convenciones garantizan trazabilidad y consistencia en todo el catálogo digital.</p>
+
+      <!-- 2.1 Estándar CPM -->
+      <div class="subsection" id="nom-cpm">
+        <div class="subsection-title">
+          <span class="sub-num">2.1</span>Estándar CPM
+        </div>
+
+        <div class="kv-list" style="margin-bottom: 18px;">
+          <div class="kv-row">
+            <div class="kv-key">Formato</div>
+            <div class="kv-val" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold);">AZ-[ANUNCIANTE]-[PRODUCTO]-[MES]/[CódigoInterno]-[NúmeroLínea]</div>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Ejemplo — Nomenclatura CPM</span>
+            <span class="code-lang">nomenclatura</span>
+          </div>
+          <div class="code-body"><span class="c-gold">AZ</span>-<span class="c-blue">TELCEL</span>-<span class="c-green">POSPAGO</span>-<span class="c-string">DICIEMBRE</span>/<span class="c-gold">N22024</span>-<span class="c-blue">69049</span>
+
+<span class="c-comment">┌─ AZ         → Prefijo TV Azteca</span>
+<span class="c-comment">├─ TELCEL     → Nombre del anunciante</span>
+<span class="c-comment">├─ POSPAGO    → Nombre del producto/campaña</span>
+<span class="c-comment">├─ DICIEMBRE  → Mes de la campaña</span>
+<span class="c-comment">├─ N22024     → Código interno de la orden</span>
+<span class="c-comment">└─ 69049      → Número de línea</span></div>
+        </div>
+      </div>
+
+      <!-- 2.2 Estándar Patrocinio -->
+      <div class="subsection" id="nom-pat">
+        <div class="subsection-title">
+          <span class="sub-num">2.2</span>Estándar Patrocinio
+        </div>
+
+        <div class="kv-list" style="margin-bottom: 18px;">
+          <div class="kv-row">
+            <div class="kv-key">Formato</div>
+            <div class="kv-val" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold);">AZ-[ANUNCIANTE]-PAT-[PROGRAMA]-[MES]</div>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Ejemplos — Nomenclatura Patrocinio</span>
+            <span class="code-lang">nomenclatura</span>
+          </div>
+          <div class="code-body"><span class="c-gold">AZ</span>-<span class="c-blue">TELCEL</span>-<span class="c-green">PAT</span>-<span class="c-string">MUNDIAL</span>-<span class="c-gold">DICIEMBRE</span>
+
+<span class="c-gold">AZ</span>-<span class="c-blue">TELCEL</span>-<span class="c-green">PAT</span>-<span class="c-string">EXATLÓN</span>-<span class="c-gold">DICIEMBRE</span>
+
+<span class="c-comment">┌─ AZ         → Prefijo TV Azteca</span>
+<span class="c-comment">├─ TELCEL     → Nombre del anunciante</span>
+<span class="c-comment">├─ PAT        → Indicador de Patrocinio</span>
+<span class="c-comment">├─ MUNDIAL    → Nombre del programa patrocinado</span>
+<span class="c-comment">└─ DICIEMBRE  → Mes del patrocinio</span></div>
+        </div>
+      </div>
+
+      <!-- 2.3 Línea de Pedido -->
+      <div class="subsection" id="nom-lp">
+        <div class="subsection-title">
+          <span class="sub-num">2.3</span>Línea de Pedido
+        </div>
+
+        <div class="kv-list" style="margin-bottom: 18px;">
+          <div class="kv-row">
+            <div class="kv-key">Estructura</div>
+            <div class="kv-val" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold);">[Plataforma] × [Tipo de Anuncio] × [Prioridad] × [Número de línea de orden]</div>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Ejemplo — Línea de Pedido</span>
+            <span class="code-lang">nomenclatura</span>
+          </div>
+          <div class="code-body"><span class="c-blue">TVAztecaUno</span>-<span class="c-green">PreRoll30s</span>-<span class="c-gold">Standard</span>-<span class="c-string">20241201</span>-<span class="c-blue">LP001</span>
+
+<span class="c-comment">┌─ TVAztecaUno  → Plataforma / Canal</span>
+<span class="c-comment">├─ PreRoll30s   → Tipo de anuncio y duración</span>
+<span class="c-comment">├─ Standard     → Prioridad de entrega</span>
+<span class="c-comment">├─ 20241201     → Fecha de inicio (YYYYMMDD)</span>
+<span class="c-comment">└─ LP001        → Número secuencial de línea de pedido</span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 3: ETAPAS DE COTIZACIÓN ── -->
+    <section class="section" id="etapas-cot">
+      <div class="section-header">
+        <div class="section-num">§3</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Quote Management · Venta Directa</div>
+          <h2 class="section-title">Etapas de Cotización — Venta Directa</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">Las etapas de cotización formalizan el ciclo de vida de una propuesta comercial, desde su creación hasta la aceptación o denegación por el cliente. TV Azteca adopta un subconjunto de los stages estándar de Salesforce con stages personalizados que reflejan el proceso interno.</p>
+
+      <!-- 3.1 Salesforce Standard Quote Stages -->
+      <div class="subsection" id="etapas-sf">
+        <div class="subsection-title">
+          <span class="sub-num">3.1</span>Salesforce Standard Quote Stages
+        </div>
+
+        <div class="sf-stages">
+          <div class="sf-stage-pill">Draft</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Needs Review</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">In Review</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Approved</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Rejected</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Presented</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Accepted</div>
+          <div class="sf-stage-pill"><span class="arrow">→</span></div>
+          <div class="sf-stage-pill">Denied</div>
+        </div>
+
+        <div class="notice info">
+          <span class="notice-icon">&#8505;</span>
+          <div class="notice-body">
+            <div class="notice-label">Contexto</div>
+            <div class="notice-text">Los stages estándar de Salesforce sirven como base. TV Azteca los mapea a un flujo personalizado que refleja las "canchas" internas del proceso de ventas: cancha de dirección (autorización interna) y cancha de cliente (presentación).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.2 TV Azteca Custom Stages -->
+      <div class="subsection" id="etapas-tva">
+        <div class="subsection-title">
+          <span class="sub-num">3.2</span>TV Azteca Custom Stages
+        </div>
+
+        <div class="quote-flow" style="align-items: flex-start; margin-bottom: 32px;">
+          <div class="qf-stage" style="flex-direction: column;">
+            <div class="qf-box draft">Borrador</div>
+            <div class="qf-label">Editable · Solo interno</div>
+          </div>
+          <div class="qf-arrow" style="margin-top: 10px;">&#8594;</div>
+          <div class="qf-stage" style="flex-direction: column;">
+            <div class="qf-box auth">En Autorización</div>
+            <div class="qf-label">Cancha dirección</div>
+          </div>
+          <div class="qf-arrow" style="margin-top: 10px;">&#8594;</div>
+          <div class="qf-stage" style="flex-direction: column;">
+            <div class="qf-box present">En Presentación</div>
+            <div class="qf-label">Cancha cliente</div>
+          </div>
+          <div class="qf-arrow" style="margin-top: 10px;">&#8594;</div>
+          <div class="qf-split">
+            <div class="qf-stage" style="flex-direction: column;">
+              <div class="qf-box accepted">Aceptada</div>
+              <div class="qf-label">Create Order</div>
+            </div>
+            <div class="qf-stage" style="flex-direction: column;">
+              <div class="qf-box denied">Denegada</div>
+              <div class="qf-label">Nueva versión</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cards cards-2">
+          <div class="card gold-accent">
+            <div class="card-label">Transición</div>
+            <div class="card-title">Borrador → En Autorización</div>
+            <div class="card-body">El Media Planner envía la propuesta a dirección. La cotización deja de ser editable libremente y entra al proceso de aprobación interna.</div>
+          </div>
+          <div class="card blue-accent">
+            <div class="card-label blue">Transición</div>
+            <div class="card-title">En Autorización → En Presentación</div>
+            <div class="card-body">El Director o Ad Sales Admin aprueba la propuesta internamente. La cotización pasa a cancha del cliente para su presentación formal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.3 Descripción de cada etapa -->
+      <div class="subsection" id="etapas-desc">
+        <div class="subsection-title">
+          <span class="sub-num">3.3</span>Descripción de Cada Etapa
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Etapa</th>
+              <th>Responsable</th>
+              <th>Descripción</th>
+              <th>Acción Disponible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Borrador</td>
+              <td class="normal-font"><span class="desc">Media Planner</span></td>
+              <td class="normal-font"><span class="desc">Propuesta en creación, editable libremente, visible solo internamente</span></td>
+              <td class="normal-font"><span class="desc">Editar, enviar a autorización</span></td>
+            </tr>
+            <tr>
+              <td>En Autorización</td>
+              <td class="normal-font"><span class="desc">Director / Ad Sales Admin</span></td>
+              <td class="normal-font"><span class="desc">Enviada a dirección para aprobación interna</span></td>
+              <td class="normal-font"><span class="desc">Aprobar → En Presentación, Rechazar → Borrador</span></td>
+            </tr>
+            <tr>
+              <td>En Presentación</td>
+              <td class="normal-font"><span class="desc">Ejecutivo de Ventas</span></td>
+              <td class="normal-font"><span class="desc">Aprobada internamente, enviada al cliente</span></td>
+              <td class="normal-font"><span class="desc">Marcar Aceptada o Denegada</span></td>
+            </tr>
+            <tr>
+              <td>Aceptada</td>
+              <td class="normal-font"><span class="desc">Media Planner</span></td>
+              <td class="normal-font"><span class="desc">Cliente confirma compra</span></td>
+              <td class="normal-font" style="color: var(--green);"><span class="desc">Create Order</span></td>
+            </tr>
+            <tr>
+              <td>Denegada</td>
+              <td class="normal-font"><span class="desc">Ejecutivo de Ventas</span></td>
+              <td class="normal-font"><span class="desc">Cliente rechaza la propuesta</span></td>
+              <td class="normal-font"><span class="desc">Crear nueva versión</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 4: DISEÑO DE CAMPAÑA ── -->
+    <section class="section" id="campana">
+      <div class="section-header">
+        <div class="section-num">§4</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Media Planning · Quote</div>
+          <h2 class="section-title">Diseño de Campaña — Actualizaciones Sprint 4</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">Sprint 4 incorpora campos adicionales en el Ad Quote Line, validaciones de datos mejoradas y refinamientos en la interfaz de Media Planning Grid para fortalecer el proceso de cotización.</p>
+
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 5: COMPLEMENTO DE SEGMENTACIONES ── -->
+    <section class="section" id="segmentaciones">
+      <div class="section-header">
+        <div class="section-num">§5</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Targeting · Audience Segmentation</div>
+          <h2 class="section-title">Complemento de Segmentaciones — Sprint 4</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">Sprint 4 expande el módulo de targeting con junction objects adicionales, nuevos criterios de segmentación por producto y la verificación del cascading mechanism para asegurar coherencia entre niveles de targeting.</p>
+
+      <div class="cards cards-2">
+        <div class="card blue-accent">
+          <div class="card-label blue">PR1066114-117</div>
+          <div class="card-title">Junction Objects Adicionales</div>
+          <div class="card-body">Nuevos junction objects para productos incorporados en Sprint 4. Habilitan el targeting granular por producto y tipo de comercialización.</div>
+        </div>
+        <div class="card blue-accent">
+          <div class="card-label blue">PR1066114-381</div>
+          <div class="card-title">Criterios de Segmentación Adicionales</div>
+          <div class="card-body">Nuevos criterios de segmentación habilitados en el módulo de targeting. Amplían las opciones disponibles para el Media Planner al configurar campañas.</div>
+        </div>
+        <div class="card gold-accent">
+          <div class="card-label">PR1066114-382</div>
+          <div class="card-title">Expanded Targeting por Producto</div>
+          <div class="card-body">Nuevos segmentos de audience habilitados por producto. Cada producto del catálogo tiene su propio conjunto de segmentos aplicables.</div>
+        </div>
+        <div class="card gold-accent">
+          <div class="card-label">Cascading Mechanism</div>
+          <div class="card-title">Verificación y Actualización</div>
+          <div class="card-body">Revisión del mecanismo de cascading para asegurar que los criterios de targeting apliquen correctamente en cascada desde el producto hasta el Line Item.</div>
+        </div>
+      </div>
+
+      <div class="notice info">
+        <span class="notice-icon">&#8505;</span>
+        <div class="notice-body">
+          <div class="notice-label">Contexto con Sprint 3</div>
+          <div class="notice-text">Los segmentos de Geo Targeting (32 estados) y Audience Segment base fueron configurados en Sprint 3. Sprint 4 complementa con segmentos adicionales vinculados a los productos del catálogo expandido, asegurando que cada producto tenga criterios de targeting apropiados para su comercialización.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 6: MODELO DE DATOS MEDIA PROPERTY ── -->
+    <section class="section" id="modelo">
+      <div class="section-header">
+        <div class="section-num">§6</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Arquitectura de Datos</div>
+          <h2 class="section-title">Modelo de Datos — Media Property</h2>
+        </div>
+      </div>
+
+      <p class="section-lead">El modelo de datos de Media Property define los objetos que representan los canales editoriales y espacios publicitarios de TV Azteca. La correcta configuración de este modelo es prerequisito para el aprovisionamiento en GAM.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Objeto</th>
+            <th>Descripción</th>
+            <th>Nota Crítica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Media Channel</td>
+            <td class="normal-font"><span class="desc">Propiedad editorial donde se publican anuncios</span></td>
+            <td class="normal-font"><span class="desc">Ejemplos: TV Azteca Uno, ADN40, A+, Canal 13</span></td>
+          </tr>
+          <tr>
+            <td>Ad Space Specification</td>
+            <td class="normal-font"><span class="desc">Canal × Ubicación × Dispositivo — define el espacio publicitario específico</span></td>
+            <td class="normal-font" style="color: var(--red);"><strong>CRÍTICO: AdServerId obligatorio</strong></td>
+          </tr>
+          <tr>
+            <td>Ad Creative Size Type</td>
+            <td class="normal-font"><span class="desc">Formatos aceptados para el espacio publicitario</span></td>
+            <td class="normal-font"><span class="desc">300×250, 728×90, Pre-roll 15s/30s, Skin</span></td>
+          </tr>
+          <tr>
+            <td>Ad Space Spec Product</td>
+            <td class="normal-font"><span class="desc">PUENTE CRÍTICO: vincula AdSpaceSpecification con Product2</span></td>
+            <td class="normal-font" style="color: var(--red);"><strong>Sin él el producto no aparece en Ad Placement</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="notice critical">
+        <span class="notice-icon">&#128683;</span>
+        <div class="notice-body">
+          <div class="notice-label">Prerequisito de Aprovisionamiento — Ad Space Spec Product</div>
+          <div class="notice-text">El objeto <strong>Ad Space Spec Product</strong> es el puente crítico entre el catálogo de productos (Product2) y los espacios publicitarios (AdSpaceSpecification). Sin este vínculo, el producto no aparece en el componente de Ad Placement al configurar el Line Item, lo que impide el aprovisionamiento en GAM. Debe verificarse para todos los productos del catálogo antes de activar una Order.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 7 — Demo ── -->
+    <section class="section" id="sec-video-s4">
+      <div class="section-header">
+        <div class="section-eyebrow-row"><span>§ 7</span> Demo</div>
+        <h2 class="section-title">Demo — Sprint 4</h2>
+      </div>
+      <p style="font-size:13px;color:#8888a8;margin-bottom:16px;">Recorrido en pantalla de las configuraciones del Sprint 4: In-Flight Amendments, Nomenclaturas 2026 y Cotización.</p>
+
+      <div style="background:#0f0f1a;border:1px solid rgba(232,184,75,0.18);border-radius:12px;overflow:hidden;margin-top:8px;">
+        <video
+          controls
+          preload="metadata"
+          style="display:block;width:100%;max-height:540px;background:#000;"
+        >
+          <source src="Clips Video/SP4.mp4" type="video/mp4">
+        </video>
+        <div style="padding:12px 20px;border-top:1px solid rgba(232,184,75,0.08);font-size:11.5px;color:#6868a0;font-style:italic;">
+          Sprint 4 — In-Flight Amendments · Nomenclaturas 2026 · Cotización · Salesforce Media Cloud on Core · TV Azteca
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── SECTION 8: USER STORIES ── -->
+    <section class="section" id="stories">
+      <div class="section-header">
+        <div class="section-num">§8</div>
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">Jira · Sprint 4</div>
+          <h2 class="section-title">User Stories</h2>
+        </div>
+      </div>
+
+      <div class="us-grid">
+        <div class="us-card">
+          <div class="us-id">PR1066114-370</div>
+          <div class="us-title">Nomenclaturas 2026 — estándar CPM</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-371</div>
+          <div class="us-title">Nomenclaturas 2026 — estándar Patrocinio</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-380</div>
+          <div class="us-title">Nomenclaturas 2026 — Línea de Pedido</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-375</div>
+          <div class="us-title">Etapas de Cotización — Venta Directa</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-376</div>
+          <div class="us-title">Etapas de Cotización — estados adicionales</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-377</div>
+          <div class="us-title">Diseño Campaña — refinamiento S4</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-378</div>
+          <div class="us-title">Diseño Campaña — validaciones adicionales</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-379</div>
+          <div class="us-title">Diseño Campaña — campos adicionales en Quote</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-381</div>
+          <div class="us-title">Complemento Segmentaciones — criterios adicionales</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-382</div>
+          <div class="us-title">Complemento Segmentaciones — nuevos segmentos por producto</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-383</div>
+          <div class="us-title">PCM — actualización general S4</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-433</div>
+          <div class="us-title">Configuraciones Generales adicionales</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-117</div>
+          <div class="us-title">Complemento Segmentaciones — junction objects adicionales</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-387</div>
+          <div class="us-title">In-Flight DRO — orquestación de cambios en GAM</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-385</div>
+          <div class="us-title">In-Flight DRO — Amendment Flow</div>
+        </div>
+        <div class="us-card">
+          <div class="us-id">PR1066114-386</div>
+          <div class="us-title">In-Flight DRO — cambios durante vuelo activo</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── JS: Sidebar active highlight on scroll ── -->
+<script>
+(function() {
+  const links = document.querySelectorAll('.sb-link');
+  const sections = Array.from(document.querySelectorAll('section[id], div[id="resumen"]'));
+
+  function getActive() {
+    const scrollY = window.scrollY + 80;
+    let current = null;
+    for (const sec of sections) {
+      if (sec.offsetTop <= scrollY) current = sec.id;
+    }
+    return current;
+  }
+
+  function updateActive() {
+    const active = getActive();
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href === '#' + active) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover=document.getElementById('sprint-cover');
+  var dismissed=false;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend',function(){cover.style.display='none';},{once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click',function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){var t=document.getElementById('resumen');if(t)t.scrollIntoView({behavior:'smooth'});},300);
+  });
+  window.addEventListener('scroll',function(){if(window.scrollY>80)dismiss();},{passive:true,once:true});
+})();
+</script>
+</body>
+</html>

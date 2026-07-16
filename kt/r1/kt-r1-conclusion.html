@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT R1 · Conclusión — Cierre Release 1 y KT R2 en Curso</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#112240;
+  color:#d4d4e0;
+  min-height:100vh;
+  display:flex;
+}
+
+/* ─── SIDEBAR ── */
+#sidebar{
+  position:fixed;top:0;left:0;width:260px;height:100vh;
+  background:linear-gradient(180deg,#001a4a 0%,#002060 35%,#0a0a1a 100%);
+  border-right:1px solid rgba(0,80,200,0.35);
+  display:flex;flex-direction:column;z-index:100;overflow:hidden;
+}
+.sb-logo{padding:20px 18px 14px;border-bottom:1px solid #1e1e2e;flex-shrink:0}
+.sb-logo img{width:130px;display:block;filter:brightness(1.1)}
+.sb-sprint-label{margin-top:10px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+.sb-nav{flex:1;overflow-y:auto;padding:14px 0 10px}
+.sb-nav::-webkit-scrollbar{width:4px}
+.sb-nav::-webkit-scrollbar-thumb{background:#2a2a3e;border-radius:2px}
+.sb-section-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4f5070;padding:10px 18px 4px}
+.sb-nav a{display:block;padding:7px 18px;font-size:12px;color:#8888a8;text-decoration:none;border-left:2px solid transparent;transition:all .15s;line-height:1.3}
+.sb-nav a:hover{color:#d4d4e0;background:rgba(232,184,75,.05);border-left-color:rgba(232,184,75,.4)}
+.sb-nav a.active{color:#e8b84b;background:rgba(232,184,75,.08);border-left-color:#e8b84b;font-weight:600}
+.sb-nav a.sub{padding-left:30px;font-size:11px}
+.sb-footer{border-top:1px solid #1e1e2e;padding:14px 18px;flex-shrink:0;display:flex;gap:8px;flex-direction:column}
+.sb-nav-btn{display:block;padding:9px 14px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;transition:all .2s ease;letter-spacing:.4px}
+.sb-nav-btn.back{background:rgba(79,142,247,.18);color:#7eb8ff;border:1px solid rgba(79,142,247,.45);box-shadow:0 2px 8px rgba(79,142,247,.12)}
+.sb-nav-btn.back:hover{background:rgba(79,142,247,.32);color:#a8d0ff;border-color:rgba(79,142,247,.7);box-shadow:0 4px 16px rgba(79,142,247,.22);transform:translateY(-1px)}
+
+/* ─── MAIN ── */
+#main{margin-left:260px;flex:1;padding:0 48px 80px;max-width:calc(100% - 260px)}
+
+/* ─── HEADER ── */
+.page-header{padding:52px 0 40px;border-bottom:1px solid #1e1e2e;margin-bottom:52px;position:relative}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#4f8ef7;margin-bottom:14px}
+.page-title{font-size:34px;font-weight:700;color:#ffffff;line-height:1.15;margin-bottom:8px}
+.page-title span{color:#e8b84b}
+.page-subtitle{font-size:15px;color:#6868a0;margin-bottom:24px;font-weight:400}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.meta-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(232,184,75,.1);color:#e8b84b;border:1px solid rgba(232,184,75,.2)}
+.meta-pill.blue{background:rgba(79,142,247,.1);color:#4f8ef7;border-color:rgba(79,142,247,.2)}
+.meta-pill.green{background:rgba(80,180,100,.12);color:#50b464;border-color:rgba(80,180,100,.25)}
+
+/* ─── SECTION ── */
+.section{margin-bottom:64px}
+.section-header{display:flex;align-items:baseline;gap:14px;border-left:4px solid #e8b84b;padding-left:16px;margin-bottom:28px}
+.section-num{font-size:13px;font-weight:700;color:#e8b84b;letter-spacing:1px}
+.section-title{font-size:22px;font-weight:700;color:#ffffff;line-height:1.2}
+.subsection{margin-bottom:36px}
+.subsection-title{font-size:15px;font-weight:600;color:#c0c0d8;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #1e1e2e}
+
+/* ─── CHECKLIST ── */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.checklist li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:#c0c0d8;line-height:1.5}
+.ck{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(80,180,100,.12);border:1px solid rgba(80,180,100,.3);color:#50b464;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.checklist li strong{color:#ffffff}
+.checklist li .sprint-tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:1px 6px;border-radius:3px;background:rgba(232,184,75,.1);color:#e8b84b;border:1px solid rgba(232,184,75,.18);margin-left:6px;vertical-align:middle}
+
+/* ─── SPRINT SUMMARY CARDS ── */
+.sprint-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.sprint-card{background:#0f0f1a;border:1px solid #2a2a3e;border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;position:relative;overflow:hidden}
+.sprint-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#e8b84b}
+.sprint-card-num{font-size:28px;font-weight:900;color:rgba(232,184,75,.18);line-height:1;letter-spacing:-2px;user-select:none}
+.sprint-card-body{}
+.sprint-card-title{font-size:13px;font-weight:700;color:#ffffff;margin-bottom:4px}
+.sprint-card-desc{font-size:12px;color:#6868a0;line-height:1.6}
+.sprint-card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.sprint-card-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px;background:#131323;color:#5a5a7a;border:1px solid #2a2a3e}
+
+/* ─── R2 STATUS BANNER ── */
+.r2-banner{
+  border-radius:12px;
+  background:linear-gradient(135deg,rgba(79,142,247,.08) 0%,rgba(0,26,74,.5) 100%);
+  border:1px solid rgba(79,142,247,.25);
+  padding:32px 36px;
+  margin-bottom:32px;
+  position:relative;
+  overflow:hidden;
+}
+.r2-banner::before{
+  content:'R2';
+  position:absolute;
+  right:24px;top:-16px;
+  font-size:120px;font-weight:900;
+  color:rgba(79,142,247,0.05);
+  line-height:1;letter-spacing:-4px;
+  user-select:none;pointer-events:none;
+}
+.r2-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;border-radius:20px;
+  font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  background:rgba(79,142,247,.15);color:#4f8ef7;border:1px solid rgba(79,142,247,.35);
+  margin-bottom:16px;
+}
+.r2-badge .dot{width:6px;height:6px;border-radius:50%;background:#4f8ef7;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.r2-banner h3{font-size:20px;font-weight:700;color:#ffffff;margin-bottom:8px}
+.r2-banner h3 span{color:#4f8ef7}
+.r2-banner p{font-size:13px;color:#5a6a90;line-height:1.7;margin-bottom:24px}
+.r2-sprint-status{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;max-width:480px}
+.r2-spr{
+  background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;
+  padding:10px 12px;text-align:center;
+}
+.r2-spr.active{
+  background:rgba(79,142,247,.08);
+  border-color:rgba(79,142,247,.3);
+}
+.r2-spr-num{font-size:18px;font-weight:900;color:rgba(255,255,255,.12);margin-bottom:4px}
+.r2-spr.active .r2-spr-num{color:#4f8ef7}
+.r2-spr-label{font-size:9.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#3a3a5a}
+.r2-spr.active .r2-spr-label{color:#4f8ef7;opacity:.8}
+.r2-spr-status{margin-top:6px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#3a3a5a}
+.r2-spr.active .r2-spr-status{color:#50b464}
+
+/* ─── R2 ROADMAP ── */
+.r2-roadmap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.r2-item{background:#0f0f1a;border:1px solid #1e1e2e;border-radius:10px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.r2-item-icon{flex-shrink:0;width:32px;height:32px;border-radius:7px;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);display:flex;align-items:center;justify-content:center;font-size:15px}
+.r2-item-body{}
+.r2-item-title{font-size:12.5px;font-weight:700;color:#c0c0d8;margin-bottom:3px}
+.r2-item-desc{font-size:11.5px;color:#4a5a7a;line-height:1.5}
+
+/* ─── INFO BOXES ── */
+.info-box{border-radius:8px;padding:14px 18px;margin-bottom:16px;border-left:4px solid;font-size:13px;line-height:1.6}
+.info-box.success{background:rgba(80,180,100,.08);border-color:#50b464;color:#90d890}
+.info-box.tip{background:rgba(79,142,247,.08);border-color:#4f8ef7;color:#90b8f8}
+.info-box strong{display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+
+/* ─── UTILS ── */
+p{font-size:13.5px;color:#9090b8;line-height:1.7;margin-bottom:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+[id]{scroll-margin-top:24px}
+
+/* ── SPRINT COVER OVERLAY ── */
+#sprint-cover{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#001020 0%,#001a4a 30%,#002060 60%,#0a0a1a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:transform .65s cubic-bezier(0.4,0,0.2,1)}
+#sprint-cover.dismissed{transform:translateY(-100%)}
+#sprint-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 60px,rgba(232,184,75,0.018) 60px,rgba(232,184,75,0.018) 61px);pointer-events:none}
+#sprint-cover::after{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);pointer-events:none}
+.sc-glow{position:absolute;bottom:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,184,75,0.06) 0%,transparent 70%);pointer-events:none}
+.sc-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(232,184,75,0) 0%,#e8b84b 30%,rgba(232,184,75,0.4) 70%,transparent 100%)}
+.sc-bg-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:280px;font-weight:900;color:rgba(232,184,75,0.028);line-height:1;letter-spacing:-10px;user-select:none;pointer-events:none;white-space:nowrap}
+.sc-inner{position:relative;z-index:2;max-width:760px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 32px}
+.sc-eyebrow{font-size:10px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#4f8ef7;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sc-eyebrow::before,.sc-eyebrow::after{content:'';display:inline-block;width:32px;height:1px}
+.sc-eyebrow::before{background:linear-gradient(90deg,transparent,#4f8ef7)}
+.sc-eyebrow::after{background:linear-gradient(90deg,#4f8ef7,transparent)}
+.sc-title{font-size:52px;font-weight:900;color:#ffffff;line-height:1.08;margin-bottom:10px;letter-spacing:-1.5px}
+.sc-title span{color:#e8b84b}
+.sc-subtitle{font-size:15px;color:#4a5a7a;margin-bottom:36px;font-weight:400;letter-spacing:.2px}
+.sc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.sc-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.sc-pill.gold{background:rgba(232,184,75,.12);color:#e8b84b;border:1px solid rgba(232,184,75,.28)}
+.sc-pill.blue{background:rgba(79,142,247,.1);color:#6aa0f8;border:1px solid rgba(79,142,247,.22)}
+.sc-pill.green{background:rgba(80,180,100,.12);color:#50b464;border:1px solid rgba(80,180,100,.28)}
+.sc-divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,184,75,.35),transparent);margin-bottom:32px}
+.sc-meta{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center;margin-bottom:52px}
+.sc-meta-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-meta-item .val{font-size:14px;font-weight:700;color:#c0c0d8}
+.sc-meta-item .lbl{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a5a}
+.sc-meta-sep{width:1px;height:36px;background:#1e1e2e}
+.sc-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e8b84b;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.35);cursor:pointer;transition:all .22s ease;text-decoration:none;box-shadow:0 4px 20px rgba(232,184,75,.08)}
+.sc-cta:hover{background:rgba(232,184,75,.2);border-color:rgba(232,184,75,.65);box-shadow:0 6px 28px rgba(232,184,75,.18);transform:translateY(-2px);color:#ffd764}
+.sc-cta svg{transition:transform .22s ease}
+.sc-cta:hover svg{transform:translateY(3px)}
+.sc-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.35;animation:sc-bounce 2.2s ease-in-out infinite}
+.sc-scroll-hint span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8b84b}
+@keyframes sc-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+</style>
+</head>
+<body>
+
+<!-- ══ SPRINT COVER ══ -->
+<div id="sprint-cover">
+  <div class="sc-top-bar"></div>
+  <div class="sc-bg-num">R1</div>
+  <div class="sc-glow"></div>
+  <div class="sc-inner">
+    <div class="sc-eyebrow">Salesforce Media Cloud &nbsp;·&nbsp; TV Azteca &nbsp;·&nbsp; KT R1</div>
+    <h1 class="sc-title">Conclusión<br><span>Release 1</span></h1>
+    <p class="sc-subtitle">Cierre del Knowledge Transfer R1 — 5 sprints, 14 módulos entregados</p>
+    <div class="sc-pills">
+      <span class="sc-pill gold">R1 Completado</span>
+      <span class="sc-pill green">KT R2 en curso</span>
+      <span class="sc-pill blue">Sprint 2 activo</span>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-meta">
+      <div class="sc-meta-item"><span class="val">5 Sprints</span><span class="lbl">Release 1</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">45+ User Stories</span><span class="lbl">Entregadas</span></div>
+      <div class="sc-meta-sep"></div>
+      <div class="sc-meta-item"><span class="val">R2 · Sprint 2</span><span class="lbl">En progreso</span></div>
+    </div>
+    <a href="#resumen" class="sc-cta" id="sc-cta-btn">
+      Ver conclusión
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="#e8b84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="sc-scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="#e8b84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- ═══ SIDEBAR ══ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <img src="imgs/logo_tvazteca.png" alt="TV Azteca">
+    <div class="sb-sprint-label">KT R1 &middot; Conclusión</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section-label">Navegación</div>
+    <a href="#resumen">Resumen</a>
+    <div class="sb-section-label">Secciones</div>
+    <a href="#sec1">&sect; 1. Entregables R1</a>
+    <a href="#sec2">&sect; 2. Resumen por Sprint</a>
+    <a href="#sec3">&sect; 3. KT R2 en Curso</a>
+  </div>
+  <div class="sb-footer">
+    <a href="kt-r1-index.html" class="sb-nav-btn back">← Índice R1</a>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ══ -->
+<main id="main">
+
+  <div id="resumen" class="page-header">
+    <div class="eyebrow">Salesforce Media Cloud · TV Azteca · KT R1</div>
+    <h1 class="page-title">Conclusión — <span>Cierre Release 1</span></h1>
+    <p class="page-subtitle">Knowledge Transfer completado · 5 sprints · Plataforma operativa</p>
+    <div class="header-meta">
+      <span class="meta-pill">R1 Completado</span>
+      <span class="meta-pill green">KT R2 en curso · Sprint 2 activo</span>
+      <span class="meta-pill blue">TV Azteca · Squad Media</span>
+    </div>
+    <div class="info-box success">
+      <strong>Release 1 cerrado</strong>
+      El Knowledge Transfer del Release 1 ha concluido exitosamente. La plataforma Salesforce Media Cloud on Core está operativa para TV Azteca con el ciclo completo de cotización, planificación y aprovisionamiento publicitario activo.
+    </div>
+  </div>
+
+  <!-- ═══ §1 — ENTREGABLES ══ -->
+  <section id="sec1" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 1</span>
+      <h2 class="section-title">Entregables del Release 1</h2>
+    </div>
+    <p>El Release 1 consolidó la habilitación completa de la plataforma, desde la arquitectura base hasta el ciclo de vida de la orden. Todos los siguientes módulos fueron implementados, documentados y validados.</p>
+
+    <ul class="checklist">
+      <li><span class="ck">✓</span><div><strong>Media Cloud Configuration habilitado</strong> — botón "Create Media Plan" activo en Opportunity<span class="sprint-tag">S1</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Revenue Cloud completo</strong> — 5 pasos en orden estricto: Enable Revenue Cloud, Salesforce Pricing, Instant Pricing, Configure at Runtime, BRE<span class="sprint-tag">S1</span></div></li>
+      <li><span class="ck">✓</span><div><strong>9 Permission Sets TVAM_*</strong> — creados y refinados con granularidad por rol funcional y técnico<span class="sprint-tag">S1</span><span class="sprint-tag">S5</span></div></li>
+      <li><span class="ck">✓</span><div><strong>PCM — Catálogo Digital TV Azteca</strong> — 12 productos en 3 capas: PCM Comercial, Ad Specification y Targeting<span class="sprint-tag">S1</span><span class="sprint-tag">S3</span></div></li>
+      <li><span class="ck">✓</span><div><strong>9 Media Channels configurados</strong> — TV Azteca Uno, ADN40, a+más, Azteca 7, Azteca Noticias y canales digitales<span class="sprint-tag">S2</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Line Item Configuration completa</strong> — 3 pestañas: Line Item (precio/fechas), Delivery (frecuencia/días) y Targeting (segmentación)<span class="sprint-tag">S2</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Audience Targeting operativo</strong> — Geografía 32 estados, Canales GAM, Segmentos Demográficos con cascading<span class="sprint-tag">S2</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Context Service + Context Definitions</strong> — TVAM_MediaPlanTransactionCtx vinculado a Pricing Procedure<span class="sprint-tag">S3</span></div></li>
+      <li><span class="ck">✓</span><div><strong>DRO Setup</strong> — Dynamic Revenue Orchestrator con flujos de fulfillment y amendment<span class="sprint-tag">S3</span></div></li>
+      <li><span class="ck">✓</span><div><strong>GAM Integration end-to-end</strong> — primer aprovisionamiento real a Google Ad Manager vía REST API OAuth 2.0<span class="sprint-tag">S3</span></div></li>
+      <li><span class="ck">✓</span><div><strong>In-Flight Amendments habilitados</strong> — modificación de órdenes activas durante el vuelo sin detener la entrega<span class="sprint-tag">S4</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Nomenclaturas 2026 formalizadas</strong> — convenciones para CPM, Patrocinio y Línea de Pedido<span class="sprint-tag">S4</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Etapas de Cotización — Venta Directa</strong> — Borrador → En Autorización → En Presentación → Aceptada / Denegada<span class="sprint-tag">S4</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Price Waterfall con BRE activo</strong> — descuentos automáticos por Ad Creative Size Type y Ad Space Spec<span class="sprint-tag">S5</span></div></li>
+      <li><span class="ck">✓</span><div><strong>Etapas de la Order — ciclo de vida completo</strong> — 5 estados con rutas incluyendo el Amendment<span class="sprint-tag">S5</span></div></li>
+    </ul>
+  </section>
+
+  <!-- ═══ §2 — RESUMEN POR SPRINT ══ -->
+  <section id="sec2" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 2</span>
+      <h2 class="section-title">Resumen por Sprint</h2>
+    </div>
+
+    <div class="sprint-cards">
+      <div class="sprint-card">
+        <div class="sprint-card-num">01</div>
+        <div class="sprint-card-body">
+          <div class="sprint-card-title">Arquitecturas Generales, PCM y Flujo Media Plan</div>
+          <div class="sprint-card-desc">Habilitación inicial de la plataforma: Revenue Cloud, Media Cloud Configuration, Permission Sets, catálogo base y primer flujo Quote to Order.</div>
+          <div class="sprint-card-tags">
+            <span class="sprint-card-tag">PCM inicial</span>
+            <span class="sprint-card-tag">Revenue Settings</span>
+            <span class="sprint-card-tag">Pricing Procedure</span>
+            <span class="sprint-card-tag">5 User Stories</span>
+          </div>
+        </div>
+      </div>
+      <div class="sprint-card">
+        <div class="sprint-card-num">02</div>
+        <div class="sprint-card-body">
+          <div class="sprint-card-title">PCM Extendido, Diseño de Campaña y Segmentación</div>
+          <div class="sprint-card-desc">Configuración de los 9 canales de TV Azteca, Line Item Configuration completa con sus 3 pestañas y targeting geográfico y demográfico.</div>
+          <div class="sprint-card-tags">
+            <span class="sprint-card-tag">9 Media Channels</span>
+            <span class="sprint-card-tag">Line Item Config</span>
+            <span class="sprint-card-tag">Targeting</span>
+            <span class="sprint-card-tag">10 User Stories</span>
+          </div>
+        </div>
+      </div>
+      <div class="sprint-card">
+        <div class="sprint-card-num">03</div>
+        <div class="sprint-card-body">
+          <div class="sprint-card-title">PCM 12 Productos, DRO Setup y Aprovisionamiento Ad Server</div>
+          <div class="sprint-card-desc">Catálogo expandido a 12 productos digitales, Context Service habilitado y primera integración end-to-end activa con Google Ad Manager.</div>
+          <div class="sprint-card-tags">
+            <span class="sprint-card-tag">12 Productos</span>
+            <span class="sprint-card-tag">DRO</span>
+            <span class="sprint-card-tag">GAM Integration</span>
+            <span class="sprint-card-tag">9 User Stories</span>
+          </div>
+        </div>
+      </div>
+      <div class="sprint-card">
+        <div class="sprint-card-num">04</div>
+        <div class="sprint-card-body">
+          <div class="sprint-card-title">In-Flight Amendments, Nomenclaturas 2026 y Etapas de Cotización</div>
+          <div class="sprint-card-desc">Modificaciones de órdenes en vuelo, estándares de nomenclatura formalizados y etapas de cotización alineadas al proceso de Venta Directa de TV Azteca.</div>
+          <div class="sprint-card-tags">
+            <span class="sprint-card-tag">In-Flight</span>
+            <span class="sprint-card-tag">Nomenclaturas</span>
+            <span class="sprint-card-tag">Quote Stages</span>
+            <span class="sprint-card-tag">16 User Stories</span>
+          </div>
+        </div>
+      </div>
+      <div class="sprint-card">
+        <div class="sprint-card-num">05</div>
+        <div class="sprint-card-body">
+          <div class="sprint-card-title">Lógica de Precios, Refinamiento de Permisos y Etapas de la Order</div>
+          <div class="sprint-card-desc">Price Waterfall dinámico con BRE, Permission Set Groups granulares por rol y ciclo de vida completo de la Order — cierre del Release 1.</div>
+          <div class="sprint-card-tags">
+            <span class="sprint-card-tag">Price Waterfall BRE</span>
+            <span class="sprint-card-tag">PSG granulares</span>
+            <span class="sprint-card-tag">Order Lifecycle</span>
+            <span class="sprint-card-tag">5 User Stories</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ §3 — KT R2 EN CURSO ══ -->
+  <section id="sec3" class="section">
+    <div class="section-header">
+      <span class="section-num">§ 3</span>
+      <h2 class="section-title">KT R2 — En Curso</h2>
+    </div>
+
+    <div class="r2-banner">
+      <div class="r2-badge">
+        <span class="dot"></span>
+        Knowledge Transfer R2 — Activo
+      </div>
+      <h3>Release 2 <span>en desarrollo activo</span></h3>
+      <p>El equipo de implementación ya trabaja en el Release 2. El Knowledge Transfer avanza en paralelo al desarrollo, documentando cada módulo conforme se implementa y valida en la Org de TV Azteca.</p>
+
+      <div class="r2-sprint-status">
+        <div class="r2-spr active">
+          <div class="r2-spr-num">06</div>
+          <div class="r2-spr-label">Sprint 6</div>
+          <div class="r2-spr-status">En progreso</div>
+        </div>
+        <div class="r2-spr">
+          <div class="r2-spr-num">07</div>
+          <div class="r2-spr-label">Sprint 7</div>
+          <div class="r2-spr-status">Pendiente</div>
+        </div>
+        <div class="r2-spr">
+          <div class="r2-spr-num">08</div>
+          <div class="r2-spr-label">Sprint 8</div>
+          <div class="r2-spr-status">Pendiente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box tip">
+      <strong>Continuidad del KT</strong>
+      Los documentos del KT R2 se publicarán en la misma estructura de sprints conforme avance el release. El acceso estará disponible desde el índice general en cuanto cada sprint sea validado por el equipo.
+    </div>
+  </section>
+
+
+</main>
+
+<!-- ══ JS — Sprint Cover ══ -->
+<script>
+(function(){
+  var cover=document.getElementById('sprint-cover');
+  var dismissed=false;
+  function dismiss(){
+    if(dismissed)return;
+    dismissed=true;
+    cover.classList.add('dismissed');
+    cover.addEventListener('transitionend',function(){cover.style.display='none';},{once:true});
+  }
+  document.getElementById('sc-cta-btn').addEventListener('click',function(e){
+    e.preventDefault();
+    dismiss();
+    setTimeout(function(){var t=document.getElementById('resumen');if(t)t.scrollIntoView({behavior:'smooth'});},300);
+  });
+  window.addEventListener('scroll',function(){if(window.scrollY>80)dismiss();},{passive:true,once:true});
+})();
+</script>
+
+<!-- ══ JS — Active Nav ══ -->
+<script>
+(function(){
+  var links=document.querySelectorAll('#sidebar .sb-nav a[href^="#"]');
+  var sections=[];
+  links.forEach(function(link){
+    var id=link.getAttribute('href').slice(1);
+    var el=document.getElementById(id);
+    if(el)sections.push({id:id,el:el,link:link});
+  });
+  function onScroll(){
+    var scrollY=window.scrollY||document.documentElement.scrollTop;
+    var active=null;
+    for(var i=0;i<sections.length;i++){
+      var top=sections[i].el.getBoundingClientRect().top+scrollY;
+      if(top<=scrollY+window.innerHeight*0.3)active=sections[i];
+    }
+    links.forEach(function(l){l.classList.remove('active');});
+    if(active)active.link.classList.add('active');
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>

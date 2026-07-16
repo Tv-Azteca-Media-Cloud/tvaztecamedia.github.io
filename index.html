@@ -477,6 +477,13 @@
         </a>
       </li>
       <li class="nav-sep"></li>
+      <li class="nav-grp">KNOWLEDGE TRANSFER</li>
+      <li>
+        <a onclick="filterCategory('knowledge-transfer',this)" id="nav-knowledge-transfer">
+          <span class="nav-ico">🎓</span>Media Cloud
+        </a>
+      </li>
+      <li class="nav-sep"></li>
       <li>
         <a href="adrs/index.html">
           <span class="nav-ico">📐</span>ADR Library
@@ -508,11 +515,11 @@
       <!-- KPIs -->
       <div class="kpi-strip">
         <div class="kpi">
-          <div class="kpi-v" id="kpi-total">10</div>
+          <div class="kpi-v" id="kpi-total">11</div>
           <div class="kpi-l">Presentaciones totales</div>
         </div>
         <div class="kpi">
-          <div class="kpi-v">4</div>
+          <div class="kpi-v">5</div>
           <div class="kpi-l">Categorías activas</div>
         </div>
         <div class="kpi">
@@ -538,6 +545,7 @@
         <button class="f-tab" onclick="filterCategory('seguridad-salesforce',this)">Seguridad Salesforce</button>
         <button class="f-tab" onclick="filterCategory('gobierno-tecnico',this)">Gobierno Técnico</button>
         <button class="f-tab" onclick="filterCategory('discovery-entregables',this)">Discovery &amp; Entregables</button>
+        <button class="f-tab" onclick="filterCategory('knowledge-transfer',this)">Knowledge Transfer</button>
       </div>
 
       <!-- Cards -->
@@ -732,6 +740,26 @@
             <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </a>
+
+      <a href="kt/r1/kt-r1-index.html"
+         class="pres-card"
+         data-category="knowledge-transfer">
+        <div class="card-banner" style="background:linear-gradient(135deg,#0050c8 0%,#0070d2 55%,#1589ee 100%)">
+          <div class="card-banner-top">
+            <span class="card-tag">Knowledge Transfer</span>
+          </div>
+          <div class="card-date">Jul 2026</div>
+          <div class="card-title">KT R1 — Media Cloud · TV Azteca</div>
+        </div>
+        <div class="card-desc-wrap">
+          <div class="card-desc">Knowledge Transfer completo del Release 1. Sprints 1–5, arquitectura Media Cloud, configuraciones, demos y conclusiones del proyecto TV Azteca × Salesforce.</div>
+          <div class="content-hit" id="hit-kt-r1"></div>
+          <div class="card-footer">
+            Ver KT
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
 
       </div>
 
