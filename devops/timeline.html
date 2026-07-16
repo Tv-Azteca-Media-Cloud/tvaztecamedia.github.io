@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps · Timeline R1 — TV Azteca Media</title>
+<style>
+  :root {
+    --navy: #0a0e1a;
+    --navy2: #0f1525;
+    --blue: #1a2340;
+    --teal: #00c9b1;
+    --teal2: #00e5cc;
+    --gold: #e8b84b;
+    --text: #e0e0ec;
+    --text2: rgba(224,224,236,0.55);
+    --border: rgba(255,255,255,0.07);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 48px 40px 80px;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+  .page-header .eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 10px;
+  }
+  .page-header h1 {
+    font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px;
+  }
+  .page-header p {
+    font-size: 13px; color: var(--text2); max-width: 600px; line-height: 1.6;
+  }
+  .page-header .badge {
+    display: inline-block; margin-top: 12px;
+    background: rgba(0,201,177,0.1); border: 1px solid rgba(0,201,177,0.25);
+    color: var(--teal); font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+  }
+
+  /* ── PHASE CARD ── */
+  .phase { margin-bottom: 12px; border-radius: 12px; overflow: hidden; }
+
+  .phase-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px; cursor: pointer;
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: background .15s, border-color .15s;
+    user-select: none;
+  }
+  .phase-header:hover { background: var(--blue); border-color: rgba(255,255,255,0.12); }
+  .phase-header.open { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+
+  .phase-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .phase-title { flex: 1; }
+  .phase-title strong { display: block; font-size: 13px; font-weight: 700; color: #fff; }
+  .phase-title span { font-size: 11px; color: var(--text2); }
+  .phase-dates {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; flex-shrink: 0;
+  }
+  .phase-chevron {
+    width: 18px; height: 18px; flex-shrink: 0;
+    color: var(--text2); transition: transform .2s;
+  }
+  .phase-header.open .phase-chevron { transform: rotate(180deg); }
+
+  /* Colors per phase */
+  .ph1 .phase-num { background: rgba(99,102,241,0.15); color: #818cf8; }
+  .ph1 .phase-dates { background: rgba(99,102,241,0.1); color: #818cf8; }
+  .ph2 .phase-num { background: rgba(0,201,177,0.12); color: var(--teal); }
+  .ph2 .phase-dates { background: rgba(0,201,177,0.1); color: var(--teal); }
+  .ph3 .phase-num { background: rgba(232,184,75,0.12); color: var(--gold); }
+  .ph3 .phase-dates { background: rgba(232,184,75,0.1); color: var(--gold); }
+  .ph4 .phase-num { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .ph4 .phase-dates { background: rgba(34,197,94,0.1); color: #4ade80; }
+  .ph4b .phase-num { background: rgba(239,68,68,0.12); color: #f87171; }
+  .ph4b .phase-dates { background: rgba(239,68,68,0.1); color: #f87171; }
+
+  /* ── TASK BODY ── */
+  .phase-body {
+    display: none;
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 4px 0 12px;
+  }
+  .phase-body.open { display: block; }
+
+  /* ── TASK ITEM ── */
+  .task {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background .1s;
+  }
+  .task:last-child { border-bottom: none; }
+  .task:hover { background: rgba(255,255,255,0.03); }
+
+  .task-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .ph1 .task-dot { background: #818cf8; }
+  .ph2 .task-dot { background: var(--teal); }
+  .ph3 .task-dot { background: var(--gold); }
+  .ph4 .task-dot { background: #4ade80; }
+  .ph4b .task-dot { background: #f87171; }
+
+  .task-content { flex: 1; }
+  .task-name { font-size: 12.5px; color: var(--text); line-height: 1.45; }
+  .task-date {
+    display: inline-block; margin-top: 3px;
+    font-size: 10px; font-weight: 600; color: var(--text2);
+    letter-spacing: 0.3px;
+  }
+  .task-tag {
+    display: inline-block; margin-left: 6px;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+    vertical-align: middle;
+  }
+  .tag-auto { background: rgba(0,201,177,0.1); color: var(--teal); }
+  .tag-manual { background: rgba(232,184,75,0.1); color: var(--gold); }
+  .tag-crit { background: rgba(239,68,68,0.1); color: #f87171; }
+
+  /* ── HOME BUTTON ── */
+  .home-btn {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(10,14,26,0.8); border: 1px solid rgba(0,201,177,0.25);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.55; transition: opacity .2s, border-color .2s;
+    backdrop-filter: blur(6px); text-decoration: none;
+  }
+  .home-btn:hover { opacity: 1; border-color: rgba(0,201,177,0.6); }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin-bottom: 32px; padding: 14px 18px;
+    background: var(--navy2); border: 1px solid var(--border); border-radius: 10px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">DevOps · Release Management</div>
+  <h1>Timeline R1 — Go-Live</h1>
+  <p>Plan de actividades para el despliegue del Release 1 a producción. Cubre las fases Pre-UAT, UAT, PreProd y Go-Live durante julio 2026.</p>
+  <span class="badge">Julio 2026</span>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div>Fase 1 — Pre-UAT</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#00c9b1"></div>Fase 2 — UAT</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e8b84b"></div>Fase 3 — PreProd</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Fase 4 — Prod / Go-Live</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Fase 4b — Go/No-Go &amp; Rollback</div>
+  <div class="legend-item" style="margin-left:auto">
+    <span class="task-tag tag-auto">auto</span> Pipeline automatizado
+  </div>
+  <div class="legend-item">
+    <span class="task-tag tag-manual">manual</span> Paso manual
+  </div>
+  <div class="legend-item">
+    <span class="task-tag tag-crit">crítico</span> Gate crítico
+  </div>
+</div>
+
+<!-- FASE 1 -->
+<div class="phase ph1">
+  <div class="phase-header open" onclick="toggle(this)">
+    <div class="phase-num">1</div>
+    <div class="phase-title">
+      <strong>Pre-UAT</strong>
+      <span>Validación del artefacto y preparación del ambiente</span>
+    </div>
+    <div class="phase-dates">Jul 3 – Jul 5</div>
+    <svg class="phase-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="phase-body open">
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Validar que el artefacto acumulado R1 está completo <span class="task-tag tag-auto">auto</span></div>
+        <div class="task-date">Jul 3 – Jul 3 · generate-sprint-manifest</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Ejecutar dress rehearsal del artefacto R1 <span class="task-tag tag-auto">auto</span></div>
+        <div class="task-date">Jul 3 – Jul 3 · release-deploy-exercise → tva-devdo1</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Crear tag del artefacto de release R1 estable <span class="task-tag tag-manual">manual</span></div>
+        <div class="task-date">Jul 3 – Jul 3</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Comunicar resultado del Ejercicio de Despliegue al equipo <span class="task-tag tag-manual">manual</span></div>
+        <div class="task-date">Jul 3 – Jul 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FASE 2 -->
+<div class="phase ph2">
+  <div class="phase-header open" onclick="toggle(this)">
+    <div class="phase-num">2</div>
+    <div class="phase-title">
+      <strong>UAT</strong>
+      <span>Homologación con usuarios de negocio y corrección de bugs</span>
+    </div>
+    <div class="phase-dates">Jul 6 – Jul 24</div>
+    <svg class="phase-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="phase-body open">
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Validar despliegue del artefacto R1 en Pre-UAT (tva-devdo1) completado <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 6 – Jul 6</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Desplegar artefacto R1 en UAT <span class="task-tag tag-auto">auto</span></div>
+        <div class="task-date">Jul 6 – Jul 6 · pipeline automatizado</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Comunicar inicio de fase UAT + verificar ausencia de freeze no planificado <span class="task-tag tag-manual">manual</span></div>
+        <div class="task-date">Jul 6 – Jul 6</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Creación de usuarios en UAT <span class="task-tag tag-manual">manual</span></div>
+        <div class="task-date">Jul 6 – Jul 6</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Asignación de permission sets y perfiles en UAT <span class="task-tag tag-manual">manual</span></div>
+        <div class="task-date">Jul 6 – Jul 6</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Carga de datos en UAT</div>
+        <div class="task-date">Jul 6 – Jul 7</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Configuración integraciones inbound (MultiAds / Platform Events)</div>
+        <div class="task-date">Jul 6 – Jul 7</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Configuración integraciones outbound (GAM / Meta — Named Credentials)</div>
+        <div class="task-date">Jul 6 – Jul 7</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Verificación E2E de integraciones (handshake GAM / Meta / MultiAds)</div>
+        <div class="task-date">Jul 7 – Jul 7</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Ejecución de pruebas UAT por TVA</div>
+        <div class="task-date">Jul 6 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Fixes UAT — integración de correcciones vía bugfix/* <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 6 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Liberación a TVA — apertura de UAT a usuarios de negocio <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 16 – Jul 16</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Sign-off UAT + comunicación fin de fase <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FASE 3 -->
+<div class="phase ph3">
+  <div class="phase-header" onclick="toggle(this)">
+    <div class="phase-num">3</div>
+    <div class="phase-title">
+      <strong>PreProd</strong>
+      <span>Dress rehearsal final antes de producción</span>
+    </div>
+    <div class="phase-dates">Jul 23 – Jul 24</div>
+    <svg class="phase-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="phase-body">
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Validar sign-off UAT completado (Fase 2 cerrada) <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Desplegar artefacto R1 en PreProd <span class="task-tag tag-auto">auto</span></div>
+        <div class="task-date">Jul 24 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Comunicar inicio de fase PreProd al equipo</div>
+        <div class="task-date">Jul 24 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Carga de datos en PreProd</div>
+        <div class="task-date">Jul 24 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Sign-off PreProd + comunicación al equipo <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 25 – Jul 24</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FASE 4 -->
+<div class="phase ph4">
+  <div class="phase-header" onclick="toggle(this)">
+    <div class="phase-num">4</div>
+    <div class="phase-title">
+      <strong>Prod / Go-Live</strong>
+      <span>Despliegue a producción y activación del sistema</span>
+    </div>
+    <div class="phase-dates">Jul 25 🚀</div>
+    <svg class="phase-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="phase-body">
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Validar sign-off PreProd completado <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Ejecutar Go/No-Go + confirmación de disponibilidad del equipo</div>
+        <div class="task-date">Jul 24 – Jul 24</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Desplegar artefacto R1 en Producción <span class="task-tag tag-auto">auto</span> <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 25 – Jul 25 · pipeline automatizado</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Comunicar inicio del Go-Live a stakeholders + confirmar ventana de deploy</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Configuración Data Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Creación de usuarios en Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Asignación de permission sets y perfiles en Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Carga de datos en Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Configuración integraciones inbound en Producción (MultiAds / Platform Events)</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Configuración integraciones outbound en Producción (GAM / Meta — Named Credentials)</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Verificación E2E de integraciones en Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Smoke / pruebas post Go-Live en Producción</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Sign-off Go-Live + comunicación fin del despliegue <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">PR para hacer merge a la rama main</div>
+        <div class="task-date">Jul 25 – Jul 25</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Creación del ambiente Hotfix (Partial Copy)</div>
+        <div class="task-date">Jul 27 – Jul 27</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FASE 4b -->
+<div class="phase ph4b">
+  <div class="phase-header" onclick="toggle(this)">
+    <div class="phase-num">4b</div>
+    <div class="phase-title">
+      <strong>Go/No-Go &amp; Rollback</strong>
+      <span>Decisión formal y plan de contingencia</span>
+    </div>
+    <div class="phase-dates">Jul 23 – Jul 23</div>
+    <svg class="phase-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="phase-body">
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Revisión del estado de todas las fases pre Go-Live <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Verificar disponibilidad del equipo de guardia</div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Confirmar plan de rollback: procedimiento, responsables y tiempos</div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-dot"></div>
+      <div class="task-content">
+        <div class="task-name">Decisión formal Go/No-Go <span class="task-tag tag-crit">crítico</span></div>
+        <div class="task-date">Jul 23 – Jul 23</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME BUTTON -->
+<a href="../index.html" title="Volver al Portal" class="home-btn">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(0,201,177,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
+    <polyline points="9 21 9 12 15 12 15 21"/>
+  </svg>
+</a>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
