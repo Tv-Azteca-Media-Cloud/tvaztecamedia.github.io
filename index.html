@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Portal de Presentaciones — TV Azteca Media Cloud</title>
+  <title>TV Azteca Media — Portal de Documentación Técnica</title>
   <style>
     :root{
       --navy:#032d60;
@@ -19,10 +19,222 @@
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+
+    /* ════════════════════════════════════════
+       HERO SECTION — Blueprint style
+    ════════════════════════════════════════ */
+    #hero{
+      position:relative;
+      width:100%;
+      min-height:100vh;
+      background:linear-gradient(160deg,#0b1f45 0%,#0c2050 35%,#0e2a5c 65%,#0d3470 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      z-index:50;
+    }
+
+    /* Subtle blueprint grid */
+    #hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image:
+        repeating-linear-gradient(0deg,rgba(100,160,255,.045) 0,rgba(100,160,255,.045) 1px,transparent 1px,transparent 40px),
+        repeating-linear-gradient(90deg,rgba(100,160,255,.045) 0,rgba(100,160,255,.045) 1px,transparent 1px,transparent 40px);
+      pointer-events:none;
+    }
+
+    /* ── Decorative wireframe panels (Blueprint-style UI mockups) ── */
+    .hero-deco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+
+    /* Left top — alert/warning card */
+    .dw-card{
+      position:absolute;
+      border:1.5px solid rgba(100,160,255,.18);
+      border-radius:6px;
+      background:rgba(255,255,255,.02);
+    }
+    .dw-line{
+      position:absolute;
+      background:rgba(100,160,255,.12);
+      border-radius:2px;
+    }
+    .dw-btn{
+      position:absolute;
+      border:1.5px solid rgba(100,160,255,.2);
+      border-radius:4px;
+      background:rgba(100,160,255,.06);
+    }
+    .dw-circle{
+      position:absolute;
+      border:1.5px solid rgba(100,160,255,.18);
+      border-radius:50%;
+    }
+    .dw-check{
+      position:absolute;
+      width:12px;height:12px;
+      border:1.5px solid rgba(100,160,255,.22);
+      border-radius:2px;
+    }
+
+    /* Panel TL */
+    .dw-p1{top:60px;left:60px;width:240px;height:180px;}
+    .dw-p1 .dw-line:nth-child(1){top:16px;left:40px;width:130px;height:10px}
+    .dw-p1 .dw-line:nth-child(2){top:34px;left:40px;width:90px;height:8px;opacity:.6}
+    .dw-p1 .dw-btn:nth-child(3){bottom:28px;left:16px;width:68px;height:26px}
+    .dw-p1 .dw-btn:nth-child(4){bottom:28px;left:96px;width:68px;height:26px}
+    .dw-p1 .dw-circle:nth-child(5){top:14px;left:14px;width:18px;height:18px}
+
+    /* Panel BL */
+    .dw-p2{bottom:80px;left:40px;width:200px;height:220px;}
+    .dw-p2 .dw-check:nth-child(1){top:18px;left:16px}
+    .dw-p2 .dw-line:nth-child(2){top:21px;left:36px;width:110px;height:8px}
+    .dw-p2 .dw-check:nth-child(3){top:44px;left:16px}
+    .dw-p2 .dw-line:nth-child(4){top:47px;left:36px;width:80px;height:8px;opacity:.6}
+    .dw-p2 .dw-check:nth-child(5){top:70px;left:16px}
+    .dw-p2 .dw-line:nth-child(6){top:73px;left:36px;width:95px;height:8px}
+    .dw-p2 .dw-check:nth-child(7){top:96px;left:16px;background:rgba(100,160,255,.15)}
+    .dw-p2 .dw-line:nth-child(8){top:99px;left:36px;width:70px;height:8px;opacity:.5}
+    .dw-p2 .dw-line:nth-child(9){bottom:28px;left:16px;right:16px;height:32px;border-radius:4px;background:rgba(100,160,255,.06)}
+
+    /* Panel TR */
+    .dw-p3{top:48px;right:56px;width:260px;height:200px;}
+    .dw-p3 .dw-line:nth-child(1){top:14px;left:14px;right:14px;height:28px;background:rgba(100,160,255,.08);border-radius:3px}
+    .dw-p3 .dw-line:nth-child(2){top:56px;left:14px;width:100px;height:8px}
+    .dw-p3 .dw-line:nth-child(3){top:56px;right:14px;width:70px;height:8px;opacity:.6}
+    .dw-p3 .dw-line:nth-child(4){top:76px;left:14px;right:14px;height:30px;background:rgba(100,160,255,.06);border-radius:3px}
+    .dw-p3 .dw-line:nth-child(5){top:120px;left:14px;right:14px;height:30px;background:rgba(100,160,255,.06);border-radius:3px}
+    .dw-p3 .dw-btn:nth-child(6){bottom:18px;right:14px;width:80px;height:26px}
+
+    /* Panel BR */
+    .dw-p4{bottom:60px;right:40px;width:220px;height:170px;}
+    .dw-p4 .dw-circle:nth-child(1){top:16px;left:16px;width:36px;height:36px}
+    .dw-p4 .dw-line:nth-child(2){top:20px;left:62px;width:100px;height:10px}
+    .dw-p4 .dw-line:nth-child(3){top:36px;left:62px;width:70px;height:8px;opacity:.6}
+    .dw-p4 .dw-line:nth-child(4){top:72px;left:16px;right:16px;height:8px}
+    .dw-p4 .dw-line:nth-child(5){top:88px;left:16px;right:16px;height:8px;opacity:.6}
+    .dw-p4 .dw-line:nth-child(6){top:104px;left:16px;width:100px;height:8px;opacity:.4}
+    .dw-p4 .dw-btn:nth-child(7){bottom:18px;left:16px;width:80px;height:28px}
+    .dw-p4 .dw-btn:nth-child(8){bottom:18px;left:110px;width:80px;height:28px;opacity:.6}
+
+    /* Extra floating elements */
+    .dw-float1{position:absolute;top:38%;left:10%;width:130px;height:36px;border:1.5px solid rgba(100,160,255,.12);border-radius:18px;background:rgba(100,160,255,.03)}
+    .dw-float2{position:absolute;top:55%;right:12%;width:90px;height:90px;border:1.5px solid rgba(100,160,255,.1);border-radius:50%}
+    .dw-float3{position:absolute;top:28%;right:28%;width:60px;height:60px;border:1.5px solid rgba(100,160,255,.1);border-radius:8px;transform:rotate(12deg)}
+
+    /* ── Hero center content ── */
+    .hero-inner{
+      position:relative;
+      z-index:10;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:0 24px;
+    }
+
+    .hero-logo-box{
+      background:rgba(255,255,255,.95);
+      border-radius:24px;
+      padding:18px 32px 14px;
+      margin-bottom:36px;
+      box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.1);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hero-logo-box img{
+      height:110px;
+      width:auto;
+      display:block;
+    }
+
+    .hero-title{
+      font-size:clamp(2rem,5vw,3.4rem);
+      font-weight:800;
+      color:#fff;
+      letter-spacing:-.02em;
+      line-height:1.1;
+      margin-bottom:14px;
+    }
+    .hero-title span{
+      color:#5abaff;
+    }
+
+    .hero-sub{
+      font-size:clamp(.95rem,2vw,1.15rem);
+      color:rgba(255,255,255,.5);
+      margin-bottom:44px;
+      letter-spacing:.01em;
+    }
+
+    .hero-cta{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background:#0176d3;
+      color:#fff;
+      font:700 14px/1 "Segoe UI",system-ui;
+      padding:14px 34px;
+      border-radius:7px;
+      text-decoration:none;
+      border:none;
+      cursor:pointer;
+      transition:background .15s,transform .15s,box-shadow .15s;
+      box-shadow:0 4px 20px rgba(1,118,211,.4);
+      letter-spacing:.01em;
+    }
+    .hero-cta:hover{
+      background:#0165b8;
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(1,118,211,.5);
+    }
+    .hero-cta svg{transition:transform .15s}
+    .hero-cta:hover svg{transform:translateY(3px)}
+
+    .hero-scroll-hint{
+      position:absolute;
+      bottom:28px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      color:rgba(255,255,255,.2);
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      z-index:10;
+      animation:bounce 2s infinite;
+    }
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+    /* ════════════════════════════════════════
+       PORTAL SECTION (existing layout)
+    ════════════════════════════════════════ */
+
+    #portal-section{
+      display:flex;
+      min-height:100vh;
+    }
 
     /* ── Sidebar ── */
-    #nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+    #nav{
+      position:sticky;
+      top:0;
+      width:var(--nav);
+      height:100vh;
+      background:var(--navy);
+      display:flex;
+      flex-direction:column;
+      overflow-y:auto;
+      flex-shrink:0;
+    }
     .nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
     .nav-logo img{height:28px;width:auto;display:block}
     .nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
@@ -36,7 +248,7 @@
     .nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
 
     /* ── Main page ── */
-    #page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+    #page{flex:1;display:flex;flex-direction:column;min-width:0}
 
     /* ── Header ── */
     header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
@@ -114,324 +326,398 @@
 </head>
 <body>
 
-<!-- ── Sidebar ── -->
-<div id="nav">
-  <div class="nav-logo">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
-    <div class="proj">Portal de Presentaciones</div>
-    <div class="sub">TV Azteca &middot; Media Cloud &middot; 2026</div>
+<!-- ════════════════════════════════════════════
+     HERO — Blueprint-inspired landing
+════════════════════════════════════════════ -->
+<section id="hero">
+
+  <!-- Decorative wireframe UI elements (background) -->
+  <div class="hero-deco" aria-hidden="true">
+    <!-- Panel top-left: alert card -->
+    <div class="dw-card dw-p1">
+      <div class="dw-circle"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-btn"></div>
+      <div class="dw-btn"></div>
+    </div>
+    <!-- Panel bottom-left: checklist -->
+    <div class="dw-card dw-p2">
+      <div class="dw-check"></div>
+      <div class="dw-line"></div>
+      <div class="dw-check"></div>
+      <div class="dw-line"></div>
+      <div class="dw-check"></div>
+      <div class="dw-line"></div>
+      <div class="dw-check"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+    </div>
+    <!-- Panel top-right: form fields -->
+    <div class="dw-card dw-p3">
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-btn"></div>
+    </div>
+    <!-- Panel bottom-right: card -->
+    <div class="dw-card dw-p4">
+      <div class="dw-circle"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-line"></div>
+      <div class="dw-btn"></div>
+      <div class="dw-btn"></div>
+    </div>
+    <!-- Floating shapes -->
+    <div class="dw-float1"></div>
+    <div class="dw-float2"></div>
+    <div class="dw-float3"></div>
   </div>
-  <ul>
-    <li class="nav-grp">CATEGORÍAS</li>
-    <li>
-      <a onclick="filterCategory('all',this)" id="nav-all" class="active">
-        <span class="nav-ico">📋</span>Todas las presentaciones
-      </a>
-    </li>
-    <li class="nav-sep"></li>
-    <li>
-      <a onclick="filterCategory('portal-de-tracking',this)" id="nav-portal-de-tracking">
-        <span class="nav-ico">📡</span>Portal de Tracking
-      </a>
-    </li>
-    <li>
-      <a onclick="filterCategory('seguridad-salesforce',this)" id="nav-seguridad-salesforce">
-        <span class="nav-ico">🔐</span>Seguridad Salesforce
-      </a>
-    </li>
-    <li>
-      <a onclick="filterCategory('gobierno-tecnico',this)" id="nav-gobierno-tecnico">
-        <span class="nav-ico">🏛️</span>Gobierno Técnico
-      </a>
-    </li>
-    <li>
-      <a onclick="filterCategory('discovery-entregables',this)" id="nav-discovery-entregables">
-        <span class="nav-ico">📦</span>Discovery & Entregables
-      </a>
-    </li>
-    <li class="nav-sep"></li>
-    <li>
-      <a href="adrs/index.html">
-        <span class="nav-ico">📐</span>ADR Library
-      </a>
-    </li>
-  </ul>
-  <div class="nav-foot">Portal interno<br>TV Azteca &middot; Media Cloud<br>2026</div>
-</div>
 
-<!-- ── Page ── -->
-<div id="page">
+  <!-- Center content -->
+  <div class="hero-inner">
+    <div class="hero-logo-box">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png"
+        alt="TV Azteca"
+      />
+    </div>
 
-  <header>
-    <div class="hdr-top">
-      <div>
-        <div class="hdr-title">Portal de Presentaciones</div>
-        <div class="hdr-sub">TV Azteca &mdash; Media Cloud</div>
+    <h1 class="hero-title">
+      TV Azteca <span>Media</span>
+    </h1>
+    <p class="hero-sub">Salesforce · Portal de Documentación Técnica</p>
+
+    <a href="#portal-content" class="hero-cta">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Ir a Documentación
+    </a>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="hero-scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    scroll
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════
+     PORTAL — Sidebar + Content
+════════════════════════════════════════════ -->
+<div id="portal-section">
+
+  <!-- ── Sidebar ── -->
+  <div id="nav">
+    <div class="nav-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+      <div class="proj">Portal de Presentaciones</div>
+      <div class="sub">TV Azteca &middot; Media Cloud &middot; 2026</div>
+    </div>
+    <ul>
+      <li class="nav-grp">CATEGORÍAS</li>
+      <li>
+        <a onclick="filterCategory('all',this)" id="nav-all" class="active">
+          <span class="nav-ico">📋</span>Todas las presentaciones
+        </a>
+      </li>
+      <li class="nav-sep"></li>
+      <li>
+        <a onclick="filterCategory('portal-de-tracking',this)" id="nav-portal-de-tracking">
+          <span class="nav-ico">📡</span>Portal de Tracking
+        </a>
+      </li>
+      <li>
+        <a onclick="filterCategory('seguridad-salesforce',this)" id="nav-seguridad-salesforce">
+          <span class="nav-ico">🔐</span>Seguridad Salesforce
+        </a>
+      </li>
+      <li>
+        <a onclick="filterCategory('gobierno-tecnico',this)" id="nav-gobierno-tecnico">
+          <span class="nav-ico">🏛️</span>Gobierno Técnico
+        </a>
+      </li>
+      <li>
+        <a onclick="filterCategory('discovery-entregables',this)" id="nav-discovery-entregables">
+          <span class="nav-ico">📦</span>Discovery &amp; Entregables
+        </a>
+      </li>
+      <li class="nav-sep"></li>
+      <li>
+        <a href="adrs/index.html">
+          <span class="nav-ico">📐</span>ADR Library
+        </a>
+      </li>
+    </ul>
+    <div class="nav-foot">Portal interno<br>TV Azteca &middot; Media Cloud<br>2026</div>
+  </div>
+
+  <!-- ── Page ── -->
+  <div id="page">
+
+    <header>
+      <div class="hdr-top">
+        <div>
+          <div class="hdr-title">Portal de Presentaciones</div>
+          <div class="hdr-sub">TV Azteca &mdash; Media Cloud</div>
+        </div>
       </div>
-    </div>
-    <div class="hdr-meta">
-      <span>Cliente: <strong>TV Azteca</strong></span>
-      <span>Área: <strong>Media Cloud</strong></span>
-      <span>Uso: <strong>Interno</strong></span>
-    </div>
-  </header>
-
-  <main>
-
-    <!-- KPIs -->
-    <div class="kpi-strip">
-      <div class="kpi">
-        <div class="kpi-v" id="kpi-total">10</div>
-        <div class="kpi-l">Presentaciones totales</div>
+      <div class="hdr-meta">
+        <span>Cliente: <strong>TV Azteca</strong></span>
+        <span>Área: <strong>Media Cloud</strong></span>
+        <span>Uso: <strong>Interno</strong></span>
       </div>
-      <div class="kpi">
-        <div class="kpi-v">4</div>
-        <div class="kpi-l">Categorías activas</div>
+    </header>
+
+    <main id="portal-content">
+
+      <!-- KPIs -->
+      <div class="kpi-strip">
+        <div class="kpi">
+          <div class="kpi-v" id="kpi-total">10</div>
+          <div class="kpi-l">Presentaciones totales</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-v">4</div>
+          <div class="kpi-l">Categorías activas</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-v">2026</div>
+          <div class="kpi-l">Año en curso</div>
+        </div>
       </div>
-      <div class="kpi">
-        <div class="kpi-v">2026</div>
-        <div class="kpi-l">Año en curso</div>
+
+      <!-- Section title + filter -->
+      <div class="section-title">Presentaciones disponibles</div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="search" type="text" placeholder="Buscar presentación…" oninput="onSearch(this.value)" autocomplete="off"/>
+        <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
       </div>
-    </div>
+      <div class="search-count" id="search-count"></div>
 
-    <!-- Section title + filter -->
-    <div class="section-title">Presentaciones disponibles</div>
+      <div class="filter-bar">
+        <button class="f-tab active" onclick="filterCategory('all',this)">Todas</button>
+        <button class="f-tab" onclick="filterCategory('portal-de-tracking',this)">Portal de Tracking</button>
+        <button class="f-tab" onclick="filterCategory('seguridad-salesforce',this)">Seguridad Salesforce</button>
+        <button class="f-tab" onclick="filterCategory('gobierno-tecnico',this)">Gobierno Técnico</button>
+        <button class="f-tab" onclick="filterCategory('discovery-entregables',this)">Discovery &amp; Entregables</button>
+      </div>
 
-    <!-- Search -->
-    <div class="search-wrap">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="search" type="text" placeholder="Buscar presentación…" oninput="onSearch(this.value)" autocomplete="off"/>
-      <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
-    </div>
-    <div class="search-count" id="search-count"></div>
+      <!-- Cards -->
+      <div class="cards-grid" id="grid">
 
-    <div class="filter-bar">
-      <button class="f-tab active" onclick="filterCategory('all',this)">Todas</button>
-      <button class="f-tab" onclick="filterCategory('portal-de-tracking',this)">Portal de Tracking</button>
-      <button class="f-tab" onclick="filterCategory('seguridad-salesforce',this)">Seguridad Salesforce</button>
-      <button class="f-tab" onclick="filterCategory('gobierno-tecnico',this)">Gobierno Técnico</button>
-      <button class="f-tab" onclick="filterCategory('discovery-entregables',this)">Discovery & Entregables</button>
-    </div>
-
-    <!-- Cards -->
-    <div class="cards-grid" id="grid">
-
-      <a href="presentaciones/portal-de-tracking/2026-07-08-tv-azteca/index.html"
-         class="pres-card"
-         data-category="portal-de-tracking">
-        <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0e4d8a 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Portal de Tracking</span>
+        <a href="presentaciones/portal-de-tracking/2026-07-08-tv-azteca/index.html"
+           class="pres-card"
+           data-category="portal-de-tracking">
+          <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0e4d8a 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Portal de Tracking</span>
+            </div>
+            <div class="card-date">08 Jul 2026</div>
+            <div class="card-title">Tv Azteca — Presentación Inicial</div>
           </div>
-          <div class="card-date">08 Jul 2026</div>
-          <div class="card-title">Tv Azteca — Presentación Inicial</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Presentación del portal de tracking para TV Azteca Media Cloud. Visión general, alcance y próximos pasos.</div>
-          <div class="content-hit" id="hit-0"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Presentación del portal de tracking para TV Azteca Media Cloud. Visión general, alcance y próximos pasos.</div>
+            <div class="content-hit" id="hit-0"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/seguridad-salesforce/2026-07-10-mfa-for-all/index.html"
-         class="pres-card"
-         data-category="seguridad-salesforce">
-        <div class="card-banner" style="background:linear-gradient(135deg,#6b1111 0%,#a01a1a 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Seguridad Salesforce</span>
+        <a href="presentaciones/seguridad-salesforce/2026-07-10-mfa-for-all/index.html"
+           class="pres-card"
+           data-category="seguridad-salesforce">
+          <div class="card-banner" style="background:linear-gradient(135deg,#6b1111 0%,#a01a1a 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Seguridad Salesforce</span>
+            </div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">MFA Obligatorio para Todos — Análisis de Impacto</div>
           </div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">MFA Obligatorio para Todos — Análisis de Impacto</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Análisis del KA 005321561: qué cambia, a quién afecta, fechas de enforcement, impacto con OKTA y acciones recomendadas para TV Azteca.</div>
-          <div class="content-hit" id="hit-1"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Análisis del KA 005321561: qué cambia, a quién afecta, fechas de enforcement, impacto con OKTA y acciones recomendadas para TV Azteca.</div>
+            <div class="content-hit" id="hit-1"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/seguridad-salesforce/2026-07-08-permission-sets/index.html"
-         class="pres-card"
-         data-category="seguridad-salesforce">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a2a 0%,#0d5c3a 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Seguridad Salesforce</span>
+        <a href="presentaciones/seguridad-salesforce/2026-07-08-permission-sets/index.html"
+           class="pres-card"
+           data-category="seguridad-salesforce">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a2a 0%,#0d5c3a 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Seguridad Salesforce</span>
+            </div>
+            <div class="card-date">08 Jul 2026</div>
+            <div class="card-title">Asignación de Permission Sets — TV Azteca</div>
           </div>
-          <div class="card-date">08 Jul 2026</div>
-          <div class="card-title">Asignación de Permission Sets — TV Azteca</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Recomendación de asignación de Permission Sets por perfil de usuario. Segregación de funciones (SoD) para el entorno Media Cloud.</div>
-          <div class="content-hit" id="hit-2"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Recomendación de asignación de Permission Sets por perfil de usuario. Segregación de funciones (SoD) para el entorno Media Cloud.</div>
+            <div class="content-hit" id="hit-2"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/seguridad-salesforce/2026-07-10-mfa-passkey-diagnostico/index.html"
-         class="pres-card"
-         data-category="seguridad-salesforce">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a1a3a 0%,#2d2d6b 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Seguridad Salesforce</span>
+        <a href="presentaciones/seguridad-salesforce/2026-07-10-mfa-passkey-diagnostico/index.html"
+           class="pres-card"
+           data-category="seguridad-salesforce">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a1a3a 0%,#2d2d6b 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Seguridad Salesforce</span>
+            </div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Diagnóstico: Doble MFA — Salesforce + Okta</div>
           </div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Diagnóstico: Doble MFA — Salesforce + Okta</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">El usuario completa MFA en Okta pero Salesforce vuelve a solicitar registro de Passkey. Diagnóstico de causa raíz y pasos de resolución en Okta y Salesforce Setup.</div>
-          <div class="content-hit" id="hit-3"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">El usuario completa MFA en Okta pero Salesforce vuelve a solicitar registro de Passkey. Diagnóstico de causa raíz y pasos de resolución en Okta y Salesforce Setup.</div>
+            <div class="content-hit" id="hit-3"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/seguridad-salesforce/2026-07-14-okta-saml-sso-uat/index.html"
-         class="pres-card"
-         data-category="seguridad-salesforce">
-        <div class="card-banner" style="background:linear-gradient(135deg,#00297a 0%,#003da5 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Seguridad Salesforce</span>
+        <a href="presentaciones/seguridad-salesforce/2026-07-14-okta-saml-sso-uat/index.html"
+           class="pres-card"
+           data-category="seguridad-salesforce">
+          <div class="card-banner" style="background:linear-gradient(135deg,#00297a 0%,#003da5 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Seguridad Salesforce</span>
+            </div>
+            <div class="card-date">14 Jul 2026</div>
+            <div class="card-title">Okta SAML SSO — Resolución UAT y Plan de Producción</div>
           </div>
-          <div class="card-date">14 Jul 2026</div>
-          <div class="card-title">Okta SAML SSO — Resolución UAT y Plan de Producción</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Causa raíz del error idpError=1601 (ACS URL sin ?sc=), resolución en UAT, y plan de acción paso a paso para activar SSO en Producción. Incluye qué va al repo y qué es configuración manual.</div>
-          <div class="content-hit" id="hit-okta-sso"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Causa raíz del error idpError=1601 (ACS URL sin ?sc=), resolución en UAT, y plan de acción paso a paso para activar SSO en Producción. Incluye qué va al repo y qué es configuración manual.</div>
+            <div class="content-hit" id="hit-okta-sso"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/gobierno-tecnico/2026-07-08-gobierno-tecnico-sf/index.html"
-         class="pres-card"
-         data-category="gobierno-tecnico">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a2a1a 0%,#2d4a2d 100%)">
-          <div class="card-banner-top">
-            <span class="card-tag">Gobierno Técnico</span>
+        <a href="presentaciones/gobierno-tecnico/2026-07-08-gobierno-tecnico-sf/index.html"
+           class="pres-card"
+           data-category="gobierno-tecnico">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a2a1a 0%,#2d4a2d 100%)">
+            <div class="card-banner-top">
+              <span class="card-tag">Gobierno Técnico</span>
+            </div>
+            <div class="card-date">08 Jul 2026</div>
+            <div class="card-title">Documento de Gobierno Técnico — Salesforce</div>
           </div>
-          <div class="card-date">08 Jul 2026</div>
-          <div class="card-title">Documento de Gobierno Técnico — Salesforce</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Estándares, modelo de ambientes, gestión de cambios y lineamientos de desarrollo para TV Azteca Media Cloud.</div>
-          <div class="content-hit" id="hit-4"></div>
-          <div class="card-footer">
-            Ver presentación
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Estándares, modelo de ambientes, gestión de cambios y lineamientos de desarrollo para TV Azteca Media Cloud.</div>
+            <div class="content-hit" id="hit-4"></div>
+            <div class="card-footer">
+              Ver presentación
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="presentaciones/discovery-entregables/2026-07-10-conciliacion-operativa/index.html"
-         class="pres-card" data-category="discovery-entregables">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
-          <div class="card-banner-top"><span class="card-tag">Discovery & Entregables</span></div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Conciliación Operativa de Campañas — Propuesta de Solución</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Propuesta de solución para la conciliación operativa de campañas en TV Azteca × Salesforce. Personas, visión, ciclos y modelo de datos.</div>
-          <div class="content-hit" id="hit-5"></div>
-          <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        </div>
-      </a>
+        <a href="presentaciones/discovery-entregables/2026-07-10-conciliacion-operativa/index.html"
+           class="pres-card" data-category="discovery-entregables">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
+            <div class="card-banner-top"><span class="card-tag">Discovery &amp; Entregables</span></div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Conciliación Operativa de Campañas — Propuesta de Solución</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Propuesta de solución para la conciliación operativa de campañas en TV Azteca × Salesforce. Personas, visión, ciclos y modelo de datos.</div>
+            <div class="content-hit" id="hit-5"></div>
+            <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
 
-      <a href="presentaciones/discovery-entregables/2026-07-10-generacion-cotizacion/index.html"
-         class="pres-card" data-category="discovery-entregables">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
-          <div class="card-banner-top"><span class="card-tag">Discovery & Entregables</span></div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Generación PDF Cotización — Discovery Entregables</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Business Context Brief, diagrama TO-BE, decisiones de diseño, mockup del PDF y RAID Log para la generación automatizada de cotizaciones.</div>
-          <div class="content-hit" id="hit-6"></div>
-          <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        </div>
-      </a>
+        <a href="presentaciones/discovery-entregables/2026-07-10-generacion-cotizacion/index.html"
+           class="pres-card" data-category="discovery-entregables">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
+            <div class="card-banner-top"><span class="card-tag">Discovery &amp; Entregables</span></div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Generación PDF Cotización — Discovery Entregables</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Business Context Brief, diagrama TO-BE, decisiones de diseño, mockup del PDF y RAID Log para la generación automatizada de cotizaciones.</div>
+            <div class="content-hit" id="hit-6"></div>
+            <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
 
-      <a href="presentaciones/discovery-entregables/2026-07-10-plan-entrega-squad/index.html"
-         class="pres-card" data-category="discovery-entregables">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
-          <div class="card-banner-top"><span class="card-tag">Discovery & Entregables</span></div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Plan de Entrega por Squad — TV Azteca</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Catálogo de épicos y features del proyecto. Plan de entrega por Release y Sprint organizado por squads de Salesforce Media Cloud.</div>
-          <div class="content-hit" id="hit-7"></div>
-          <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        </div>
-      </a>
+        <a href="presentaciones/discovery-entregables/2026-07-10-plan-entrega-squad/index.html"
+           class="pres-card" data-category="discovery-entregables">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
+            <div class="card-banner-top"><span class="card-tag">Discovery &amp; Entregables</span></div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Plan de Entrega por Squad — TV Azteca</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Catálogo de épicos y features del proyecto. Plan de entrega por Release y Sprint organizado por squads de Salesforce Media Cloud.</div>
+            <div class="content-hit" id="hit-7"></div>
+            <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
 
-      <a href="presentaciones/discovery-entregables/2026-07-10-rentabilidad-descuentos/index.html"
-         class="pres-card" data-category="discovery-entregables">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
-          <div class="card-banner-top"><span class="card-tag">Discovery & Entregables</span></div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Rentabilidad · Descuentos & Portal de Autorización — Discovery</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Consolidado de discovery: rentabilidad, descuentos & bonificaciones, portal de costos y autorización. Sesiones mayo 2026.</div>
-          <div class="content-hit" id="hit-8"></div>
-          <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        </div>
-      </a>
+        <a href="presentaciones/discovery-entregables/2026-07-10-rentabilidad-descuentos/index.html"
+           class="pres-card" data-category="discovery-entregables">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
+            <div class="card-banner-top"><span class="card-tag">Discovery &amp; Entregables</span></div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Rentabilidad · Descuentos &amp; Portal de Autorización — Discovery</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Consolidado de discovery: rentabilidad, descuentos &amp; bonificaciones, portal de costos y autorización. Sesiones mayo 2026.</div>
+            <div class="content-hit" id="hit-8"></div>
+            <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
 
-      <a href="presentaciones/discovery-entregables/2026-07-10-venta-programatica/index.html"
-         class="pres-card" data-category="discovery-entregables">
-        <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
-          <div class="card-banner-top"><span class="card-tag">Discovery & Entregables</span></div>
-          <div class="card-date">10 Jul 2026</div>
-          <div class="card-title">Venta Programática — Discovery Entregables</div>
-        </div>
-        <div class="card-desc-wrap">
-          <div class="card-desc">Business Context Brief, proceso TO-BE, BRD de requisitos, RAID Log, artefactos y diagramas BPMN para Venta Programática.</div>
-          <div class="content-hit" id="hit-9"></div>
-          <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        </div>
-      </a>
+        <a href="presentaciones/discovery-entregables/2026-07-10-venta-programatica/index.html"
+           class="pres-card" data-category="discovery-entregables">
+          <div class="card-banner" style="background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 100%)">
+            <div class="card-banner-top"><span class="card-tag">Discovery &amp; Entregables</span></div>
+            <div class="card-date">10 Jul 2026</div>
+            <div class="card-title">Venta Programática — Discovery Entregables</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Business Context Brief, proceso TO-BE, BRD de requisitos, RAID Log, artefactos y diagramas BPMN para Venta Programática.</div>
+            <div class="content-hit" id="hit-9"></div>
+            <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
 
-    </div>
+      </div>
 
-  </main>
+    </main>
 
-  <footer>&copy; 2026 TV Azteca Media &mdash; Uso interno. Todos los derechos reservados.</footer>
-</div>
+    <footer>&copy; 2026 TV Azteca Media &mdash; Uso interno. Todos los derechos reservados.</footer>
+  </div><!-- /#page -->
+
+</div><!-- /#portal-section -->
 
 <script>
   let currentCategory = 'all';
 
-  // ── Full-text index: fetch each presentation's HTML in background ──
-  // contentIndex[i] = plain text of the i-th card's presentation
   const cards = Array.from(document.querySelectorAll('.pres-card'));
-  const contentIndex = new Array(cards.length).fill(null); // null = not yet loaded
+  const contentIndex = new Array(cards.length).fill(null);
   const contentLoading = new Array(cards.length).fill(false);
 
   function loadContentIndex() {
@@ -442,21 +728,16 @@
       fetch(url)
         .then(r => r.text())
         .then(html => {
-          // Strip tags, collapse whitespace → plain searchable text
           const tmp = document.createElement('div');
           tmp.innerHTML = html;
-          // Remove script/style nodes
           tmp.querySelectorAll('script,style').forEach(n => n.remove());
           contentIndex[i] = tmp.textContent.replace(/\s+/g, ' ').toLowerCase();
         })
         .catch(() => { contentIndex[i] = ''; });
     });
   }
-
-  // Start fetching immediately so index is ready when user types
   loadContentIndex();
 
-  // ── Snippet: extract ~120 chars around first match ──────────────────
   function getSnippet(text, query) {
     const q = query.trim().toLowerCase();
     const pos = text.toLowerCase().indexOf(q);
@@ -466,12 +747,10 @@
     let snippet = text.slice(start, end).trim();
     if (start > 0) snippet = '…' + snippet;
     if (end < text.length) snippet = snippet + '…';
-    // Highlight match inside snippet
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return snippet.replace(new RegExp('(' + escaped + ')', 'gi'), '<mark>$1</mark>');
   }
 
-  // ── Category filter ──────────────────────────────────────────────────
   function filterCategory(cat, el) {
     currentCategory = cat;
     document.getElementById('search').value = '';
@@ -485,7 +764,6 @@
     applyFilters('');
   }
 
-  // ── Search input ─────────────────────────────────────────────────────
   function onSearch(query) {
     document.getElementById('search-clear').style.display = query.length > 0 ? 'block' : 'none';
     if (query.length > 0) {
@@ -506,53 +784,35 @@
     applyFilters('');
   }
 
-  // ── Core filter + highlight + content snippet ────────────────────────
   function applyFilters(query) {
     const q = query.trim().toLowerCase();
     let visible = 0;
-
     cards.forEach((card, i) => {
       const titleEl = card.querySelector('.card-title');
       const descEl  = card.querySelector('.card-desc');
       const tagEl   = card.querySelector('.card-tag');
       const hitEl   = card.querySelector('.content-hit');
       const catMatch = currentCategory === 'all' || card.dataset.category === currentCategory;
-
-      // Cache originals once
       if (!titleEl._orig) titleEl._orig = titleEl.innerHTML;
       if (!descEl._orig)  descEl._orig  = descEl.innerHTML;
-      // Restore before re-evaluating
       titleEl.innerHTML = titleEl._orig;
       descEl.innerHTML  = descEl._orig;
-
       const titleText = titleEl._orig.toLowerCase();
       const descText  = descEl._orig.toLowerCase();
       const tagText   = tagEl ? tagEl.textContent.toLowerCase() : '';
-
       const cardMatch = q === '' || titleText.includes(q) || descText.includes(q) || tagText.includes(q);
-
-      // Check full content only when card itself doesn't match
       const fullText    = contentIndex[i];
       const contentMatch = !cardMatch && q !== '' && fullText !== null && fullText.includes(q);
-
       const show = catMatch && (cardMatch || contentMatch);
       card.style.display = show ? 'flex' : 'none';
-
-      // Update hit snippet
-      if (hitEl) {
-        hitEl.classList.remove('visible');
-        hitEl.innerHTML = '';
-      }
-
+      if (hitEl) { hitEl.classList.remove('visible'); hitEl.innerHTML = ''; }
       if (show) {
         visible++;
         if (q && cardMatch) {
-          // Highlight title + desc
           titleEl.innerHTML = highlight(titleEl._orig, query);
           descEl.innerHTML  = highlight(descEl._orig, query);
         }
         if (q && contentMatch && hitEl) {
-          // Content-only match: show teal snippet
           const snippet = getSnippet(fullText, q);
           if (snippet) {
             hitEl.innerHTML = '<div class="hit-label">Encontrado en el contenido</div>' + snippet;
@@ -560,7 +820,6 @@
           }
         }
         if (q && cardMatch && contentMatch && hitEl) {
-          // Also found in content even though card matched — still show snippet
           const snippet = getSnippet(fullText, q);
           if (snippet) {
             hitEl.innerHTML = '<div class="hit-label">También en el contenido</div>' + snippet;
@@ -569,20 +828,13 @@
         }
       }
     });
-
     document.getElementById('kpi-total').textContent = visible;
-
     const countEl = document.getElementById('search-count');
     if (q) {
-      // Break down by source
-      const cardHits    = cards.filter((c,i) => c.style.display !== 'none' && contentIndex[i] !== null
-        && (c.querySelector('.card-title')._orig.toLowerCase().includes(q)
-         || c.querySelector('.card-desc')._orig.toLowerCase().includes(q))).length;
       const contentHits = cards.filter((c,i) => c.style.display !== 'none'
         && contentIndex[i] !== null && contentIndex[i].includes(q)
         && !c.querySelector('.card-title')._orig.toLowerCase().includes(q)
         && !c.querySelector('.card-desc')._orig.toLowerCase().includes(q)).length;
-
       if (visible === 0) {
         countEl.textContent = 'Sin resultados para "' + query + '"';
       } else {
