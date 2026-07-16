@@ -1259,5 +1259,21 @@ footer strong {
   observer.observe(hero);
 })();
 </script>
+
+<!-- ── HOME BUTTON ── -->
+<a href="../../index.html" title="Volver al Portal" style="
+  position:fixed; bottom:24px; right:24px; z-index:999;
+  width:38px; height:38px; border-radius:50%;
+  background:rgba(15,14,30,0.72); border:1px solid rgba(232,184,75,0.25);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0.55; transition:opacity .2s, border-color .2s, background .2s;
+  backdrop-filter:blur(6px); text-decoration:none;
+" onmouseover="this.style.opacity='1';this.style.borderColor='rgba(232,184,75,0.6)'"
+   onmouseout="this.style.opacity='0.55';this.style.borderColor='rgba(232,184,75,0.25)'">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(232,184,75,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
+    <polyline points="9 21 9 12 15 12 15 21"/>
+  </svg>
+</a>
 </body>
 </html>
