@@ -348,6 +348,148 @@
 
     /* ── Footer ── */
     footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+
+    /* ════════════════════════════════════════════
+       DEVOPS TIMELINE — Gantt view
+    ════════════════════════════════════════════ */
+    #view-devops-timeline{display:none;flex-direction:column;flex:1;background:#0a0e1a;color:#e0e0ec;min-height:0}
+    #view-devops-timeline.active{display:flex}
+
+    .tl-header{
+      padding:28px 32px 20px;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      flex-shrink:0;
+    }
+    .tl-header .tl-eyebrow{
+      font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+      color:#00c9b1;margin-bottom:8px;
+    }
+    .tl-header h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+    .tl-header p{font-size:12px;color:rgba(224,224,236,0.5);max-width:560px;line-height:1.6}
+    .tl-badge{
+      display:inline-block;margin-top:10px;padding:3px 10px;border-radius:4px;
+      background:rgba(0,201,177,0.1);border:1px solid rgba(0,201,177,0.25);
+      color:#00c9b1;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    }
+
+    .tl-body{flex:1;overflow-y:auto;overflow-x:auto;padding:24px 32px 40px}
+    .tl-body::-webkit-scrollbar{width:4px;height:4px}
+    .tl-body::-webkit-scrollbar-thumb{background:rgba(0,201,177,0.2);border-radius:2px}
+
+    /* Legend */
+    .tl-legend{
+      display:flex;flex-wrap:wrap;gap:16px;margin-bottom:24px;
+      padding:12px 16px;background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);border-radius:8px;
+    }
+    .tl-leg-item{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(224,224,236,0.55)}
+    .tl-leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    .tl-leg-tag{
+      font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+      padding:2px 6px;border-radius:3px;
+    }
+    .tag-a{background:rgba(0,201,177,0.12);color:#00c9b1}
+    .tag-m{background:rgba(232,184,75,0.12);color:#e8b84b}
+    .tag-c{background:rgba(239,68,68,0.12);color:#f87171}
+
+    /* Gantt grid */
+    .gantt-wrap{min-width:820px}
+    .gantt-axis{
+      display:grid;margin-left:160px;margin-bottom:6px;
+      font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+      color:rgba(224,224,236,0.35);
+    }
+    .gantt-axis-cell{text-align:center;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.08)}
+
+    /* Phase row */
+    .gantt-phase{margin-bottom:4px}
+    .gantt-phase-label{
+      display:flex;align-items:center;gap:0;margin-left:160px;margin-bottom:2px;
+    }
+    .gantt-phase-pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:3px 10px 3px 8px;border-radius:4px;
+      font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    }
+
+    .gantt-row{
+      display:flex;align-items:center;min-height:34px;
+      border-radius:6px;margin-bottom:2px;
+      transition:background .1s;
+    }
+    .gantt-row:hover{background:rgba(255,255,255,0.03)}
+
+    .gantt-row-label{
+      width:160px;flex-shrink:0;
+      font-size:11px;color:rgba(224,224,236,0.7);
+      padding-right:14px;line-height:1.35;
+      display:flex;align-items:center;gap:6px;
+    }
+    .gantt-row-label .row-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+
+    .gantt-grid{
+      flex:1;position:relative;display:grid;height:28px;
+    }
+    .gantt-col{
+      border-left:1px solid rgba(255,255,255,0.05);
+      height:28px;
+    }
+    .gantt-bar{
+      position:absolute;top:4px;height:20px;border-radius:5px;
+      display:flex;align-items:center;padding:0 8px;
+      font-size:9px;font-weight:600;letter-spacing:0.3px;
+      white-space:nowrap;overflow:hidden;
+      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+      transition:filter .15s;cursor:default;
+    }
+    .gantt-bar:hover{filter:brightness(1.15)}
+
+    /* Milestone diamond */
+    .gantt-milestone{
+      position:absolute;top:50%;transform:translateY(-50%) rotate(45deg);
+      width:14px;height:14px;border-radius:2px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.4);
+      cursor:default;
+    }
+
+    /* Phase colors */
+    .ph1-bar{background:linear-gradient(90deg,#4f46e5,#6366f1)}
+    .ph2-bar{background:linear-gradient(90deg,#0891b2,#00c9b1)}
+    .ph3-bar{background:linear-gradient(90deg,#b45309,#e8b84b)}
+    .ph4-bar{background:linear-gradient(90deg,#15803d,#4ade80)}
+    .ph4b-bar{background:linear-gradient(90deg,#b91c1c,#f87171)}
+    .ph1-ms{background:#818cf8}
+    .ph2-ms{background:#00c9b1}
+    .ph3-ms{background:#e8b84b}
+    .ph4-ms{background:#4ade80}
+    .ph4b-ms{background:#f87171}
+
+    /* section divider */
+    .gantt-section-sep{
+      height:1px;background:rgba(255,255,255,0.05);
+      margin:10px 0 10px 160px;
+    }
+
+    /* Tooltip */
+    .tl-tooltip{
+      position:fixed;z-index:999;pointer-events:none;
+      background:#1a2340;border:1px solid rgba(255,255,255,0.12);
+      border-radius:8px;padding:10px 14px;font-size:11px;color:#e0e0ec;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:260px;line-height:1.5;
+      opacity:0;transition:opacity .15s;
+    }
+    .tl-tooltip.show{opacity:1}
+    .tl-tooltip strong{color:#fff;display:block;margin-bottom:3px;font-size:12px}
+    .tl-tooltip span{color:rgba(224,224,236,0.55);font-size:10px}
+
+    /* Back button */
+    .tl-back-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      margin-bottom:0;cursor:pointer;background:none;border:none;
+      color:rgba(224,224,236,0.45);font-size:11px;padding:0;
+      transition:color .15s;
+    }
+    .tl-back-btn:hover{color:#00c9b1}
   </style>
 </head>
 <body>
@@ -484,7 +626,7 @@
         </a>
       </li>
       <li>
-        <a href="devops/timeline.html" style="padding-left:36px;">
+        <a href="#devops-timeline" onclick="showView('devops-timeline');return false;" style="padding-left:36px;" id="nav-devops-timeline">
           <span class="nav-ico">📅</span>Timeline R1
         </a>
       </li>
@@ -764,6 +906,42 @@
     <footer>&copy; 2026 TV Azteca Media &mdash; Uso interno. Todos los derechos reservados.</footer>
   </div><!-- /#page -->
 
+  <!-- ══════════════════════════════════════════════════
+       DEVOPS TIMELINE VIEW (Gantt)
+  ══════════════════════════════════════════════════ -->
+  <div id="view-devops-timeline">
+    <div class="tl-header">
+      <button class="tl-back-btn" onclick="showView('portal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver al portal
+      </button>
+      <div class="tl-eyebrow" style="margin-top:12px">DevOps · Release Management</div>
+      <h2>Timeline R1 — Go-Live</h2>
+      <p>Plan de actividades para el despliegue del Release 1 a producción. Julio 2026.</p>
+      <span class="tl-badge">Julio 2026</span>
+    </div>
+
+    <div class="tl-body">
+      <!-- Legend -->
+      <div class="tl-legend">
+        <div class="tl-leg-item"><div class="tl-leg-dot" style="background:#6366f1"></div>Fase 1 Pre-UAT</div>
+        <div class="tl-leg-item"><div class="tl-leg-dot" style="background:#00c9b1"></div>Fase 2 UAT</div>
+        <div class="tl-leg-item"><div class="tl-leg-dot" style="background:#e8b84b"></div>Fase 3 PreProd</div>
+        <div class="tl-leg-item"><div class="tl-leg-dot" style="background:#4ade80"></div>Fase 4 Go-Live</div>
+        <div class="tl-leg-item"><div class="tl-leg-dot" style="background:#f87171"></div>Go/No-Go</div>
+        <div class="tl-leg-item" style="margin-left:auto"><span class="tl-leg-tag tag-a">auto</span>&nbsp;Pipeline</div>
+        <div class="tl-leg-item"><span class="tl-leg-tag tag-m">manual</span>&nbsp;Manual</div>
+        <div class="tl-leg-item"><span class="tl-leg-tag tag-c">crítico</span>&nbsp;Gate</div>
+      </div>
+
+      <!-- Gantt chart — built by JS below -->
+      <div class="gantt-wrap" id="gantt-root"></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tl-tooltip" id="tl-tooltip"></div>
+  </div>
+
 </div><!-- /#portal-section -->
 
 <script>
@@ -1041,6 +1219,216 @@
   function highlight(html, query) {
     const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return html.replace(new RegExp('(' + q + ')', 'gi'), '<mark>$1</mark>');
+  }
+
+  /* ══════════════════════════════════════════════════
+     VIEW SWITCHER
+  ══════════════════════════════════════════════════ */
+  function showView(id) {
+    const portalPage = document.getElementById('page');
+    const tlView     = document.getElementById('view-devops-timeline');
+
+    if (id === 'devops-timeline') {
+      portalPage.style.display = 'none';
+      tlView.classList.add('active');
+      document.getElementById('nav-devops-timeline').classList.add('active');
+      if (!document.getElementById('gantt-root').hasChildNodes()) buildGantt();
+    } else {
+      portalPage.style.display = '';
+      tlView.classList.remove('active');
+      document.getElementById('nav-devops-timeline').classList.remove('active');
+    }
+  }
+
+  /* ══════════════════════════════════════════════════
+     GANTT BUILDER
+  ══════════════════════════════════════════════════ */
+  function buildGantt() {
+    /* Jul 2026: Jul 3 = col 0, each day = 1 unit. Total: Jul 3–28 = 26 cols */
+    const START_DAY = 3;   /* Jul 3 */
+    const END_DAY   = 28;  /* Jul 28 */
+    const COLS      = END_DAY - START_DAY + 1; /* 26 cols */
+
+    /* Column width in % */
+    const COL_W = 100 / COLS;
+
+    function pct(day1, day2) {
+      /* returns {left%, width%} */
+      const l = ((day1 - START_DAY) / COLS) * 100;
+      const w = ((day2 - day1 + 1) / COLS) * 100;
+      return { left: Math.max(0,l), width: Math.max(w, COL_W * 0.8) };
+    }
+    function ms(day) {
+      /* milestone: center on day */
+      const l = ((day - START_DAY + 0.5) / COLS) * 100;
+      return { left: l };
+    }
+
+    const phases = [
+      {
+        id: 'ph1', label: 'Fase 1 — Pre-UAT', dates: 'Jul 3–5',
+        color: '#6366f1', cls: 'ph1-bar', msCls: 'ph1-ms',
+        rows: [
+          { label: 'Validar artefacto R1 completo', d1:3, d2:3, tags:['auto'], tip:'generate-sprint-manifest' },
+          { label: 'Dress rehearsal artefacto R1', d1:3, d2:3, tags:['auto'], tip:'release-deploy-exercise → tva-devdo1' },
+          { label: 'Crear tag release estable', d1:3, d2:3, tags:['manual'], tip:'Tag inmutable del artefacto R1' },
+          { label: 'Comunicar resultado al equipo', d1:3, d2:3, tags:['manual'], tip:'Comunicación post ejercicio de despliegue' },
+        ]
+      },
+      {
+        id: 'ph2', label: 'Fase 2 — UAT', dates: 'Jul 6–24',
+        color: '#00c9b1', cls: 'ph2-bar', msCls: 'ph2-ms',
+        rows: [
+          { label: 'Desplegar artefacto en UAT', d1:6, d2:6, tags:['auto','crit'], tip:'Pipeline → tva-uat' },
+          { label: 'Crear usuarios en UAT', d1:6, d2:6, tags:['manual'], tip:'Asignación de perfiles en UAT' },
+          { label: 'Carga de datos en UAT', d1:6, d2:7, tags:['manual'], tip:'' },
+          { label: 'Config. integraciones inbound', d1:6, d2:7, tags:['manual'], tip:'MultiAds / Platform Events' },
+          { label: 'Config. integraciones outbound', d1:6, d2:7, tags:['manual'], tip:'GAM / Meta — Named Credentials' },
+          { label: 'Verificación E2E integraciones', d1:7, d2:7, tags:['crit'], tip:'Handshake GAM / Meta / MultiAds' },
+          { label: 'Ejecución pruebas UAT', d1:6, d2:24, tags:[], tip:'Usuarios de negocio TVA' },
+          { label: 'Fixes UAT (bugfix/*)', d1:6, d2:24, tags:['crit'], tip:'Correcciones post-deploy UAT' },
+          { label: 'Liberación a usuarios negocio', d1:16, d2:16, milestone:true, tags:['crit'], tip:'Apertura de UAT a TVA' },
+          { label: 'Sign-off UAT', d1:23, d2:23, milestone:true, tags:['crit'], tip:'Comunicación fin de fase UAT' },
+        ]
+      },
+      {
+        id: 'ph3', label: 'Fase 3 — PreProd', dates: 'Jul 23–24',
+        color: '#e8b84b', cls: 'ph3-bar', msCls: 'ph3-ms',
+        rows: [
+          { label: 'Desplegar artefacto en PreProd', d1:24, d2:24, tags:['auto','crit'], tip:'Pipeline → tva-preprd' },
+          { label: 'Carga de datos en PreProd', d1:24, d2:24, tags:['manual'], tip:'' },
+          { label: 'Sign-off PreProd', d1:24, d2:24, milestone:true, tags:['crit'], tip:'Cierre de fase PreProd' },
+        ]
+      },
+      {
+        id: 'ph4b', label: 'Go/No-Go', dates: 'Jul 23',
+        color: '#f87171', cls: 'ph4b-bar', msCls: 'ph4b-ms',
+        rows: [
+          { label: 'Revisión estado todas las fases', d1:23, d2:23, tags:['crit'], tip:'Gate previo al Go-Live' },
+          { label: 'Verificar disponibilidad equipo', d1:23, d2:23, tags:['manual'], tip:'' },
+          { label: 'Confirmar plan de rollback', d1:23, d2:23, tags:['crit'], tip:'Procedimiento, responsables y tiempos' },
+          { label: 'Decisión formal Go/No-Go', d1:23, d2:23, milestone:true, tags:['crit'], tip:'RM + TA — dual approval' },
+        ]
+      },
+      {
+        id: 'ph4', label: 'Fase 4 — Go-Live 🚀', dates: 'Jul 25',
+        color: '#4ade80', cls: 'ph4-bar', msCls: 'ph4-ms',
+        rows: [
+          { label: 'Desplegar en Producción', d1:25, d2:25, tags:['auto','crit'], tip:'Pipeline → tva-prod' },
+          { label: 'Crear usuarios en Producción', d1:25, d2:25, tags:['manual'], tip:'' },
+          { label: 'Config. integraciones Prod', d1:25, d2:25, tags:['manual'], tip:'Inbound + Outbound (GAM/Meta/MultiAds)' },
+          { label: 'Verificación E2E Producción', d1:25, d2:25, tags:['crit'], tip:'Handshake completo en Prod' },
+          { label: 'Smoke / pruebas post Go-Live', d1:25, d2:25, tags:['crit'], tip:'' },
+          { label: 'Sign-off Go-Live', d1:25, d2:25, milestone:true, tags:['crit'], tip:'Comunicación fin del despliegue' },
+          { label: 'PR merge a main', d1:25, d2:25, tags:['manual'], tip:'' },
+          { label: 'Creación ambiente Hotfix', d1:27, d2:27, tags:['manual'], tip:'Partial Copy post Go-Live' },
+        ]
+      },
+    ];
+
+    /* Day labels */
+    const days = [];
+    for (let d = START_DAY; d <= END_DAY; d++) days.push(d);
+
+    /* Build axis */
+    const root = document.getElementById('gantt-root');
+    const axis = document.createElement('div');
+    axis.className = 'gantt-axis';
+    axis.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+    days.forEach(d => {
+      const c = document.createElement('div');
+      c.className = 'gantt-axis-cell';
+      /* Show every 2 days for readability */
+      c.textContent = (d % 2 === 1) ? `Jul ${d}` : '';
+      axis.appendChild(c);
+    });
+    root.appendChild(axis);
+
+    /* Tooltip */
+    const tooltip = document.getElementById('tl-tooltip');
+    function showTip(e, html) {
+      tooltip.innerHTML = html;
+      tooltip.classList.add('show');
+      moveTip(e);
+    }
+    function moveTip(e) {
+      const x = e.clientX + 14, y = e.clientY - 10;
+      tooltip.style.left = Math.min(x, window.innerWidth - 280) + 'px';
+      tooltip.style.top  = Math.max(y, 8) + 'px';
+    }
+    function hideTip() { tooltip.classList.remove('show'); }
+
+    /* Build each phase */
+    phases.forEach(phase => {
+      const sep = document.createElement('div');
+      sep.className = 'gantt-section-sep';
+      root.appendChild(sep);
+
+      /* Phase label pill */
+      const lbl = document.createElement('div');
+      lbl.className = 'gantt-phase-label';
+      lbl.innerHTML = `<span class="gantt-phase-pill" style="background:${phase.color}20;color:${phase.color};border:1px solid ${phase.color}40">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="${phase.color}" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        ${phase.label} <span style="opacity:.6;font-weight:400;margin-left:4px">${phase.dates}</span>
+      </span>`;
+      root.appendChild(lbl);
+
+      /* Rows */
+      phase.rows.forEach(row => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'gantt-row';
+
+        /* Label */
+        const labelEl = document.createElement('div');
+        labelEl.className = 'gantt-row-label';
+        let tagsHtml = '';
+        if (row.tags.includes('auto'))  tagsHtml += `<span class="tl-leg-tag tag-a" style="font-size:8px;padding:1px 5px">auto</span>`;
+        if (row.tags.includes('manual'))tagsHtml += `<span class="tl-leg-tag tag-m" style="font-size:8px;padding:1px 5px">manual</span>`;
+        if (row.tags.includes('crit'))  tagsHtml += `<span class="tl-leg-tag tag-c" style="font-size:8px;padding:1px 5px">crítico</span>`;
+        labelEl.innerHTML = `<div>
+          <div style="font-size:10.5px;color:rgba(224,224,236,0.75);line-height:1.35">${row.label}</div>
+          ${tagsHtml ? `<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px">${tagsHtml}</div>` : ''}
+        </div>`;
+        rowEl.appendChild(labelEl);
+
+        /* Grid */
+        const gridEl = document.createElement('div');
+        gridEl.className = 'gantt-grid';
+        gridEl.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+        days.forEach(() => {
+          const col = document.createElement('div');
+          col.className = 'gantt-col';
+          gridEl.appendChild(col);
+        });
+
+        const tipContent = `<strong>${row.label}</strong>
+          <span>Jul ${row.d1}${row.d2 !== row.d1 ? ` – Jul ${row.d2}` : ''}</span>
+          ${row.tip ? `<div style="margin-top:5px;color:rgba(224,224,236,0.6);font-size:10px">${row.tip}</div>` : ''}`;
+
+        if (row.milestone) {
+          const { left } = ms(row.d1);
+          const mEl = document.createElement('div');
+          mEl.className = `gantt-milestone ${phase.msCls}`;
+          mEl.style.left = `calc(${left}% - 7px)`;
+          mEl.addEventListener('mousemove', e => { showTip(e, tipContent); moveTip(e); });
+          mEl.addEventListener('mouseleave', hideTip);
+          gridEl.appendChild(mEl);
+        } else {
+          const { left, width } = pct(row.d1, row.d2);
+          const bar = document.createElement('div');
+          bar.className = `gantt-bar ${phase.cls}`;
+          bar.style.left  = left + '%';
+          bar.style.width = width + '%';
+          if (width * COLS / 100 > 3) bar.textContent = `Jul ${row.d1}–${row.d2}`;
+          bar.addEventListener('mousemove', e => { showTip(e, tipContent); moveTip(e); });
+          bar.addEventListener('mouseleave', hideTip);
+          gridEl.appendChild(bar);
+        }
+
+        rowEl.appendChild(gridEl);
+        root.appendChild(rowEl);
+      });
+    });
   }
 </script>
 
