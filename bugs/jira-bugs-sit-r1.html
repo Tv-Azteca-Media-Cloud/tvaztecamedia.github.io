@@ -2548,46 +2548,85 @@ if (window.self !== window.top) {
 }
 </script>
 <style>
-/* ── Embedded mode ── */
+/* ══════════════════════════════════════════
+   EMBEDDED MODE — portal iframe
+   zoom applied via JS: document.documentElement.style.zoom = '0.72'
+   These rules fix layout issues that persist after zoom
+   ══════════════════════════════════════════ */
 html.embedded #dk-sidebar,
 html.embedded #dk-topbar { display: none !important; }
-html.embedded #dk-main { margin-left: 0 !important; padding-top: 0 !important; }
-html.embedded .sz-wrap { max-width: 100% !important; padding: 12px 16px !important; }
+html.embedded #dk-main   { margin-left: 0 !important; padding-top: 0 !important; }
 
-/* KPI numbers */
-html.embedded .gtb-num { font-size: 32px !important; }
+/* Full-width, compact padding */
+html.embedded .sz-wrap   { max-width: 100% !important; padding: 10px 14px !important; }
+html.embedded .sz-section { margin: 12px 0 !important; }
+
+/* ── KPI stat cards: smaller grid + smaller numbers ── */
+html.embedded .sz-stats {
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
+  gap: 6px !important;
+}
+html.embedded .sz-stat     { padding: 10px 8px !important; }
+html.embedded .sz-stat-num { font-size: 28px !important; }
+html.embedded .sz-stat-lbl { font-size: 10px !important; }
+
+/* ── GTB cards (Resumen ejecutivo) ── */
+html.embedded .gtb-num   { font-size: 30px !important; }
 html.embedded .gtb-label { font-size: 10px !important; }
-html.embedded .gtb-sub  { font-size: 9px  !important; }
-html.embedded .gtb-item { padding: 10px 14px !important; }
-html.embedded .gtb      { gap: 6px !important; flex-wrap: wrap !important; }
+html.embedded .gtb-sub   { font-size: 9px  !important; }
+html.embedded .gtb-item  { padding: 10px 12px !important; }
+html.embedded .gtb       { gap: 6px !important; flex-wrap: wrap !important; }
 
-/* Headings */
-html.embedded h1 { font-size: 18px !important; }
-html.embedded h2 { font-size: 15px !important; }
-html.embedded h3 { font-size: 13px !important; }
+/* ── Headings ── */
+html.embedded h1, html.embedded .sz-section-title { font-size: 16px !important; }
+html.embedded h2 { font-size: 14px !important; }
+html.embedded h3 { font-size: 12px !important; }
 html.embedded p, html.embedded li { font-size: 11px !important; line-height: 1.5 !important; }
 
-/* Table */
-html.embedded #tbl-tickets { table-layout: fixed; width: 100%; font-size: 11px !important; }
+/* ── Table: fixed layout, truncate long result badges ── */
+html.embedded #tbl-tickets {
+  table-layout: fixed !important;
+  width: 100% !important;
+  font-size: 11px !important;
+}
 html.embedded #tbl-tickets th,
-html.embedded #tbl-tickets td { padding: 5px 7px !important; }
+html.embedded #tbl-tickets td       { padding: 4px 6px !important; vertical-align: middle !important; }
 html.embedded #tbl-tickets th:nth-child(1),
-html.embedded #tbl-tickets td:nth-child(1) { width: 110px; }
+html.embedded #tbl-tickets td:nth-child(1) { width: 100px !important; }
 html.embedded #tbl-tickets th:nth-child(2),
-html.embedded #tbl-tickets td:nth-child(2) { width: auto; }
+html.embedded #tbl-tickets td:nth-child(2) { width: auto !important; }
 html.embedded #tbl-tickets th:nth-child(3),
-html.embedded #tbl-tickets td:nth-child(3) { width: 90px; }
+html.embedded #tbl-tickets td:nth-child(3) { width: 85px !important; }
 html.embedded #tbl-tickets th:nth-child(4),
-html.embedded #tbl-tickets td:nth-child(4) { width: 80px; }
+html.embedded #tbl-tickets td:nth-child(4) { width: 75px !important; }
 html.embedded #tbl-tickets th:nth-child(5),
-html.embedded #tbl-tickets td:nth-child(5) { width: 160px; }
+html.embedded #tbl-tickets td:nth-child(5) { width: 175px !important; }
 html.embedded #tbl-tickets th:nth-child(6),
-html.embedded #tbl-tickets td:nth-child(6) { width: 38px; }
-html.embedded #tbl-tickets td:nth-child(2) .small-title { white-space:normal; word-break:break-word; display:block; }
+html.embedded #tbl-tickets td:nth-child(6) { width: 36px !important; }
 
-/* Badges */
-html.embedded .res-badge, html.embedded .sq-badge { font-size: 9px !important; padding: 2px 5px !important; }
-html.embedded .sp-badge { font-size: 9px !important; padding: 1px 4px !important; }
+/* The KEY fix: result badges must NOT wrap — truncate with ellipsis */
+html.embedded .sz-tag {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+  font-size: 10px !important;
+}
+html.embedded .sp-badge {
+  display: inline-block !important;
+  font-size: 9px !important;
+  padding: 1px 4px !important;
+  margin-top: 2px !important;
+}
+html.embedded .squad-tag { font-size: 9px !important; padding: 2px 5px !important; }
+html.embedded .ticket-key a { font-size: 10px !important; }
+
+html.embedded #tbl-tickets td:nth-child(2) .small-title {
+  white-space: normal !important;
+  word-break: break-word !important;
+  display: block !important;
+}
 </style>
 
 </body>
