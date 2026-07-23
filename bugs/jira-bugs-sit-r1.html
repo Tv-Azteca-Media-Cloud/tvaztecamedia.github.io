@@ -1376,6 +1376,12 @@ a { color: var(--dk-blue) !important; }
         <span class="sb-label">Criterio SP</span>
       </a>
     </li>
+    <li>
+      <a href="#" class="sb-link" data-view="ejemplo" data-tab="analisis">
+        <span class="sb-icon">🧪</span>
+        <span class="sb-label">Ejemplo</span>
+      </a>
+    </li>
   </ul>
 
   <div class="sb-legend">
@@ -2383,6 +2389,89 @@ IF(OR(ISBLANK(ContractId), ISBLANK(TotalPrice), ISBLANK(Contract.TVAI_SaldoClien
     </div>
 
   </div>
+</div>
+<!-- ════════════════════════════════════════════
+     VISTA EJEMPLO — KPI cards rediseñadas desde cero
+     CSS propio, sin dependencia de clases existentes
+════════════════════════════════════════════ -->
+<div class="view" id="view-ejemplo" data-tab="analisis" style="display:none;">
+<style>
+.ej-wrap { padding: 24px 28px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.ej-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+              color: #6b7aab; margin-bottom: 6px; }
+.ej-title   { font-size: 20px; font-weight: 800; color: #e8eaf0; margin: 0 0 20px; }
+
+/* KPI grid */
+.ej-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.ej-kpi {
+  background: #1a2035;
+  border-radius: 10px;
+  padding: 16px 12px 14px;
+  border-top: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+.ej-kpi-num  { font-size: 40px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+.ej-kpi-icon { font-size: 14px; margin-bottom: 3px; }
+.ej-kpi-lbl  { font-size: 10px; font-weight: 600; color: #8b93b0; text-transform: uppercase;
+               letter-spacing: .5px; white-space: nowrap; }
+
+.ej-kpi--bug    { border-top-color: #f06292; }
+.ej-kpi--bug    .ej-kpi-num { color: #f06292; }
+.ej-kpi--accept { border-top-color: #26d4a8; }
+.ej-kpi--accept .ej-kpi-num { color: #26d4a8; }
+.ej-kpi--detail { border-top-color: #ffd54f; }
+.ej-kpi--detail .ej-kpi-num { color: #ffd54f; }
+.ej-kpi--reject { border-top-color: #8b93b0; }
+.ej-kpi--reject .ej-kpi-num { color: #8b93b0; }
+.ej-kpi--repro  { border-top-color: #b39ddb; }
+.ej-kpi--repro  .ej-kpi-num { color: #b39ddb; }
+</style>
+
+<div class="ej-wrap">
+  <div class="ej-eyebrow">Cifras · Ejemplo</div>
+  <div class="ej-title">Resultado del análisis · 25 tickets</div>
+
+  <div class="ej-kpi-grid">
+    <div class="ej-kpi ej-kpi--bug">
+      <div class="ej-kpi-icon">🐛</div>
+      <div class="ej-kpi-num">5</div>
+      <div class="ej-kpi-lbl">Bug real</div>
+    </div>
+    <div class="ej-kpi ej-kpi--accept">
+      <div class="ej-kpi-icon">✅</div>
+      <div class="ej-kpi-num">8</div>
+      <div class="ej-kpi-lbl">Aceptado</div>
+    </div>
+    <div class="ej-kpi ej-kpi--detail">
+      <div class="ej-kpi-icon">❓</div>
+      <div class="ej-kpi-num">4</div>
+      <div class="ej-kpi-lbl">Requiere aclaración</div>
+    </div>
+    <div class="ej-kpi ej-kpi--reject">
+      <div class="ej-kpi-icon">🚫</div>
+      <div class="ej-kpi-num">7</div>
+      <div class="ej-kpi-lbl">Fuera de alcance</div>
+    </div>
+    <div class="ej-kpi ej-kpi--repro">
+      <div class="ej-kpi-icon">🔁</div>
+      <div class="ej-kpi-num">1</div>
+      <div class="ej-kpi-lbl">Reproducción</div>
+    </div>
+  </div>
+
+  <p style="color:#6b7aab; font-size:12px; margin:0;">
+    Vista de ejemplo — los KPI cards se ven bien aquí. Iremos migrando el resto de secciones a este diseño.
+  </p>
+</div>
 </div>
 </div><!-- /dk-main -->
 
