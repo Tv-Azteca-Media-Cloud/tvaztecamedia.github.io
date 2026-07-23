@@ -1213,6 +1213,10 @@
   }
 
   function filterCategory(cat, el) {
+    // ensure main page is visible (user may be coming from bugs/devops iframe views)
+    document.getElementById('view-bugs-iframe').classList.remove('active');
+    document.getElementById('view-devops-timeline').classList.remove('active');
+    document.getElementById('page').style.display = '';
     currentCategory = cat;
     document.getElementById('search').value = '';
     document.getElementById('search-clear').style.display = 'none';
