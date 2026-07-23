@@ -2546,27 +2546,34 @@ if (window.self !== window.top) {
 }
 </script>
 <style>
+/* ── Embedded mode (rendered inside portal iframe) ── */
 html.embedded #dk-sidebar,
 html.embedded #dk-topbar { display: none !important; }
-html.embedded #dk-main {
-  margin-left: 0 !important;
-  padding-top: 0 !important;
-}
-/* Tabla compacta en modo embedded */
-html.embedded .sz-wrap { max-width: 100% !important; padding: 20px 24px !important; }
+html.embedded #dk-main { margin-left: 0 !important; padding-top: 0 !important; }
+
+/* Global zoom — makes everything proportionally smaller */
+html.embedded body { zoom: 0.78; }
+
+/* Full-width layout */
+html.embedded .sz-wrap { max-width: 100% !important; padding: 16px 20px !important; }
+
+/* KPI cards: let them shrink naturally with zoom */
+html.embedded .gtb { gap: 10px !important; }
+
+/* Compact table */
 html.embedded #tbl-tickets { table-layout: fixed; width: 100%; }
 html.embedded #tbl-tickets th:nth-child(1),
-html.embedded #tbl-tickets td:nth-child(1) { width: 130px; }
+html.embedded #tbl-tickets td:nth-child(1) { width: 110px; }
 html.embedded #tbl-tickets th:nth-child(2),
 html.embedded #tbl-tickets td:nth-child(2) { width: auto; }
 html.embedded #tbl-tickets th:nth-child(3),
-html.embedded #tbl-tickets td:nth-child(3) { width: 100px; }
+html.embedded #tbl-tickets td:nth-child(3) { width: 90px; }
 html.embedded #tbl-tickets th:nth-child(4),
-html.embedded #tbl-tickets td:nth-child(4) { width: 90px; }
+html.embedded #tbl-tickets td:nth-child(4) { width: 80px; }
 html.embedded #tbl-tickets th:nth-child(5),
-html.embedded #tbl-tickets td:nth-child(5) { width: 170px; }
+html.embedded #tbl-tickets td:nth-child(5) { width: 160px; }
 html.embedded #tbl-tickets th:nth-child(6),
-html.embedded #tbl-tickets td:nth-child(6) { width: 44px; }
+html.embedded #tbl-tickets td:nth-child(6) { width: 40px; }
 html.embedded #tbl-tickets td:nth-child(2) .small-title {
   white-space: normal;
   word-break: break-word;
