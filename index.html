@@ -246,7 +246,9 @@
 
     #portal-section{
       display:flex;
+      height:100vh;
       min-height:100vh;
+      overflow:hidden;
     }
 
     /* ── Sidebar ── */
@@ -274,7 +276,7 @@
     .nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
 
     /* ── Main page ── */
-    #page{flex:1;display:flex;flex-direction:column;min-width:0}
+    #page{flex:1;display:flex;flex-direction:column;min-width:0;overflow-y:auto}
 
     /* ── Header ── */
     header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
@@ -352,9 +354,9 @@
     /* ════════════════════════════════════════════
        BUGS IFRAME VIEW
     ════════════════════════════════════════════ */
-    #view-bugs-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#EAF5FE}
+    #view-bugs-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#EAF5FE;overflow:hidden}
     #view-bugs-iframe.active{display:flex}
-    #view-bugs-iframe iframe{flex:1;border:none;width:100%;min-height:0}
+    #view-bugs-iframe iframe{flex:1;border:none;width:100%;height:100%;min-height:0;display:block}
 
     /* ════════════════════════════════════════════
        DEVOPS TIMELINE — Gantt view
@@ -982,7 +984,7 @@
        BUGS IFRAME VIEW
   ══════════════════════════════════════════════════ -->
   <div id="view-bugs-iframe">
-    <iframe id="bugs-iframe" src="" title="Análisis de Bugs R1"></iframe>
+    <iframe id="bugs-iframe" title="Análisis de Bugs R1"></iframe>
   </div>
 
 </div><!-- /#portal-section -->
@@ -1301,8 +1303,8 @@
     const navId = subview === 'tabla' ? 'nav-bugs-tabla' : 'nav-bugs-resumen';
     document.getElementById(navId).classList.add('active');
 
-    if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
-      // first load — set src with hash
+    if (!iframe.getAttribute('src')) {
+      // first load — set src with hash so the child navigates on init
       iframe.src = BUGS_SRC + '#' + subview;
     } else {
       // already loaded — send postMessage to switch view
