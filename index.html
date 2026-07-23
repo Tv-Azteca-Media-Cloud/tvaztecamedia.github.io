@@ -350,6 +350,13 @@
     footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
 
     /* ════════════════════════════════════════════
+       BUGS IFRAME VIEW
+    ════════════════════════════════════════════ */
+    #view-bugs-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#EAF5FE}
+    #view-bugs-iframe.active{display:flex}
+    #view-bugs-iframe iframe{flex:1;border:none;width:100%;min-height:0}
+
+    /* ════════════════════════════════════════════
        DEVOPS TIMELINE — Gantt view
     ════════════════════════════════════════════ */
     #view-devops-timeline{display:none;flex-direction:column;flex:1;background:#0a0e1a;color:#e0e0ec;min-height:0}
@@ -616,6 +623,18 @@
       <li>
         <a onclick="filterCategory('discovery-entregables',this)" id="nav-discovery-entregables">
           <span class="nav-ico">📦</span>Discovery &amp; Entregables
+        </a>
+      </li>
+      <li class="nav-sep"></li>
+      <li class="nav-grp">ANÁLISIS DE BUGS R1</li>
+      <li>
+        <a href="#bugs-resumen" onclick="showBugsView('resumen');return false;" id="nav-bugs-resumen">
+          <span class="nav-ico">📋</span>Resumen ejecutivo
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-tabla" onclick="showBugsView('tabla');return false;" id="nav-bugs-tabla" style="padding-left:36px;">
+          <span class="nav-ico">📊</span>25 tickets
         </a>
       </li>
       <li class="nav-sep"></li>
@@ -959,6 +978,13 @@
     <div class="tl-tooltip" id="tl-tooltip"></div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════
+       BUGS IFRAME VIEW
+  ══════════════════════════════════════════════════ -->
+  <div id="view-bugs-iframe">
+    <iframe id="bugs-iframe" src="" title="Análisis de Bugs R1"></iframe>
+  </div>
+
 </div><!-- /#portal-section -->
 
 <script>
@@ -1241,21 +1267,57 @@
   /* ══════════════════════════════════════════════════
      VIEW SWITCHER
   ══════════════════════════════════════════════════ */
-  function showView(id) {
-    const portalPage = document.getElementById('page');
-    const tlView     = document.getElementById('view-devops-timeline');
+  const BUGS_SRC = 'bugs/jira-bugs-sit-r1.html';
 
+  function hideAllViews() {
+    document.getElementById('page').style.display = 'none';
+    document.getElementById('view-devops-timeline').classList.remove('active');
+    document.getElementById('view-bugs-iframe').classList.remove('active');
+    // clear all sidebar active states for switcher links
+    ['nav-devops-timeline','nav-bugs-resumen','nav-bugs-tabla'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+  }
+
+  function showView(id) {
+    hideAllViews();
     if (id === 'devops-timeline') {
-      portalPage.style.display = 'none';
-      tlView.classList.add('active');
+      document.getElementById('view-devops-timeline').classList.add('active');
       document.getElementById('nav-devops-timeline').classList.add('active');
       if (!document.getElementById('gantt-root').hasChildNodes()) buildGantt();
     } else {
-      portalPage.style.display = '';
-      tlView.classList.remove('active');
-      document.getElementById('nav-devops-timeline').classList.remove('active');
+      document.getElementById('page').style.display = '';
     }
   }
+
+  function showBugsView(subview) {
+    hideAllViews();
+    const iframeView = document.getElementById('view-bugs-iframe');
+    const iframe     = document.getElementById('bugs-iframe');
+    iframeView.classList.add('active');
+
+    // highlight sidebar item
+    const navId = subview === 'tabla' ? 'nav-bugs-tabla' : 'nav-bugs-resumen';
+    document.getElementById(navId).classList.add('active');
+
+    if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
+      // first load — set src with hash
+      iframe.src = BUGS_SRC + '#' + subview;
+    } else {
+      // already loaded — send postMessage to switch view
+      iframe.contentWindow.postMessage({ navigateTo: subview }, '*');
+    }
+  }
+
+  // When iframe loads, re-send the desired view in case of first load
+  document.getElementById('bugs-iframe').addEventListener('load', function() {
+    const active = document.getElementById('nav-bugs-tabla').classList.contains('active')
+      ? 'tabla' : 'resumen';
+    try {
+      this.contentWindow.postMessage({ navigateTo: active }, '*');
+    } catch(e) {}
+  });
 
   /* ══════════════════════════════════════════════════
      GANTT BUILDER
