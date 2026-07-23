@@ -270,10 +270,11 @@
     .nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
     .nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
     #nav ul{list-style:none;padding:4px 0;flex:1}
-    #nav ul li a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+    #nav ul li a{display:flex;align-items:center;gap:6px;padding:7px 14px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer;overflow:hidden}
     #nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
-    .nav-ico{font-size:12px;flex-shrink:0}
-    .nav-badge{margin-left:auto;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
+    .nav-ico{font-size:11px;flex-shrink:0}
+    .nav-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+    .nav-badge{margin-left:4px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;flex-shrink:0}
     #nav ul li a.active .nav-badge{background:rgba(255,255,255,.2);color:#fff}
     .nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
 
@@ -633,57 +634,57 @@
       <li class="nav-grp">ANÁLISIS DE BUGS R1</li>
       <li>
         <a href="#bugs-resumen" onclick="showBugsView('resumen');return false;" id="nav-bugs" class="nav-bugs-item" data-bugs-view="resumen">
-          <span class="nav-ico">📋</span>Resumen ejecutivo
+          <span class="nav-ico">📋</span><span class="nav-lbl">Resumen ejecutivo</span>
         </a>
       </li>
       <li>
         <a href="#bugs-tabla" onclick="showBugsView('tabla');return false;" class="nav-bugs-item" data-bugs-view="tabla">
-          <span class="nav-ico">🗂️</span>Resultado · 25 tickets
+          <span class="nav-ico">🗂️</span><span class="nav-lbl">Resultado · 25 tickets</span>
         </a>
       </li>
       <li>
         <a href="#bugs-bugs" onclick="showBugsView('bugs');return false;" class="nav-bugs-item" data-bugs-view="bugs">
-          <span class="nav-ico">🐛</span>Bugs reales <span class="nav-badge">5</span>
+          <span class="nav-ico">🐛</span><span class="nav-lbl">Bugs reales</span><span class="nav-badge">5</span>
         </a>
       </li>
       <li>
         <a href="#bugs-exec" onclick="showBugsView('exec');return false;" class="nav-bugs-item" data-bugs-view="exec">
-          <span class="nav-ico">✅</span>Aceptados <span class="nav-badge">8</span>
+          <span class="nav-ico">✅</span><span class="nav-lbl">Aceptados</span><span class="nav-badge">8</span>
         </a>
       </li>
       <li>
         <a href="#bugs-detail" onclick="showBugsView('detail');return false;" class="nav-bugs-item" data-bugs-view="detail">
-          <span class="nav-ico">❓</span>Requiere aclaración <span class="nav-badge">4</span>
+          <span class="nav-ico">❓</span><span class="nav-lbl">Requiere aclaración</span><span class="nav-badge">4</span>
         </a>
       </li>
       <li>
         <a href="#bugs-reject" onclick="showBugsView('reject');return false;" class="nav-bugs-item" data-bugs-view="reject">
-          <span class="nav-ico">🚫</span>Fuera de alcance <span class="nav-badge">7</span>
+          <span class="nav-ico">🚫</span><span class="nav-lbl">Fuera de alcance</span><span class="nav-badge">7</span>
         </a>
       </li>
       <li>
         <a href="#bugs-repro" onclick="showBugsView('repro');return false;" class="nav-bugs-item" data-bugs-view="repro">
-          <span class="nav-ico">🔁</span>Reproducción <span class="nav-badge">1</span>
+          <span class="nav-ico">🔁</span><span class="nav-lbl">Reproducción</span><span class="nav-badge">1</span>
         </a>
       </li>
       <li>
         <a href="#bugs-reunion" onclick="showBugsView('reunion');return false;" class="nav-bugs-item" data-bugs-view="reunion">
-          <span class="nav-ico">📝</span>Reunión 2026-07-22
+          <span class="nav-ico">📝</span><span class="nav-lbl">Reunión 2026-07-22</span>
         </a>
       </li>
       <li>
         <a href="#bugs-metodologia" onclick="showBugsView('metodologia');return false;" class="nav-bugs-item" data-bugs-view="metodologia">
-          <span class="nav-ico">📖</span>Metodología
+          <span class="nav-ico">📖</span><span class="nav-lbl">Metodología</span>
         </a>
       </li>
       <li>
         <a href="#bugs-curso" onclick="showBugsView('curso');return false;" class="nav-bugs-item" data-bugs-view="curso">
-          <span class="nav-ico">⚙️</span>Tickets en Curso <span class="nav-badge">18</span>
+          <span class="nav-ico">⚙️</span><span class="nav-lbl">Tickets en Curso</span><span class="nav-badge">18</span>
         </a>
       </li>
       <li>
         <a href="#bugs-glosario" onclick="showBugsView('glosario');return false;" class="nav-bugs-item" data-bugs-view="glosario">
-          <span class="nav-ico">🎯</span>Criterio SP
+          <span class="nav-ico">🎯</span><span class="nav-lbl">Criterio SP</span>
         </a>
       </li>
       <li class="nav-sep"></li>
