@@ -273,6 +273,8 @@
     #nav ul li a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
     #nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
     .nav-ico{font-size:12px;flex-shrink:0}
+    .nav-badge{margin-left:auto;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
+    #nav ul li a.active .nav-badge{background:rgba(255,255,255,.2);color:#fff}
     .nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
 
     /* ── Main page ── */
@@ -356,10 +358,6 @@
     ════════════════════════════════════════════ */
     #view-bugs-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#0f1520;overflow:hidden}
     #view-bugs-iframe.active{display:flex}
-    #bugs-tabbar{display:flex;align-items:center;gap:8px;padding:10px 20px;background:#161b2e;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
-    #bugs-tabbar .bt{padding:6px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#8b9bbf;font-size:13px;font-family:inherit;cursor:pointer;transition:all .18s}
-    #bugs-tabbar .bt:hover{background:rgba(255,255,255,.06);color:#c8d4ef}
-    #bugs-tabbar .bt.active{background:#1a56db;border-color:#1a56db;color:#fff;font-weight:600}
     #view-bugs-iframe iframe{flex:1;border:none;width:100%;height:100%;min-height:0;display:block}
 
     /* ════════════════════════════════════════════
@@ -634,8 +632,58 @@
       <li class="nav-sep"></li>
       <li class="nav-grp">ANÁLISIS DE BUGS R1</li>
       <li>
-        <a href="#bugs" onclick="showBugsView('resumen');return false;" id="nav-bugs">
-          <span class="nav-ico">🐛</span>Clasificación SIT
+        <a href="#bugs-resumen" onclick="showBugsView('resumen');return false;" id="nav-bugs" class="nav-bugs-item" data-bugs-view="resumen">
+          <span class="nav-ico">📋</span>Resumen ejecutivo
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-tabla" onclick="showBugsView('tabla');return false;" class="nav-bugs-item" data-bugs-view="tabla">
+          <span class="nav-ico">🗂️</span>Resultado · 25 tickets
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-bugs" onclick="showBugsView('bugs');return false;" class="nav-bugs-item" data-bugs-view="bugs">
+          <span class="nav-ico">🐛</span>Bugs reales <span class="nav-badge">5</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-exec" onclick="showBugsView('exec');return false;" class="nav-bugs-item" data-bugs-view="exec">
+          <span class="nav-ico">✅</span>Aceptados <span class="nav-badge">8</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-detail" onclick="showBugsView('detail');return false;" class="nav-bugs-item" data-bugs-view="detail">
+          <span class="nav-ico">❓</span>Requiere aclaración <span class="nav-badge">4</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-reject" onclick="showBugsView('reject');return false;" class="nav-bugs-item" data-bugs-view="reject">
+          <span class="nav-ico">🚫</span>Fuera de alcance <span class="nav-badge">7</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-repro" onclick="showBugsView('repro');return false;" class="nav-bugs-item" data-bugs-view="repro">
+          <span class="nav-ico">🔁</span>Reproducción <span class="nav-badge">1</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-reunion" onclick="showBugsView('reunion');return false;" class="nav-bugs-item" data-bugs-view="reunion">
+          <span class="nav-ico">📝</span>Reunión 2026-07-22
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-metodologia" onclick="showBugsView('metodologia');return false;" class="nav-bugs-item" data-bugs-view="metodologia">
+          <span class="nav-ico">📖</span>Metodología
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-curso" onclick="showBugsView('curso');return false;" class="nav-bugs-item" data-bugs-view="curso">
+          <span class="nav-ico">⚙️</span>Tickets en Curso <span class="nav-badge">18</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bugs-glosario" onclick="showBugsView('glosario');return false;" class="nav-bugs-item" data-bugs-view="glosario">
+          <span class="nav-ico">🎯</span>Criterio SP
         </a>
       </li>
       <li class="nav-sep"></li>
@@ -983,10 +1031,6 @@
        BUGS IFRAME VIEW
   ══════════════════════════════════════════════════ -->
   <div id="view-bugs-iframe">
-    <div id="bugs-tabbar">
-      <button class="bt active" id="bt-resumen" onclick="switchBugsTab('resumen')">📋 Resumen ejecutivo</button>
-      <button class="bt" id="bt-tabla" onclick="switchBugsTab('tabla')">📊 25 tickets</button>
-    </div>
     <iframe id="bugs-iframe" title="Análisis de Bugs R1"></iframe>
   </div>
 
@@ -1278,10 +1322,8 @@
     document.getElementById('page').style.display = 'none';
     document.getElementById('view-devops-timeline').classList.remove('active');
     document.getElementById('view-bugs-iframe').classList.remove('active');
-    ['nav-devops-timeline','nav-bugs'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('active');
-    });
+    // clear all nav active states
+    document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
   }
 
   function showView(id) {
@@ -1295,33 +1337,17 @@
     }
   }
 
-  let _bugsCurrentTab = 'resumen';
-
-  function switchBugsTab(subview) {
-    _bugsCurrentTab = subview;
-    // update tab buttons
-    ['resumen','tabla'].forEach(t => {
-      const btn = document.getElementById('bt-' + t);
-      if (btn) btn.classList.toggle('active', t === subview);
-    });
-    // tell the iframe
-    const iframe = document.getElementById('bugs-iframe');
-    if (iframe.getAttribute('src')) {
-      iframe.contentWindow.postMessage({ navigateTo: subview }, '*');
-    }
-  }
+  let _bugsCurrentView = 'resumen';
 
   function showBugsView(subview) {
     subview = subview || 'resumen';
-    _bugsCurrentTab = subview;
+    _bugsCurrentView = subview;
     hideAllViews();
     document.getElementById('view-bugs-iframe').classList.add('active');
-    document.getElementById('nav-bugs').classList.add('active');
-    // sync tab buttons
-    ['resumen','tabla'].forEach(t => {
-      const btn = document.getElementById('bt-' + t);
-      if (btn) btn.classList.toggle('active', t === subview);
-    });
+    // mark the matching sidebar link active
+    const activeLink = document.querySelector('.nav-bugs-item[data-bugs-view="' + subview + '"]')
+                    || document.getElementById('nav-bugs');
+    if (activeLink) activeLink.classList.add('active');
     const iframe = document.getElementById('bugs-iframe');
     if (!iframe.getAttribute('src')) {
       iframe.src = BUGS_SRC + '#' + subview;
@@ -1330,10 +1356,10 @@
     }
   }
 
-  // When iframe loads, navigate to the active tab
+  // When iframe loads, navigate to the active view
   document.getElementById('bugs-iframe').addEventListener('load', function() {
     try {
-      this.contentWindow.postMessage({ navigateTo: _bugsCurrentTab }, '*');
+      this.contentWindow.postMessage({ navigateTo: _bugsCurrentView }, '*');
     } catch(e) {}
   });
 
