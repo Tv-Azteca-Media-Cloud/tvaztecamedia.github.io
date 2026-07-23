@@ -2539,7 +2539,20 @@ window.addEventListener('message', function(e) {
     if (fn) fn(e.data.navigateTo);
   }
 });
+
+// Embedded mode: hide sidebar + topbar, reset margins
+if (window.self !== window.top) {
+  document.documentElement.classList.add('embedded');
+}
 </script>
+<style>
+html.embedded #dk-sidebar,
+html.embedded #dk-topbar { display: none !important; }
+html.embedded #dk-main {
+  margin-left: 0 !important;
+  padding-top: 0 !important;
+}
+</style>
 
 </body>
 </html>
