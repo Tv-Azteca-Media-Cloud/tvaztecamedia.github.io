@@ -91,8 +91,22 @@
   .field-label { font-size: 12px; color: var(--text-muted); min-width: 140px; }
   .field-value { font-size: 13px; color: #181818; }
 
+  /* ── Back Button ── */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    position: fixed; top: 16px; left: 16px; z-index: 200;
+    background: #032d60; color: #fff;
+    padding: 10px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    transition: background .15s, transform .1s;
+    border: none; cursor: pointer;
+  }
+  .back-btn:hover { background: #0176d3; transform: translateY(-1px); }
+  .back-btn svg { flex-shrink: 0; }
+
   /* ── Demo State Selector ── */
-  .demo-bar { background: #032d60; color: #fff; padding: 10px 24px; display: flex;
+  .demo-bar { background: #032d60; color: #fff; padding: 10px 24px 10px 180px; display: flex;
               align-items: center; gap: 12px; font-size: 12px; }
   .demo-bar strong { font-size: 13px; }
   .state-btn { padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
@@ -179,6 +193,14 @@
 </style>
 </head>
 <body>
+
+<!-- ── Back Button ── -->
+<a class="back-btn" href="../index.html#portal-content">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+  </svg>
+  Volver al Menú
+</a>
 
 <!-- ── Demo Control Bar ── -->
 <div class="demo-bar">
