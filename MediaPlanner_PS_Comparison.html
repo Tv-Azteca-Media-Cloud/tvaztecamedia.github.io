@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparativa: TVAM_MediaPlanner vs TVAM_MediaPlanner_Custom</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; }
+
+  .hero { background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 100%); padding: 40px 48px 32px; border-bottom: 1px solid #2d3748; }
+  .hero h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .hero .subtitle { font-size: 14px; color: #90cdf4; margin-bottom: 20px; }
+  .meta-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+  .chip { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .chip-blue { background: #2b6cb0; color: #bee3f8; }
+  .chip-orange { background: #7b341e; color: #fbd38d; }
+  .chip-green { background: #276749; color: #c6f6d5; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 32px 48px; }
+
+  .section { margin-bottom: 48px; }
+  .section-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; display: block; width: 4px; height: 20px; background: #4299e1; border-radius: 2px; }
+  .section-desc { font-size: 13px; color: #718096; margin-bottom: 16px; }
+
+  /* Summary cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .card { background: #1a202c; border: 1px solid #2d3748; border-radius: 12px; padding: 20px; }
+  .card-label { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .card-value { font-size: 28px; font-weight: 800; }
+  .card-value.managed { color: #f6ad55; }
+  .card-value.custom { color: #68d391; }
+  .card-value.diff { color: #fc8181; }
+  .card-sub { font-size: 12px; color: #718096; margin-top: 4px; }
+
+  /* Verdict banner */
+  .verdict { border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; border-left: 4px solid; }
+  .verdict.possible { background: #1a2e22; border-color: #48bb78; }
+  .verdict.warning { background: #2d2006; border-color: #ed8936; }
+  .verdict-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .verdict.possible .verdict-title { color: #68d391; }
+  .verdict.warning .verdict-title { color: #f6ad55; }
+  .verdict p { font-size: 13px; color: #a0aec0; line-height: 1.6; }
+  .verdict ul { padding-left: 18px; margin-top: 8px; }
+  .verdict li { font-size: 13px; color: #a0aec0; margin-bottom: 4px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid #2d3748; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #1a202c; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #718096; white-space: nowrap; border-bottom: 1px solid #2d3748; }
+  tbody tr { border-bottom: 1px solid #1a202c; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #1a202c; }
+  tbody td { padding: 10px 16px; vertical-align: middle; }
+  .td-name { color: #e2e8f0; font-family: 'Menlo', 'Consolas', monospace; font-size: 12px; }
+  .td-label { color: #a0aec0; font-size: 12px; }
+
+  /* Permission badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .badge-yes { background: #276749; color: #9ae6b4; }
+  .badge-no { background: #2d3748; color: #4a5568; }
+  .badge-partial { background: #7b341e; color: #fbd38d; }
+  .badge-gap { background: #44337a; color: #d6bcfa; }
+
+  .crud-cell { display: flex; gap: 3px; flex-wrap: wrap; }
+  .crud { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; font-size: 10px; font-weight: 800; border-radius: 3px; }
+  .crud-r { background: #2c5282; color: #90cdf4; }
+  .crud-c { background: #276749; color: #9ae6b4; }
+  .crud-e { background: #744210; color: #fbd38d; }
+  .crud-d { background: #742a2a; color: #feb2b2; }
+  .crud-v { background: #44337a; color: #d6bcfa; }
+  .crud-m { background: #234e52; color: #81e6d9; }
+  .crud-off { background: #2d3748; color: #4a5568; }
+
+  .tag-missing { display: inline-block; font-size: 11px; background: #44337a; color: #d6bcfa; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .tag-same { display: inline-block; font-size: 11px; background: #1a202c; color: #4a5568; padding: 2px 8px; border-radius: 4px; }
+  .tag-partial { display: inline-block; font-size: 11px; background: #7b341e; color: #fbd38d; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .tag-present { display: inline-block; font-size: 11px; background: #276749; color: #9ae6b4; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+  .section-filter { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn { font-size: 12px; padding: 5px 14px; border-radius: 6px; border: 1px solid #2d3748; background: #1a202c; color: #a0aec0; cursor: pointer; }
+  .filter-btn.active { background: #2b6cb0; border-color: #4299e1; color: #fff; }
+
+  .highlight-row td { background: #1a1030 !important; }
+  .note { font-size: 12px; color: #718096; margin-top: 8px; font-style: italic; }
+
+  .tab-badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .tab-on { background: #276749; color: #9ae6b4; }
+  .tab-off { background: #744210; color: #fbd38d; }
+  .tab-none { background: #2d3748; color: #4a5568; }
+
+  .app-row td:first-child { font-weight: 600; }
+
+  .sticky-thead thead th { position: sticky; top: 0; z-index: 1; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media(max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>TVAM_MediaPlanner — Comparativa de Permisos</h1>
+  <p class="subtitle">Org: SIT (aztecamedia--sit) · TVA_EjecutivoDeVentas · Análisis 2026-07-27</p>
+  <div class="meta-chips">
+    <span class="chip chip-orange">Managed Package · ID: 0PSWF000000t0CS4AY</span>
+    <span class="chip chip-green">Custom PS · ID: 0PSWF000000t0CL4AY</span>
+    <span class="chip chip-blue">Contexto: Problema de visibilidad de apps extra</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Summary cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Permisos de Objetos — Managed</div>
+      <div class="card-value managed">142</div>
+      <div class="card-sub">objetos con algún acceso</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Permisos de Objetos — Custom</div>
+      <div class="card-value custom">29</div>
+      <div class="card-sub">objetos con algún acceso</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Gaps en Custom (objetos)</div>
+      <div class="card-value diff">113</div>
+      <div class="card-sub">objetos que faltan o son parciales</div>
+    </div>
+    <div class="card">
+      <div class="card-label">System Perms — Managed</div>
+      <div class="card-value managed">23</div>
+      <div class="card-sub">permisos de usuario activos</div>
+    </div>
+    <div class="card">
+      <div class="card-label">System Perms — Custom</div>
+      <div class="card-value custom">1</div>
+      <div class="card-sub">solo PermissionsActivateOrder</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Tab Settings — Managed</div>
+      <div class="card-value managed">59</div>
+      <div class="card-sub">Custom: <span style="color:#68d391">0</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Apps Visibles — Managed</div>
+      <div class="card-value managed">2</div>
+      <div class="card-sub">Custom: <span style="color:#68d391">1</span></div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict possible">
+    <div class="verdict-title">✅ Técnicamente ES posible reemplazar el Managed PS con el Custom</div>
+    <p>Todos los object permissions, system permissions y tab settings del managed PS son replicables en el custom. Si migras todos los permisos al custom y <strong>quitas el managed</strong>, puedes controlar exactamente qué apps son visibles y eliminar el problema del Calendario de inventario.</p>
+    <ul>
+      <li>Los 22 system permissions faltantes se pueden activar en el Custom PS.</li>
+      <li>Los 113 object/CRUD gaps se pueden replicar en el Custom PS.</li>
+      <li>Las 59 tab settings se pueden agregar al Custom PS.</li>
+      <li>El Custom PS ya tiene la visibilidad de <em>Portal Azteca Ventas</em> — solo habría que NO agregar el <em>Advertising Inventory Calendar</em>.</li>
+    </ul>
+  </div>
+  <div class="verdict warning">
+    <div class="verdict-title">⚠️ Riesgo: dependencias ocultas del managed package</div>
+    <p>Los managed packages de Salesforce a veces tienen lógica interna (Apex triggers, flows, validation rules) que verifica que el PS managed esté asignado, o que ciertas feature flags propias del paquete estén activas. Remover el managed PS sin probar podría romper flujos de Media Cloud silenciosamente.</p>
+    <ul>
+      <li><strong>Recomendación:</strong> Primero agregar todos los permisos al Custom PS, luego hacer una prueba en SIT: asignar solo el Custom (sin el Managed) a un usuario de prueba y validar Media Planner (Quote), PCM y los flujos de Ad Order.</li>
+      <li>Si todo funciona → migrar a producción quitando el managed.</li>
+      <li>Si algo falla → usar <strong>PS Group + Muting PS</strong> (alternativa más segura, sin tocar el managed).</li>
+    </ul>
+  </div>
+
+  <!-- 1. App Visibility -->
+  <div class="section">
+    <div class="section-title">App Visibility</div>
+    <div class="section-desc">Raíz del problema: el managed PS otorga acceso al Calendario de inventario de publicidad que no debería ver el Ejecutivo de Ventas.</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>App (DeveloperName)</th>
+            <th>Label</th>
+            <th>Managed</th>
+            <th>Custom</th>
+            <th>Impacto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="app-row">
+            <td class="td-name">TVA_MediaAdSalesManagement</td>
+            <td class="td-label">Portal Azteca Ventas</td>
+            <td><span class="badge badge-yes">✓ Visible</span></td>
+            <td><span class="badge badge-yes">✓ Visible</span></td>
+            <td><span class="tag-same">Sin problema</span></td>
+          </tr>
+          <tr class="app-row highlight-row">
+            <td class="td-name">standard__AdvertisingInventoryCalendar</td>
+            <td class="td-label">Calendario de inventario de publicidad</td>
+            <td><span class="badge badge-yes">✓ Visible</span></td>
+            <td><span class="badge badge-no">✗ No visible</span></td>
+            <td><span class="tag-missing">🔴 Causa del problema</span></td>
+          </tr>
+          <tr class="app-row">
+            <td class="td-name">—</td>
+            <td class="td-label">Otras apps (Agentforce Studio, Salesforce Contracts, etc.)</td>
+            <td><span class="badge badge-no">Depende del Perfil PS</span></td>
+            <td><span class="badge badge-no">Depende del Perfil PS</span></td>
+            <td><span class="tag-same">Origen diferente</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. System Permissions -->
+  <div class="section">
+    <div class="section-title">System / User Permissions — Diferencias</div>
+    <div class="section-desc">Solo se muestran los permisos donde hay diferencia. El Custom PS solo tiene activo PermissionsActivateOrder; todos los demás son False.</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Permission API Name</th>
+            <th>Descripción</th>
+            <th>Managed</th>
+            <th>Custom</th>
+            <th>¿Crítico para Media Cloud?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-name">PermissionsRunMediaPlans</td>
+            <td class="td-label">Run Media Plans</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Media Planner</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsCoreCPQUser</td>
+            <td class="td-label">Core CPQ User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Quote / AdQuote</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsCorePricingRunTimeUser</td>
+            <td class="td-label">Core Pricing Runtime User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Pricing en Quote</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsProductCatalogApiAccess</td>
+            <td class="td-label">Product Catalog API Access</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — PCM</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsProductConfiguratorUser</td>
+            <td class="td-label">Product Configurator User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — PCM / Config</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsProductDiscoveryUser</td>
+            <td class="td-label">Product Discovery User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — PCM</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsViewProductCatalogObjects</td>
+            <td class="td-label">View Product Catalog Objects</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — PCM</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsQuoteToOrderUser</td>
+            <td class="td-label">Quote to Order User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Conversión Quote→Order</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsPricingDiscovery</td>
+            <td class="td-label">Pricing Discovery</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Pricing</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsRunFlow</td>
+            <td class="td-label">Run Flow</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-missing">🔴 Crítico — Flows de Media Cloud</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsRunDecisionMatrix</td>
+            <td class="td-label">Run Decision Matrix</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-partial">🟡 Medio — Business Rules Engine</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsRunExpressionSet</td>
+            <td class="td-label">Run Expression Set</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-partial">🟡 Medio — Pricing rules</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsDROOrderSubmitInitiateUser</td>
+            <td class="td-label">DRO Order Submit/Initiate</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-partial">🟡 Medio — Revenue Cloud Orders</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsDecimalQuantityRuntime</td>
+            <td class="td-label">Decimal Quantity Runtime</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-partial">🟡 Medio — Cantidades decimales en Orders</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsDerivedPricing</td>
+            <td class="td-label">Derived Pricing</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-partial">🟡 Medio — Precios derivados</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsAmendAssets</td>
+            <td class="td-label">Amend Assets</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo — Asset Management</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsManageAssets</td>
+            <td class="td-label">Manage Assets</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo — Asset Management</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsAssessmentPlatformUser</td>
+            <td class="td-label">Assessment Platform User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsContextServiceRuntime</td>
+            <td class="td-label">Context Service Runtime</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo — Context rules</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsExplainabilityUserAccess</td>
+            <td class="td-label">Explainability User Access</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsFinancialServices2UserAccess</td>
+            <td class="td-label">Financial Services 2 User Access</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">PermissionsInteractionCalcUserPerm</td>
+            <td class="td-label">Interaction Calc User</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-no">✗ False</span></td>
+            <td><span class="tag-present">🟢 Bajo</span></td>
+          </tr>
+          <tr style="background:#1a2e22">
+            <td class="td-name">PermissionsActivateOrder</td>
+            <td class="td-label">Activate Order</td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="badge badge-yes">✓ True</span></td>
+            <td><span class="tag-same">Igual en ambos</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Object Permissions -->
+  <div class="section">
+    <div class="section-title">Object Permissions — Comparativa Completa</div>
+    <div class="section-desc">
+      R=Read · C=Create · E=Edit · D=Delete · VA=ViewAll · MA=ModifyAll.
+      Los objetos marcados como "Solo Managed" son los que el Custom PS no cubre en absoluto.
+    </div>
+
+    <div class="two-col" style="margin-bottom:24px">
+      <div class="verdict possible" style="margin-bottom:0">
+        <div class="verdict-title">Objetos en ambos PS (parcial o igual)</div>
+        <ul>
+          <li><strong>Iguales:</strong> AdAvailabilityViewConfig, AdAvailableTargetSegment/Value, AdQuoteMediaTypeProperty, AdSpaceSpec*, AdTargetCategory*, Attr*, Order, PriceBookEntryDerivedPrice, ProductAttributeDefinition, ProductClassification*, SalesTransactionType, UnitOfMeasure</li>
+          <li><strong>Parciales (custom tiene menos):</strong> AdQuote (sin Delete), PriceAdjustmentSchedule (solo Read), Product2 (solo Read), ProductCatalog/Category/CategoryProduct/SellingModel (solo Read+ViewAll)</li>
+        </ul>
+      </div>
+      <div class="verdict warning" style="margin-bottom:0">
+        <div class="verdict-title">Objetos críticos solo en Managed</div>
+        <ul>
+          <li><strong>Ad* (operación):</strong> AdOpportunity, AdOpportunityLineItem, AdOrderItem y todos sus child (8 objetos CRUD)</li>
+          <li><strong>Ad* (configuración):</strong> AdDemographicCode, AdTargetTemplate/Value, AdServer*, AdSpace*</li>
+          <li><strong>Quote/Order:</strong> AdQuoteLine y todos sus child (9 objetos CRUD), Quote, QuoteToOrder*</li>
+          <li><strong>Pricing/Revenue:</strong> Pricebook2, PricingApiExecution, PricingProcessExecution, CostBook*</li>
+          <li><strong>PCM extra:</strong> ProductConfigurationFlow, ProductCategoryDisqual/Qualif, ProductRampSegment</li>
+          <li><strong>Assets:</strong> Asset, AssetAction*, AssetStatePeriod, AssetContractRelationship</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>sObject</th>
+            <th>Managed (R/C/E/D/VA/MA)</th>
+            <th>Custom (R/C/E/D/VA/MA)</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Ad Objects CRUD -->
+          <tr><td class="td-name">Account</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-off">V</span><span class="crud crud-off">M</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdAvailabilityDimensions</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdAvailabilityJob</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdAvailabilityViewConfig</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdAvailableTargetSegment</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdAvailableTargetSegmentValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdBuyServerAccount</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdCreativeSizeType</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdDemographicCode</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdDigitalAvailability</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdLinearAvailability</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOperationJobRun</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOperationJobRunOutcome</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOpportunity</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOpportunityLineItem</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItem</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemAdSpaceSpec</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemCreativeSizeType</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemDeliveryFrequency</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemDeliverySchedule</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemPrintIssue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderItemUnitsSplit</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderLineHiatus</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderLineTargetExpression</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdOrderLineTargetValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdPageLayoutType</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdProductDefaultTargetValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuote</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (sin Delete)</span></td></tr>
+          <tr><td class="td-name">AdQuoteLine</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineAdSpaceSpec</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineCreativeSizeType</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineDeliveryFrequency</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineDeliverySchedule</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineHiatus</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLinePrintIssue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineTargetExpression</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineTargetValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteLineUnitsSplit</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdQuoteMediaTypeProperty</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdSalesMgmtEventView</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdServer</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdServerAccount</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdServerAccountContact</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdServerUser</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpace</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpaceCapacity</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-e">E</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpaceCapacityAllocation</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpaceCreativeSizeType</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpaceGroupMember</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdSpaceSpecProduct</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdSpaceSpecification</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdSpecMediaPrintIssue</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdTargetCategory</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdTargetCategorySegment</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdTargetSegmentValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AdTargetTemplate</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AdTargetTemplateValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AppUsageAssignment</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Asset</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AssetAction</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AssetActionSource</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AssetContractRelationship</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AssetStatePeriod</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AttrPicklistExcludedValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AttributeAdjustmentCondition</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AttributeBasedAdjRule</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AttributeBasedAdjustment</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">AttributeCategory</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AttributeCategoryAttribute</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AttributeDefinition</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AttributePicklist</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">AttributePicklistValue</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">BundleBasedAdjustment</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">CalcMatrix* (5 obj)</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">CalculationProcedure* (4 obj)</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Contact</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-e">E</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ContextPersistenceEvent</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Contract</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ContractItemPrice</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">CostBook / CostBookEntry</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ExpressionSet / Version / ObjAlias</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">IndexRate</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">LegalEntity</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">MediaChannel</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">MediaContentTitle</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">MediaPrintIssue</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">OmniProcess / OmniProcessElement</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Opportunity</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Order</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">PaymentTerm</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">PriceAdjustmentSchedule</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">PriceAdjustmentTier</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">PriceBookEntryDerivedPrice</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">PriceRevisionPolicy</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Pricebook2</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">PricingAdjBatchJob / Log</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">PricingApiExecution</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">PricingProcessExecution</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Product2</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">ProductAttributeDefinition</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">ProductCatalog</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">ProductCategory</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">ProductCategoryDisqual / Qualif</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductCategoryProduct</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">ProductClassification / Attr</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">ProductComponentGroup / Override</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductConfigurationFlow</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductDisqualification / Qualif</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductRampSegment</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductRelComponentOverride</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductRelationshipType</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">ProductSellingModel</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-c">C</span><span class="crud crud-e">E</span><span class="crud crud-d">D</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-off">C</span><span class="crud crud-off">E</span><span class="crud crud-off">D</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-partial">Parcial (solo Read)</span></td></tr>
+          <tr><td class="td-name">ProductSpecificationRecType / Type</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">Quote</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">QuoteToOrderCompletedEvent</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">QuoteToOrderErrDtlEvent</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">RevenueAsyncOperation</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">RevenueTransactionErrorLog</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">SalesTransactionType</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">TaxPolicy / TaxTreatment</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">UnitOfMeasure</td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><div class="crud-cell"><span class="crud crud-r">R</span><span class="crud crud-v">VA</span></div></td><td><span class="tag-same">Igual</span></td></tr>
+          <tr><td class="td-name">UnitOfMeasureClass</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+          <tr><td class="td-name">UserExternalCredential</td><td><div class="crud-cell"><span class="crud crud-r">R</span></div></td><td><span class="tag-missing">No existe</span></td><td><span class="tag-missing">Solo Managed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. Tab Settings -->
+  <div class="section">
+    <div class="section-title">Tab Settings</div>
+    <div class="section-desc">El managed PS define 59 tabs (DefaultOn/DefaultOff). El custom PS no define ninguna. Si se reemplaza el managed, hay que agregar estas tabs al custom.</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tab Name</th>
+            <th>Managed</th>
+            <th>Custom</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-name">standard-AttributeCategory</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-AttributeDefinition</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-AttributePicklist</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-AttributePicklistValue</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-OmniProcess</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-OmniProcessElement</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-Pricebook2</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-Product2</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductCatalog</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductCategory</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductClassification</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductComponentGroup</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductRampSegment</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductRelationshipType</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-ProductSellingModel</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-UnitOfMeasure</td><td><span class="tab-badge tab-on">DefaultOn</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+          <tr><td class="td-name">standard-AdAvailabilityDimensions … (43 más)</td><td><span class="tab-badge tab-off">DefaultOff</span></td><td><span class="tab-badge tab-none">Sin definir</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">* Las 43 tabs con DefaultOff son: AdAvailabilityDimensions, AdAvailabilityJob, AdAvailabilityViewConfig, AdAvailableTargetSegment/Value, AdBuyServerAccount, AdCreativeSizeType, AdDemographicCode, AdDigitalAvailability, AdLinearAvailability, AdOperationJobRun/Outcome, AdOpportunity/LineItem, AdOrderItem* (7 child), AdPageLayoutType, AdProductDefaultTargetValue, AdQuote, AdQuoteLine* (10 child), AdServer, AdServerAccountContact, AdServerUser, AdSpaceCapacity, AdSpaceSpecification, AdSpaceSpecProduct, AdTargetCategory/Segment/Value, AdTargetTemplate/Value, ExpressionSet, MediaChannel, MediaContentTitle.</p>
+  </div>
+
+  <!-- 5. Decisión final -->
+  <div class="section">
+    <div class="section-title">Plan de acción recomendado</div>
+    <div class="two-col">
+      <div>
+        <div class="verdict possible" style="margin-bottom:16px">
+          <div class="verdict-title">Opción A — Migrar al Custom (Más limpia a largo plazo)</div>
+          <ol style="padding-left:18px; color:#a0aec0; font-size:13px; line-height:1.8">
+            <li>Agregar los <strong>22 system permissions</strong> faltantes al <code>TVAM_MediaPlanner_Custom</code>.</li>
+            <li>Agregar los <strong>113 object permissions</strong> faltantes al Custom PS.</li>
+            <li>Agregar las <strong>59 tab settings</strong> al Custom PS.</li>
+            <li><strong>NO</strong> agregar visibilidad de <code>standard__AdvertisingInventoryCalendar</code>.</li>
+            <li>En SIT: asignar solo el Custom PS a un usuario de prueba y validar Media Planner (AdQuote), PCM y flows de Order.</li>
+            <li>Si todo ok → quitar <code>TVAM_MediaPlanner</code> (managed) de todos los usuarios con perfil <code>TVA_EjecutivoDeVentas</code>.</li>
+          </ol>
+        </div>
+      </div>
+      <div>
+        <div class="verdict warning" style="margin-bottom:16px">
+          <div class="verdict-title">Opción B — PS Group + Muting PS (Más segura, sin tocar el managed)</div>
+          <ol style="padding-left:18px; color:#a0aec0; font-size:13px; line-height:1.8">
+            <li>Crear <code>TVAM_MediaPlanner_PSGroup</code> (Permission Set Group).</li>
+            <li>Incluir en el grupo: <code>TVAM_MediaPlanner</code> + <code>TVAM_MediaPlanner_Custom</code>.</li>
+            <li>Crear un <strong>Muting Permission Set</strong> dentro del grupo.</li>
+            <li>En el muting PS: marcar <code>standard__AdvertisingInventoryCalendar</code> como <em>hidden</em>.</li>
+            <li>Reemplazar las asignaciones individuales de ambos PSes por asignación del PSGroup.</li>
+          </ol>
+        </div>
+        <div class="verdict warning" style="margin-bottom:0; border-color:#fc8181; background:#2d1515">
+          <div class="verdict-title" style="color:#fc8181">⚡ Nota importante sobre Muting PS</div>
+          <p>Los Muting Permission Sets solo pueden desactivar <em>object permissions</em> y <em>field permissions</em>, <strong>no app visibility</strong>. Esto significa que la Opción B no resuelve el problema directamente — tendrías que combinarla con quitar la visibilidad del app en el Custom PS, lo cual requiere igualmente modificar el managed behavior. La <strong>Opción A es más efectiva</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
