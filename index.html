@@ -377,6 +377,9 @@
     #view-bugs-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#0f1520;overflow:hidden}
     #view-bugs-iframe.active{display:flex}
     #view-bugs-iframe iframe{flex:1;border:none;width:100%;height:100%;min-height:0;display:block}
+    #view-mockup-iframe{display:none;flex-direction:column;flex:1;min-height:0;background:#f3f3f3;overflow:hidden}
+    #view-mockup-iframe.active{display:flex}
+    #view-mockup-iframe iframe{flex:1;border:none;width:100%;height:100%;min-height:0;display:block}
 
     /* ════════════════════════════════════════════
        DEVOPS TIMELINE — Gantt view
@@ -747,7 +750,7 @@
       <li class="nav-sep"></li>
       <li class="nav-grp">MOCKUPS</li>
       <li>
-        <a href="mockups/pause-gam-items.html">
+        <a onclick="showMockupView('mockups/pause-gam-items.html',this);return false;" href="#mockup-pause-gam" id="nav-mockup-pause-gam">
           <span class="nav-ico">⏸</span><span class="nav-lbl">Pausar Items GAM</span>
         </a>
       </li>
@@ -1090,6 +1093,13 @@
     <iframe id="bugs-iframe" title="Análisis de Bugs R1"></iframe>
   </div>
 
+  <!-- ══════════════════════════════════════════════════
+       MOCKUPS IFRAME VIEW
+  ══════════════════════════════════════════════════ -->
+  <div id="view-mockup-iframe">
+    <iframe id="mockup-iframe" title="Mockup"></iframe>
+  </div>
+
 </div><!-- /#portal-section -->
 
 <script>
@@ -1382,8 +1392,17 @@
     document.getElementById('page').style.display = 'none';
     document.getElementById('view-devops-timeline').classList.remove('active');
     document.getElementById('view-bugs-iframe').classList.remove('active');
+    document.getElementById('view-mockup-iframe').classList.remove('active');
     // clear all nav active states
     document.querySelectorAll('#nav ul li a').forEach(a => a.classList.remove('active'));
+  }
+
+  function showMockupView(src, navLink) {
+    hideAllViews();
+    document.getElementById('view-mockup-iframe').classList.add('active');
+    if (navLink) navLink.classList.add('active');
+    const iframe = document.getElementById('mockup-iframe');
+    iframe.src = src;
   }
 
   function showView(id) {
