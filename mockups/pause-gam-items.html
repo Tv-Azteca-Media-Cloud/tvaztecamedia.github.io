@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Pausar Items GAM | TV Azteca Media Cloud</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         font-size: 13px; background: #f3f3f3; color: #181818; }
+
+  /* ── SLDS-ish Variables ── */
+  :root {
+    --brand:       #0176d3;
+    --brand-dark:  #014486;
+    --brand-light: #e8f4fd;
+    --success:     #2e844a;
+    --success-bg:  #eaf5ea;
+    --error:       #ba0517;
+    --error-bg:    #fef1ee;
+    --warning:     #fe9339;
+    --warning-bg:  #fef6ee;
+    --border:      #dddbda;
+    --bg-header:   #f3f2f2;
+    --text-muted:  #706e6b;
+    --text-label:  #3e3e3c;
+    --shadow:      0 2px 12px rgba(0,0,0,.15);
+    --radius:      4px;
+  }
+
+  /* ── SLDS-ish Page Header ── */
+  .page-header { background: #fff; border-bottom: 1px solid var(--border); padding: 0 24px; }
+  .page-header-top { display: flex; align-items: center; justify-content: space-between;
+                     padding: 12px 0 0; }
+  .record-type { font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+                 letter-spacing: .5px; }
+  .record-name { font-size: 20px; font-weight: 700; color: #181818; display: flex;
+                 align-items: center; gap: 8px; }
+  .record-name-icon { width: 32px; height: 32px; border-radius: 6px; background: #5867e8;
+                      display: flex; align-items: center; justify-content: center; }
+  .record-name-icon svg { width: 18px; height: 18px; fill: #fff; }
+
+  .action-bar { display: flex; gap: 8px; padding: 10px 0; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px;
+         border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer;
+         border: 1px solid transparent; transition: all .15s; white-space: nowrap; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-neutral { background: #fff; border-color: var(--border); color: var(--text-label); }
+  .btn-neutral:hover:not(:disabled) { background: var(--bg-header); }
+  .btn-brand { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .btn-brand:hover:not(:disabled) { background: var(--brand-dark); border-color: var(--brand-dark); }
+  .btn-destructive { background: #c23934; color: #fff; border-color: #c23934; }
+  .btn-destructive:hover:not(:disabled) { background: #a61c17; }
+  .btn-sm { padding: 4px 12px; font-size: 12px; }
+
+  /* ── Path ── */
+  .path-bar { display: flex; align-items: center; padding: 8px 0; gap: 0; overflow: hidden; }
+  .path-step { flex: 1; height: 28px; display: flex; align-items: center; justify-content: center;
+               font-size: 11px; font-weight: 500; position: relative; background: #c9f0d0;
+               color: #2e844a; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%,
+               calc(100% - 10px) 100%, 0 100%, 10px 50%); margin-right: 2px; }
+  .path-step:first-child { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%,
+                            calc(100% - 10px) 100%, 0 100%); }
+  .path-step.active { background: #032d60; color: #fff; }
+  .path-step.done::before { content: '✓ '; }
+
+  /* ── Record Meta ── */
+  .record-meta { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px 24px;
+                 padding: 12px 0; border-top: 1px solid var(--border); }
+  .meta-field label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px; }
+  .meta-field span { font-size: 13px; color: #181818; }
+  .meta-field a { color: var(--brand); text-decoration: none; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 12px; font-size: 11px;
+           font-weight: 600; }
+  .badge-finalizada { background: #032d60; color: #fff; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; border-bottom: 1px solid var(--border); background: #fff;
+          padding: 0 24px; }
+  .tab { padding: 10px 16px; font-size: 13px; color: var(--text-muted); cursor: pointer;
+         border-bottom: 2px solid transparent; }
+  .tab.active { color: var(--brand); border-bottom-color: var(--brand); font-weight: 600; }
+
+  /* ── Page Content ── */
+  .page-content { padding: 20px 24px; }
+  .section-header { font-size: 13px; font-weight: 700; color: var(--text-label);
+                    border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; }
+  .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 32px; }
+  .field-row { display: flex; gap: 8px; }
+  .field-label { font-size: 12px; color: var(--text-muted); min-width: 140px; }
+  .field-value { font-size: 13px; color: #181818; }
+
+  /* ── Demo State Selector ── */
+  .demo-bar { background: #032d60; color: #fff; padding: 10px 24px; display: flex;
+              align-items: center; gap: 12px; font-size: 12px; }
+  .demo-bar strong { font-size: 13px; }
+  .state-btn { padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
+               border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff;
+               transition: all .15s; }
+  .state-btn:hover { background: rgba(255,255,255,.15); }
+  .state-btn.active { background: #fff; color: #032d60; font-weight: 700; }
+
+  /* ── Modal Backdrop ── */
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+                    z-index: 100; align-items: center; justify-content: center; }
+  .modal-backdrop.visible { display: flex; }
+
+  /* ── Modal ── */
+  .modal { background: #fff; border-radius: 8px; box-shadow: var(--shadow); width: 760px;
+           max-width: 95vw; max-height: 90vh; display: flex; flex-direction: column;
+           overflow: hidden; }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border);
+                  display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .modal-title-icon { width: 24px; height: 24px; background: #5867e8; border-radius: 4px;
+                      display: flex; align-items: center; justify-content: center; }
+  .modal-title-icon svg { width: 14px; height: 14px; fill: #fff; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--text-muted);
+                 font-size: 18px; line-height: 1; padding: 4px; border-radius: 4px; }
+  .modal-close:hover { background: var(--bg-header); }
+  .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border);
+                  display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* ── Order Info Summary ── */
+  .order-summary { background: var(--bg-header); border-radius: var(--radius); padding: 10px 14px;
+                   display: flex; gap: 24px; margin-bottom: 16px; font-size: 12px; }
+  .order-summary-item label { color: var(--text-muted); display: block; margin-bottom: 1px; }
+  .order-summary-item span { font-weight: 600; color: #181818; }
+
+  /* ── Data Table ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th { background: var(--bg-header); text-align: left; padding: 8px 10px;
+                   font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+                   letter-spacing: .3px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .data-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .data-table tr:hover td { background: var(--brand-light); }
+  .data-table tr.selected td { background: #e8f4fd; }
+  .data-table input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--brand); }
+  .status-pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .status-active { background: #cef5d4; color: #2e844a; }
+  .status-paused { background: #ffe9c9; color: #a85600; }
+  .mono { font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace; font-size: 11px; color: #3e3e3c; }
+
+  /* ── Alert Boxes ── */
+  .alert { border-radius: var(--radius); padding: 10px 14px; display: flex; gap: 10px;
+           align-items: flex-start; margin-bottom: 12px; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-body { flex: 1; }
+  .alert-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .alert-msg { font-size: 12px; }
+  .alert-success { background: var(--success-bg); border-left: 4px solid var(--success); }
+  .alert-success .alert-title { color: var(--success); }
+  .alert-error { background: var(--error-bg); border-left: 4px solid var(--error); }
+  .alert-error .alert-title { color: var(--error); }
+  .alert-empty { background: var(--warning-bg); border-left: 4px solid var(--warning); }
+  .alert-empty .alert-title { color: #a85600; }
+
+  /* ── Spinner ── */
+  .spinner-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center;
+                  padding: 32px; gap: 12px; color: var(--text-muted); font-size: 12px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border);
+             border-top-color: var(--brand); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Selection Counter ── */
+  .selection-bar { display: flex; align-items: center; justify-content: space-between;
+                   margin-bottom: 8px; }
+  .selection-count { font-size: 12px; color: var(--text-muted); }
+  .selection-count strong { color: var(--brand); }
+
+  /* ── State Panel visibility ── */
+  [data-state] { display: none; }
+  [data-state].visible { display: block; }
+
+  /* ── Tooltips ── */
+  [title] { cursor: help; }
+</style>
+</head>
+<body>
+
+<!-- ── Demo Control Bar ── -->
+<div class="demo-bar">
+  <strong>📋 Mockup — Pausar Items GAM</strong>
+  <span style="opacity:.6">|</span>
+  <span>Estado del modal:</span>
+  <button class="state-btn active" onclick="setState('idle')">Idle (selección)</button>
+  <button class="state-btn" onclick="setState('loading')">Cargando...</button>
+  <button class="state-btn" onclick="setState('success')">Éxito ✓</button>
+  <button class="state-btn" onclick="setState('error')">Error GAM ✗</button>
+  <button class="state-btn" onclick="setState('empty')">Sin items elegibles</button>
+  <span style="margin-left:auto; opacity:.6; font-size:11px">PR1066114-742 · TV Azteca Media Cloud</span>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SALESFORCE ORDER RECORD PAGE (Background)
+════════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-top">
+    <div>
+      <div class="record-type">Order</div>
+      <div class="record-name">
+        <div class="record-name-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3a4 4 0 110 8 4 4 0 010-8zm0 10c-4 0-6 2-6 3v1h12v-1c0-1-2-3-6-3z"/></svg>
+        </div>
+        00000199
+      </div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-neutral">Procesar Orden</button>
+      <button class="btn btn-neutral">Create Amend Quote</button>
+      <!-- ★ NUEVO BOTÓN — solo visible cuando Status = TVAM_Completed -->
+      <button class="btn btn-brand" onclick="openModal()" title="Visible únicamente cuando Order.Status = TVAM_Completed (FINALIZADA)">
+        ⏸ Pausar Items GAM
+      </button>
+    </div>
+  </div>
+
+  <!-- Path / Stage Bar -->
+  <div class="path-bar">
+    <div class="path-step done">Draft</div>
+    <div class="path-step done">Activated</div>
+    <div class="path-step done">Contracted</div>
+    <div class="path-step done">In Progress</div>
+    <div class="path-step done">Delivered</div>
+    <div class="path-step done">Billed</div>
+    <div class="path-step active">FINALIZADA</div>
+  </div>
+
+  <!-- Record Meta Fields -->
+  <div class="record-meta">
+    <div class="meta-field"><label>Account Name</label><a href="#">MRPTAYLOR</a></div>
+    <div class="meta-field"><label>Contract Number</label><span>—</span></div>
+    <div class="meta-field"><label>Order Start Date</label><span>6/23/2026</span></div>
+    <div class="meta-field"><label>Status</label><span class="badge badge-finalizada">FINALIZADA</span></div>
+    <div class="meta-field"><label>Order Amount</label><span>$120.00</span></div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active">Details</div>
+  <div class="tab">Related</div>
+  <div class="tab">Decomposition Details</div>
+</div>
+
+<!-- Page Content (blurred background placeholder) -->
+<div class="page-content">
+  <div class="section-header">Order Information</div>
+  <div class="field-grid">
+    <div>
+      <div class="field-row"><span class="field-label">Order Name</span><span class="field-value">AZD-MRPTAYLOR-Presupuesto Mundial-JUNIO</span></div>
+      <div class="field-row" style="margin-top:8px"><span class="field-label">Order Number</span><span class="field-value">00000199</span></div>
+      <div class="field-row" style="margin-top:8px"><span class="field-label">Account Name</span><a class="field-value" href="#" style="color:var(--brand)">MRPTAYLOR</a></div>
+    </div>
+    <div>
+      <div class="field-row"><span class="field-label">Order Amount</span><span class="field-value">$120.00</span></div>
+      <div class="field-row" style="margin-top:8px"><span class="field-label">Status</span><span class="field-value">FINALIZADA</span></div>
+      <div class="field-row" style="margin-top:8px"><span class="field-label">Activated Date</span><span class="field-value">6/23/2026, 10:43 AM</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     MODAL — PAUSAR ITEMS GAM
+════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="modal-title-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </div>
+        Pausar Items GAM
+      </div>
+      <button class="modal-close" onclick="closeModal()" title="Cancelar y cerrar">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <div class="order-summary-item"><label>Orden</label><span>00000199</span></div>
+        <div class="order-summary-item"><label>Account</label><span>MRPTAYLOR</span></div>
+        <div class="order-summary-item"><label>Status</label><span>FINALIZADA</span></div>
+        <div class="order-summary-item"><label>ID Orden GAM</label><span class="mono">4141062876</span></div>
+      </div>
+
+      <!-- ── STATE: idle (tabla de selección) ── -->
+      <div data-state="idle" class="visible">
+        <div class="selection-bar">
+          <span class="selection-count" id="selectionCount">Selecciona los items que deseas pausar en GAM</span>
+          <span style="font-size:11px; color:var(--text-muted)">* Solo se muestran items con ID de GAM asignado</span>
+        </div>
+        <table class="data-table" id="itemsTable">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleAll(this)"></th>
+              <th>Nombre del Item</th>
+              <th>ID Orden GAM</th>
+              <th>ID Item GAM</th>
+              <th style="text-align:right">Costo</th>
+              <th>Estado Actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" class="row-cb" onchange="updateCount()"></td>
+              <td>Banner Display_0000000261</td>
+              <td class="mono">4141062876</td>
+              <td class="mono">111111111</td>
+              <td style="text-align:right">$45.00</td>
+              <td><span class="status-pill status-active">ACTIVA</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-cb" onchange="updateCount()"></td>
+              <td>Video Pre-roll_0000000262</td>
+              <td class="mono">4141062876</td>
+              <td class="mono">222222222</td>
+              <td style="text-align:right">$35.00</td>
+              <td><span class="status-pill status-active">ACTIVA</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-cb" onchange="updateCount()"></td>
+              <td>Skin Desktop_0000000263</td>
+              <td class="mono">4141062876</td>
+              <td class="mono">333333333</td>
+              <td style="text-align:right">$25.00</td>
+              <td><span class="status-pill status-active">ACTIVA</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-cb" onchange="updateCount()"></td>
+              <td>Native Content_0000000264</td>
+              <td class="mono">4141062876</td>
+              <td class="mono">444444444</td>
+              <td style="text-align:right">$15.00</td>
+              <td><span class="status-pill status-paused">PAUSADA</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── STATE: loading ── -->
+      <div data-state="loading">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <span>Enviando solicitud a Google Ad Manager...</span>
+          <span style="font-size:11px">performLineItemAction → PauseLineItems</span>
+        </div>
+      </div>
+
+      <!-- ── STATE: success ── -->
+      <div data-state="success">
+        <div class="alert alert-success">
+          <div class="alert-icon">✅</div>
+          <div class="alert-body">
+            <div class="alert-title">Items pausados exitosamente en GAM</div>
+            <div class="alert-msg">GAM confirmó la pausa de <strong>2 items</strong>. El estado en Salesforce ha sido actualizado a <strong>PAUSADA</strong>.</div>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre del Item</th>
+              <th>ID Item GAM</th>
+              <th style="text-align:right">Costo</th>
+              <th>Estado Actualizado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Banner Display_0000000261</td>
+              <td class="mono">111111111</td>
+              <td style="text-align:right">$45.00</td>
+              <td><span class="status-pill status-paused">PAUSADA</span></td>
+            </tr>
+            <tr>
+              <td>Video Pre-roll_0000000262</td>
+              <td class="mono">222222222</td>
+              <td style="text-align:right">$35.00</td>
+              <td><span class="status-pill status-paused">PAUSADA</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── STATE: error ── -->
+      <div data-state="error">
+        <div class="alert alert-error">
+          <div class="alert-icon">❌</div>
+          <div class="alert-body">
+            <div class="alert-title">Error al pausar items en GAM</div>
+            <div class="alert-msg">
+              GAM rechazó la operación. Ningún item fue modificado en Salesforce.<br>
+              <strong>Detalle:</strong> <span class="mono">PermissionError: User does not have permission to perform action PauseLineItems on network 32425760</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:8px">
+          Puedes <strong>Reintentar</strong> el envío con los mismos items seleccionados, o <strong>Cancelar</strong> para cerrar sin modificar ningún dato.
+        </p>
+      </div>
+
+      <!-- ── STATE: empty ── -->
+      <div data-state="empty">
+        <div class="alert alert-empty">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title">No hay items con ID de GAM disponibles para pausar</div>
+            <div class="alert-msg">
+              Ningún Order Item de esta Orden tiene el campo <span class="mono">TVAI_IdExterno__c</span> (ID de Line Item en GAM) asignado.
+              Los items deben haber sido enviados a GAM previamente antes de poder pausarlos.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <!-- Modal Footer — changes by state -->
+    <div class="modal-footer" id="modalFooter">
+      <!-- populated by setState() -->
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /backdrop -->
+
+
+<script>
+  let currentState = 'idle';
+
+  function setState(state) {
+    currentState = state;
+    // toggle state panels
+    document.querySelectorAll('[data-state]').forEach(el => {
+      el.classList.toggle('visible', el.dataset.state === state);
+    });
+    // toggle demo bar buttons
+    document.querySelectorAll('.state-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.toLowerCase().includes(state) ||
+        (state === 'idle' && btn.textContent.includes('Idle')) ||
+        (state === 'loading' && btn.textContent.includes('Cargando')) ||
+        (state === 'success' && btn.textContent.includes('xito')) ||
+        (state === 'error' && btn.textContent.includes('Error')) ||
+        (state === 'empty' && btn.textContent.includes('Sin items')));
+    });
+    // update footer
+    const footer = document.getElementById('modalFooter');
+    if (state === 'idle') {
+      footer.innerHTML = `
+        <button class="btn btn-neutral" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-brand" id="pauseBtn" disabled onclick="setState('loading'); setTimeout(()=>setState('success'),1800)">
+          ⏸ Pausar seleccionados
+        </button>`;
+      updateCount();
+    } else if (state === 'loading') {
+      footer.innerHTML = `
+        <button class="btn btn-neutral" disabled>Cancelar</button>
+        <button class="btn btn-brand" disabled>⏸ Pausando…</button>`;
+    } else if (state === 'success') {
+      footer.innerHTML = `
+        <button class="btn btn-brand" onclick="closeModal()">Cerrar</button>`;
+    } else if (state === 'error') {
+      footer.innerHTML = `
+        <button class="btn btn-neutral" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-destructive" onclick="setState('loading'); setTimeout(()=>setState('success'),1800)">
+          🔄 Reintentar
+        </button>`;
+    } else if (state === 'empty') {
+      footer.innerHTML = `
+        <button class="btn btn-neutral" onclick="closeModal()">Cancelar</button>`;
+    }
+    openModal();
+  }
+
+  function openModal() {
+    document.getElementById('modalBackdrop').classList.add('visible');
+    if (currentState === 'idle') { updateCount(); }
+  }
+
+  function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('visible');
+  }
+
+  function handleBackdropClick(e) {
+    if (currentState !== 'loading') closeModal();
+  }
+
+  function updateCount() {
+    const checked = document.querySelectorAll('.row-cb:checked').length;
+    const countEl = document.getElementById('selectionCount');
+    const pauseBtn = document.getElementById('pauseBtn');
+    if (countEl) countEl.innerHTML = checked > 0
+      ? `<strong>${checked} item(s) seleccionado(s)</strong> para pausar`
+      : 'Selecciona los items que deseas pausar en GAM';
+    if (pauseBtn) pauseBtn.disabled = checked === 0;
+    // update row highlight
+    document.querySelectorAll('#itemsTable tbody tr').forEach(tr => {
+      tr.classList.toggle('selected', tr.querySelector('.row-cb')?.checked);
+    });
+  }
+
+  function toggleAll(master) {
+    document.querySelectorAll('.row-cb').forEach(cb => { cb.checked = master.checked; });
+    updateCount();
+  }
+
+  // Initial state
+  setState('idle');
+  // Don't auto-open on load — let the user click the button
+  closeModal();
+</script>
+</body>
+</html>
