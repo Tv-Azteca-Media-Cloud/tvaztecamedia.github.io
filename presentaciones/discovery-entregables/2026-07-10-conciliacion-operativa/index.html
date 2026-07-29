@@ -309,6 +309,8 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
 .calc-mech.ci{background:#f3f0ff;color:#5c1fad;border:1px solid #c7b0f5}
 .calc-mech.formula{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5}
 .calc-mech.bucket{background:#fff3e8;color:#a55400;border:1px solid #f5c48a}
+.calc-mech.bdt{background:#e8f9ee;color:#04844b;border:1px solid #8dd4a6}
+.calc-mech.dmo{background:#fef7e8;color:#806000;border:1px solid #e8d27a}
 .calc-card .calc-inputs{font-size:10px;color:var(--sf-label);margin:4px 0 6px;
   font-family:monospace;line-height:1.5}
 .calc-card .calc-inputs b{color:var(--sf-dark);font-family:monospace}
@@ -342,6 +344,12 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
 .map-tbl .src-std{background:#eef0f2;color:#3e3e3c;border:1px solid #c7c9cb;
   border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;display:inline-block}
 .map-tbl .src-rpt{background:#fff8e6;color:#806000;border:1px solid #e8d27a;
+  border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;display:inline-block}
+.map-tbl .src-f{background:#e8f4fd;color:#005ea2;border:1px solid #a8d4f5;
+  border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;display:inline-block}
+.map-tbl .src-bdt{background:#e8f9ee;color:#04844b;border:1px solid #8dd4a6;
+  border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;display:inline-block}
+.map-tbl .src-dmo{background:#fef7e8;color:#806000;border:1px solid #e8d27a;
   border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;display:inline-block}
 .map-tbl code{font-family:monospace;font-size:11px;color:var(--sf-dark)}
 .map-tbl-cap{font-size:11px;color:var(--sf-label);margin:14px 0 4px;
@@ -1026,7 +1034,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="persona-actions">
           <span>Impresiones entregadas vs. contratadas</span>
           <span>% Cumplimiento</span>
-          <span>CTR / VTR / Viewability</span>
+          <span>CTR / VTR</span>
           <span>PacingGap histórico</span>
           <span>Monto facturable proyectado</span>
           <span>Tendencia de entrega últimos 7 días</span>
@@ -1386,51 +1394,51 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="sec-hd">Métricas que se calculan</div>
       <div class="metric-grid">
         <div class="metric-card">
-          <div class="mt-name">Desvío de pacing <span class="badge b-purple" style="margin-left:4px">CI_PacingGap</span></div>
-          <code class="mt-formula">Actual_Delivery_Pct__c − Expected_Delivery_Pct__c</code>
-          <div class="mt-desc">Diferencia entre <code>deliveryIndicator.actualDeliveryPercentage</code> y <code>deliveryIndicator.expectedDeliveryPercentage</code>. Es la métrica principal de salud operativa del line item — protagonista del Trafficker.</div>
+          <div class="mt-name">Desvío de pacing <span class="badge b-blue" style="margin-left:4px">F_PacingGap</span></div>
+          <code class="mt-formula">ActualDeliveryPercentage__c − ExpectedDeliveryPercentage__c</code>
+          <div class="mt-desc">Formula Field materializado en el DLO <code>TVAI_LineItemGamHarmonization__dll</code> por el propio BDT (record-level, sin join). Diferencia entre <code>deliveryIndicator.actualDeliveryPercentage</code> y <code>deliveryIndicator.expectedDeliveryPercentage</code> (deserializados en el mismo pass). Es la métrica principal de salud operativa del line item — protagonista del Trafficker. Se expone al DMO current junto con las demás columnas del DLO.</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">% Avance acumulado <span class="badge b-purple" style="margin-left:4px">CI_PctAvance</span></div>
-          <code class="mt-formula">Imps_Delivered__c ÷ OrderItem.Quantity × 100</code>
-          <div class="mt-desc"><code>Imps_Delivered__c</code> proviene de <code>stats.impressionsDelivered</code>; <code>OrderItem.Quantity</code> es lo contratado. Avance sin signo — qué tan cerca está del 100%.</div>
+          <div class="mt-name">% Avance acumulado <span class="badge b-blue" style="margin-left:4px">F_PctAvance</span></div>
+          <code class="mt-formula">ImpressionsDelivered__c ÷ OrderItem.Quantity × 100</code>
+          <div class="mt-desc">Formula Field sobre el DMO. <code>ImpressionsDelivered__c</code> proviene de <code>stats.impressionsDelivered</code>; <code>OrderItem.Quantity</code> es lo contratado. Avance sin signo — qué tan cerca está del 100%.</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">Proyección al vencimiento <span class="badge b-purple" style="margin-left:4px">CI_Projection</span></div>
-          <code class="mt-formula">(Imps_Delivered__c ÷ días_transcurridos) × días_totales</code>
-          <div class="mt-desc">Días calculados a partir de <code>OrderItem.ServiceDate</code> y <code>OrderItem.EndDate</code>. Anticipa el riesgo antes de que sea irrecuperable.</div>
+          <div class="mt-name">Proyección al vencimiento <span class="badge b-blue" style="margin-left:4px">F_Projection</span></div>
+          <code class="mt-formula">(ImpressionsDelivered__c ÷ días_transcurridos) × días_totales</code>
+          <div class="mt-desc">Formula Field sobre el DMO. Días calculados a partir de <code>OrderItem.ServiceDate</code> y <code>OrderItem.EndDate</code>. Anticipa el riesgo antes de que sea irrecuperable.</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">Revenue at Risk <span class="badge b-purple" style="margin-left:4px">CI_RevenueAtRisk</span></div>
-          <code class="mt-formula">MAX(0, OrderItem.Quantity − CI_Projection) × (OrderItem.UnitPrice ÷ 1000)</code>
-          <div class="mt-desc">Exposición comercial por under-delivery proyectado al cierre. Se consolida por advertiser y alimenta el Dashboard Comercial.</div>
+          <div class="mt-name">Revenue at Risk <span class="badge b-blue" style="margin-left:4px">F_RevenueAtRisk</span></div>
+          <code class="mt-formula">MAX(0, OrderItem.Quantity − F_Projection) × (OrderItem.UnitPrice ÷ 1000)</code>
+          <div class="mt-desc">Formula Field sobre el DMO, anidado sobre F_Projection. Exposición comercial por under-delivery proyectado al cierre. Se consolida por advertiser y alimenta el Dashboard Comercial.</div>
         </div>
       </div>
 
-      <div class="sec-hd">Condiciones que disparan alerta — categorizadas por <code>CI_AlertLevel</code></div>
+      <div class="sec-hd">Condiciones que disparan alerta — categorizadas por <code>F_AlertLevel</code></div>
       <div class="alert-rule-hd">
         <div>Nivel</div>
-        <div>Condición sobre <code>CI_PacingGap</code></div>
+        <div>Condición sobre <code>F_PacingGap</code></div>
         <div>Significado</div>
         <div>Acción automática</div>
       </div>
       <div style="border:1px solid var(--sf-border);border-radius:0 0 4px 4px;background:var(--sf-white)">
         <div class="alert-rule">
           <div class="ar-level ar-warning">Warning</div>
-          <div class="ar-cond">CI_PacingGap ≤ −10% y &gt; −20%</div>
+          <div class="ar-cond">F_PacingGap ≤ −10% y &gt; −20%</div>
           <div class="ar-meaning">El line item entrega 10 puntos por debajo del ritmo esperado — situación reversible si se actúa pronto</div>
           <div class="ar-action">Task + notificación in-app al Trafficker (+ email / Slack opcional)</div>
         </div>
         <div class="alert-rule">
           <div class="ar-level ar-critical">Critical</div>
-          <div class="ar-cond">CI_PacingGap ≤ −20%</div>
+          <div class="ar-cond">F_PacingGap ≤ −20%</div>
           <div class="ar-meaning">Desvío significativo — alta probabilidad de no alcanzar el 100% al cierre del vuelo</div>
           <div class="ar-action">Task urgente + email al Trafficker + notificación al Ejecutivo de Ventas</div>
         </div>
         <div class="alert-rule">
           <div class="ar-level ar-zero">Zero Delivery</div>
-          <div class="ar-cond">Imps_Delivered__c = 0 y horas_sin_imps ≥ 24 (campaña activa)</div>
-          <div class="ar-meaning">Posible problema técnico (creativo rechazado, targeting bloqueado, inventario agotado)</div>
+          <div class="ar-cond">ImpressionsDelivered__c = 0 y (NOW() − CI_LastImpressionAt) ≥ 24h</div>
+          <div class="ar-meaning">Posible problema técnico (creativo rechazado, targeting bloqueado, inventario agotado). <code>CI_LastImpressionAt</code> es un Calculated Insight sobre el DMO history que rollupa, por LineItem, el timestamp del último sync con incremento real de impresiones — <code>F_AlertLevel</code> lo consume desde el DMO current</div>
           <div class="ar-action">Task + alerta inmediata — requiere validación operativa</div>
         </div>
       </div>
@@ -1463,24 +1471,24 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="sec-hd">Métricas que se consolidan</div>
       <div class="metric-grid">
         <div class="metric-card">
-          <div class="mt-name">Entrega final vs. contratado <span class="badge b-purple" style="margin-left:4px">CI_PctAvance</span></div>
-          <code class="mt-formula">Imps_Delivered__c ÷ OrderItem.Quantity</code>
-          <div class="mt-desc">Cierre cuantitativo de la campaña — la misma fórmula del ciclo operativo, evaluada en el último ciclo del vuelo. Base para validar cumplimiento e identificar líneas que requieren make-good.</div>
+          <div class="mt-name">Entrega final vs. contratado <span class="badge b-blue" style="margin-left:4px">F_PctAvance</span></div>
+          <code class="mt-formula">ImpressionsDelivered__c ÷ OrderItem.Quantity</code>
+          <div class="mt-desc">Formula Field sobre el DMO — la misma fórmula del ciclo operativo, evaluada en el último ciclo del vuelo. Base para validar cumplimiento e identificar líneas que requieren make-good.</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">% Cumplimiento al cierre <span class="badge b-purple" style="margin-left:4px">CI_PctAvance</span></div>
-          <code class="mt-formula">Imps_Delivered__c ÷ OrderItem.Quantity × 100</code>
-          <div class="mt-desc">Indicador de cumplimiento congelado al cierre del vuelo. Distingue líneas en 100%, con under-delivery menor (ajuste comercial) y críticas (renegociación).</div>
+          <div class="mt-name">% Cumplimiento al cierre <span class="badge b-blue" style="margin-left:4px">F_PctAvance</span></div>
+          <code class="mt-formula">ImpressionsDelivered__c ÷ OrderItem.Quantity × 100</code>
+          <div class="mt-desc">Formula Field sobre el DMO. Indicador de cumplimiento congelado al cierre del vuelo. Distingue líneas en 100%, con under-delivery menor (ajuste comercial) y críticas (renegociación).</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">Monto facturable <span class="badge b-purple" style="margin-left:4px">CI_MontoFacturable</span> <span class="badge b-green" style="margin-left:4px">Regla acordada</span></div>
-          <code class="mt-formula">MIN(Imps_Delivered__c, OrderItem.Quantity) × (OrderItem.UnitPrice ÷ 1000)</code>
-          <div class="mt-desc">Base objetiva para facturación. Under-delivery → cobra entregado; over-delivery → cobra contratado (el exceso no se factura). Se expone como Formula Field <code>OrderItem.MontoFacturable__c</code>.</div>
+          <div class="mt-name">Monto facturable <span class="badge b-blue" style="margin-left:4px">F_MontoFacturable</span> <span class="badge b-green" style="margin-left:4px">Regla acordada</span></div>
+          <code class="mt-formula">MIN(ImpressionsDelivered__c, OrderItem.Quantity) × (OrderItem.UnitPrice ÷ 1000)</code>
+          <div class="mt-desc">Formula Field sobre el DMO. Base objetiva para facturación. Under-delivery → cobra entregado; over-delivery → cobra contratado (el exceso no se factura). Se expone al OrderItem vía Formula Field espejo <code>OrderItem.MontoFacturable__c</code>.</div>
         </div>
         <div class="metric-card">
-          <div class="mt-name">Make-good / ajuste comercial <span class="badge b-purple" style="margin-left:4px">CI_MakeGood</span></div>
-          <code class="mt-formula">MAX(0, OrderItem.Quantity − Imps_Delivered__c)</code>
-          <div class="mt-desc">Volumen de compensación pendiente cuando aplica. Habilita conversaciones comerciales basadas en dato técnico — no en estimación.</div>
+          <div class="mt-name">Make-good / ajuste comercial <span class="badge b-blue" style="margin-left:4px">F_MakeGood</span></div>
+          <code class="mt-formula">MAX(0, OrderItem.Quantity − ImpressionsDelivered__c)</code>
+          <div class="mt-desc">Formula Field sobre el DMO. Volumen de compensación pendiente cuando aplica. Habilita conversaciones comerciales basadas en dato técnico — no en estimación.</div>
         </div>
       </div>
 
@@ -1488,7 +1496,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="example-box">
         <div class="ex-title">Cómo se entrega el dato a facturación</div>
         <div class="ex-body">
-          Al ejecutarse el ciclo de cierre, <code>CI_MontoFacturable</code> queda expuesto al objeto OrderItem a través del Formula Field <code>OrderItem.MontoFacturable__c</code>. MultiAds consume ese campo vía REST API estándar de Salesforce — sin desarrollo de integración propietaria, sin paso manual de exportación, sin planilla intermedia. La emisión de la factura ocurre del lado de MultiAds una vez que el dato está disponible.
+          Al ejecutarse el ciclo de cierre, <code>F_MontoFacturable</code> vive en el DMO <code>TVAI_LineItemGamHarmonization__dlm</code>. Un Formula Field espejo en el OrderItem — <code>OrderItem.MontoFacturable__c</code> — refleja el mismo cálculo sobre los campos ya visibles en Salesforce. MultiAds consume ese campo vía REST API estándar de Salesforce — sin desarrollo de integración propietaria, sin paso manual de exportación, sin planilla intermedia. La emisión de la factura ocurre del lado de MultiAds una vez que el dato está disponible.
         </div>
       </div>
 
@@ -1519,7 +1527,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="e2e-num blue">2</div>
         <div class="e2e-body">
           <div class="e2e-title">Ingestión automática 2 veces por día</div>
-          <div class="e2e-desc">El GAM Connector lee del payload SOAP: <code>stats.impressionsDelivered</code>, <code>stats.clicksDelivered</code>, <code>stats.videoCompletionsDelivered/Starts</code>, <code>stats.viewableImpressionsDelivered</code>, <code>deliveryIndicator.actual/expectedDeliveryPercentage</code>, <code>deliveryData.units[7]</code> y <code>costPerUnit</code>. Se materializan en la DLO <code>Reconciliation_LineItem</code> (campos <code>Imps_Delivered__c</code>, <code>Clicks_Delivered__c</code>, <code>Actual_Delivery_Pct__c</code>, etc.). El CRM Connector mantiene sincronizado Account/Order/OrderItem desde Media Cloud.</div>
+          <div class="e2e-desc">El GAM Connector lee del payload SOAP: <code>stats.impressionsDelivered</code>, <code>stats.clicksDelivered</code>, <code>stats.videoCompletionsDelivered/Starts</code>, <code>stats.viewableImpressionsDelivered</code>, <code>deliveryIndicator.actual/expectedDeliveryPercentage</code>, <code>deliveryData.units[7]</code> y <code>costPerUnit</code>. Se materializan en el DLO <code>TVAI_LineItemGamHarmonization__dll</code> (campos <code>ImpressionsDelivered__c</code>, <code>ClicksDelivered__c</code>, <code>ActualDeliveryPercentage__c</code>, etc.). El CRM Connector mantiene sincronizado Account/Order/OrderItem desde Media Cloud.</div>
           <span class="e2e-system">Sistema: Data Cloud + GAM Connector + CRM Connector</span>
         </div>
       </div>
@@ -1527,9 +1535,9 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="e2e-step">
         <div class="e2e-num blue">3</div>
         <div class="e2e-body">
-          <div class="e2e-title">Conciliación y cálculo de métricas</div>
-          <div class="e2e-desc">Data Cloud une la DLO de GAM con el OrderItem a través de <code>OrderItem.GAM_Line_Item_Id__c</code> y calcula los Calculated Insights del ciclo: <code>CI_PacingGap</code>, <code>CI_PctAvance</code>, <code>CI_Projection</code>, <code>CI_RevenueAtRisk</code>, <code>CI_AlertLevel</code>, <code>CI_CTR/VTR/Viewability</code>, <code>CI_MontoFacturable</code>, <code>CI_MakeGood</code>. Quedan disponibles para Reports, Dashboards y Data Actions.</div>
-          <span class="e2e-system">Sistema: Data Cloud</span>
+          <div class="e2e-title">Deserialización · unión · cálculo declarativo</div>
+          <div class="e2e-desc">El <b>Batch Data Transform</b> <code>BDT_LineItemGamHarmonization</code> deserializa los blobs <code>Stats</code> y <code>DeliveryIndicator</code> del GAM Connector en columnas tipadas del DLO <code>TVAI_LineItemGamHarmonization__dll</code> (upsert por LI, Primary Key <code>LineItemId__c</code> + Key Qualifier <code>KQ_LineItemId__c</code>) y agrega la fila del sync al DMO <code>TVAI_LineItemGamHarmonization_History__dlm</code> (append-only). El mismo BDT materializa <b>en el propio DLO</b> los 3 Formula Fields record-level auto-contenidos (<code>F_PacingGap</code>, <code>F_CTR</code>, <code>F_VTR</code>) — todos dependen sólo de columnas del propio LineItem. Data Cloud une el DLO con el OrderItem en el DMO <code>TVAI_LineItemGamHarmonization__dlm</code> por <code>OrderItem.GAM_Line_Item_Id__c ↔ LineItemId__c</code> y evalúa los 6 Formula Fields del DMO — cinco comerciales (<code>F_PctAvance</code>, <code>F_Projection</code>, <code>F_RevenueAtRisk</code>, <code>F_MontoFacturable</code>, <code>F_MakeGood</code>) y <code>F_AlertLevel</code>, que combina <code>F_PacingGap</code> con el CI histórico <code>CI_LastImpressionAt</code> para detectar Zero Delivery. Los <b>tres Calculated Insights</b> del histórico (<code>CI_PacingDaily</code>, <code>CI_PacingVelocity</code>, <code>CI_LastImpressionAt</code>) rollupan sobre el DMO history para alimentar tendencia, análisis pós-vuelo y la detección "24h sin incremento".</div>
+          <span class="e2e-system">Sistema: Data Cloud (BDT + DMOs + Formula Fields + Calculated Insights)</span>
         </div>
       </div>
 
@@ -1537,7 +1545,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="e2e-num orange">4</div>
         <div class="e2e-body">
           <div class="e2e-title">Evaluación de umbrales y disparo de alertas</div>
-          <div class="e2e-desc">Cada vez que se ejecuta el ciclo, Data Cloud evalúa <code>CI_AlertLevel</code> (Warning / Critical / Zero Delivery / OK). Cuando una métrica cruza el umbral, dispara la acción configurada — Task en Salesforce, email al Trafficker, notificación in-app, mensaje en Slack (si la conexión está habilitada).</div>
+          <div class="e2e-desc">Cada vez que se ejecuta el ciclo, Data Cloud recalcula <code>F_AlertLevel</code> (Warning / Critical / Zero Delivery / OK) sobre el DMO <code>TVAI_LineItemGamHarmonization__dlm</code>. Cuando el valor del Formula Field cambia entre syncs, la Data Action configurada sobre el DMO dispara la acción — Task en Salesforce, email al Trafficker, notificación in-app, mensaje en Slack (si la conexión está habilitada). Las Data Actions sí pueden dispararse por cambios en Formula Fields del DMO.</div>
           <span class="e2e-system">Sistema: Data Cloud Data Actions + Flow</span>
         </div>
       </div>
@@ -1555,7 +1563,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="e2e-num purple">6</div>
         <div class="e2e-body">
           <div class="e2e-title">Cierre y facturación automática</div>
-          <div class="e2e-desc">Al cierre del vuelo o del mes, <code>CI_MontoFacturable</code> se expone como Formula Field <code>OrderItem.MontoFacturable__c</code>. MultiAds consume el dato vía REST API estándar de Salesforce y emite la factura. Sin intervención manual, sin planilla intermedia, sin riesgo de divergencia.</div>
+          <div class="e2e-desc">Al cierre del vuelo o del mes, <code>F_MontoFacturable</code> vive en el DMO y su valor se refleja en Salesforce vía Formula Field <code>OrderItem.MontoFacturable__c</code>. MultiAds consume el dato vía REST API estándar de Salesforce y emite la factura. Sin intervención manual, sin planilla intermedia, sin riesgo de divergencia.</div>
           <span class="e2e-system">Sistema: Salesforce → API → MultiAds</span>
         </div>
       </div>
@@ -1563,7 +1571,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="example-box">
         <div class="ex-title">Un ejemplo concreto</div>
         <div class="ex-body">
-          Line item con <code>OrderItem.Quantity = 1.000.000</code> impresiones y <code>OrderItem.UnitPrice = $50 MXN</code> (CPM), vuelo de 30 días. A los 15 días, <code>Imps_Delivered__c = 400.000</code> — debería estar en 500.000. Resultado: <code>CI_PacingGap = −10%</code> → <code>CI_AlertLevel = Warning</code> → se dispara Task + notificación + email al Trafficker. El Trafficker abre el record del OrderItem, identifica targeting limitado y coordina con el Implementador. Si al cierre se entregan 900.000 impresiones, <code>CI_MontoFacturable = MIN(900.000, 1.000.000) × (50 ÷ 1000) = $45.000 MXN</code> — el Formula Field <code>OrderItem.MontoFacturable__c</code> queda con ese valor y MultiAds lo factura.
+          Line item con <code>OrderItem.Quantity = 1.000.000</code> impresiones y <code>OrderItem.UnitPrice = $50 MXN</code> (CPM), vuelo de 30 días. A los 15 días, <code>ImpressionsDelivered__c = 400.000</code> — debería estar en 500.000. Resultado: <code>F_PacingGap = −10%</code> → <code>F_AlertLevel = Warning</code> → la Data Action sobre el DMO dispara Task + notificación + email al Trafficker. El Trafficker abre el record del OrderItem, identifica targeting limitado y coordina con el Implementador. Si al cierre se entregan 900.000 impresiones, <code>F_MontoFacturable = MIN(900.000, 1.000.000) × (50 ÷ 1000) = $45.000 MXN</code> — el Formula Field espejo <code>OrderItem.MontoFacturable__c</code> queda con ese valor y MultiAds lo factura.
         </div>
       </div>
     </div>
@@ -1573,14 +1581,14 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
 <div id="t5" class="content">
   <div class="page-hd">
     <div class="page-hd-title">5. Modelo de Datos del Lado Cliente</div>
-    <div class="page-hd-sub">Casi todo lo que necesitamos ya existe en Media Cloud. Sólo se construyen dos campos.</div>
+    <div class="page-hd-sub">Media Cloud aporta los objetos comerciales. Sumamos cuatro campos en Core, un Batch Data Transform que alimenta un DLO tipado y dos DMOs en Data Cloud (current + history), y doce cálculos declarativos — tres Formula Fields materializados en el DLO por el BDT (record-level, sin join), seis Formula Fields sobre el DMO (cinco con join lateral a OrderItem, uno con dependencia temporal vía CI), y tres Calculated Insights sobre el DMO history.</div>
   </div>
 
   <div class="alert info">
     <div class="alert-band info"></div>
     <div class="alert-body">
       <div class="alert-title">Aprovechar lo estándar antes de construir</div>
-      <div class="alert-text">El modelo de datos sigue el principio de simplificación: usamos los objetos estándar que Media Cloud ya trae configurados (Account, Order, OrderItem), añadimos sólo los <b>dos campos imprescindibles</b> para conectar con Google Ad Manager, y las métricas operativas y financieras se calculan automáticamente en Data Cloud — sin replicar tablas, sin mantener planillas paralelas.</div>
+      <div class="alert-text">El modelo sigue el principio de simplificación: se usan los objetos estándar que Media Cloud ya trae configurados (Account, Order, OrderItem) y se añaden sólo los <b>campos imprescindibles</b> para conectar con Google Ad Manager. Las métricas se calculan como <b>Formula Fields</b> declarativos en dos capas — las <b>auto-contenidas al LineItem</b> (pacing, CTR, VTR) se materializan en el propio DLO por el BDT en el mismo pass de deserialización; las <b>comerciales y la alerta</b> (avance, proyección, revenue at risk, facturación, make-good, nivel de alerta) viven en el DMO porque dependen del join lateral con OrderItem o del histórico temporal. Tres rollups temporales sobre el DMO history se materializan como <b>Calculated Insights</b>: agregación diaria, velocidad de pacing y "último sync con incremento de impresiones" — este último alimenta la detección de Zero Delivery en <code>F_AlertLevel</code>. Ni Apex, ni batch jobs, ni tablas replicadas.</div>
     </div>
   </div>
 
@@ -1758,140 +1766,223 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
     <div class="card-hd">5.3 Métricas calculadas — fuentes, fórmulas y mecanismo</div>
     <div class="card-bd">
       <p class="card-intro">
-        Cada métrica está atada a <b>campos reales</b> que llegan del payload de Google Ad Manager o que existen en Media Cloud (Order/OrderItem). Cada una se materializa como <b>Calculated Insight</b> en Data Cloud sobre la DLO de reconciliación (<code>Reconciliation_LineItem</code>) o como <b>Formula Field</b> en el objeto Salesforce. El equipo de TV Azteca no escribe Apex ni administra batch jobs — los CIs se configuran declarativamente en Data Cloud.
+        Cada métrica está atada a <b>campos reales</b> que llegan del payload de Google Ad Manager o que existen en Media Cloud (Order/OrderItem). El GAM Data Cloud Connector entrega los bloques <code>stats.*</code> y <code>deliveryIndicator.*</code> serializados; un <b>Batch Data Transform (BDT)</b> los deserializa y proyecta cada componente como columna tipada del DLO <code>TVAI_LineItemGamHarmonization__dll</code>. El BDT también <b>materializa en el propio DLO</b> los 3 Formula Fields auto-contenidos al LineItem (<code>F_PacingGap</code>, <code>F_CTR</code>, <code>F_VTR</code>) — cálculos puramente record-level, sin join. Sobre el DMO <code>TVAI_LineItemGamHarmonization__dlm</code> — que hace join lateral con OrderItem — se declaran los 6 Formula Fields restantes: cinco comerciales (<code>F_PctAvance</code>, <code>F_Projection</code>, <code>F_RevenueAtRisk</code>, <code>F_MontoFacturable</code>, <code>F_MakeGood</code>) que dependen de <code>OrderItem.Quantity</code>, <code>UnitPrice</code>, <code>ServiceDate</code> y <code>EndDate</code>, más <code>F_AlertLevel</code> que combina <code>F_PacingGap</code> con la detección de Zero Delivery. Tres rollups temporales sobre el DMO history se materializan como <b>Calculated Insights</b>: agregación diaria (<code>CI_PacingDaily</code>), velocidad de pacing (<code>CI_PacingVelocity</code>) y timestamp del último incremento de impresiones (<code>CI_LastImpressionAt</code>) — este último es el input histórico que <code>F_AlertLevel</code> lee para clasificar Zero Delivery. Cobertura explicada en 5.5.
       </p>
 
+      <div class="alert info" style="margin-bottom:14px">
+        <div class="alert-band info"></div>
+        <div class="alert-body">
+          <div class="alert-title">Criterio de decisión — dónde vive cada cálculo</div>
+          <div class="alert-text">
+            <b>Formula Field materializado en el DLO por el BDT (record-level, sin join)</b> — cuando el cálculo depende <i>sólo</i> de columnas del mismo LineItem (ej. actual vs. expected delivery, clicks/impresiones, video completions/starts). El BDT lo evalúa en el mismo pass de deserialización — cero job intermedio, cero scheduling adicional.<br>
+            <b>Formula Field sobre el DMO</b> — cuando el cálculo depende de un campo comercial del contrato (ej. <code>OrderItem.Quantity</code>, <code>UnitPrice</code>, <code>ServiceDate</code>, <code>EndDate</code>) resuelto por el join lateral, <b>o</b> de un input histórico ya materializado por un CI. Se evalúa al instante del upsert.<br>
+            <b>Calculated Insight sobre el DMO history</b> — para tres casos: (1) agregación entre múltiples records (ej. rollup diario); (2) comparación temporal entre records (ej. velocidad de pacing día vs. día anterior); (3) "última ocurrencia de X" por LineItem (ej. último sync con incremento de impresiones, base de la detección Zero Delivery).<br>
+            Con este criterio, la solución tiene <b>9 Formula Fields</b> (3 en el DLO por BDT + 6 en el DMO) <b>+ 3 CIs</b> sobre el DMO history — todo declarativo, sin código, sin batch jobs propios.
+          </div>
+        </div>
+      </div>
+
       <div class="sub-h-cap">
-        Operativas — usadas por el Trafficker y el Ejecutivo en el ciclo diario
+        Prerrequisito — Batch Data Transform: deserialización + Formula Fields record-level en el DLO
       </div>
       <div class="fgrid two" style="margin-bottom:14px">
-        <div class="calc-card">
-          <div class="calc-name">PacingGap <span class="calc-id">CI_PacingGap</span></div>
-          <div class="calc-mech ci">Calculated Insight · Data Cloud</div>
+        <div class="calc-card green" style="grid-column:1/-1">
+          <div class="calc-name">Deserialización GAM → DLO + Formulas record-level <span class="calc-id">BDT_LineItemGamHarmonization</span></div>
+          <div class="calc-mech bdt">Batch Data Transform · Data Cloud</div>
           <div class="calc-inputs">
-            Entradas: <b>Actual_Delivery_Pct__c</b> y <b>Expected_Delivery_Pct__c</b><br>
-            ← <code>deliveryIndicator.actualDeliveryPercentage</code> · <code>deliveryIndicator.expectedDeliveryPercentage</code> (GAM SOAP)
+            Entrada: DLO cruda del GAM Data Cloud Connector, con <code>Stats</code> y <code>DeliveryIndicator</code> como blobs serializados por line item · frecuencia 2x/día atada al sync del Connector · target DLO <code>TVAI_LineItemGamHarmonization__dll</code>, Primary Key <code>LineItemId__c</code> + Key Qualifier <code>KQ_LineItemId__c</code>
           </div>
-          <div class="calc-formula">Actual_Delivery_Pct__c − Expected_Delivery_Pct__c</div>
-          <div class="calc-desc">Diferencia entre lo entregado a la fecha y lo proporcionalmente esperado. Negativo = atrasado. Es la métrica protagonista del Trafficker.</div>
+          <div class="calc-formula">Parse(Stats) → ImpressionsDelivered__c · ClicksDelivered__c · VideoCompletionsDelivered__c · VideoStartsDelivered__c · ViewableImpressionsDelivered__c
+Parse(DeliveryIndicator) → ActualDeliveryPercentage__c · ExpectedDeliveryPercentage__c
+Formula record-level → F_PacingGap · F_CTR · F_VTR</div>
+          <div class="calc-desc">Pieza declarativa que transforma la DLO cruda del Connector en el DLO tipado <code>TVAI_LineItemGamHarmonization__dll</code>. El BDT hace dos trabajos en un solo paso: (1) deserializa los blobs <code>Stats</code>/<code>DeliveryIndicator</code> en columnas tipadas; (2) materializa en el propio DLO los 3 Formula Fields auto-contenidos al record (<code>F_PacingGap</code>, <code>F_CTR</code>, <code>F_VTR</code>) — todos dependen sólo de campos del propio LineItem, no requieren join lateral ni histórico. <code>ViewableImpressionsDelivered__c</code> se deserializa y queda populado en el DLO, pero sin Formula consumidora en R2 (denominador <code>activeViewEligibleImpressions</code> ausente en el payload — G0716 closed negativo 17-Jul-2026; reservado para R3 si Reports API REST cubre el denominador).</div>
+          <div class="calc-display">Alimenta el DLO <code>TVAI_LineItemGamHarmonization__dll</code> (current, insumo del DMO) y en paralelo el DMO <code>TVAI_LineItemGamHarmonization_History__dlm</code> (append, base de los 3 CIs temporales) — ver 5.5</div>
+          <div class="calc-tags"><span>Data Cloud</span><span>Prerrequisito</span><span>2x/día</span><span>3 Formulas materializadas</span></div>
+        </div>
+      </div>
+
+      <div class="sub-h-cap">
+        Capa 1 · 3 Formula Fields materializados en el DLO por el BDT — record-level, auto-contenidos al LineItem, sin join
+      </div>
+      <p class="card-intro" style="margin-bottom:10px">
+        Estos tres cálculos dependen <b>únicamente</b> de columnas del propio LineItem GAM (impresiones, clicks, video starts/completions, actual/expected delivery). El BDT los evalúa en el mismo pass de deserialización y los escribe como columnas tipadas del DLO <code>TVAI_LineItemGamHarmonization__dll</code> — disponibles al instante del sync, sin refresh intermedio, sin depender del DMO ni de histórico.
+      </p>
+      <div class="fgrid two" style="margin-bottom:14px">
+        <div class="calc-card">
+          <div class="calc-name">PacingGap <span class="calc-id">F_PacingGap</span></div>
+          <div class="calc-mech formula">Formula Field · DLO TVAI_LineItemGamHarmonization__dll (BDT stage)</div>
+          <div class="calc-inputs">
+            Entradas: <b>ActualDeliveryPercentage__c</b> y <b>ExpectedDeliveryPercentage__c</b><br>
+            ← materializadas por el BDT desde <code>deliveryIndicator.actualDeliveryPercentage</code> · <code>deliveryIndicator.expectedDeliveryPercentage</code>
+          </div>
+          <div class="calc-formula">ActualDeliveryPercentage__c − ExpectedDeliveryPercentage__c</div>
+          <div class="calc-desc">Diferencia entre lo entregado a la fecha y lo proporcionalmente esperado. Negativo = atrasado. Se materializa en el propio BDT sobre el DLO — disponible al instante del sync, sin refresh intermedio, sin depender del join con OrderItem.</div>
           <div class="calc-display">página 360 OrderItem · Report "Pacing Diario" · Dashboard Operativo (gauge + tabla)</div>
-          <div class="calc-tags"><span>Trafficker</span><span>2x/día</span><span>Alertas</span></div>
+          <div class="calc-tags"><span>Trafficker</span><span>2x/día</span><span>Alertas</span><span>BDT stage</span></div>
         </div>
 
-        <div class="calc-card green">
-          <div class="calc-name">% Avance <span class="calc-id">CI_PctAvance</span></div>
-          <div class="calc-mech ci">Calculated Insight · Data Cloud</div>
+        <div class="calc-card">
+          <div class="calc-name">CTR <span class="calc-id">F_CTR</span></div>
+          <div class="calc-mech formula">Formula Field · DLO TVAI_LineItemGamHarmonization__dll (BDT stage)</div>
           <div class="calc-inputs">
-            Entradas: <b>Imps_Delivered__c</b> (← <code>stats.impressionsDelivered</code>) y <b>OrderItem.Quantity</b> (impressiones contratadas)
+            Entradas: <b>ClicksDelivered__c</b> (← <code>stats.clicksDelivered</code>) y <b>ImpressionsDelivered__c</b> (← <code>stats.impressionsDelivered</code>)
           </div>
-          <div class="calc-formula">Imps_Delivered__c / OrderItem.Quantity × 100</div>
-          <div class="calc-desc">Progreso acumulado del line item respecto a lo vendido. Indicador de avance sin signo.</div>
+          <div class="calc-formula">IF(ImpressionsDelivered__c &gt; 0, (ClicksDelivered__c / ImpressionsDelivered__c) * 100, NULL)</div>
+          <div class="calc-desc">Click-through rate del line item. Ambos inputs vienen del mismo record del DLO — el BDT lo materializa junto con la deserialización. NULL-safe: cuando aún no hay impresiones el campo queda vacío en vez de dividir por cero.</div>
+          <div class="calc-display">página 360 OrderItem · Report "Calidad por LI" · Dashboard Calidad</div>
+          <div class="calc-tags"><span>Implementador</span><span>2x/día</span><span>Calidad</span><span>BDT stage</span></div>
+        </div>
+
+        <div class="calc-card">
+          <div class="calc-name">VTR <span class="calc-id">F_VTR</span></div>
+          <div class="calc-mech formula">Formula Field · DLO TVAI_LineItemGamHarmonization__dll (BDT stage)</div>
+          <div class="calc-inputs">
+            Entradas: <b>VideoCompletionsDelivered__c</b> (← <code>stats.videoCompletionsDelivered</code>) y <b>VideoStartsDelivered__c</b> (← <code>stats.videoStartsDelivered</code>)
+          </div>
+          <div class="calc-formula">IF(VideoStartsDelivered__c &gt; 0, (VideoCompletionsDelivered__c / VideoStartsDelivered__c) * 100, NULL)</div>
+          <div class="calc-desc">Video-through rate del line item. NULL-safe cuando aún no hay video starts. Materializado en el mismo pass del BDT.</div>
+          <div class="calc-display">página 360 OrderItem · Report "Calidad por LI" · Dashboard Calidad</div>
+          <div class="calc-tags"><span>Implementador</span><span>2x/día</span><span>Calidad</span><span>BDT stage</span></div>
+        </div>
+
+      </div>
+
+      <div class="alert ok" style="margin-bottom:14px">
+        <div class="alert-band ok"></div>
+        <div class="alert-body">
+          <div class="alert-title">Por qué estos tres caben en el BDT y no necesitan el DMO</div>
+          <div class="alert-text">Ninguno de los tres (<code>F_PacingGap</code>, <code>F_CTR</code>, <code>F_VTR</code>) referencia campos de <code>OrderItem</code>, <code>Order</code> o <code>Account</code>, ni depende de otros records del mismo LineItem (histórico). Todos leen columnas del mismo record ya deserializadas por el mismo BDT — cálculo puramente record-level, cero latencia adicional. <code>F_AlertLevel</code> queda fuera de esta capa porque su regla "Zero Delivery ≥ 24h" es fundamentalmente una comparación entre records temporales — pertenece al DMO y consume el CI histórico <code>CI_LastImpressionAt</code>.</div>
+        </div>
+      </div>
+
+      <div class="sub-h-cap">
+        Capa 2 · 6 Formula Fields sobre el DMO — dependen del join lateral con OrderItem o del histórico temporal
+      </div>
+      <p class="card-intro" style="margin-bottom:10px">
+        Cinco de estos cálculos dependen de campos comerciales del contrato — <code>OrderItem.Quantity</code>, <code>UnitPrice</code>, <code>ServiceDate</code>, <code>EndDate</code> — resueltos por el join lateral <code>OrderItem.GAM_Line_Item_Id__c ↔ LineItemId__c</code> del CRM Connector. El sexto (<code>F_AlertLevel</code>) depende del CI <code>CI_LastImpressionAt</code> que rollupa el DMO history para saber cuándo fue el último sync con incremento de impresiones — input temporal que ninguna Formula record-level puede resolver. Todos viven en el DMO <code>TVAI_LineItemGamHarmonization__dlm</code> y se evalúan al instante del upsert.
+      </p>
+      <div class="fgrid two" style="margin-bottom:14px">
+        <div class="calc-card green">
+          <div class="calc-name">% Avance <span class="calc-id">F_PctAvance</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm</div>
+          <div class="calc-inputs">
+            Entradas: <b>ImpressionsDelivered__c</b> (del DLO) y <b>OrderItem.Quantity</b> (impresiones contratadas, join por <code>OrderItem.GAM_Line_Item_Id__c ↔ LineItemId__c</code>)
+          </div>
+          <div class="calc-formula">ImpressionsDelivered__c / OrderItem.Quantity × 100</div>
+          <div class="calc-desc">Progreso acumulado del line item respecto a lo vendido. Indicador de avance sin signo. Necesita el join con OrderItem — vive en el DMO, no en el DLO.</div>
           <div class="calc-display">página 360 OrderItem · Report "Pacing Diario" · Dashboard Trafficker (donut)</div>
-          <div class="calc-tags"><span>Trafficker</span><span>Implementador</span><span>2x/día</span></div>
+          <div class="calc-tags"><span>Trafficker</span><span>Implementador</span><span>2x/día</span><span>DMO</span></div>
         </div>
 
         <div class="calc-card orange">
-          <div class="calc-name">Proyección de cierre <span class="calc-id">CI_Projection</span></div>
-          <div class="calc-mech ci">Calculated Insight · Data Cloud</div>
+          <div class="calc-name">Proyección de cierre <span class="calc-id">F_Projection</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm</div>
           <div class="calc-inputs">
-            Entradas: <b>Imps_Delivered__c</b>, <b>OrderItem.ServiceDate</b>, <b>OrderItem.EndDate</b> y fecha actual del ciclo
+            Entradas: <b>ImpressionsDelivered__c</b> (del DLO), <b>OrderItem.ServiceDate</b>, <b>OrderItem.EndDate</b> y fecha del sync (<code>SyncTimestamp</code>)
           </div>
-          <div class="calc-formula">(Imps_Delivered__c / días_transcurridos) × días_totales</div>
-          <div class="calc-desc">Cuánto entregará el line item al final del vuelo manteniendo el ritmo actual.</div>
+          <div class="calc-formula">(ImpressionsDelivered__c / días_transcurridos) × días_totales</div>
+          <div class="calc-desc">Cuánto entregará el line item al final del vuelo manteniendo el ritmo actual. Las fechas de vuelo vienen del contratado en SF (<code>OrderItem.ServiceDate</code>/<code>EndDate</code>) — source of truth comercial, no las fechas del GAM. Por eso vive en el DMO con join lateral.</div>
           <div class="calc-display">página 360 OrderItem (KPI tile) · Dashboard Operativo (tabla "Top 10 LIs en riesgo")</div>
-          <div class="calc-tags"><span>Trafficker</span><span>Ejecutivo</span><span>2x/día</span></div>
+          <div class="calc-tags"><span>Trafficker</span><span>Ejecutivo</span><span>2x/día</span><span>DMO</span></div>
         </div>
 
         <div class="calc-card purple">
-          <div class="calc-name">Revenue at Risk <span class="calc-id">CI_RevenueAtRisk</span></div>
-          <div class="calc-mech ci">Calculated Insight · Data Cloud</div>
+          <div class="calc-name">Revenue at Risk <span class="calc-id">F_RevenueAtRisk</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm</div>
           <div class="calc-inputs">
-            Entradas: <b>CI_Projection</b>, <b>OrderItem.Quantity</b>, <b>OrderItem.UnitPrice</b> (CPM)
+            Entradas: <b>F_Projection</b>, <b>OrderItem.Quantity</b>, <b>OrderItem.UnitPrice</b> (CPM)
           </div>
-          <div class="calc-formula">MAX(0, OrderItem.Quantity − CI_Projection) × (OrderItem.UnitPrice / 1000)</div>
-          <div class="calc-desc">Monto comercial en riesgo si no se corrige el pacing. Traduce el dato técnico al lenguaje del Ejecutivo de Ventas.</div>
+          <div class="calc-formula">MAX(0, OrderItem.Quantity − F_Projection) × (OrderItem.UnitPrice / 1000)</div>
+          <div class="calc-desc">Monto comercial en riesgo si no se corrige el pacing. Traduce el dato técnico al lenguaje del Ejecutivo de Ventas. Formula anidada sobre <code>F_Projection</code> — Data Cloud resuelve la dependencia en el mismo upsert.</div>
           <div class="calc-display">Dashboard Comercial · Report "Revenue at Risk por Account" · página Account 360</div>
-          <div class="calc-tags"><span>Ejecutivo</span><span>2x/día</span><span>Comercial</span></div>
+          <div class="calc-tags"><span>Ejecutivo</span><span>2x/día</span><span>Comercial</span><span>DMO</span></div>
+        </div>
+
+        <div class="calc-card purple">
+          <div class="calc-name">Monto Facturable <span class="calc-id">F_MontoFacturable</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm + réplica al OrderItem</div>
+          <div class="calc-inputs">
+            <b>ImpressionsDelivered__c</b> (del DLO), <b>OrderItem.Quantity</b>, <b>OrderItem.UnitPrice</b>
+          </div>
+          <div class="calc-formula">MIN(ImpressionsDelivered__c, OrderItem.Quantity) × (OrderItem.UnitPrice / 1000)</div>
+          <div class="calc-desc">Valor real a facturar al cierre del vuelo. Regla comercial integrada: nunca se factura por encima de lo contratado. El Formula Field vive en el DMO y se sincroniza al Formula Field homónimo <code>OrderItem.MontoFacturable__c</code> — MultiAds consume ese campo vía REST API estándar de Salesforce.</div>
+          <div class="calc-display">página 360 OrderItem · Report "Cumplimiento por Order" · Report "Conciliación Mensual de Facturación" · endpoint REST consumido por MultiAds</div>
+          <div class="calc-tags"><span>Ejecutivo</span><span>Facturación</span><span>MultiAds</span><span>DMO</span></div>
+        </div>
+
+        <div class="calc-card orange">
+          <div class="calc-name">Make-good <span class="calc-id">F_MakeGood</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm</div>
+          <div class="calc-inputs">
+            <b>ImpressionsDelivered__c</b> (del DLO), <b>OrderItem.Quantity</b>
+          </div>
+          <div class="calc-formula">MAX(0, OrderItem.Quantity − ImpressionsDelivered__c)</div>
+          <div class="calc-desc">Impresiones pendientes de compensar al cierre. Disponible al instante del cierre, no al final del mes. Necesita <code>OrderItem.Quantity</code> del contrato — por eso vive en el DMO.</div>
+          <div class="calc-display">Report "Make-good Acumulado" · página Account 360 (banda de actividad reciente)</div>
+          <div class="calc-tags"><span>Ejecutivo</span><span>Comercial</span><span>DMO</span></div>
         </div>
 
         <div class="calc-card orange" style="grid-column:1/-1">
-          <div class="calc-name">Nivel de Alerta <span class="calc-id">CI_AlertLevel</span></div>
-          <div class="calc-mech bucket">Bucket / IF · Calculated Insight</div>
+          <div class="calc-name">Nivel de Alerta <span class="calc-id">F_AlertLevel</span></div>
+          <div class="calc-mech formula">Formula Field · DMO TVAI_LineItemGamHarmonization__dlm (CASE)</div>
           <div class="calc-inputs">
-            Entradas: <b>CI_PacingGap</b>, <b>Imps_Delivered__c</b>, horas_sin_imps (Data Transform)
+            Entradas: <b>F_PacingGap</b> (del DLO, materializado por BDT), <b>ImpressionsDelivered__c</b> (del DLO), <b>CI_LastImpressionAt</b> (rollup temporal sobre el DMO history — ver 5.5)
           </div>
-          <div class="calc-formula">IF Imps_Delivered__c=0 AND horas_sin_imps≥24 → "Zero Delivery" · IF CI_PacingGap ≤ −0.20 → "Critical" · IF CI_PacingGap ≤ −0.10 → "Warning" · ELSE → "OK"</div>
-          <div class="calc-desc">Clasificación categórica derivada del PacingGap. Es lo que ilumina la pill colorida en las tablas de Reports y dispara las acciones automáticas (Slack, Task, email).</div>
-          <div class="calc-display">columna de pill colorida en todos los Reports operativos · regla de Conditional Highlighting en Lightning Dashboard · disparador del Flow de alertas</div>
-          <div class="calc-tags"><span>Trafficker</span><span>Automatización</span><span>Alertas</span></div>
+          <div class="calc-formula">CASE
+  WHEN ImpressionsDelivered__c = 0 AND (NOW() − CI_LastImpressionAt) ≥ 24h → "Zero Delivery"
+  WHEN F_PacingGap ≤ −0.20 → "Critical"
+  WHEN F_PacingGap ≤ −0.10 → "Warning"
+  ELSE → "OK"
+END</div>
+          <div class="calc-desc">Clasificación categórica derivada del PacingGap y de la ausencia de impresiones. Es lo que ilumina la pill colorida en las tablas de Reports y dispara las acciones automáticas (Slack, Task, email). Vive en el DMO — no en el DLO — porque la regla "24h sin incremento" requiere comparación con el histórico del propio LineItem, cálculo que <code>CI_LastImpressionAt</code> resuelve idiomáticamente en Data Cloud.</div>
+          <div class="calc-display">columna de pill colorida en todos los Reports operativos · regla de Conditional Highlighting en Lightning Dashboard · disparador de la Data Action de alertas sobre el DMO</div>
+          <div class="calc-tags"><span>Trafficker</span><span>Automatización</span><span>Alertas</span><span>DMO</span></div>
         </div>
       </div>
 
       <div class="sub-h-cap">
-        Calidad de entrega — usadas por el Implementador y el Ejecutivo
+        Analíticas temporales — los tres Calculated Insights de la solución
       </div>
-      <div class="fgrid three" style="margin-bottom:14px">
+      <p class="card-intro" style="margin-bottom:10px">
+        Los CIs se reservan para lo que no cabe como Formula record-level: agregación entre records (rollup diario), comparación temporal (velocidad de pacing) y "última ocurrencia de X por LineItem" (último sync con incremento de impresiones — base de la detección Zero Delivery). Los tres corren sobre el DMO history <code>TVAI_LineItemGamHarmonization_History__dlm</code>.
+      </p>
+      <div class="fgrid two" style="margin-bottom:14px">
         <div class="calc-card">
-          <div class="calc-name">CTR <span class="calc-id">CI_CTR</span></div>
-          <div class="calc-mech ci">Calculated Insight</div>
+          <div class="calc-name">Rollup diario <span class="calc-id">CI_PacingDaily</span></div>
+          <div class="calc-mech ci">Calculated Insight · agregación entre records</div>
           <div class="calc-inputs">
-            <b>Clicks_Delivered__c</b> (← <code>stats.clicksDelivered</code>)<br>
-            <b>Imps_Delivered__c</b> (← <code>stats.impressionsDelivered</code>)
+            Entrada: DMO <code>TVAI_LineItemGamHarmonization_History</code> (append) — colección de todos los syncs de un line item en el día · agrupado por <code>LineItemId + Date</code>
           </div>
-          <div class="calc-formula">Clicks_Delivered__c / Imps_Delivered__c × 100</div>
-          <div class="calc-display">página 360 OrderItem · Report "Calidad por LI" · Dashboard Calidad</div>
-        </div>
-
-        <div class="calc-card">
-          <div class="calc-name">VTR <span class="calc-id">CI_VTR</span></div>
-          <div class="calc-mech ci">Calculated Insight</div>
-          <div class="calc-inputs">
-            <b>Video_Completions__c</b> (← <code>stats.videoCompletionsDelivered</code>)<br>
-            <b>Video_Starts__c</b> (← <code>stats.videoStartsDelivered</code>)
-          </div>
-          <div class="calc-formula">Video_Completions__c / Video_Starts__c × 100</div>
-          <div class="calc-display">página 360 OrderItem · Report "Calidad por LI" · Dashboard Calidad</div>
-        </div>
-
-        <div class="calc-card">
-          <div class="calc-name">Viewability <span class="calc-id">CI_Viewability</span></div>
-          <div class="calc-mech ci">Calculated Insight</div>
-          <div class="calc-inputs">
-            <b>Viewable_Imps__c</b> (← <code>stats.viewableImpressionsDelivered</code>)<br>
-            <b>Active_View_Eligible_Imps__c</b> (← <code>stats.activeViewEligibleImpressions</code>)
-          </div>
-          <div class="calc-formula">Viewable_Imps__c / Active_View_Eligible_Imps__c × 100</div>
-          <div class="calc-flag">activeViewEligibleImpressions sujeto a confirmación durante el spike técnico del GAM Connector. Si no está disponible en SOAP, se ingiere vía Reports API REST como fuente complementaria.</div>
-          <div class="calc-display">página 360 OrderItem · Report "Calidad por LI" · Dashboard Calidad</div>
-        </div>
-      </div>
-
-      <div class="sub-h-cap">
-        Financieras — usadas en el cierre y la facturación
-      </div>
-      <div class="fgrid two">
-        <div class="calc-card purple">
-          <div class="calc-name">Monto Facturable <span class="calc-id">CI_MontoFacturable</span></div>
-          <div class="calc-mech ci">Calculated Insight · expuesta como Formula Field en OrderItem</div>
-          <div class="calc-inputs">
-            <b>Imps_Delivered__c</b>, <b>OrderItem.Quantity</b>, <b>OrderItem.UnitPrice</b>
-          </div>
-          <div class="calc-formula">MIN(Imps_Delivered__c, OrderItem.Quantity) × (OrderItem.UnitPrice / 1000)</div>
-          <div class="calc-desc">Valor real a facturar al cierre del vuelo. Regla comercial integrada: nunca se factura por encima de lo contratado. Se expone también como Formula Field <code>OrderItem.MontoFacturable__c</code> para que MultiAds lo consuma vía REST API estándar.</div>
-          <div class="calc-display">página 360 OrderItem · Report "Cumplimiento por Order" · Report "Conciliación Mensual de Facturación" · endpoint REST consumido por MultiAds</div>
-          <div class="calc-tags"><span>Ejecutivo</span><span>Facturación</span><span>MultiAds</span></div>
+          <div class="calc-formula">AVG(F_PacingGap), MIN(F_PacingGap), MAX(F_PacingGap), LAST(F_PacingGap), LAST(F_PctAvance) por día</div>
+          <div class="calc-desc">Consolida los 2 syncs diarios en un único record de cierre del día — evita ruido de intra-día en dashboards de tendencia. Es un CI legítimo porque agrega múltiples records del history en un rollup por fecha; no cabe como Formula Field.</div>
+          <div class="calc-display">Report histórico "Evolución de Pacing por LI" · Dashboard Ejecutivo (tendencia semanal) · Tableau Next (candidato post-R2)</div>
+          <div class="calc-tags"><span>Ejecutivo</span><span>Analítico</span><span>1x/día</span></div>
         </div>
 
         <div class="calc-card orange">
-          <div class="calc-name">Make-good <span class="calc-id">CI_MakeGood</span></div>
-          <div class="calc-mech ci">Calculated Insight</div>
+          <div class="calc-name">Velocidad de pacing <span class="calc-id">CI_PacingVelocity</span></div>
+          <div class="calc-mech ci">Calculated Insight · comparación entre records temporales</div>
           <div class="calc-inputs">
-            <b>Imps_Delivered__c</b>, <b>OrderItem.Quantity</b>
+            Entrada: DMO <code>TVAI_LineItemGamHarmonization_History__dlm</code> · dos puntos consecutivos por line item (cierre de hoy vs. cierre de ayer)
           </div>
-          <div class="calc-formula">MAX(0, OrderItem.Quantity − Imps_Delivered__c)</div>
-          <div class="calc-desc">Impresiones pendientes de compensar al cierre. Disponible al instante del cierre, no al final del mes.</div>
-          <div class="calc-display">Report "Make-good Acumulado" · página Account 360 (banda de actividad reciente)</div>
-          <div class="calc-tags"><span>Ejecutivo</span><span>Comercial</span></div>
+          <div class="calc-formula">F_PacingGap(hoy) − F_PacingGap(ayer)</div>
+          <div class="calc-desc">Sinaliza si el gap empeora, mejora o está estable — información que <code>F_AlertLevel</code> no captura (evalúa punto en el tiempo, no tendencia). Habilita la evolución del alerta hacia <code>F_AlertLevel_v2</code> con dimensión de trend en un release futuro sin redesenhar el modelo.</div>
+          <div class="calc-display">Report "LIs empeorando" · Dashboard Ejecutivo (indicador de trend por line item) · candidato a Data Action de escalado cuando <code>CI_PacingVelocity ≤ −0.05</code></div>
+          <div class="calc-tags"><span>Ejecutivo</span><span>Trend</span><span>1x/día</span></div>
+        </div>
+
+        <div class="calc-card" style="grid-column:1/-1">
+          <div class="calc-name">Último sync con incremento de impresiones <span class="calc-id">CI_LastImpressionAt</span></div>
+          <div class="calc-mech ci">Calculated Insight · "última ocurrencia" por LineItem sobre el history</div>
+          <div class="calc-inputs">
+            Entrada: DMO <code>TVAI_LineItemGamHarmonization_History__dlm</code> · todos los syncs por line item con su <code>ImpressionsDelivered__c</code> y <code>SyncTimestamp</code>
+          </div>
+          <div class="calc-formula">Por <code>LineItemId__c</code>:
+  Delta = ImpressionsDelivered__c(sync N) − ImpressionsDelivered__c(sync N−1)
+  CI_LastImpressionAt = MAX(SyncTimestamp) WHERE Delta &gt; 0</div>
+          <div class="calc-desc">Timestamp del último sync en el que este LineItem realmente registró incremento de impresiones. Es el único input histórico que necesita <code>F_AlertLevel</code> para detectar Zero Delivery: cuando <code>ImpressionsDelivered__c = 0</code> en el sync actual, se compara <code>NOW() − CI_LastImpressionAt</code> contra el umbral de 24h. Refresh cadence: 1x/día (suficiente — Zero Delivery es una detección de 24h, no requiere latencia sub-hora). Reemplaza los campos <code>LastImpsIncrement__c</code>/<code>LastImpsIncrementAt__c</code> que en el diseño anterior se querían materializar como delta stateful en el BDT — el CI es el patrón idiomático para "última ocurrencia de X por entidad" en Data Cloud.</div>
+          <div class="calc-display">Consumido exclusivamente por <code>F_AlertLevel</code> · trazable en el Report "Zero Delivery — Vuelos sin entrega"</div>
+          <div class="calc-tags"><span>Alertas</span><span>Zero Delivery</span><span>1x/día</span><span>Input de F_AlertLevel</span></div>
         </div>
       </div>
 
@@ -1899,7 +1990,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="alert-band info"></div>
         <div class="alert-body">
           <div class="alert-title">Catálogo extensible — sin reabrir el proyecto</div>
-          <div class="alert-text">Si TV Azteca quiere sumar una nueva métrica (ej. costo por engagement, share of voice por publisher), se agrega un Calculated Insight adicional en Data Cloud y se publica en el Connected Object existente. Los Reports y Dashboards la incorporan como columna nueva — no se requiere desarrollo, solo configuración declarativa.</div>
+          <div class="alert-text">Si TV Azteca quiere sumar una nueva métrica escalar (ej. costo por engagement, share of voice por publisher), se agrega un Formula Field adicional en el DMO. Si necesita un rollup temporal o cross-record (ej. participación mensual por publisher), se agrega un Calculated Insight sobre el DMO history. Los Reports y Dashboards la incorporan como columna nueva — no se requiere desarrollo, solo configuración declarativa.</div>
         </div>
       </div>
     </div>
@@ -1910,14 +2001,17 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
     <div class="card-hd">5.4 Mapa consolidado — campo → métrica → dónde aparece</div>
     <div class="card-bd">
       <p class="card-intro">
-        Tabla única de referencia que enlaza cada métrica con su origen, su mecanismo de construcción y todos los puntos de la solución donde se exhibe. Sirve como anclaje para validar técnicamente la integración y para que TV Azteca confirme qué se verá dónde antes del go-live.
+        Tabla única de referencia que enlaza cada campo con su origen, su mecanismo de construcción y todos los puntos de la solución donde se exhibe. Sirve como anclaje para validar técnicamente la integración y para que TV Azteca confirme qué se verá dónde antes del go-live.
       </p>
 
       <div class="sub-h-cap">Convenciones de color</div>
       <p class="card-intro" style="margin-bottom:8px">
         <span class="src-gam">GAM</span> campo del payload SOAP de Google Ad Manager &nbsp;·&nbsp;
         <span class="src-mc">MC</span> campo estándar de Media Cloud &nbsp;·&nbsp;
-        <span class="src-new">NUEVO</span> campo a crear en este proyecto &nbsp;·&nbsp;
+        <span class="src-new">NUEVO</span> campo a crear en este proyecto (Salesforce Core) &nbsp;·&nbsp;
+        <span class="src-bdt">BDT</span> columna materializada por el Batch Data Transform &nbsp;·&nbsp;
+        <span class="src-dmo">DMO</span> Data Model Object de Data Cloud &nbsp;·&nbsp;
+        <span class="src-f">F</span> Formula Field declarativo &nbsp;·&nbsp;
         <span class="src-ci">CI</span> Calculated Insight de Data Cloud
       </p>
 
@@ -1925,44 +2019,59 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <thead>
           <tr>
             <th style="width:90px">Fuente</th>
-            <th style="width:230px">Campo / Métrica</th>
+            <th style="width:250px">Campo / Métrica</th>
             <th>Mecanismo de creación</th>
             <th>Dónde aparece en la solución</th>
           </tr>
         </thead>
         <tbody>
-          <!-- GAM SOAP -->
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.impressionsDelivered</code></td><td>Ingerido por GAM Connector → DLO <code>Reconciliation_LineItem</code> · campo <code>Imps_Delivered__c</code></td><td>Entrada de CI_PctAvance, CI_RevenueAtRisk, CI_MontoFacturable, CI_MakeGood, CI_CTR</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.clicksDelivered</code></td><td>DLO · campo <code>Clicks_Delivered__c</code></td><td>Entrada de CI_CTR · página 360 OrderItem (Calidad)</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.videoCompletionsDelivered</code></td><td>DLO · campo <code>Video_Completions__c</code></td><td>Entrada de CI_VTR</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.videoStartsDelivered</code></td><td>DLO · campo <code>Video_Starts__c</code></td><td>Entrada de CI_VTR</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.viewableImpressionsDelivered</code></td><td>DLO · campo <code>Viewable_Imps__c</code></td><td>Entrada de CI_Viewability</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>stats.activeViewEligibleImpressions</code> <span style="color:var(--sf-orange);font-weight:700">⚠ a confirmar</span></td><td>DLO · campo <code>Active_View_Eligible_Imps__c</code></td><td>Entrada de CI_Viewability (sujeto a spike técnico del Connector)</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>deliveryIndicator.expectedDeliveryPercentage</code></td><td>DLO · campo <code>Expected_Delivery_Pct__c</code></td><td>Entrada de CI_PacingGap</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>deliveryIndicator.actualDeliveryPercentage</code></td><td>DLO · campo <code>Actual_Delivery_Pct__c</code></td><td>Entrada de CI_PacingGap</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>deliveryData.units[7]</code></td><td>DLO · campo <code>Units_Last7Days__c</code> (array)</td><td>Mini bar-chart "Pacing diario últimos 7 días" en página 360 OrderItem</td></tr>
-          <tr><td><span class="src-gam">GAM</span></td><td><code>costPerUnit.microAmount</code> ÷ 1.000.000</td><td>DLO · campo <code>Rate_GAM__c</code></td><td>Validación cruzada contra <code>OrderItem.UnitPrice</code> · alerta de discrepancia</td></tr>
+          <!-- GAM SOAP payload (crudo, serializado en la DLO) -->
+          <tr><td><span class="src-gam">GAM</span></td><td><code>Stats</code> (blob serializado)</td><td>Ingerido tal cual por GAM Data Cloud Connector en la DLO cruda · deserializado por el BDT en columnas tipadas</td><td>No consumible directamente · alimentado al BDT</td></tr>
+          <tr><td><span class="src-gam">GAM</span></td><td><code>DeliveryIndicator</code> (blob serializado)</td><td>Ingerido tal cual por GAM Connector en la DLO cruda · deserializado por el BDT</td><td>No consumible directamente · alimentado al BDT</td></tr>
+          <tr><td><span class="src-gam">GAM</span></td><td><code>deliveryData.units[7]</code></td><td>Ingerido por GAM Connector · array por día de los últimos 7</td><td>Mini bar-chart "Pacing diario últimos 7 días" en página 360 OrderItem — proyectado como <code>Units_Last7Days__c</code></td></tr>
+          <tr><td><span class="src-gam">GAM</span></td><td><code>costPerUnit.microAmount</code> ÷ 1.000.000</td><td>Ingerido por GAM Connector · proyectado en DMO como <code>Rate_GAM__c</code></td><td>Validación cruzada contra <code>OrderItem.UnitPrice</code> · alerta de discrepancia</td></tr>
 
-          <!-- Media Cloud -->
-          <tr><td><span class="src-mc">MC</span></td><td><code>Account.Name</code> · <code>Account.OwnerId</code> · <code>Account.Industry</code></td><td>Estándar Media Cloud · ingerido vía CRM Connector</td><td>Filtros y agrupaciones en todos los Reports · Dashboard Comercial · página Account 360</td></tr>
-          <tr><td><span class="src-mc">MC</span></td><td><code>Order.OrderNumber</code> · <code>Order.EffectiveDate</code> · <code>Order.EndDate</code> · <code>Order.TotalAmount</code></td><td>Estándar Media Cloud</td><td>Report "Cumplimiento por Order" · página Account 360 (lista de Orders activas)</td></tr>
-          <tr><td><span class="src-mc">MC</span></td><td><code>OrderItem.Product2Id</code> · <code>OrderItem.Quantity</code> · <code>OrderItem.UnitPrice</code> · <code>OrderItem.ServiceDate/EndDate</code></td><td>Estándar Media Cloud · ingerido vía CRM Connector</td><td>Entrada de todos los CIs comerciales (% Avance, Revenue at Risk, Monto Facturable, Make-good, Proyección)</td></tr>
+          <!-- BDT — columnas deserializadas y Formula Fields materializados en el DLO -->
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>ImpressionsDelivered__c</code></td><td>Parse de <code>Stats.impressionsDelivered</code> · columna tipada en DLO <code>TVAI_LineItemGamHarmonization__dll</code></td><td>Entrada de F_CTR (DLO) · entrada de F_PctAvance, F_RevenueAtRisk, F_MontoFacturable, F_MakeGood, F_AlertLevel (DMO) · entrada de CI_LastImpressionAt (rollup temporal sobre history) · página 360 OrderItem (Calidad)</td></tr>
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>ClicksDelivered__c</code></td><td>Parse de <code>Stats.clicksDelivered</code> · columna tipada en DLO</td><td>Entrada de F_CTR · página 360 OrderItem (Calidad)</td></tr>
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>VideoCompletionsDelivered__c</code> · <code>VideoStartsDelivered__c</code></td><td>Parse de <code>Stats.videoCompletionsDelivered</code> · <code>videoStartsDelivered</code> · columnas tipadas en DLO</td><td>Entrada de F_VTR</td></tr>
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>ViewableImpressionsDelivered__c</code></td><td>Parse de <code>Stats.viewableImpressionsDelivered</code> · columna tipada en DLO</td><td>Deserializado sin Formula consumidora en R2 (G0716 — denominador <code>activeViewEligibleImpressions</code> ausente en el payload; reservado para R3 vía Reports API REST)</td></tr>
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>ActualDeliveryPercentage__c</code> · <code>ExpectedDeliveryPercentage__c</code></td><td>Parse de <code>DeliveryIndicator.actualDeliveryPercentage</code> · <code>expectedDeliveryPercentage</code> · columnas tipadas en DLO</td><td>Entrada de F_PacingGap</td></tr>
+          <tr><td><span class="src-bdt">BDT</span></td><td><code>SyncTimestamp</code></td><td>Timestamp del sync del Connector · estampilla cada record del history</td><td>Eje temporal del Report "Evolución de Pacing" · llave del rollup diario CI_PacingDaily · entrada de CI_LastImpressionAt (base del cálculo Zero Delivery)</td></tr>
 
-          <!-- Nuevos -->
+          <!-- Formula Fields materializados en el DLO por el mismo BDT (record-level, sin join) -->
+          <tr><td><span class="src-bdt">BDT</span> <span class="src-f">F</span></td><td><code>F_PacingGap</code></td><td>Formula Field materializado en DLO por el BDT · <code>ActualDeliveryPercentage__c − ExpectedDeliveryPercentage__c</code></td><td>página 360 OrderItem · Report "Pacing Diario" · Dashboard Operativo (gauge) · entrada de F_AlertLevel</td></tr>
+          <tr><td><span class="src-bdt">BDT</span> <span class="src-f">F</span></td><td><code>F_CTR</code></td><td>Formula Field materializado en DLO por el BDT · <code>IF(ImpressionsDelivered__c &gt; 0, (ClicksDelivered__c / ImpressionsDelivered__c) * 100, NULL)</code></td><td>página 360 OrderItem (tarjeta Calidad) · Report "Calidad por LI" · Dashboard Calidad · Home App Implementador</td></tr>
+          <tr><td><span class="src-bdt">BDT</span> <span class="src-f">F</span></td><td><code>F_VTR</code></td><td>Formula Field materializado en DLO por el BDT · <code>IF(VideoStartsDelivered__c &gt; 0, (VideoCompletionsDelivered__c / VideoStartsDelivered__c) * 100, NULL)</code></td><td>página 360 OrderItem (tarjeta Calidad) · Report "Calidad por LI" · Dashboard Calidad · Home App Implementador</td></tr>
+
+          <!-- Media Cloud (join lateral en el DMO) -->
+          <tr><td><span class="src-mc">MC</span></td><td><code>Account.Name</code> · <code>Account.OwnerId</code> · <code>Account.Industry</code></td><td>Estándar Media Cloud · ingerido vía CRM Connector · join lateral con el DMO por Order.AccountId</td><td>Filtros y agrupaciones en todos los Reports · Dashboard Comercial · página Account 360</td></tr>
+          <tr><td><span class="src-mc">MC</span></td><td><code>Order.OrderNumber</code> · <code>Order.EffectiveDate</code> · <code>Order.EndDate</code> · <code>Order.TotalAmount</code></td><td>Estándar Media Cloud · CRM Connector</td><td>Report "Cumplimiento por Order" · página Account 360 (lista de Orders activas)</td></tr>
+          <tr><td><span class="src-mc">MC</span></td><td><code>OrderItem.Product2Id</code> · <code>OrderItem.Quantity</code> · <code>OrderItem.UnitPrice</code> · <code>OrderItem.ServiceDate/EndDate</code></td><td>Estándar Media Cloud · CRM Connector · join con el DMO por <code>OrderItem.GAM_Line_Item_Id__c</code></td><td>Entrada de todas las Formulas comerciales (F_PctAvance, F_RevenueAtRisk, F_MontoFacturable, F_MakeGood, F_Projection)</td></tr>
+
+          <!-- Campos nuevos en Salesforce Core -->
           <tr><td><span class="src-new">NUEVO</span></td><td><code>Order.GAM_Order_Id__c</code></td><td>Campo Text(50) en Order · poblado por callback de la integración (Apex Invocable o Flow)</td><td>Llave de join Order ⇄ GAM Order · página Order 360 (sección "Identificadores GAM")</td></tr>
           <tr><td><span class="src-new">NUEVO</span></td><td><code>OrderItem.GAM_Line_Item_Id__c</code></td><td>Campo Text(50) en OrderItem · poblado por callback de la integración</td><td>Llave de join OrderItem ⇄ GAM LI · página 360 OrderItem (tarjeta "Identificadores GAM")</td></tr>
-          <tr><td><span class="src-new">NUEVO</span></td><td><code>OrderItem.MontoFacturable__c</code></td><td>Formula Field Currency · expone CI_MontoFacturable al objeto OrderItem</td><td>Endpoint REST estándar consumido por MultiAds · página 360 OrderItem (tarjeta "Monto facturable proyectado")</td></tr>
+          <tr><td><span class="src-new">NUEVO</span></td><td><code>OrderItem.MontoFacturable__c</code></td><td>Formula Field Currency en OrderItem · réplica del F_MontoFacturable del DMO (Data Cloud → Core vía Data Action de sync)</td><td>Endpoint REST estándar consumido por MultiAds · página 360 OrderItem (tarjeta "Monto facturable proyectado")</td></tr>
           <tr><td><span class="src-new">NUEVO</span></td><td><code>OrderItem.LastSync_GAM__c</code></td><td>Datetime · actualizado por la Data Action del Connector tras cada ciclo</td><td>Página 360 OrderItem (tarjeta "Identificadores GAM" · valor "Última sincronización")</td></tr>
 
-          <!-- Calculated Insights -->
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_PacingGap</code></td><td>Calculated Insight en Data Cloud · ver 5.3</td><td>página 360 OrderItem · Report "Pacing Diario" · Dashboard Operativo (gauge) · disparador del CI_AlertLevel</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_PctAvance</code></td><td>Calculated Insight</td><td>página 360 OrderItem · Report "Pacing Diario" · Dashboard Trafficker (donut)</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_Projection</code></td><td>Calculated Insight</td><td>página 360 OrderItem (KPI) · Dashboard Operativo (tabla resumen)</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_RevenueAtRisk</code></td><td>Calculated Insight</td><td>Dashboard Comercial · Report "Revenue at Risk por Account" · Account 360 · Home App Ejecutivo (KPI)</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_AlertLevel</code></td><td>Calculated Insight categórico (Bucket / IF)</td><td>Pill coloreada en todos los Reports operativos · regla Conditional Highlighting Dashboard · disparador del Flow de alertas</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_CTR</code> · <code>CI_VTR</code> · <code>CI_Viewability</code></td><td>Calculated Insights de calidad</td><td>página 360 OrderItem (tarjeta Calidad) · Report "Calidad por LI" · Dashboard Calidad · Home App Implementador (KPI)</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_MontoFacturable</code></td><td>Calculated Insight · expuesto como Formula Field</td><td>página 360 OrderItem · Report "Cumplimiento por Order" · Report "Conciliación Mensual" · endpoint MultiAds</td></tr>
-          <tr><td><span class="src-ci">CI</span></td><td><code>CI_MakeGood</code></td><td>Calculated Insight</td><td>Report "Make-good Acumulado" · página Account 360 (actividad)</td></tr>
+          <!-- DMOs de Data Cloud -->
+          <tr><td><span class="src-dlo">DLO</span></td><td><code>TVAI_LineItemGamHarmonization__dll</code> (current)</td><td>DLO alimentado por el BDT · una fila por line item, Primary Key <code>LineItemId__c</code> + Key Qualifier <code>KQ_LineItemId__c</code>, upsert 2x/día · aloja los 21 campos deserializados y los 3 Formula Fields record-level materializados en el propio BDT (F_PacingGap, F_CTR, F_VTR)</td><td>Insumo del DMO</td></tr>
+          <tr><td><span class="src-dmo">DMO</span></td><td><code>TVAI_LineItemGamHarmonization__dlm</code> (current)</td><td>DMO que hace join lateral con OrderItem por <code>OrderItem.GAM_Line_Item_Id__c ↔ LineItemId__c</code> · aloja los 6 Formula Fields del DMO (F_PctAvance, F_Projection, F_RevenueAtRisk, F_MontoFacturable, F_MakeGood, F_AlertLevel)</td><td>Fuente de todos los Reports operativos, del Dashboard Operativo y del disparador de Data Actions sobre F_AlertLevel</td></tr>
+          <tr><td><span class="src-dmo">DMO</span></td><td><code>TVAI_LineItemGamHarmonization_History__dlm</code> (append)</td><td>DMO append-only alimentado por BDT · una fila por sync · clave compuesta <code>LineItemId__c + SyncTimestamp</code></td><td>Fuente del Report "Evolución de Pacing" · base del gráfico histórico en página 360 OrderItem · entrada de los 3 CIs (CI_PacingDaily, CI_PacingVelocity, CI_LastImpressionAt) · candidato Tableau Next</td></tr>
+
+          <!-- Formula Fields sobre el DMO (dependen del join lateral con OrderItem) -->
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_PctAvance</code></td><td>Formula Field · DMO · <code>ImpressionsDelivered__c / OrderItem.Quantity × 100</code> · join por <code>OrderItem.GAM_Line_Item_Id__c ↔ LineItemId__c</code></td><td>página 360 OrderItem · Report "Pacing Diario" · Dashboard Trafficker (donut)</td></tr>
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_Projection</code></td><td>Formula Field · DMO · <code>(ImpressionsDelivered__c / días_transcurridos) × días_totales</code> · fechas del vuelo desde <code>OrderItem.ServiceDate</code>/<code>EndDate</code> (source of truth comercial)</td><td>página 360 OrderItem (KPI) · Dashboard Operativo (tabla resumen)</td></tr>
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_RevenueAtRisk</code></td><td>Formula Field · DMO · <code>MAX(0, OrderItem.Quantity − F_Projection) × (OrderItem.UnitPrice / 1000)</code></td><td>Dashboard Comercial · Report "Revenue at Risk por Account" · Account 360 · Home App Ejecutivo</td></tr>
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_MontoFacturable</code></td><td>Formula Field · DMO · <code>MIN(ImpressionsDelivered__c, OrderItem.Quantity) × (OrderItem.UnitPrice / 1000)</code> · replicado al Formula Field homónimo del OrderItem vía Data Action</td><td>página 360 OrderItem · Report "Cumplimiento por Order" · Report "Conciliación Mensual" · endpoint MultiAds</td></tr>
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_MakeGood</code></td><td>Formula Field · DMO · <code>MAX(0, OrderItem.Quantity − ImpressionsDelivered__c)</code></td><td>Report "Make-good Acumulado" · página Account 360 (actividad)</td></tr>
+          <tr><td><span class="src-dmo">DMO</span> <span class="src-f">F</span></td><td><code>F_AlertLevel</code></td><td>Formula Field CASE · DMO · combina F_PacingGap + ImpressionsDelivered__c + CI_LastImpressionAt (24h Zero Delivery)</td><td>Pill coloreada en todos los Reports operativos · Conditional Highlighting Dashboard · disparador de la Data Action de alertas (evaluada sobre el DMO)</td></tr>
+
+          <!-- Calculated Insights (solo 2, sobre history) -->
+          <tr><td><span class="src-ci">CI</span></td><td><code>CI_PacingDaily</code></td><td>Calculated Insight sobre DMO history · agrupado por <code>LineItemId + Date</code> · AVG/MIN/MAX/LAST de F_PacingGap</td><td>Report histórico "Evolución de Pacing por LI" · Dashboard Ejecutivo (tendencia semanal) · Tableau Next (post-R2)</td></tr>
+          <tr><td><span class="src-ci">CI</span></td><td><code>CI_PacingVelocity</code></td><td>Calculated Insight sobre DMO history · <code>F_PacingGap(hoy) − F_PacingGap(ayer)</code></td><td>Report "LIs empeorando" · Dashboard Ejecutivo (indicador de trend) · candidato a Data Action de escalado</td></tr>
+          <tr><td><span class="src-ci">CI</span></td><td><code>CI_LastImpressionAt</code></td><td>Calculated Insight sobre DMO history · por LineItemId, <code>MAX(SyncTimestamp) WHERE Delta(ImpressionsDelivered__c) &gt; 0</code></td><td>Input exclusivo de F_AlertLevel para detección de Zero Delivery · trazable en el Report "Zero Delivery"</td></tr>
         </tbody>
       </table>
 
@@ -1970,7 +2079,111 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="alert-band info"></div>
         <div class="alert-body">
           <div class="alert-title">Cómo leer esta tabla</div>
-          <div class="alert-text">Cada fila parte de un campo (GAM, Media Cloud o nuevo) o de una métrica calculada. La columna "Mecanismo" describe cómo se construye sin escribir Apex. La columna "Dónde aparece" lista los puntos exactos de la experiencia — página, report, dashboard, endpoint — donde el dato es visible. Las decisiones que dependen de validación técnica están marcadas con <b>⚠ a confirmar</b>.</div>
+          <div class="alert-text">Cada fila parte de un campo, un artefacto (BDT/DLO/DMO) o una métrica calculada. La columna "Mecanismo" describe cómo se construye sin escribir Apex. La columna "Dónde aparece" lista los puntos exactos de la experiencia — página, report, dashboard, endpoint — donde el dato es visible. La secuencia lógica es <b>GAM → BDT (deserializa + materializa 3 Formula Fields record-level en el DLO) → DMO (join lateral con OrderItem + 6 Formula Fields, uno de ellos consumiendo un CI histórico) → 3 CIs (rollups temporales sobre el DMO history)</b>. Las filas con doble tag <span class="src-bdt">BDT</span> <span class="src-f">F</span> son los tres cálculos auto-contenidos al LineItem que el BDT escribe directamente en el DLO. Las decisiones que dependen de validación técnica están marcadas con <b>⚠ a confirmar</b>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.5 -->
+  <div class="card">
+    <div class="card-hd">5.5 Historial temporal y análisis de tendencia</div>
+    <div class="card-bd">
+      <p class="card-intro">
+        La conciliación no sirve solo para responder "¿dónde estoy hoy?"; también debe responder "¿estoy empeorando, mejorando o estable?" y "¿cómo se comportó este line item durante el vuelo?". Data Cloud resuelve el histórico de forma nativa, sin persistir datos analíticos en objetos Salesforce ni construir tablas paralelas — respetando el principio de Passive Core.
+      </p>
+
+      <div class="sub-h-cap">Arquitectura de retención — un DMO current + un DMO history</div>
+      <div class="fgrid two" style="margin-bottom:14px">
+        <div class="comp-card">
+          <div class="comp-icon blue">C</div>
+          <div class="comp-title">TVAI_LineItemGamHarmonization (current)</div>
+          <div class="comp-sub">DMO con upsert por line item</div>
+          <div class="comp-body">Una fila por line item, actualizada 2x/día. Clave <code>LineItemId__c</code> (Primary Key) + <code>KQ_LineItemId__c</code> (Key Qualifier). Alimentado por el DLO <code>TVAI_LineItemGamHarmonization__dll</code> (que ya trae los 3 Formula Fields record-level materializados por el BDT — F_PacingGap, F_CTR, F_VTR); el DMO agrega el join lateral con OrderItem por <code>OrderItem.GAM_Line_Item_Id__c</code> y aloja los 6 Formula Fields del DMO — cinco comerciales (F_PctAvance, F_Projection, F_RevenueAtRisk, F_MontoFacturable, F_MakeGood) y F_AlertLevel (que consume el CI histórico <code>CI_LastImpressionAt</code>). Es la fuente de todos los Reports operativos, del Dashboard Operativo y del disparador de Data Actions — responde "¿dónde está este line item ahora?".</div>
+        </div>
+        <div class="comp-card">
+          <div class="comp-icon green">H</div>
+          <div class="comp-title">TVAI_LineItemGamHarmonization_History (append)</div>
+          <div class="comp-sub">DMO append-only alimentado por el mismo BDT</div>
+          <div class="comp-body">Una fila por cada sync — 2 records/día por line item. Clave compuesta <code>LineItemId__c + SyncTimestamp</code>. Preserva el histórico completo del vuelo sin sobrescribir el punto anterior. Es la fuente del Report "Evolución de Pacing" y de los tres CIs (<code>CI_PacingDaily</code>, <code>CI_PacingVelocity</code>, <code>CI_LastImpressionAt</code>).</div>
+        </div>
+      </div>
+
+      <div class="alert info" style="margin-bottom:14px">
+        <div class="alert-band info"></div>
+        <div class="alert-body">
+          <div class="alert-title">Por qué el history es un DMO append y no un CI ni un objeto Salesforce</div>
+          <div class="alert-text">
+            <b>Data Cloud es append-only por naturaleza en la DLO.</b> Cada sync del GAM Connector escribe un record nuevo con timestamp; el histórico crudo ya existe sin trabajo adicional. El único costo real es proyectar un DMO tipado encima — mismo BDT, mismas transformaciones, doble destino. No hay recomputo, no hay job programado.<br><br>
+            <b>Por qué no persistir en objeto Salesforce Core.</b> Con 10.000 line items activos × 2 syncs/día × 90 días de retención, hablamos de ~1,8M registros — trivial para Data Cloud, costoso para Salesforce (consume storage licenciado y complica reports con volumen). Además, persistir analítica en Core rompería el principio de Passive Core: Data Cloud existe justamente para no obligar a Salesforce a alojar datos operativos históricos.<br><br>
+            <b>Excepción</b>: si un KPI resumido específico necesita disparar automatizaciones sobre Account (ej. "peor PacingGap de los últimos 7 días por advertiser"), se puede escribir <b>ese único número</b> — no la tabla — a un campo del Account vía Data Action. Se evalúa caso por caso post-R2.
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-h-cap">Qué habilita el DMO history en la experiencia</div>
+      <table class="map-tbl">
+        <thead>
+          <tr>
+            <th style="width:280px">Capacidad</th>
+            <th>Cómo se construye</th>
+            <th>Consumo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Gráfico de PacingGap por día en la página 360 OrderItem</td>
+            <td>Lightning Report Chart sobre CI_PacingDaily filtrado por <code>OrderItem.Id = $Record.Id</code> · eje X = fecha, eje Y = LAST(F_PacingGap) del día · color por <code>F_AlertLevel</code></td>
+            <td>Trafficker abre el line item y ve la evolución del pacing sin salir de la página · reemplaza la necesidad de exportar a Excel</td>
+          </tr>
+          <tr>
+            <td>Indicador de trend "empeorando / estable / mejorando" por line item</td>
+            <td>Formula Field opcional sobre el DMO current que lee el último valor de <code>CI_PacingVelocity</code> del history · categoriza en 3 buckets</td>
+            <td>Columna "Trend" en el Report operativo del Trafficker · Home App del Ejecutivo · candidato a criterio de escalado (Critical + trend empeorando = escalar automáticamente)</td>
+          </tr>
+          <tr>
+            <td>Análisis pós-vuelo y curva de entrega</td>
+            <td>Report tabular sobre <code>TVAI_LineItemGamHarmonization_History</code> agrupado por line item · muestra sync a sync la evolución de <code>ImpressionsDelivered__c</code> y <code>F_PctAvance</code></td>
+            <td>Post-mortem de campañas · insumo para conversaciones comerciales de renovación · base de casos de uso para make-good ampliado</td>
+          </tr>
+          <tr>
+            <td>Dashboard ejecutivo con tendencia semanal / mensual</td>
+            <td>Dashboard sobre <code>CI_PacingDaily</code> agrupado por semana o mes · métricas de portafolio (AVG PacingGap, % de LIs en Warning, evolución de Revenue at Risk)</td>
+            <td>Ejecutivo de Ventas · Head of Media · vista consolidada de salud comercial del portafolio</td>
+          </tr>
+          <tr>
+            <td>Fuente para analítica avanzada (post-R2)</td>
+            <td>Tableau Next se conecta directamente al DMO history · visualizaciones ad-hoc, cortes por vertical, benchmarks entre publishers</td>
+            <td>Analista comercial · reportes ejecutivos mensuales · candidato a explorar en fase post-Go-Live si se activa la licencia</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h-cap">Volumen y costo — orden de magnitud</div>
+      <div class="fgrid two">
+        <div class="field">
+          <div class="label">Volumen anual estimado</div>
+          <div class="val">~7,3M records en DMO history (10K line items activos × 2 syncs/día × 365 días)</div>
+        </div>
+        <div class="field">
+          <div class="label">Retención sugerida R2</div>
+          <div class="val">90 días rolling · CI_PacingDaily preservado 12 meses (footprint bajo)</div>
+        </div>
+        <div class="field">
+          <div class="label">Costo Data Cloud incremental</div>
+          <div class="val">Marginal: el BDT ya se ejecuta 2x/día para el DMO current · escribir al history es el mismo pipeline</div>
+        </div>
+        <div class="field">
+          <div class="label">Trade-off vs. objeto Salesforce</div>
+          <div class="val">Data Cloud storage &lt;&lt; Salesforce storage · sin impacto en governor limits del Core · sin duplicación de verdad</div>
+        </div>
+      </div>
+
+      <div class="alert ok" style="margin-top:14px">
+        <div class="alert-band ok"></div>
+        <div class="alert-body">
+          <div class="alert-title">Histórico sin invadir Salesforce Core</div>
+          <div class="alert-text">La conciliación operativa gana rastreabilidad temporal completa sin creer objetos Salesforce, sin escribir Apex, sin proceso batch propio. El DMO history nace del mismo BDT que ya construimos para el current — dos destinos, un pipeline. La analítica temporal (trend, curva del vuelo, dashboards ejecutivos) queda cubierta desde el día 1 del Go-Live R2.</div>
         </div>
       </div>
     </div>
@@ -2122,25 +2335,25 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <td>5 KPI cards (Activos · En meta · Warning · Critical · Zero Delivery)</td>
             <td>Dashboard Component — tipo <b>Metric</b> ×5</td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report "Line Items en Alerta" agrupado por <code>CI_AlertLevel</code>, contando <code>OrderItem.Id</code></td>
+            <td>Report "Line Items en Alerta" agrupado por <code>F_AlertLevel</code>, contando <code>OrderItem.Id</code></td>
           </tr>
           <tr>
             <td>Tabla "Line items en riesgo — top 8 por revenue at risk"</td>
             <td>Dashboard Component — tipo <b>Lightning Table</b></td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report con filtro <code>CI_AlertLevel ≠ OK</code>, ordenado DESC por <code>CI_RevenueAtRisk</code>, top 8. Columnas: <code>OrderItem.Name</code> · <code>Account.Name</code> · <code>CI_PacingGap</code> · <code>CI_PctAvance</code> · <code>CI_RevenueAtRisk</code> · <code>CI_AlertLevel</code></td>
+            <td>Report con filtro <code>F_AlertLevel ≠ OK</code>, ordenado DESC por <code>F_RevenueAtRisk</code>, top 8. Columnas: <code>OrderItem.Name</code> · <code>Account.Name</code> · <code>F_PacingGap</code> · <code>F_PctAvance</code> · <code>F_RevenueAtRisk</code> · <code>F_AlertLevel</code></td>
           </tr>
           <tr>
             <td>Pills "Critical / Warning / Zero Del." en la tabla</td>
             <td>Bucket Field + Conditional Highlighting</td>
-            <td><span class="src-ci">CI</span></td>
-            <td><code>CI_AlertLevel</code> renderizado como bucket; coloración por regla del Dashboard</td>
+            <td><span class="src-f">F</span></td>
+            <td><code>F_AlertLevel</code> renderizado como bucket; coloración por regla del Dashboard</td>
           </tr>
           <tr>
             <td>Color del PacingGap (rojo/naranja)</td>
             <td>Dashboard Conditional Highlighting (no es código)</td>
-            <td><span class="src-ci">CI</span></td>
-            <td>Regla por <code>CI_AlertLevel</code> (Critical / Warning / OK). Umbrales definidos por TV Azteca</td>
+            <td><span class="src-f">F</span></td>
+            <td>Regla por <code>F_AlertLevel</code> (Critical / Warning / OK). Umbrales definidos por TV Azteca</td>
           </tr>
           <tr>
             <td>Lista "Mis tareas — hoy" con badge "14"</td>
@@ -2186,15 +2399,14 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         </div>
         <div class="mock-body">
           <div class="mock-h1">Panel técnico — Calidad de entrega</div>
-          <div class="mock-h1-sub">Foco en CTR, VTR, Viewability y line items con anomalías técnicas</div>
+          <div class="mock-h1-sub">Foco en CTR, VTR y line items con anomalías técnicas</div>
 
           <div class="mock-card">
             <div class="mock-card-hd">Indicadores de calidad — promedio último ciclo</div>
             <div class="mock-card-bd">
-              <div class="kpi-row k4">
+              <div class="kpi-row k3">
                 <div class="kpi"><div class="kpi-lbl">CTR promedio</div><div class="kpi-val blue">1,84%</div></div>
                 <div class="kpi green"><div class="kpi-lbl">VTR promedio</div><div class="kpi-val green">72%</div></div>
-                <div class="kpi green"><div class="kpi-lbl">Viewability</div><div class="kpi-val green">81%</div></div>
                 <div class="kpi orange"><div class="kpi-lbl">Anomalías abiertas</div><div class="kpi-val orange">9</div></div>
               </div>
             </div>
@@ -2204,13 +2416,13 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <div class="mock-card-hd">Line items con anomalías técnicas — para revisión</div>
             <div class="mock-card-bd" style="padding:0">
               <table class="mock-table">
-                <thead><tr><th>Line Item</th><th>Producto</th><th>CTR</th><th>VTR</th><th>Viewability</th><th>Estado</th></tr></thead>
+                <thead><tr><th>Line Item</th><th>Producto</th><th>CTR</th><th>VTR</th><th>Estado</th></tr></thead>
                 <tbody>
-                  <tr><td>LI-44612</td><td>Pre-roll CTV</td><td>0,00%</td><td>0%</td><td>—</td><td><span class="pill crit">Zero Delivery</span></td></tr>
-                  <tr><td>LI-44821</td><td>Spot 30s prime</td><td>0,42%</td><td>38%</td><td>52%</td><td><span class="pill warn">Warning</span></td></tr>
-                  <tr><td>LI-44907</td><td>Banner top home</td><td>0,18%</td><td>—</td><td>41%</td><td><span class="pill warn">Warning</span></td></tr>
-                  <tr><td>LI-44778</td><td>Display ROS</td><td>1,12%</td><td>—</td><td>68%</td><td><span class="pill warn">Warning</span></td></tr>
-                  <tr><td>LI-44655</td><td>Pre-roll video</td><td>1,90%</td><td>54%</td><td>72%</td><td><span class="pill warn">Warning</span></td></tr>
+                  <tr><td>LI-44612</td><td>Pre-roll CTV</td><td>0,00%</td><td>0%</td><td><span class="pill crit">Zero Delivery</span></td></tr>
+                  <tr><td>LI-44821</td><td>Spot 30s prime</td><td>0,42%</td><td>38%</td><td><span class="pill warn">Warning</span></td></tr>
+                  <tr><td>LI-44907</td><td>Banner top home</td><td>0,18%</td><td>—</td><td><span class="pill warn">Warning</span></td></tr>
+                  <tr><td>LI-44778</td><td>Display ROS</td><td>1,12%</td><td>—</td><td><span class="pill warn">Warning</span></td></tr>
+                  <tr><td>LI-44655</td><td>Pre-roll video</td><td>1,90%</td><td>54%</td><td><span class="pill warn">Warning</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -2290,16 +2502,16 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <td>Lightning App "Media Operations — Implementador" con perfil/perm set propio</td>
           </tr>
           <tr>
-            <td>4 KPI cards (CTR · VTR · Viewability · Anomalías abiertas)</td>
-            <td>Dashboard Component — tipo <b>Metric</b> ×4</td>
+            <td>3 KPI cards (CTR · VTR · Anomalías abiertas)</td>
+            <td>Dashboard Component — tipo <b>Metric</b> ×3</td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Reports con promedios: <code>AVG(CI_CTR)</code>, <code>AVG(CI_VTR)</code>, <code>AVG(CI_Viewability)</code>. Conteo de anomalías técnicas con <code>CI_AlertLevel ≠ OK AND (CI_CTR &lt; meta OR CI_VTR &lt; meta OR CI_Viewability &lt; meta)</code></td>
+            <td>Reports con promedios: <code>AVG(F_CTR)</code>, <code>AVG(F_VTR)</code>. Conteo de anomalías técnicas con <code>F_AlertLevel ≠ OK AND (F_CTR &lt; meta OR F_VTR &lt; meta)</code></td>
           </tr>
           <tr>
             <td>Tabla "Line items con anomalías técnicas"</td>
             <td>Dashboard Component — tipo <b>Lightning Table</b></td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report sobre OrderItem con filtro <code>CI_AlertLevel ≠ OK</code>. Columnas: <code>OrderItem.Name</code> · <code>OrderItem.Product2.Name</code> · <code>CI_CTR</code> · <code>CI_VTR</code> · <code>CI_Viewability</code> · <code>CI_AlertLevel</code></td>
+            <td>Report sobre OrderItem con filtro <code>F_AlertLevel ≠ OK</code>. Columnas: <code>OrderItem.Name</code> · <code>OrderItem.Product2.Name</code> · <code>F_CTR</code> · <code>F_VTR</code> · <code>F_AlertLevel</code></td>
           </tr>
           <tr>
             <td>Lista "Tasks asignadas por Trafficker"</td>
@@ -2452,13 +2664,13 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <td>4 KPI cards (Revenue contratado · Facturable proyectado · Revenue at Risk · Advertisers en riesgo)</td>
             <td>Dashboard Component — tipo <b>Metric</b> ×4</td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report sobre OrderItem filtrado por <code>Order.OwnerId = $User.Id</code>. Sumarios: <code>SUM(OrderItem.Quantity × UnitPrice ÷ 1000)</code> contratado · <code>SUM(CI_MontoFacturable)</code> proyectado · <code>SUM(CI_RevenueAtRisk)</code> · <code>COUNT_DISTINCT(Account.Id WHERE CI_AlertLevel ≠ OK)</code></td>
+            <td>Report sobre OrderItem filtrado por <code>Order.OwnerId = $User.Id</code>. Sumarios: <code>SUM(OrderItem.Quantity × UnitPrice ÷ 1000)</code> contratado · <code>SUM(F_MontoFacturable)</code> proyectado · <code>SUM(F_RevenueAtRisk)</code> · <code>COUNT_DISTINCT(Account.Id WHERE F_AlertLevel ≠ OK)</code></td>
           </tr>
           <tr>
             <td>Tabla "Accounts con riesgo comercial"</td>
             <td>Dashboard Component — tipo <b>Lightning Table</b></td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report agrupado por <code>Account.Name</code> con filtro <code>Order.OwnerId = $User.Id AND SUM(CI_RevenueAtRisk) &gt; 0</code>. Columnas: <code>Account.Name</code> · <code>COUNT(Order.Id)</code> · contratado · <code>SUM(CI_MontoFacturable)</code> · <code>SUM(CI_RevenueAtRisk)</code></td>
+            <td>Report agrupado por <code>Account.Name</code> con filtro <code>Order.OwnerId = $User.Id AND SUM(F_RevenueAtRisk) &gt; 0</code>. Columnas: <code>Account.Name</code> · <code>COUNT(Order.Id)</code> · contratado · <code>SUM(F_MontoFacturable)</code> · <code>SUM(F_RevenueAtRisk)</code></td>
           </tr>
           <tr>
             <td>Lista "Próximas reuniones"</td>
@@ -2470,7 +2682,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <td>Lista "Cierres del mes anterior"</td>
             <td>List View Component (objeto Order)</td>
             <td><span class="src-std">STANDARD</span></td>
-            <td>Filtro <code>OwnerId = $User.Id AND EndDate = LAST_MONTH</code>. Columnas: <code>Account.Name</code> · <code>CI_PctAvance</code> final · <code>CI_MontoFacturable</code></td>
+            <td>Filtro <code>OwnerId = $User.Id AND EndDate = LAST_MONTH</code>. Columnas: <code>Account.Name</code> · <code>F_PctAvance</code> final · <code>F_MontoFacturable</code></td>
           </tr>
         </tbody>
       </table>
@@ -2617,13 +2829,13 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <td>Card "Salud operativa" — 4 KPIs (Line items · En meta · Warning · Critical)</td>
             <td>Dashboard Component embebido en Record Page — tipo <b>Metric</b> ×4</td>
             <td><span class="src-rpt">REPORT</span></td>
-            <td>Report sobre OrderItem agrupado por <code>CI_AlertLevel</code> con filtro <code>Order.AccountId = $Record.Id</code>. Filtro nativo del componente Dashboard usa el contexto del registro</td>
+            <td>Report sobre OrderItem agrupado por <code>F_AlertLevel</code> con filtro <code>Order.AccountId = $Record.Id</code>. Filtro nativo del componente Dashboard usa el contexto del registro</td>
           </tr>
           <tr>
             <td>Tabla "Orders activas"</td>
             <td>Related List Quick — objeto Order</td>
             <td><span class="src-std">STANDARD</span></td>
-            <td>Filtro <code>Status = 'Active'</code>. Columnas: <code>Order.Name</code> · vigencia (<code>ServiceDate</code>/<code>EndDate</code>) · <code>SUM(Quantity × UnitPrice ÷ 1000)</code> · <code>AVG(CI_PctAvance)</code> · <code>SUM(CI_RevenueAtRisk)</code></td>
+            <td>Filtro <code>Status = 'Active'</code>. Columnas: <code>Order.Name</code> · vigencia (<code>ServiceDate</code>/<code>EndDate</code>) · <code>SUM(Quantity × UnitPrice ÷ 1000)</code> · <code>AVG(F_PctAvance)</code> · <code>SUM(F_RevenueAtRisk)</code></td>
           </tr>
           <tr>
             <td>Card "Detalles"</td>
@@ -2703,10 +2915,9 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
               <div class="mock-card">
                 <div class="mock-card-hd">Calidad de entrega</div>
                 <div class="mock-card-bd">
-                  <div class="kpi-row k3">
+                  <div class="kpi-row k2">
                     <div class="kpi orange"><div class="kpi-lbl">CTR</div><div class="kpi-val orange">0,42%</div></div>
                     <div class="kpi orange"><div class="kpi-lbl">VTR</div><div class="kpi-val orange">38%</div></div>
-                    <div class="kpi"><div class="kpi-lbl">Viewability</div><div class="kpi-val blue">52%</div></div>
                   </div>
                 </div>
               </div>
@@ -2744,7 +2955,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
                       <div style="font-size:10px;margin-top:4px;color:var(--sf-label)">D · 57K</div>
                     </div>
                   </div>
-                  <div style="font-size:10px;color:var(--sf-label);margin-top:8px;text-align:center;line-height:1.5">Fuente: <code style="font-family:monospace;color:var(--sf-dark)">deliveryData.units</code> de GAM (ventana de 7 días). Color por <code style="font-family:monospace;color:var(--sf-dark)">CI_AlertLevel</code> del día.</div>
+                  <div style="font-size:10px;color:var(--sf-label);margin-top:8px;text-align:center;line-height:1.5">Fuente: <code style="font-family:monospace;color:var(--sf-dark)">deliveryData.units</code> de GAM (ventana de 7 días). Color por <code style="font-family:monospace;color:var(--sf-dark)">F_AlertLevel</code> del día.</div>
                 </div>
               </div>
             </div>
@@ -2794,7 +3005,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
                 <div class="mock-card-bd">
                   <div style="text-align:center;padding:10px 0">
                     <div style="font-size:24px;font-weight:700;color:var(--sf-purple)">$ 564.300</div>
-                    <div style="font-size:11px;color:var(--sf-label);margin-top:4px;font-family:monospace">MIN(Imps_Delivered__c, OrderItem.Quantity) × (UnitPrice/1000)</div>
+                    <div style="font-size:11px;color:var(--sf-label);margin-top:4px;font-family:monospace">MIN(ImpressionsDelivered__c, OrderItem.Quantity) × (UnitPrice/1000)</div>
                   </div>
                   <div style="font-size:11px;color:var(--sf-text);padding:8px 10px;background:var(--sf-bg);border-radius:3px;line-height:1.5">
                     Campo <code style="font-family:monospace;color:var(--sf-dark)">OrderItem.MontoFacturable__c</code> consumido por MultiAds vía REST estándar.
@@ -2831,26 +3042,26 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
           <tr>
             <td>Card "Métricas operativas" — 4 KPIs</td>
             <td>Dashboard Component embebido — tipo <b>Metric</b> ×4</td>
-            <td><span class="src-ci">CI</span></td>
-            <td><code>CI_PacingGap</code> · <code>CI_PctAvance</code> + <code>Imps_Delivered__c</code> · <code>CI_Projection</code> · <code>CI_RevenueAtRisk</code>. Filtro <code>OrderItem.Id = $Record.Id</code></td>
+            <td><span class="src-f">F</span></td>
+            <td><code>F_PacingGap</code> · <code>F_PctAvance</code> + <code>ImpressionsDelivered__c</code> · <code>F_Projection</code> · <code>F_RevenueAtRisk</code>. Filtro <code>OrderItem.Id = $Record.Id</code></td>
           </tr>
           <tr>
             <td>Color del PacingGap card (rojo · Critical)</td>
             <td>Conditional Highlighting del Dashboard</td>
-            <td><span class="src-ci">CI</span></td>
-            <td>Regla por <code>CI_AlertLevel</code>: Critical rojo · Warning naranja · OK verde</td>
+            <td><span class="src-f">F</span></td>
+            <td>Regla por <code>F_AlertLevel</code>: Critical rojo · Warning naranja · OK verde</td>
           </tr>
           <tr>
-            <td>Card "Calidad de entrega" — 3 KPIs (CTR · VTR · Viewability)</td>
-            <td>Dashboard Component embebido — tipo <b>Metric</b> ×3</td>
-            <td><span class="src-ci">CI</span></td>
-            <td><code>CI_CTR</code> · <code>CI_VTR</code> · <code>CI_Viewability</code></td>
+            <td>Card "Calidad de entrega" — 2 KPIs (CTR · VTR)</td>
+            <td>Dashboard Component embebido — tipo <b>Metric</b> ×2</td>
+            <td><span class="src-f">F</span></td>
+            <td><code>F_CTR</code> · <code>F_VTR</code></td>
           </tr>
           <tr>
             <td>Gráfico "Pacing diario — últimos 7 días"</td>
             <td>Dashboard Component — tipo <b>Column Chart</b></td>
             <td><span class="src-gam">GAM</span></td>
-            <td>Series desde <code>deliveryData.units</code> (array de 7 días) ingerido en DLO <code>Reconciliation_LineItem</code> campo <code>Units_Last7Days__c</code>. Color de cada barra por <code>CI_AlertLevel</code> del día (conditional highlighting)</td>
+            <td>Series desde <code>deliveryData.units</code> (array de 7 días) ingerido en DLO <code>TVAI_LineItemGamHarmonization__dll</code> campo <code>Units_Last7Days__c</code>. Color de cada barra por <code>F_AlertLevel</code> del día (conditional highlighting)</td>
           </tr>
           <tr>
             <td>Card "Identificadores GAM" con pill "Automático"</td>
@@ -2867,8 +3078,8 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
           <tr>
             <td>Card "Monto facturable proyectado" con pill "Formula Field"</td>
             <td>Record Detail Component (campo destacado)</td>
-            <td><span class="src-new">NUEVO</span> + <span class="src-ci">CI</span></td>
-            <td><code>OrderItem.MontoFacturable__c</code> (Formula Field) = <code>MIN(Imps_Delivered__c, Quantity) × (UnitPrice ÷ 1000)</code>. Comentario inferior usa <code>CI_RevenueAtRisk</code> + label de MultiAds</td>
+            <td><span class="src-new">NUEVO</span> + <span class="src-f">F</span></td>
+            <td><code>OrderItem.MontoFacturable__c</code> (Formula Field espejo del OrderItem que refleja <code>F_MontoFacturable</code>) = <code>MIN(ImpressionsDelivered__c, Quantity) × (UnitPrice ÷ 1000)</code>. Comentario inferior usa <code>F_RevenueAtRisk</code> + label de MultiAds</td>
           </tr>
         </tbody>
       </table>
@@ -2943,13 +3154,13 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="rep-card green">
           <div class="rep-name">Calidad por Line Item <span class="pill ok">Implementador</span></div>
           <div class="rep-meta">Frecuencia: diaria · Agrupación: line item</div>
-          <div class="rep-desc">CTR, VTR y Viewability de cada line item activo contra meta. Identifica creativos o configuraciones técnicas que requieren ajuste.</div>
-          <div class="rep-fields"><span>LineItem</span><span>CTR</span><span>VTR</span><span>Viewability</span><span>Δ vs meta</span></div>
+          <div class="rep-desc">CTR y VTR de cada line item activo contra meta. Identifica creativos o configuraciones técnicas que requieren ajuste.</div>
+          <div class="rep-fields"><span>LineItem</span><span>CTR</span><span>VTR</span><span>Δ vs meta</span></div>
         </div>
         <div class="rep-card green">
           <div class="rep-name">Anomalías Técnicas Detectadas <span class="pill ok">Implementador</span></div>
           <div class="rep-meta">Frecuencia: continuo · Agrupación: tipo de anomalía</div>
-          <div class="rep-desc">Line items con métricas técnicas fuera de rango: CTR bajo, VTR bajo, Viewability baja, Zero Delivery. Cola de trabajo del Implementador.</div>
+          <div class="rep-desc">Line items con métricas técnicas fuera de rango: CTR bajo, VTR bajo, Zero Delivery. Cola de trabajo del Implementador.</div>
           <div class="rep-fields"><span>LineItem</span><span>Anomalía</span><span>Severidad</span><span>Asignado a</span></div>
         </div>
       </div>
@@ -2988,7 +3199,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
         <div class="alert-band info"></div>
         <div class="alert-body">
           <div class="alert-title">Cómo se ven los niveles (Critical / Warning / OK) en los Reports</div>
-          <div class="alert-text">Salesforce Reports tabular no soporta cambiar el color de una fila por valor. En su lugar, cada Report incluye una columna <b>Nivel de Alerta</b> generada por <b>Bucket Field</b> sobre <code style="font-family:monospace;color:var(--sf-dark)">CI_AlertLevel</code>, que aparece como pill colorida (rojo / naranja / verde) y es agrupable. Cuando un Report se monta en un Lightning Dashboard, se añade además <b>Conditional Highlighting</b> sobre las métricas numéricas (PacingGap, % Avance) — todo configuración estándar, ninguna línea de Apex ni componente custom.</div>
+          <div class="alert-text">Salesforce Reports tabular no soporta cambiar el color de una fila por valor. En su lugar, cada Report incluye una columna <b>Nivel de Alerta</b> generada por <b>Bucket Field</b> sobre <code style="font-family:monospace;color:var(--sf-dark)">F_AlertLevel</code>, que aparece como pill colorida (rojo / naranja / verde) y es agrupable. Cuando un Report se monta en un Lightning Dashboard, se añade además <b>Conditional Highlighting</b> sobre las métricas numéricas (PacingGap, % Avance) — todo configuración estándar, ninguna línea de Apex ni componente custom.</div>
         </div>
       </div>
     </div>
@@ -3051,7 +3262,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
                 </tbody>
               </table>
               <div style="padding:8px 12px;font-size:10px;color:var(--sf-label);background:#fafafa;line-height:1.5">
-                Las pills coloreadas de la columna <b>Nivel</b> provienen del Bucket Field <code style="font-family:monospace;color:var(--sf-dark)">CI_AlertLevel</code> — derivado de <code style="font-family:monospace;color:var(--sf-dark)">CI_PacingGap</code> y de la regla Zero Delivery (24h). Es un <b>Report tabular estándar agrupado por nivel</b>, sin código.
+                Las pills coloreadas de la columna <b>Nivel</b> provienen del Bucket Field <code style="font-family:monospace;color:var(--sf-dark)">F_AlertLevel</code> — derivado de <code style="font-family:monospace;color:var(--sf-dark)">F_PacingGap</code> y de la regla Zero Delivery (24h). Es un <b>Report tabular estándar agrupado por nivel</b>, sin código.
               </div>
             </div>
           </div>
@@ -3095,7 +3306,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <div class="rb-field">Proyección cierre</div>
             <div class="rb-field sel">Revenue at Risk</div>
             <div class="rb-field sel">Nivel de Alerta <span style="background:var(--sf-orange);color:#fff;padding:1px 5px;border-radius:2px;font-size:9px;margin-left:4px">BUCKET</span></div>
-            <div class="rb-field">CTR · VTR · Viewability</div>
+            <div class="rb-field">CTR · VTR</div>
             <div class="rb-field">Monto Facturable</div>
             <div class="rb-field">GAM Order Id</div>
             <div class="rb-field">GAM Line Item Id</div>
@@ -3117,7 +3328,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
                 <tr><td>LI-44918</td><td>Display deportes</td><td>28-Jul</td><td>−7%</td><td>34%</td><td>$ 12.800</td><td><span class="pill warn">Warning</span></td></tr>
               </tbody>
             </table>
-            <div style="font-size:10px;color:var(--sf-label);margin-top:8px;text-align:right">4 registros · agrupado por Order · ordenado por At Risk DESC · columna Nivel = Bucket Field <code style="font-family:monospace;color:var(--sf-dark)">CI_AlertLevel</code></div>
+            <div style="font-size:10px;color:var(--sf-label);margin-top:8px;text-align:right">4 registros · agrupado por Order · ordenado por At Risk DESC · columna Nivel = Bucket Field <code style="font-family:monospace;color:var(--sf-dark)">F_AlertLevel</code></div>
           </div>
         </div>
       </div>
@@ -3172,8 +3383,8 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
       <div class="alert-text" style="line-height:1.7">
         <b>Métrica simple (tiles superiores):</b> componente "Metric" sobre un Report tabular agregado.<br>
         <b>Gauge "Salud general":</b> componente "Gauge" con tres rangos de color configurados en la propia herramienta.<br>
-        <b>Donut "Distribución por estado":</b> componente "Donut Chart" agrupado por <code style="font-family:monospace;color:var(--sf-dark)">CI_AlertLevel</code>.<br>
-        <b>Bar chart "Pacing por producto":</b> componente "Horizontal Bar" agrupado por Producto, métrica = promedio de <code style="font-family:monospace;color:var(--sf-dark)">CI_PacingGap</code>; color condicional configurado en el componente.<br>
+        <b>Donut "Distribución por estado":</b> componente "Donut Chart" agrupado por <code style="font-family:monospace;color:var(--sf-dark)">F_AlertLevel</code>.<br>
+        <b>Bar chart "Pacing por producto":</b> componente "Horizontal Bar" agrupado por Producto, métrica = promedio de <code style="font-family:monospace;color:var(--sf-dark)">F_PacingGap</code>; color condicional configurado en el componente.<br>
         <b>Line chart histórico:</b> componente "Line Chart" sobre Report agrupado por día.<br>
         <b>Tabla "Top 5 en riesgo":</b> componente "Lightning Table" + <b>Conditional Highlighting</b> sobre la columna PacingGap (regla nativa: rojo &lt; −20%, naranja &lt; −10%, verde resto).
       </div>
@@ -3331,7 +3542,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
 
       <div class="dash-shell">
         <div class="dash-toolbar">
-          <div class="dash-toolbar-title">Dashboard de Calidad · CTR / VTR / Viewability</div>
+          <div class="dash-toolbar-title">Dashboard de Calidad · CTR / VTR</div>
           <div class="dash-toolbar-meta">Última actualización: hoy 08:00</div>
         </div>
         <div class="dash-filters">
@@ -3354,13 +3565,6 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             <div class="dash-tile-bd">
               <div class="dash-tile-big green">72%</div>
               <div class="dash-tile-sub">Meta 70% · <b style="color:var(--sf-green)">+2 pp</b></div>
-            </div>
-          </div>
-          <div class="dash-tile">
-            <div class="dash-tile-hd">Viewability promedio <span class="dash-src">Métrica</span></div>
-            <div class="dash-tile-bd">
-              <div class="dash-tile-big green">81%</div>
-              <div class="dash-tile-sub">Meta 70% · <b style="color:var(--sf-green)">+11 pp</b></div>
             </div>
           </div>
           <div class="dash-tile">
@@ -3400,16 +3604,15 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
           <div class="dash-tile">
             <div class="dash-tile-hd">Anomalías por tipo <span class="dash-src">Donut</span></div>
             <div class="dash-tile-bd">
-              <div class="donut" style="background:conic-gradient(var(--sf-red) 0 33%, var(--sf-orange) 33% 67%, var(--sf-purple) 67% 89%, var(--sf-blue) 89% 100%)">
+              <div class="donut" style="background:conic-gradient(var(--sf-red) 0 43%, var(--sf-orange) 43% 86%, var(--sf-blue) 86% 100%)">
                 <div class="donut-lbl">
-                  <div class="donut-lbl-big">9</div>
+                  <div class="donut-lbl-big">7</div>
                   <div class="donut-lbl-sub">anomalías</div>
                 </div>
               </div>
               <div class="donut-legend">
                 <div class="donut-legend-row"><div class="donut-swatch" style="background:var(--sf-red)"></div><div>Zero Delivery</div><div>3</div></div>
                 <div class="donut-legend-row"><div class="donut-swatch" style="background:var(--sf-orange)"></div><div>VTR bajo</div><div>3</div></div>
-                <div class="donut-legend-row"><div class="donut-swatch" style="background:var(--sf-purple)"></div><div>Viewability baja</div><div>2</div></div>
                 <div class="donut-legend-row"><div class="donut-swatch" style="background:var(--sf-blue)"></div><div>CTR bajo</div><div>1</div></div>
               </div>
             </div>
@@ -3430,21 +3633,6 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
                 <span>−14d</span><span>1,5%</span><span>1,84%</span>
               </div>
               <div class="dash-tile-sub" style="text-align:left;margin-top:6px">Mejora sostenida — optimización de creativos en producto noticias</div>
-            </div>
-          </div>
-          <div class="dash-tile">
-            <div class="dash-tile-hd">Tendencia de Viewability — 14 días <span class="dash-src">Línea</span></div>
-            <div class="dash-tile-bd left">
-              <div class="linechart">
-                <svg viewBox="0 0 280 80" preserveAspectRatio="none">
-                  <polyline fill="none" stroke="#04844b" stroke-width="2"
-                    points="0,40 20,38 40,42 60,36 80,30 100,32 120,28 140,30 160,24 180,26 200,22 220,20 240,18 260,22 280,16"/>
-                </svg>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sf-label);margin-top:4px;padding:0 2px">
-                <span>−14d</span><span>74%</span><span>81%</span>
-              </div>
-              <div class="dash-tile-sub" style="text-align:left;margin-top:6px">Por encima de la meta (70%) — reposicionamiento de display funcionó</div>
             </div>
           </div>
         </div>
@@ -4123,7 +4311,7 @@ ul.list-std li{font-size:12px;margin-bottom:4px}
             </div>
           </div>
           <div class="next-bd">
-            El catálogo de métricas calculadas (PacingGap, Avance, CTR, VTR, Viewability, Revenue at Risk, Monto Facturable) cubre los casos críticos. ¿Hay alguna métrica adicional usada hoy por el equipo comercial o de operaciones que deba sumarse al MVP?
+            El catálogo de métricas calculadas (PacingGap, Avance, CTR, VTR, Revenue at Risk, Monto Facturable) cubre los casos críticos. ¿Hay alguna métrica adicional usada hoy por el equipo comercial o de operaciones que deba sumarse al MVP?
             <ul>
               <li>Validar métricas Phase 1</li>
               <li>Identificar candidatas para Phase 2</li>
