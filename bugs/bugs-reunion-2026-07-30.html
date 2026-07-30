@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bugs TV Azteca — Reunión 30 Jul 2026</title>
+  <style>
+    /* ─── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --surface-page:   #0d0d0d;
+      --surface-1:      #1a1a19;
+      --surface-2:      #222221;
+      --surface-3:      #2e2e2b;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --border:         rgba(255,255,255,0.09);
+      --border-hover:   rgba(255,255,255,0.20);
+      --gridline:       #2c2c2a;
+
+      /* Categorical (dataviz palette — dark steps) */
+      --s1: #3987e5;
+      --s2: #d95926;
+      --s3: #199e70;
+
+      /* Status */
+      --crit:    #d03b3b;
+      --warning: #fab219;
+      --muted:   #898781;
+
+      /* Category map */
+      --cat-func:   var(--crit);
+      --cat-config: var(--s2);
+      --cat-ux:     var(--s3);
+
+      /* Accent */
+      --accent: #D42E12;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--surface-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* ─── Header ─────────────────────────────────────────────── */
+    .header {
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-stripe {
+      width: 4px;
+      height: 2.25rem;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .header-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    .header-right {
+      margin-left: auto;
+      text-align: right;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+    .header-right span {
+      display: block;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    /* ─── KPI tiles ──────────────────────────────────────────── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-tile {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-tile::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 10px 10px 0 0;
+    }
+    .kpi-tile.t-total::after  { background: var(--text-muted); }
+    .kpi-tile.t-func::after   { background: var(--cat-func); }
+    .kpi-tile.t-config::after { background: var(--cat-config); }
+    .kpi-tile.t-ux::after     { background: var(--cat-ux); }
+    .kpi-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+    }
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .kpi-tile.t-func   .kpi-value { color: var(--cat-func); }
+    .kpi-tile.t-config .kpi-value { color: var(--cat-config); }
+    .kpi-tile.t-ux     .kpi-value { color: var(--cat-ux); }
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    /* ─── Chart card ─────────────────────────────────────────── */
+    .card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 1.25rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .bar-label {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      width: 16rem;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      height: 26px;
+      background: var(--surface-3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      transition: width 0.5s cubic-bezier(.22,.61,.36,1);
+    }
+    .bar-fill span {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.92);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ─── Filters ────────────────────────────────────────────── */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .filter-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-right: 0.25rem;
+    }
+    .sep { width: 1px; height: 1.25rem; background: var(--border); margin: 0 0.375rem; }
+    .fbtn {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+    .fbtn:hover { background: var(--surface-3); color: var(--text-primary); border-color: var(--border-hover); }
+    .fbtn.active { background: var(--surface-3); color: var(--text-primary); border-color: var(--border-hover); }
+    .fbtn[data-cat="funcional"].active { border-color: var(--cat-func);   color: var(--cat-func); }
+    .fbtn[data-cat="config"].active    { border-color: var(--cat-config); color: var(--cat-config); }
+    .fbtn[data-cat="ux"].active        { border-color: var(--cat-ux);     color: var(--cat-ux); }
+    .fbtn[data-pri="alta"].active   { border-color: var(--crit);    color: var(--crit); }
+    .fbtn[data-pri="media"].active  { border-color: var(--warning); color: var(--warning); }
+    .fbtn[data-rep].active { border-color: var(--border-hover); color: var(--text-primary); }
+
+    .filter-block { margin-bottom: 1.5rem; }
+
+    /* ─── Count line ─────────────────────────────────────────── */
+    .results-line {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .results-line strong { color: var(--text-secondary); }
+
+    /* ─── Bug cards ──────────────────────────────────────────── */
+    .bug-grid { display: flex; flex-direction: column; gap: 0.625rem; }
+
+    .bug-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 0.875rem;
+      align-items: flex-start;
+      transition: border-color 0.12s;
+    }
+    .bug-card:hover { border-color: var(--border-hover); }
+
+    .bug-stripe {
+      width: 3px;
+      border-radius: 3px;
+      align-self: stretch;
+      flex-shrink: 0;
+    }
+    .bug-stripe.funcional { background: var(--cat-func); }
+    .bug-stripe.config    { background: var(--cat-config); }
+    .bug-stripe.ux        { background: var(--cat-ux); }
+
+    .bug-num {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      min-width: 1.75rem;
+      padding-top: 0.2rem;
+    }
+    .bug-body { flex: 1; min-width: 0; }
+    .bug-title {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      margin-bottom: 0.375rem;
+      line-height: 1.4;
+    }
+    .bug-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .bug-meta {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.625rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.675rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bd-funcional { background: rgba(208,59,59,0.14);  color: var(--cat-func); }
+    .bd-config    { background: rgba(217,89,38,0.14);  color: var(--cat-config); }
+    .bd-ux        { background: rgba(25,158,112,0.14); color: var(--cat-ux); }
+    .bd-alta      { background: rgba(208,59,59,0.14);  color: var(--crit); }
+    .bd-media     { background: rgba(250,178,25,0.14); color: var(--warning); }
+    .bd-baja      { background: rgba(137,135,129,0.12); color: var(--text-muted); }
+    .bd-reporter  { background: var(--surface-3); color: var(--text-secondary); }
+
+    /* ─── Empty state ────────────────────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      display: none;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .bar-label { width: 11rem; }
+    }
+    @media (max-width: 560px) {
+      .main { padding: 1rem; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .bar-label { width: 8.5rem; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Header ──────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-stripe"></div>
+  <div>
+    <div class="header-title">Bugs TV Azteca — Sesión de Estabilización UAT</div>
+    <div class="header-sub">Incidentes reportados por el equipo de pruebas · Release 1</div>
+  </div>
+  <div class="header-right">
+    30 de julio, 2026
+    <span>R1 · Ventana UAT</span>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ─── KPI tiles ─────────────────────────────────────────── -->
+  <div class="kpi-row">
+    <div class="kpi-tile t-total">
+      <div class="kpi-label">Total issues</div>
+      <div class="kpi-value">23</div>
+      <div class="kpi-sub">Detectados en sesión</div>
+    </div>
+    <div class="kpi-tile t-func">
+      <div class="kpi-label">Funcionales</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-sub">Bugs en flujo de negocio</div>
+    </div>
+    <div class="kpi-tile t-config">
+      <div class="kpi-label">Config / Permisos</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-sub">Acceso y seguridad</div>
+    </div>
+    <div class="kpi-tile t-ux">
+      <div class="kpi-label">UX / Interfaz</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-sub">Visibilidad y usabilidad</div>
+    </div>
+  </div>
+
+  <!-- ─── Distribution chart ────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">Distribución por categoría</div>
+    <div class="bar-row">
+      <div class="bar-label">Errores funcionales</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:39.1%; background:var(--cat-func)"><span>9</span></div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Configuración / Permisos</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:21.7%; background:var(--cat-config)"><span>5</span></div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">UX / Visibilidad / Interfaz</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:39.1%; background:var(--cat-ux)"><span>9</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Filters ───────────────────────────────────────────── -->
+  <div class="filter-block">
+    <div class="filter-row">
+      <span class="filter-label">Categoría:</span>
+      <button class="fbtn active" data-cat="all"      onclick="setFilter('cat',this,'all')">Todos (23)</button>
+      <button class="fbtn"        data-cat="funcional" onclick="setFilter('cat',this,'funcional')">Funcional (9)</button>
+      <button class="fbtn"        data-cat="config"    onclick="setFilter('cat',this,'config')">Config / Permisos (5)</button>
+      <button class="fbtn"        data-cat="ux"        onclick="setFilter('cat',this,'ux')">UX / Interfaz (9)</button>
+      <div class="sep"></div>
+      <span class="filter-label">Prioridad:</span>
+      <button class="fbtn active" data-pri="all"   onclick="setFilter('pri',this,'all')">Todas</button>
+      <button class="fbtn"        data-pri="alta"  onclick="setFilter('pri',this,'alta')">Alta</button>
+      <button class="fbtn"        data-pri="media" onclick="setFilter('pri',this,'media')">Media</button>
+      <button class="fbtn"        data-pri="baja"  onclick="setFilter('pri',this,'baja')">Baja</button>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Reportado por:</span>
+      <button class="fbtn active" data-rep="all"      onclick="setFilter('rep',this,'all')">Todos</button>
+      <button class="fbtn"        data-rep="fernanda" onclick="setFilter('rep',this,'fernanda')">Fernanda</button>
+      <button class="fbtn"        data-rep="manuel"   onclick="setFilter('rep',this,'manuel')">Manuel</button>
+      <button class="fbtn"        data-rep="viri"     onclick="setFilter('rep',this,'viri')">Viri</button>
+      <button class="fbtn"        data-rep="job"      onclick="setFilter('rep',this,'job')">Job</button>
+      <button class="fbtn"        data-rep="carlos"   onclick="setFilter('rep',this,'carlos')">Carlos Rojas</button>
+    </div>
+  </div>
+
+  <!-- ─── Results count ─────────────────────────────────────── -->
+  <div class="results-line" id="results-line"></div>
+
+  <!-- ─── Bug list ──────────────────────────────────────────── -->
+  <div class="bug-grid" id="bug-grid"></div>
+  <div class="empty" id="empty">No hay issues con los filtros seleccionados.</div>
+
+</main>
+
+<script>
+const BUGS = [
+  /* ── Funcionales ───────────────────────────────────────── */
+  {
+    id:1, cat:'funcional', pri:'alta', reporters:['fernanda'],
+    title:'Error al reenviar registro borrado via integración',
+    desc:'Al borrar un registro e intentar reenviarlo por la integración, el sistema marca un fallo. El registro se traslada a la papelera de reciclaje de Salesforce y no se elimina permanentemente, generando conflicto durante el reingreso. Requiere definir si se automatiza la limpieza o recuperación de registros.'
+  },
+  {
+    id:2, cat:'funcional', pri:'media', reporters:['fernanda'],
+    title:'Campos obligatorios sin indicador visual (asterisco rojo)',
+    desc:'Durante la creación de una oportunidad, campos clave no muestran el asterisco rojo de obligatoriedad. La validación está configurada para activarse en la transición de etapa, no al crear el registro — causa confusión al usuario final. Referenciado en historias de usuario de Sprints 4 y 5, incluyendo historia 403.'
+  },
+  {
+    id:3, cat:'funcional', pri:'alta', reporters:['fernanda'],
+    title:'Botón "Nueva oportunidad de consumo" no visible',
+    desc:'El botón no aparece de forma consistente por cambios en los estados de contratos (de "activated" a "con activo"). Las reglas de visibilidad del botón no fueron actualizadas para contemplar el nuevo estado del contrato.'
+  },
+  {
+    id:4, cat:'funcional', pri:'alta', reporters:['fernanda'],
+    title:'Botón "Media Plan" no aparece dentro de la oportunidad',
+    desc:'El botón "Media Plan" no es visible dentro del contexto de oportunidad, impidiendo al usuario continuar con el flujo de trabajo previsto. Bloqueante para el proceso de propuesta.'
+  },
+  {
+    id:5, cat:'funcional', pri:'media', reporters:['fernanda'],
+    title:'Fechas predeterminadas incorrectas en activaciones',
+    desc:'Las fechas de inicio y fin de activaciones muestran a veces una hora anterior a la actual. El equipo propone estandarizar estos campos a la primera y última hora del día para evitar errores de configuración.'
+  },
+  {
+    id:6, cat:'funcional', pri:'alta', reporters:['fernanda'],
+    title:'Sistema permite saltar etapas del flujo de ventas',
+    desc:'El sistema permite avanzar a "validación interna" estando únicamente en "autorización". Faltan controles de validación robustos para impedir saltos de etapa no permitidos y evitar errores humanos en el proceso.'
+  },
+  {
+    id:7, cat:'funcional', pri:'alta', reporters:['fernanda'],
+    title:'Notificaciones de aprobación inconsistentes',
+    desc:'Tras aprobar un registro, el sistema no genera la notificación correspondiente (ni en app ni por correo electrónico), a pesar de que el 8 de julio funcionó correctamente. El acuerdo original establece notificación dual: sistema + email. Comportamiento inconsistente.'
+  },
+  {
+    id:8, cat:'funcional', pri:'media', reporters:['job'],
+    title:'Leads duplicados sin flujo claro de fusión',
+    desc:'El proceso de aprobación de candidatos con duplicados no es evidente para el usuario. Se requiere instrucción manual para acceder al componente "Equipo Aprobador" y realizar el merge de candidatos. Al finalizar la aprobación, el sistema actualiza el avance de etapa del ejecutivo.'
+  },
+  {
+    id:9, cat:'funcional', pri:'baja', reporters:[],
+    title:'Carga lenta del Plan de Orquestación',
+    desc:'El Plan de Orquestación tarda en cargar y muestra errores al inicio, obligando al usuario a esperar. Atribuido a un problema de red. El flujo de fulfillment se completa correctamente una vez procesado.'
+  },
+  /* ── Configuración / Permisos ──────────────────────────── */
+  {
+    id:10, cat:'config', pri:'alta', reporters:['manuel'],
+    title:'Ejecutivos pueden modificar fechas y montos tras enviar correos',
+    desc:'No existe bloqueo automático en la etapa correspondiente. Los ejecutivos pueden alterar campos sensibles (fechas de cierre, montos) después de haberlos comunicado por correo, afectando la trazabilidad. El sistema sigue las reglas definidas en las US actuales, que no contemplan este bloqueo.'
+  },
+  {
+    id:11, cat:'config', pri:'media', reporters:['fernanda'],
+    title:'Campo "Cuenta Principal" editable — debe ser solo lectura',
+    desc:'El campo nativo de Salesforce "Cuenta Principal" es editable y genera confusión con el concepto de "Agrupador Corporativo". La solución acordada es configurarlo como solo lectura para evitar modificaciones incorrectas por parte de los usuarios.'
+  },
+  {
+    id:12, cat:'config', pri:'alta', reporters:['fernanda','manuel'],
+    title:'Ejecutivos con permisos para modificar territorios de cuentas',
+    desc:'El perfil de ejecutivos ("caja de medios") tiene permisos para modificar asignaciones de territorio de cuentas, lo cual no debería ser posible. Identificado como un posible error en la configuración del grupo de permisos.'
+  },
+  {
+    id:13, cat:'config', pri:'media', reporters:['manuel','carlos'],
+    title:'Contratos asignados a propietarios incorrectos',
+    desc:'Algunos contratos están asignados a ejecutivos distintos a quienes realizan las pruebas, afectando la visibilidad de registros. Confirmado como error de asignación manual durante la configuración del ambiente de pruebas.'
+  },
+  {
+    id:14, cat:'config', pri:'media', reporters:['manuel'],
+    title:'Posibilidad de crear cuentas desde el flujo de oportunidad',
+    desc:'Los usuarios pueden crear nuevas cuentas durante el flujo de oportunidad, lo que puede romper la trazabilidad de la información proveniente de la integración. Se evalúa remover el botón de creación de cuentas en ese contexto.'
+  },
+  /* ── UX / Interfaz ─────────────────────────────────────── */
+  {
+    id:15, cat:'ux', pri:'alta', reporters:['manuel','fernanda','viri'],
+    title:'Filtro de Agrupador Corporativo no restringe correctamente',
+    desc:'El Agrupador Corporativo no filtra los contratos disponibles según la combinación agrupador + anunciante. Cuando se selecciona un agrupador sin relación con la cuenta, el resultado es vacío sin mensaje explicativo. No es posible aplicar un lookup filter nativo de Salesforce — requiere componente personalizado.'
+  },
+  {
+    id:16, cat:'ux', pri:'media', reporters:['fernanda','viri'],
+    title:'Visualización limitada de contratos (solo muestra uno)',
+    desc:'El sistema muestra un solo contrato activo aunque haya varios. Causa: Salesforce cachea la selección previa por optimización. Los demás contratos son accesibles pero no visibles de inmediato, generando confusión en el usuario.'
+  },
+  {
+    id:17, cat:'ux', pri:'media', reporters:['fernanda','viri'],
+    title:'Falta "nombre corto" en resultados de búsqueda de contratos',
+    desc:'La búsqueda de contratos no muestra el nombre corto en los resultados, obligando a los usuarios a recordar el ID numérico para identificar el registro correcto. Se propone configurar columnas adicionales en la pantalla de búsqueda.'
+  },
+  {
+    id:18, cat:'ux', pri:'baja', reporters:['fernanda'],
+    title:'Tabs y campos innecesarios en ciertos productos',
+    desc:'Productos como "Talento externo" muestran tabs de segmentación y entrega que no les corresponden, generando confusión. Se requiere revisar la matriz de productos para ocultar campos no aplicables a cada categoría de producto.'
+  },
+  {
+    id:19, cat:'ux', pri:'baja', reporters:['fernanda'],
+    title:'Redundancia en visualización de tamaños de creatividades',
+    desc:'Existe información duplicada en la interfaz al visualizar tamaños de creatividades. Se acuerda revisar la matriz de productos para asegurar que solo se visualicen las opciones correctas y evitar duplicidad de datos.'
+  },
+  {
+    id:20, cat:'ux', pri:'baja', reporters:['carlos','fernanda'],
+    title:'Interfaz de Pedidos (Orders) con campos irrelevantes al negocio de medios',
+    desc:'La página de Pedidos contiene campos propios de otra industria (dirección de envío, datos de facturación de retail). El equipo señala que parece un template genérico que debe ser adaptado al giro del negocio de medios y publicidad.'
+  },
+  {
+    id:21, cat:'ux', pri:'baja', reporters:['fernanda'],
+    title:'Campos innecesarios para ejecutivos (comisiones Ad Server)',
+    desc:'Existen campos visibles en la interfaz que no son relevantes para el perfil de ejecutivo, como las comisiones de Ad Server. Agregan ruido a la interfaz, dificultan la adopción y se reporta carga lenta de metadata al agregar productos.'
+  },
+  {
+    id:22, cat:'ux', pri:'media', reporters:['viri'],
+    title:'Sin mensajes de error cuando el agrupador no tiene resultados',
+    desc:'Cuando el filtro de agrupador no arroja resultados, la pantalla aparece vacía sin explicar el motivo. Se propone mostrar un mensaje o pop-up proactivo para informar al usuario sobre el comportamiento del sistema y evitar confusión.'
+  },
+  {
+    id:23, cat:'ux', pri:'baja', reporters:['carlos'],
+    title:'Fricción general en el flujo de oportunidades',
+    desc:'El proceso requiere múltiples clics para configuraciones simples, generando una fricción significativa que dificulta la adopción. Se solicita simplificación del diseño para mejorar la experiencia operacional, especialmente para escenarios con mayor volumen de usuarios.'
+  }
+];
+
+const CAT_LABEL  = { funcional:'Funcional', config:'Config / Permisos', ux:'UX / Interfaz' };
+const PRI_LABEL  = { alta:'Prioridad Alta', media:'Prioridad Media', baja:'Prioridad Baja' };
+const REP_LABEL  = { fernanda:'Fernanda', manuel:'Manuel', viri:'Viri', job:'Job', carlos:'Carlos Rojas' };
+
+let filters = { cat:'all', pri:'all', rep:'all' };
+
+function setFilter(type, btn, val) {
+  filters[type] = val;
+  document.querySelectorAll(`button[data-${type}]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const visible = BUGS.filter(b =>
+    (filters.cat === 'all' || b.cat === filters.cat) &&
+    (filters.pri === 'all' || b.pri === filters.pri) &&
+    (filters.rep === 'all' || b.reporters.includes(filters.rep))
+  );
+
+  document.getElementById('results-line').innerHTML =
+    `Mostrando <strong>${visible.length}</strong> de <strong>${BUGS.length}</strong> issues`;
+
+  document.getElementById('bug-grid').innerHTML = visible.map(b => `
+    <article class="bug-card">
+      <div class="bug-stripe ${b.cat}"></div>
+      <div class="bug-num">#${b.id}</div>
+      <div class="bug-body">
+        <div class="bug-title">${b.title}</div>
+        <div class="bug-desc">${b.desc}</div>
+        <div class="bug-meta">
+          <span class="badge bd-${b.cat}">${CAT_LABEL[b.cat]}</span>
+          <span class="badge bd-${b.pri}">${PRI_LABEL[b.pri]}</span>
+          ${b.reporters.map(r => `<span class="badge bd-reporter">${REP_LABEL[r]}</span>`).join('')}
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  document.getElementById('empty').style.display = visible.length ? 'none' : 'block';
+}
+
+render();
+</script>
+</body>
+</html>
