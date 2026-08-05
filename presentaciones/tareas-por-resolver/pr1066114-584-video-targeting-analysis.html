@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR1066114-584 · VIDEO_AD_PLACEMENT — Análisis ServerIdentifier</title>
+<style>
+  :root {
+    --bg:       #0f1117;
+    --surface:  #1a1f2e;
+    --surface2: #232a3b;
+    --border:   #2d3555;
+    --text:     #e2e8f0;
+    --muted:    #8892aa;
+    --accent:   #6c8aff;
+
+    --update-bg:   #201800;
+    --update-fg:   #f59e0b;
+    --update-pill: #6b3c00;
+    --delete-bg:   #200a0a;
+    --delete-fg:   #f87171;
+    --delete-pill: #6b1515;
+    --create-bg:   #06192c;
+    --create-fg:   #60a5fa;
+    --create-pill: #12355a;
+    --ok-bg:       #041610;
+    --ok-fg:       #34d399;
+    --ok-pill:     #083825;
+    --info-bg:     #0d1a2e;
+    --info-fg:     #a5b4fc;
+    --info-pill:   #1e2d55;
+    --warn-bg:     #1c1200;
+    --warn-fg:     #fbbf24;
+    --scope-bg:    #110d1c;
+    --scope-fg:    #c084fc;
+    --scope-pill:  #3b1f5c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5; padding: 32px 24px; max-width: 1400px; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .page-header { margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .page-header h1 { font-size: 21px; font-weight: 600; margin-bottom: 4px; }
+  .meta { color: var(--muted); font-size: 12px; display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+  .meta span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .banner { border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; border: 1px solid; }
+  .banner.warn  { background: var(--warn-bg);  color: var(--warn-fg);  border-color: #5a3d00; }
+  .banner.info  { background: var(--info-bg);  color: var(--info-fg);  border-color: #2a3a6a; }
+  .banner .icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .banner strong { font-weight: 600; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .kpi .lbl  { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+  .kpi .val  { font-size: 28px; font-weight: 700; line-height: 1; }
+  .kpi .sub  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .kpi.update .val { color: var(--update-fg); }
+  .kpi.delete .val { color: var(--delete-fg); }
+  .kpi.create .val { color: var(--create-fg); }
+  .kpi.ok     .val { color: var(--ok-fg); }
+  .kpi.scope  .val { color: var(--scope-fg); }
+
+  h2 { font-size: 14px; font-weight: 600; color: var(--text); }
+  .sh { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sh .cnt { font-size: 11px; color: var(--muted); background: var(--surface2); border-radius: 20px; padding: 2px 10px; }
+
+  .section { margin-bottom: 32px; }
+  .note { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: var(--muted); }
+  .note strong { color: var(--text); }
+  .note code { font-family: monospace; font-size: 11px; background: var(--surface2); padding: 1px 5px; border-radius: 3px; color: var(--info-fg); }
+
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface2); color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 8px 12px; font-size: 12.5px; vertical-align: middle; }
+  .mono { font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 11.5px; }
+  .id-cell { color: var(--muted); font-family: monospace; font-size: 11px; }
+  .row-u { background: var(--update-bg); }
+  .row-d { background: var(--delete-bg); }
+  .row-c { background: var(--create-bg); }
+  .row-ok { background: var(--ok-bg); }
+  .row-scope { background: var(--scope-bg); }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 20px; padding: 2px 9px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.03em; white-space: nowrap; }
+  .pill.u    { background: var(--update-pill); color: var(--update-fg); }
+  .pill.d    { background: var(--delete-pill); color: var(--delete-fg); }
+  .pill.c    { background: var(--create-pill); color: var(--create-fg); }
+  .pill.ok   { background: var(--ok-pill);     color: var(--ok-fg); }
+  .pill.info { background: var(--info-pill);   color: var(--info-fg); }
+  .pill.scope { background: var(--scope-pill); color: var(--scope-fg); }
+
+  .old { color: var(--delete-fg); font-family: monospace; font-size: 11.5px; }
+  .new { color: var(--ok-fg);     font-family: monospace; font-size: 11.5px; }
+  .new.tbd { color: var(--create-fg); }
+  .na { color: var(--muted); font-size: 11px; font-style: italic; }
+
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  .ref-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-top: 28px; }
+  .ref-box h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; }
+  .ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .ref-item .rl { font-size: 10.5px; color: var(--muted); }
+  .ref-item .rv { font-family: monospace; font-size: 11.5px; color: var(--text); margin-top: 1px; }
+
+  .scope-label { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 20px; margin-bottom: 14px; }
+  .scope-label.in-scope { background: var(--create-pill); color: var(--create-fg); }
+  .scope-label.out-scope { background: var(--scope-pill); color: var(--scope-fg); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>PR1066114-584 · VIDEO_AD_PLACEMENT — Análisis ServerIdentifier en SIT</h1>
+  <div class="meta">
+    <span><span class="dot" style="color:var(--update-fg)"></span>Squad: crp-integrations / crp-media</span>
+    <span><span class="dot" style="color:var(--muted)"></span>Ambiente: <strong>SIT</strong> (UAT no tiene objetos AdTarget*)</span>
+    <span><span class="dot" style="color:var(--muted)"></span>Objeto: AdTargetSegmentValue</span>
+    <span><span class="dot" style="color:var(--muted)"></span>2026-08-05</span>
+  </div>
+</div>
+
+<div class="banner warn">
+  <span class="icon">⚠️</span>
+  <div>
+    <strong>UAT no tiene los objetos AdTarget*.</strong>
+    UAT es un Full Copy de producción — <code>AdTargetCategorySegment</code> y <code>AdTargetSegmentValue</code> no existen ahí porque Media Cloud targeting no ha llegado a producción. El análisis usa <strong>SIT</strong>. Cuando estos cambios se incluyan en el artefacto y se promueva a UAT, el mismo delta aplicará.
+  </div>
+</div>
+
+<div class="banner info">
+  <span class="icon">ℹ️</span>
+  <div>
+    <strong>Scope del ticket 584:</strong>
+    Solo cubre la categoría <code>Posición del video</code> (VIDEO_AD_PLACEMENT). El análisis encontró problemas adicionales en <code>Segmentación personalizada</code> y <code>Tipo de inventario</code> — se documentan al final como hallazgos fuera de scope para escalación separada.
+  </div>
+</div>
+
+<!-- ═══════════════ KPIs — SCOPE 584 ONLY ═══════════════ -->
+<div class="kpi-row">
+  <div class="kpi update"><div class="lbl">Actualizar (VIDEO)</div><div class="val">23</div><div class="sub">TVAZTECA_VIDEO → enum GAM</div></div>
+  <div class="kpi delete"><div class="lbl">Eliminar duplicados</div><div class="val">10</div><div class="sub">Mismos nombres cargados 2×</div></div>
+  <div class="kpi create"><div class="lbl">Crear faltantes</div><div class="val">25+</div><div class="sub">Posiciones 21–45, MIDROLL</div></div>
+  <div class="kpi ok"><div class="lbl">OK sin tocar</div><div class="val">63</div><div class="sub">Geografía + Dispositivos</div></div>
+  <div class="kpi scope"><div class="lbl">Fuera de scope 584</div><div class="val">23</div><div class="sub">CUST_NIVEL2 + INV_FORMATOS</div></div>
+</div>
+
+<!-- ═══════════════ SECCIÓN 1 · VIDEO_MOMENT ═══════════════ -->
+<div class="section">
+  <span class="scope-label in-scope">EN SCOPE — 584</span>
+  <div class="sh"><h2>1 · Segmento VIDEO_MOMENT — "Momento del anuncio"</h2><span class="cnt">3 registros · todos actualizar</span></div>
+
+  <div class="note">
+    Mapeo <strong>VideoPosition enum de GAM</strong>. GAM define 4 valores: <code>ALL</code>, <code>PREROLL</code>, <code>MIDROLL</code>, <code>POSTROLL</code>.
+    En SIT existen 3 — falta <strong>MIDROLL</strong>. Confirmar con TVA si lo omitieron deliberadamente.
+    Ref: <a href="https://developers.google.com/ad-manager/api/reference/v202508/LineItemService.VideoPositionTarget" target="_blank">GAM LineItemService.VideoPositionTarget v202508</a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>ServerIdentifier actual</th><th>ServerIdentifier objetivo</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vk4AI</td><td>Cualquier anuncio durante el video</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">ALL</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vi4AI</td><td>Anuncio Previo al video</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">PREROLL</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-c"><td class="id-cell">—</td><td class="na">Anuncio en medio del video</td><td><span class="na">(no existe)</span></td><td><span class="new tbd">MIDROLL</span></td><td><span class="pill c">CREAR ⚠️ confirmar</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vj4AI</td><td>Anuncios al final del video</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">POSTROLL</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ SECCIÓN 2 · VIDEO_POSITION ═══════════════ -->
+<div class="section">
+  <span class="scope-label in-scope">EN SCOPE — 584</span>
+  <div class="sh"><h2>2 · Segmento VIDEO_POSITION — "Posición exacta"</h2><span class="cnt">33 registros existentes (10 duplicados) · 25 faltantes</span></div>
+
+  <div class="note">
+    Mapeo <strong>VideoPositionWithinPod enum de GAM</strong> (valores numéricos 1–45). En SIT existen posiciones 1–20 más registros duplicados y nombres de "Posición N" inconsistentes. Hay que: (a) actualizar ServerIdentifier en los únicos válidos, (b) eliminar los duplicados, (c) crear posiciones 21–45.
+  </div>
+
+  <div class="sh" style="margin-top:12px"><h2 style="font-size:12.5px;color:var(--muted)">2a · Registros a actualizar (conservar)</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Actual</th><th>Objetivo</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005WD4AY</td><td>Primera posición</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">1</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vl4AI</td><td>Anuncio durante el video 1</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">1</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W54AI</td><td>Posición 2</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">2</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vm4AI</td><td>Anuncio durante el video 2</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">2</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W74AI</td><td>Posición 3</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">3</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vn4AI</td><td>Anuncio durante el video 3</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">3</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W94AI</td><td>Posición 4</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">4</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vo4AI</td><td>Anuncio durante el video 4</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">4</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005WB4AY</td><td>Posición 5</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">5</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vp4AI</td><td>Anuncio durante el video 5</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">5</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vq4AI</td><td>Anuncio durante el video 6</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">6</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vr4AI</td><td>Anuncio durante el video 7</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">7</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vs4AI</td><td>Anuncio durante el video 8</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">8</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vt4AI</td><td>Anuncio durante el video 9</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">9</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vu4AI</td><td>Anuncio durante el video 10</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">10</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vv4AI</td><td>Anuncio durante el video 11</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">11</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vw4AI</td><td>Anuncio durante el video 12</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">12</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vx4AI</td><td>Anuncio durante el video 13</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">13</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vy4AI</td><td>Anuncio durante el video 14</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">14</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005Vz4AI</td><td>Anuncio durante el video 15</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">15</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W04AI</td><td>Anuncio durante el video 16</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">16</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W14AI</td><td>Anuncio durante el video 17</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">17</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W24AI</td><td>Anuncio durante el video 18</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">18</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W34AI</td><td>Anuncio durante el video 19</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">19</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+        <tr class="row-u"><td class="id-cell">1GPWF00000005W44AI</td><td>Anuncio durante el video 20</td><td><span class="old">TVAZTECA_VIDEO</span></td><td><span class="new">20</span></td><td><span class="pill u">ACTUALIZAR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <strong>Nota:</strong> Posición 1 tiene dos registros distintos con el mismo propósito ("Primera posición" y "Anuncio durante el video 1"). Lo mismo para Posiciones 2–5. Confirmar con TVA cuál de cada par conservar antes de ejecutar la limpieza — la tabla de duplicados abajo lista los que se sugiere eliminar.
+  </div>
+
+  <div class="sh" style="margin-top:16px"><h2 style="font-size:12.5px;color:var(--muted)">2b · Duplicados a eliminar</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID a CONSERVAR</th><th>ID a ELIMINAR</th><th>Name (duplicado)</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr class="row-d"><td class="id-cell" style="color:var(--ok-fg)">1GPWF00000005WD4AY</td><td class="id-cell" style="color:var(--delete-fg)">1GPWF00000005WE4AY</td><td>Primera posición</td><td><span class="pill d">DUPLICADO</span></td></tr>
+        <tr class="row-d"><td class="id-cell" style="color:var(--ok-fg)">1GPWF00000005W54AI</td><td class="id-cell" style="color:var(--delete-fg)">1GPWF00000005W64AI</td><td>Posición 2</td><td><span class="pill d">DUPLICADO</span></td></tr>
+        <tr class="row-d"><td class="id-cell" style="color:var(--ok-fg)">1GPWF00000005W74AI</td><td class="id-cell" style="color:var(--delete-fg)">1GPWF00000005W84AI</td><td>Posición 3</td><td><span class="pill d">DUPLICADO</span></td></tr>
+        <tr class="row-d"><td class="id-cell" style="color:var(--ok-fg)">1GPWF00000005W94AI</td><td class="id-cell" style="color:var(--delete-fg)">1GPWF00000005WA4AY</td><td>Posición 4</td><td><span class="pill d">DUPLICADO</span></td></tr>
+        <tr class="row-d"><td class="id-cell" style="color:var(--ok-fg)">1GPWF00000005WB4AY</td><td class="id-cell" style="color:var(--delete-fg)">1GPWF00000005WC4AY</td><td>Posición 5</td><td><span class="pill d">DUPLICADO</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh" style="margin-top:16px"><h2 style="font-size:12.5px;color:var(--muted)">2c · Posiciones faltantes (21–45)</h2></div>
+  <div class="note">GAM soporta <code>VideoPositionWithinPod</code> 1–45. En SIT solo existen 1–20. Hay que crear los 25 registros faltantes.</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name sugerido</th><th>Segmento</th><th>ServerIdentifier objetivo</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr class="row-c"><td>Anuncio durante el video 21</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">21</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 22</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">22</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 23</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">23</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 24</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">24</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 25</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">25</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 26</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">26</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 27</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">27</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 28</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">28</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 29</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">29</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 30</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">30</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 31</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">31</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 32</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">32</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 33</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">33</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 34</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">34</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 35</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">35</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 36</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">36</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 37</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">37</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 38</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">38</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 39</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">39</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 40</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">40</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 41</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">41</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 42</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">42</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 43</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">43</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 44</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">44</span></td><td><span class="pill c">CREAR</span></td></tr>
+        <tr class="row-c"><td>Anuncio durante el video 45</td><td><span class="mono">VIDEO_POSITION</span></td><td><span class="new tbd">45</span></td><td><span class="pill c">CREAR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ SECCIÓN 3 · FUERA DE SCOPE ═══════════════ -->
+<div class="section">
+  <span class="scope-label out-scope">FUERA DE SCOPE — 584 · Para escalación separada</span>
+  <div class="sh"><h2>3 · Otros segmentos con ServerIdentifier placeholder</h2><span class="cnt">Hallazgos adicionales</span></div>
+
+  <div class="note">
+    El análisis del dataset completo reveló placeholders en otras categorías. <strong>No son parte del trabajo de 584</strong>, pero representan el mismo patrón y deberían tener su propia historia o tarea de datos.
+  </div>
+
+  <div class="sh" style="margin-top:12px"><h2 style="font-size:12.5px;color:var(--muted)">3a · Segmentación personalizada — CUST_NIVEL2 ("Dinámico 1–21")</h2></div>
+  <div class="note">
+    Los 21 registros de segundo nivel (<code>CUST_NIVEL2</code>) tienen <code>TVAZTECA_CUSTOM</code>. Los de primer nivel (<code>CUST_NIVEL1</code>) ya tienen IDs numéricos reales de GAM — excepto <strong>"Segmento de Público"</strong> (<code>1GPWF00000005UM4AY</code>) que también sigue siendo <code>TVAZTECA_CUSTOM</code>.
+    Preguntar al equipo de integraciones si <code>TVAZTECA_CUSTOM</code> en Nivel 2 es intencional (key-values dinámicos sin ID fijo en GAM) o si hay IDs específicos que cargar.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Segmento</th><th>ServerIdentifier actual</th><th>Dependiente de (Nivel 1)</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005UM4AY</td><td>Segmento de Público</td><td><span class="mono">CUST_NIVEL1</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td><span class="na">—</span></td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ug4AI</td><td>Dinámico 1</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>IDNOTA</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uh4AI</td><td>Dinámico 2</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>Segmento de Público</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ui4AI</td><td>Dinámico 3</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>Pos</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uj4AI</td><td>Dinámico 4</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>Ptv-Channel</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uk4AI</td><td>Dinámico 5</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>Ptv-Vertical</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ul4AI</td><td>Dinámico 6</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>content_genre</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Um4AI</td><td>Dinámico 7</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>device</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Un4AI</td><td>Dinámico 8</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>genre</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uo4AI</td><td>Dinámico 9</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>intertype</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Up4AI</td><td>Dinámico 10</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>isamp</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uq4AI</td><td>Dinámico 11</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>pagetype</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ur4AI</td><td>Dinámico 12</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>permutive</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Us4AI</td><td>Dinámico 13</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>platform</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ut4AI</td><td>Dinámico 14</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>prmtvctx</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uu4AI</td><td>Dinámico 15</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>rating</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uv4AI</td><td>Dinámico 16</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>section</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uw4AI</td><td>Dinámico 17</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>sitename</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ux4AI</td><td>Dinámico 18</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>kpeid</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uy4AI</td><td>Dinámico 19</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>kpid</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Uz4AI</td><td>Dinámico 20</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>yt_vrallowed</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005V04AI</td><td>Dinámico 21</td><td><span class="mono">CUST_NIVEL2</span></td><td><span class="old">TVAZTECA_CUSTOM</span></td><td>ytdevice</td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh" style="margin-top:20px"><h2 style="font-size:12.5px;color:var(--muted)">3b · Tipo de inventario — INV_FORMAT / INV_FORMATOS</h2></div>
+  <div class="note">
+    El padre "Tipo de inventario" y los 3 formatos tienen <code>TVAZTECA_INVENTORY</code>. Si estos valores se mapean a GAM ad unit types, necesitan sus IDs reales. Si son clasificación interna sin correspondencia en GAM, el placeholder puede ser intencional — confirmar.
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Segmento (Code)</th><th>ServerIdentifier actual</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Ve4AI</td><td>Tipo de inventario</td><td><span class="mono">INV_FORMAT</span></td><td><span class="old">TVAZTECA_INVENTORY</span></td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Vf4AI</td><td>Gráfico</td><td><span class="mono">INV_FORMATOS</span></td><td><span class="old">TVAZTECA_INVENTORY</span></td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Vg4AI</td><td>Aplicación para dispositivos móviles</td><td><span class="mono">INV_FORMATOS</span></td><td><span class="old">TVAZTECA_INVENTORY</span></td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+        <tr class="row-scope"><td class="id-cell">1GPWF00000005Vh4AI</td><td>Audio y video in-stream</td><td><span class="mono">INV_FORMATOS</span></td><td><span class="old">TVAZTECA_INVENTORY</span></td><td><span class="pill scope">CONFIRMAR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ REFERENCIA ═══════════════ -->
+<div class="ref-box">
+  <h4>Referencia de IDs</h4>
+  <div class="ref-grid">
+    <div class="ref-item"><div class="rl">Jira</div><div class="rv"><a href="https://salesforce.atlassian.net/browse/PR1066114-584" target="_blank">PR1066114-584</a></div></div>
+    <div class="ref-item"><div class="rl">Ambiente con datos</div><div class="rv">SIT (tva-sit)</div></div>
+    <div class="ref-item"><div class="rl">Categoría scope 584</div><div class="rv">Posición del video — 0QyWF0000000xUj0AI</div></div>
+    <div class="ref-item"><div class="rl">Seg VIDEO_MOMENT</div><div class="rv">0kYWF00000003Iz2AI</div></div>
+    <div class="ref-item"><div class="rl">Seg VIDEO_POSITION</div><div class="rv">0kYWF00000003J02AI</div></div>
+    <div class="ref-item"><div class="rl">GAM enum fuente</div><div class="rv">VideoPositionTarget v202508</div></div>
+    <div class="ref-item"><div class="rl">Mecanismo de carga</div><div class="rv">Manual (como DEVICE_CATEGORY)</div></div>
+    <div class="ref-item"><div class="rl">Seg CUST_NIVEL2</div><div class="rv">0kYWF00000003Is2AI</div></div>
+    <div class="ref-item"><div class="rl">Seg INV_FORMATOS</div><div class="rv">0kYWF00000003Iy2AI</div></div>
+  </div>
+</div>
+
+</body>
+</html>

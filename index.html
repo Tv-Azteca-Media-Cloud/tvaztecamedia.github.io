@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>TV Azteca Media — Portal de Documentación Técnica</title>
+  <title>Sprint 8: Integraciones — TV Azteca Media</title>
   <style>
     :root{
       --navy:#032d60;
@@ -594,11 +594,11 @@
     <h1 class="hero-title">
       TV Azteca <span>Media</span>
     </h1>
-    <p class="hero-sub">Salesforce · Portal de Documentación Técnica</p>
+    <p class="hero-sub">Sprint 8: Integraciones</p>
 
-    <a href="#portal-content" class="hero-cta">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Ir a Documentación
+    <a href="sprint8.html" class="hero-cta">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+      Ver presentación
     </a>
   </div>
 
@@ -653,6 +653,11 @@
       <li>
         <a onclick="filterCategory('discovery-entregables',this)" id="nav-discovery-entregables">
           <span class="nav-ico">📦</span>Discovery &amp; Entregables
+        </a>
+      </li>
+      <li>
+        <a onclick="filterCategory('tareas-por-resolver',this)" id="nav-tareas-por-resolver">
+          <span class="nav-ico">🔧</span>Tareas por resolver
         </a>
       </li>
       <li class="nav-sep"></li>
@@ -832,6 +837,7 @@
         <button class="f-tab" onclick="filterCategory('seguridad-salesforce',this)">Seguridad Salesforce</button>
         <button class="f-tab" onclick="filterCategory('gobierno-tecnico',this)">Gobierno Técnico</button>
         <button class="f-tab" onclick="filterCategory('discovery-entregables',this)">Discovery &amp; Entregables</button>
+        <button class="f-tab" onclick="filterCategory('tareas-por-resolver',this)">Tareas por resolver</button>
       </div>
 
       <!-- Cards -->
@@ -1024,6 +1030,27 @@
             <div class="card-desc">Business Context Brief, proceso TO-BE, BRD de requisitos, RAID Log, artefactos y diagramas BPMN para Venta Programática.</div>
             <div class="content-hit" id="hit-9"></div>
             <div class="card-footer">Ver presentación <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAREAS POR RESOLVER
+      ══════════════════════════════════════════ -->
+      <div class="section-title">Tareas por resolver</div>
+      <div class="pres-grid">
+
+        <a href="presentaciones/tareas-por-resolver/pr1066114-584-video-targeting-analysis.html"
+           class="pres-card" data-category="tareas-por-resolver">
+          <div class="card-banner" style="background:linear-gradient(135deg,#0b3d6b 0%,#0176d3 100%)">
+            <div class="card-banner-top"><span class="card-tag">Media Cloud · GAM</span></div>
+            <div class="card-date">05 Ago 2026</div>
+            <div class="card-title">PR1066114-584 · Video Targeting — AdTarget vs GAM</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Análisis de ServerIdentifiers y VideoPositionTarget: 23 registros a actualizar, 10 duplicados a eliminar, 25+ entradas VideoPositionWithinPod a crear.</div>
+            <div class="card-footer">Ver análisis <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </a>
 
