@@ -121,19 +121,12 @@
   <h1>PR1066114-584 · VIDEO_AD_PLACEMENT — Análisis ServerIdentifier en SIT</h1>
   <div class="meta">
     <span><span class="dot" style="color:var(--update-fg)"></span>Squad: crp-integrations / crp-media</span>
-    <span><span class="dot" style="color:var(--muted)"></span>Ambiente: <strong>SIT</strong> (UAT no tiene objetos AdTarget*)</span>
+    <span><span class="dot" style="color:var(--muted)"></span>Ambiente: <strong>SIT</strong></span>
     <span><span class="dot" style="color:var(--muted)"></span>Objeto: AdTargetSegmentValue</span>
     <span><span class="dot" style="color:var(--muted)"></span>2026-08-05</span>
   </div>
 </div>
 
-<div class="banner warn">
-  <span class="icon">⚠️</span>
-  <div>
-    <strong>UAT no tiene los objetos AdTarget*.</strong>
-    UAT es un Full Copy de producción — <code>AdTargetCategorySegment</code> y <code>AdTargetSegmentValue</code> no existen ahí porque Media Cloud targeting no ha llegado a producción. El análisis usa <strong>SIT</strong>. Cuando estos cambios se incluyan en el artefacto y se promueva a UAT, el mismo delta aplicará.
-  </div>
-</div>
 
 <div class="banner info">
   <span class="icon">ℹ️</span>
