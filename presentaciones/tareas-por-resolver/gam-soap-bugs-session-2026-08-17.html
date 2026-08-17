@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAM SOAP Integration — Session Bug Log (2026-08-17)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      padding: 32px 16px;
+    }
+
+    .page-header {
+      max-width: 960px;
+      margin: 0 auto 32px;
+    }
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f3460;
+    }
+    .page-header .meta {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    .page-header .meta span {
+      margin-right: 20px;
+    }
+
+    .summary-strip {
+      max-width: 960px;
+      margin: 0 auto 32px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px 20px;
+      border-left: 4px solid #d1d5db;
+    }
+    .stat-card.green  { border-color: #10b981; }
+    .stat-card.amber  { border-color: #f59e0b; }
+    .stat-card.red    { border-color: #ef4444; }
+    .stat-card.blue   { border-color: #3b82f6; }
+    .stat-card .num   { font-size: 2rem; font-weight: 700; }
+    .stat-card.green  .num { color: #10b981; }
+    .stat-card.amber  .num { color: #f59e0b; }
+    .stat-card.red    .num { color: #ef4444; }
+    .stat-card.blue   .num { color: #3b82f6; }
+    .stat-card .label { font-size: 0.75rem; color: #6b7280; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section {
+      max-width: 960px;
+      margin: 0 auto 28px;
+    }
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6b7280;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .badge {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .badge.deployed  { background: #d1fae5; color: #065f46; }
+    .badge.pending   { background: #fef3c7; color: #92400e; }
+    .badge.config    { background: #dbeafe; color: #1e40af; }
+    .badge.info      { background: #ede9fe; color: #4c1d95; }
+
+    .card-id {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #9ca3af;
+      min-width: 52px;
+      margin-top: 3px;
+    }
+    .card-title-block { flex: 1; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    .card-body {
+      padding: 16px 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .row { display: grid; grid-template-columns: 140px 1fr; gap: 8px; align-items: start; }
+    .row-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+    .row-value { font-size: 0.875rem; color: #374151; line-height: 1.5; }
+
+    code, .mono {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      font-size: 0.78rem;
+    }
+    .file-pill {
+      display: inline-block;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 1px 8px;
+      font-size: 0.78rem;
+      font-family: monospace;
+      color: #374151;
+    }
+    .line-ref {
+      display: inline-block;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 5px;
+      padding: 1px 8px;
+      font-size: 0.78rem;
+      font-family: monospace;
+      color: #1d4ed8;
+      margin-left: 6px;
+    }
+
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+    pre .del { color: #f87171; background: rgba(239,68,68,0.15); display: block; }
+    pre .add { color: #86efac; background: rgba(34,197,94,0.12); display: block; }
+    pre .ctx { color: #94a3b8; }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #b91c1c;
+      line-height: 1.5;
+    }
+
+    .action-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      line-height: 1.5;
+    }
+
+    .warning-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #92400e;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #1e40af;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .summary-strip { grid-template-columns: repeat(2, 1fr); }
+      .row { grid-template-columns: 1fr; }
+      .row-label { margin-bottom: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>GAM SOAP Integration — Session Bug Log</h1>
+    <div class="meta">
+      <span>📅 2026-08-17</span>
+      <span>👤 José Carlos Padilla</span>
+      <span>🔗 Integración: <code>TVAI_GAMSoapIntegrationHelper</code> + <code>TVAI_GAMWrapper</code></span>
+      <span>🌿 Branch activo: <code>crp-integrations</code></span>
+    </div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="stat-card green">
+      <div class="num">4</div>
+      <div class="label">Desplegados y confirmados</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="num">2</div>
+      <div class="label">Bugs pendientes en Dev</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="num">1</div>
+      <div class="label">Config DRO pendiente</div>
+    </div>
+    <div class="stat-card red">
+      <div class="num">1</div>
+      <div class="label">Bugs Catálogo / DRO</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- DEPLOYED                                               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">✅ Fixes desplegados y confirmados en QA</div>
+
+    <!-- Bug #1 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #1</span>
+        <div class="card-title-block">
+          <div class="card-title">goalType nulo — el validador rechaza la meta</div>
+          <div class="card-subtitle">goalTypeCode ≠ goalType · Log: <code>apex-07LWG00000shKvp2AE</code></div>
+        </div>
+        <span class="badge deployed">Desplegado</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Archivo</span>
+          <span class="row-value">
+            <span class="file-pill">crp-integrations/main/default/classes/TVAI_GAMWrapper.cls</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Error original</span>
+          <div class="row-value">
+            <div class="error-box">ValidationException: "El tipo de meta (goalType) está vacío o no fue proporcionado"</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">El método <code>toGamGoal()</code> leía <code>chosen.goalTypeCode</code>, campo que no existe en el payload DRO. El campo correcto es <code>chosen.goalType</code>.</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Cambio</span>
+          <div class="row-value">
+<pre><span class="del">- goalType = TVAI_GAMWrapper.GOAL_TYPE_BY_CODE.get(chosen.goalTypeCode);</span>
+<span class="add">+ goalType = TVAI_GAMWrapper.GOAL_TYPE_BY_CODE.get(chosen.goalType);</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bug #2 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #2</span>
+        <div class="card-title-block">
+          <div class="card-title">unitType enum mismatch — valor "Impression" no mapeado</div>
+          <div class="card-subtitle">Log: <code>apex-07LWG00000soNqL2AU</code></div>
+        </div>
+        <span class="badge deployed">Desplegado</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Archivo</span>
+          <span class="row-value">
+            <span class="file-pill">crp-integrations/main/default/classes/TVAI_GAMWrapper.cls</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Error original</span>
+          <div class="row-value">
+            <div class="error-box">ValidationException: "El tipo de unidad de la meta (unitType) 'Impression' no es válido. Los valores permitidos son: [IMPRESSIONS, ...]"</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">DRO envía <code>"Impression"</code>; GAM espera <code>"IMPRESSIONS"</code>. No existía un mapa de traducción para <code>unitType</code>.</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Cambio</span>
+          <div class="row-value">
+<pre><span class="add">+ private static final Map&lt;String, String&gt; GOAL_UNIT_TYPE = new Map&lt;String, String&gt;{</span>
+<span class="add">+     'Impression' =&gt; 'IMPRESSIONS'</span>
+<span class="add">+ };</span>
+<span class="ctx">
+  // En toGamGoal():</span>
+<span class="del">- goal.unitType = chosen.unitType;</span>
+<span class="add">+ goal.unitType = translateEnum(GOAL_UNIT_TYPE, chosen.unitType);</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bug #3 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #3</span>
+        <div class="card-title-block">
+          <div class="card-title">Orden de elementos SOAP inválido — orderId después de name</div>
+          <div class="card-subtitle">XSD GAM · Log: <code>hoyLunes.log</code></div>
+        </div>
+        <span class="badge deployed">Desplegado</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Archivo</span>
+          <span class="row-value">
+            <span class="file-pill">crp-integrations/main/default/classes/TVAI_GAMSoapIntegrationHelper.cls</span>
+            <span class="line-ref">~línea 455</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Error original</span>
+          <div class="row-value">
+            <div class="error-box">GAM HTTP 500: cvc-complex-type.2.4.a: Invalid content was found starting with element 'orderId'. One of '{name}' is expected.</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">El XSD de GAM exige <code>orderId</code> antes de <code>name</code>. El código emitía el bloque <code>orderId</code> después de <code>name</code>.</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Cambio</span>
+          <div class="row-value">
+<pre><span class="add">+ writeOptionalElement(w, gamNs, 'id', li.id);</span>
+<span class="add">+ if ('createLineItems'.equals(operationName)) {</span>
+<span class="add">+     writeElement(w, gamNs, 'orderId', li.orderId);</span>
+<span class="add">+ }</span>
+<span class="add">+ writeElement(w, gamNs, 'name', li.name);</span>
+<span class="add">+ writeOptionalElement(w, gamNs, 'externalId', li.externalId);</span>
+<span class="del">
+  // Antes (orden incorrecto):</span>
+<span class="del">- writeOptionalElement(w, gamNs, 'id', li.id);</span>
+<span class="del">- writeElement(w, gamNs, 'name', li.name);</span>
+<span class="del">- writeOptionalElement(w, gamNs, 'externalId', li.externalId);</span>
+<span class="del">- if ('createLineItems'.equals(operationName)) {</span>
+<span class="del">-     writeElement(w, gamNs, 'orderId', li.orderId);</span>
+<span class="del">- }</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PENDING CODE                                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">🔧 Bugs pendientes — cambios de código para Dev</div>
+
+    <!-- Bug #7 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #7</span>
+        <div class="card-title-block">
+          <div class="card-title">DUPLICATE_VALUE en TVAI_IdExterno__c tras UPDATE_LINE_ITEMS exitoso</div>
+          <div class="card-subtitle">DmlException · Log: <code>apex-07LWG00000sttT02AI</code> · GAM HTTP 200 recibido, falla en DML post-callout</div>
+        </div>
+        <span class="badge pending">Pendiente</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Archivo</span>
+          <span class="row-value">
+            <span class="file-pill">crp-integrations/main/default/classes/TVAI_GAMSoapIntegrationHelper.cls</span>
+            <span class="line-ref">~líneas 517–559 (método updateLineItem)</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Error</span>
+          <div class="row-value">
+            <div class="error-box">DmlException: Update failed. First exception on row 0 with id 802WG00000dtXzYYAU;
+first error: DUPLICATE_VALUE, duplicate value found: TVAI_IdExterno__c
+duplicates value on record with id: 802WG00000du2qHYAQ</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Contexto</span>
+          <span class="row-value">
+            GAM respondió <strong>HTTP 200</strong> con <code>updateLineItemsResponse</code> exitoso — el Line Item <code>7400373780</code> fue actualizado en GAM correctamente.<br /><br />
+            Sin embargo, el método <code>updateLineItem</code> (post-procesamiento del response) intenta escribir <code>TVAI_IdExterno__c = "7400373780"</code> en el OrderItem del amendment (<code>802WG00000dtXzYYAU</code>).<br /><br />
+            El OrderItem <em>original</em> (<code>802WG00000du2qHYAQ</code>) ya tiene ese mismo valor en <code>TVAI_IdExterno__c</code> — fue escrito cuando <code>createLineItems</code> corrió por primera vez. El unique constraint explota.
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">
+            <code>updateLineItem</code> fue diseñado para el flujo <code>CREATE_LINE_ITEMS</code> (donde estampar el ID nuevo es correcto). También se invoca como callback de <code>UPDATE_LINE_ITEMS</code>, pero en ese caso el Line Item ID no cambia — ya existe en el OrderItem original.
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Fix</span>
+          <div class="row-value">
+<pre><span class="ctx">// Método updateLineItem (~línea 550), bloque de actualización DML:
+
+// ── ANTES ─────────────────────────────────────────────────────────────────</span>
+<span class="del">- if (hasChanges) {</span>
+<span class="del">-     Database.update(patch, AccessLevel.SYSTEM_MODE);</span>
+<span class="del">- }</span>
+<span class="ctx">
+// ── DESPUÉS ───────────────────────────────────────────────────────────────</span>
+<span class="add">+ if (hasChanges) {</span>
+<span class="add">+     try {</span>
+<span class="add">+         Database.update(patch, AccessLevel.SYSTEM_MODE);</span>
+<span class="add">+     } catch (DmlException e) {</span>
+<span class="add">+         Boolean isDuplicate = e.getMessage() != null</span>
+<span class="add">+             &amp;&amp; e.getMessage().contains('DUPLICATE_VALUE')</span>
+<span class="add">+             &amp;&amp; e.getMessage().contains(EXTERNAL_ID_FIELD);</span>
+<span class="add">+         if (!isDuplicate) {</span>
+<span class="add">+             throw e;</span>
+<span class="add">+         }</span>
+<span class="add">+         // DUPLICATE_VALUE en TVAI_IdExterno__c: el GAM Line Item ID ya está</span>
+<span class="add">+         // en el OrderItem original. El update de GAM fue exitoso; no-op.</span>
+<span class="add">+     }</span>
+<span class="add">+ }</span></pre>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Impacto real</span>
+          <div class="row-value">
+            <div class="action-box">
+              El amendment <strong>sí llegó a GAM</strong> (HTTP 200). El único problema es que Salesforce no registra la excepción de DML como no-fatal — propaga hacia arriba y marca el fulfillment como fallido, aunque GAM esté actualizado. El fix hace que ese DML duplicado sea silenciado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bug #6 (confirmado desplegado por último log) -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #6</span>
+        <div class="card-title-block">
+          <div class="card-title">Amendment envía GAM Order ID en lugar del GAM Line Item ID</div>
+          <div class="card-subtitle">CommonError.NOT_FOUND → resuelto · Log confirmación: <code>apex-07LWG00000sttT02AI</code> · GAM HTTP 200 ✅</div>
+        </div>
+        <span class="badge deployed">Desplegado</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Archivo</span>
+          <span class="row-value">
+            <span class="file-pill">crp-integrations/main/default/classes/TVAI_GAMSoapIntegrationHelper.cls</span>
+            <span class="line-ref">líneas 371–389</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Error GAM</span>
+          <div class="row-value">
+            <div class="error-box">CommonError.NOT_FOUND @ lineItem[0].id; trigger:'4164647756'
+// GAM recibe el Order ID (4164647756) en lugar del Line Item ID (7400373780)</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">
+            El método <code>generateUpdateLineItemsSoapRequest</code> hace SOQL sobre <code>OrderItem.TVAI_IdExterno__c</code>.
+            Ese campo contiene el GAM <strong>Order</strong> ID (<code>4164647756</code>).
+            El GAM <strong>Line Item</strong> ID (<code>7400373780</code>) vive en <code>AdOrderItem.AdServerOrderLineIdentifier</code>.
+            GAM rechaza el request porque <code>4164647756</code> es un Order ID, no un Line Item ID.
+            <br /><br />
+            Contexto confirmado por el usuario:
+            <ul style="margin-top:6px;padding-left:18px;font-size:0.85rem">
+              <li><code>AdOrderItem</code>: <code>802WG00000dtXzYYAU</code></li>
+              <li><code>Ad Server Order Line Identifier</code> = <code>7400373780</code> ✅ (Line Item ID — valor correcto)</li>
+              <li><code>Ad Server Order Identifier</code> = <code>4164647756</code> ❌ (Order ID — valor que se estaba enviando)</li>
+            </ul>
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Cambio</span>
+          <div class="row-value">
+<pre><span class="ctx">// Método: generateUpdateLineItemsSoapRequest (~línea 371)
+
+// ── ANTES (incorrecto) ────────────────────────────────────────────────────</span>
+<span class="del">- List&lt;SObject&gt; rows = Database.queryWithBinds(</span>
+<span class="del">-     'SELECT TVAI_IdExterno__c FROM OrderItem WHERE Id = :orderItemId LIMIT 1',</span>
+<span class="del">-     new Map&lt;String, Object&gt;{ 'orderItemId' =&gt; orderItemId },</span>
+<span class="del">-     AccessLevel.SYSTEM_MODE</span>
+<span class="del">- );</span>
+<span class="del">- String gamLineItemId = rows.isEmpty() ? null : (String) rows[0].get(EXTERNAL_ID_FIELD);</span>
+<span class="del">- if (String.isBlank(gamLineItemId)) {</span>
+<span class="del">-     throw new TVAI_GAMSoapIntegrationException(</span>
+<span class="del">-         'El OrderItem ' + orderItemId + ' no tiene GAM Line Item ID (TVAI_IdExterno__c vacío)'</span>
+<span class="del">-         + ' — debe ejecutarse CREATE_LINE_ITEMS primero.'</span>
+<span class="del">-     );</span>
+<span class="del">- }</span>
+<span class="ctx">
+// ── DESPUÉS (correcto) ────────────────────────────────────────────────────</span>
+<span class="add">+ List&lt;SObject&gt; rows = Database.queryWithBinds(</span>
+<span class="add">+     'SELECT ' + AD_SERVER_ORDER_LINE_ID_FIELD</span>
+<span class="add">+     + ' FROM ' + AD_ORDER_ITEM_OBJECT</span>
+<span class="add">+     + ' WHERE ' + AD_ORDER_ITEM_ORDER_ITEM_FIELD + ' = :orderItemId LIMIT 1',</span>
+<span class="add">+     new Map&lt;String, Object&gt;{ 'orderItemId' =&gt; orderItemId },</span>
+<span class="add">+     AccessLevel.SYSTEM_MODE</span>
+<span class="add">+ );</span>
+<span class="add">+ String gamLineItemId = rows.isEmpty() ? null</span>
+<span class="add">+     : (String) rows[0].get(AD_SERVER_ORDER_LINE_ID_FIELD);</span>
+<span class="add">+ if (String.isBlank(gamLineItemId)) {</span>
+<span class="add">+     throw new TVAI_GAMSoapIntegrationException(</span>
+<span class="add">+         'El AdOrderItem del OrderItem ' + orderItemId</span>
+<span class="add">+         + ' no tiene GAM Line Item ID (AdServerOrderLineIdentifier vacío)'</span>
+<span class="add">+         + ' — debe ejecutarse CREATE_LINE_ITEMS primero.'</span>
+<span class="add">+     );</span>
+<span class="add">+ }</span></pre>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Constantes usadas</span>
+          <div class="row-value">
+            <div class="info-box">
+              Todas ya existen en la clase (líneas 40–49):<br />
+              <code>AD_ORDER_ITEM_OBJECT = 'AdOrderItem'</code><br />
+              <code>AD_ORDER_ITEM_ORDER_ITEM_FIELD = 'OrderItemId'</code><br />
+              <code>AD_SERVER_ORDER_LINE_ID_FIELD = 'AdServerOrderLineIdentifier'</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PENDING CONFIG                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">⚙️ Configuración DRO pendiente</div>
+
+    <!-- Config #1 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">CFG #1</span>
+        <div class="card-title-block">
+          <div class="card-title">Fulfillment Workplace "Amend Order" — paso sin Callout configurado</div>
+          <div class="card-subtitle">DRO Setup · Fulfillment Workplace: Media GAM Master</div>
+        </div>
+        <span class="badge config">Config DRO</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Síntoma</span>
+          <span class="row-value">El flujo de Amendment de DRO llega al paso "Amend Order" pero no ejecuta ningún Callout porque el paso no tiene proveedor configurado.</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Acción</span>
+          <div class="row-value">
+            <div class="action-box">
+              En DRO Setup → Fulfillment Workplaces → <strong>Media GAM Master</strong>:<br />
+              1. Localizar el paso <strong>"Amend Order"</strong><br />
+              2. Abrir la <strong>Integration Definition</strong> del paso<br />
+              3. Cambiar el tipo de acción de <strong>Pause → Callout</strong><br />
+              4. Configurar el Callout apuntando a <strong><code>SfiAdsAdServerIntegrationProvider</code></strong><br />
+              5. Operación: <code>updateLineItems</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CATALOG / DRO CONFIG ISSUES                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">📦 Issues de catálogo / configuración DRO — no son cambios de código</div>
+
+    <!-- Bug #4 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #4</span>
+        <div class="card-title-block">
+          <div class="card-title">goalType DAILY incompatible con lineItemType STANDARD</div>
+          <div class="card-subtitle">Regla de negocio GAM · Log: <code>apex-07LWG00000sse4i2AA</code></div>
+        </div>
+        <span class="badge pending">Pendiente</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Error GAM</span>
+          <div class="row-value">
+            <div class="error-box">ReservationDetailsError.DURATION_NOT_ALLOWED @ lineItem[0].primaryGoal.goalType; trigger:'DAILY'</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Root cause</span>
+          <span class="row-value">
+            GAM prohíbe <code>goalType=DAILY</code> con <code>lineItemType=STANDARD</code>.
+            DRO está enviando <code>goalType: "Daily"</code> + <code>lineItemType: "STANDARD"</code>.
+            El Apex traduce fielmente lo que DRO manda — el problema está upstream en la configuración del catálogo/producto.
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Origen UI</span>
+          <span class="row-value">Quote → Entrega → Goals → campo <strong>"Impression Limit: Diario"</strong>. Ese campo fuerza <code>goalType=Daily</code>.</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Reglas GAM</span>
+          <div class="row-value">
+            <div class="warning-box">
+              Combinaciones válidas según GAM:<br />
+              &bull; <code>STANDARD</code> → <code>LIFETIME</code> (impresiones totales del vuelo)<br />
+              &bull; <code>SPONSORSHIP</code> → <code>DAILY</code> (% de tráfico, <em>no impresiones</em>)<br />
+              &bull; <code>BULK</code> → <code>DAILY</code> (impresiones diarias — posiblemente el tipo correcto para este caso de uso)<br /><br />
+              <strong>Acción requerida:</strong> confirmar con el equipo de catálogo/DRO qué tipo de producto corresponde a "impresiones diarias" y alinear <code>lineItemType</code> en consecuencia.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Área</span>
+          <span class="row-value">Configuración de catálogo / DRO — <strong>no requiere cambio de código Apex</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bug #5 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">BUG #5</span>
+        <div class="card-title-block">
+          <div class="card-title">Cambio a SPONSORSHIP no persistió — mismo error que Bug #4</div>
+          <div class="card-subtitle">Log: <code>apex-07LWG00000stXKQ2A2</code></div>
+        </div>
+        <span class="badge info">Observación</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Observación</span>
+          <span class="row-value">
+            El log muestra <code>lineItemType = "STANDARD"</code> a lo largo de toda la ejecución.
+            El cambio a SPONSORSHIP no quedó guardado en el registro correcto de la Quote/Producto.
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Nota adicional</span>
+          <div class="row-value">
+            <div class="warning-box">
+              Aunque el cambio hubiera persistido, <code>SPONSORSHIP + DAILY</code> en GAM espera una <strong>meta de porcentaje de tráfico</strong>, no de impresiones. El catálogo necesita revisión antes de retestear.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Área</span>
+          <span class="row-value">Relacionado con Bug #4 — resolver el tipo de producto primero</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CHECKLIST                                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">📋 Checklist para Dev</div>
+    <div class="card">
+      <div class="card-body" style="gap:10px">
+        <div style="font-size:0.85rem;line-height:1.8">
+          <p style="font-weight:600;margin-bottom:8px;color:#374151">Cambios de código (<code>crp-integrations</code>):</p>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>✅ <strong>Bug #1</strong> — <code>TVAI_GAMWrapper.cls</code>: <code>chosen.goalTypeCode</code> → <code>chosen.goalType</code> &nbsp;<em>(ya desplegado en QA, replicar en Dev)</em></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>✅ <strong>Bug #2</strong> — <code>TVAI_GAMWrapper.cls</code>: agregar mapa <code>GOAL_UNIT_TYPE</code> + <code>translateEnum</code> para <code>unitType</code> &nbsp;<em>(ya desplegado en QA, replicar en Dev)</em></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>✅ <strong>Bug #3</strong> — <code>TVAI_GAMSoapIntegrationHelper.cls</code>: mover bloque <code>orderId</code> antes de <code>name</code> &nbsp;<em>(ya desplegado en QA, replicar en Dev)</em></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-top:6px">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>✅ <strong>Bug #6</strong> — <code>TVAI_GAMSoapIntegrationHelper.cls</code> líneas 371–384: SOQL cambiado a <code>AdOrderItem.AdServerOrderLineIdentifier</code> — <em>confirmado desplegado en QA por log <code>apex-07LWG00000sttT02AI</code> (GAM HTTP 200)</em>. Replicar en Dev.</span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-top:6px">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>🔧 <strong>Bug #7</strong> — <code>TVAI_GAMSoapIntegrationHelper.cls</code> ~línea 550 (método <code>updateLineItem</code>): envolver el <code>Database.update</code> en try-catch que trate <code>DUPLICATE_VALUE</code> en <code>TVAI_IdExterno__c</code> como no-op</span>
+          </label>
+        </div>
+        <div style="font-size:0.85rem;line-height:1.8;border-top:1px solid #e5e7eb;padding-top:12px">
+          <p style="font-weight:600;margin-bottom:8px;color:#374151">Configuración DRO (Setup):</p>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>⚙️ <strong>CFG #1</strong> — Fulfillment Workplace "Media GAM Master" → paso "Amend Order" → Integration Definition → cambiar <strong>Pause → Callout</strong> → proveedor <code>SfiAdsAdServerIntegrationProvider</code> / operación <code>updateLineItems</code></span>
+          </label>
+        </div>
+        <div style="font-size:0.85rem;line-height:1.8;border-top:1px solid #e5e7eb;padding-top:12px">
+          <p style="font-weight:600;margin-bottom:8px;color:#374151">Investigación catálogo / DRO (con equipo):</p>
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="margin-top:3px;flex-shrink:0" />
+            <span>📦 <strong>Bug #4 / #5</strong> — Confirmar tipo de producto para "impresiones diarias": ¿<code>BULK</code>? ¿<code>SPONSORSHIP</code> con % de tráfico? Alinear configuración de catálogo y DRO antes de retestear</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:960px;margin:0 auto;padding-bottom:48px;text-align:center;font-size:0.75rem;color:#9ca3af">
+    Generado el 2026-08-17 · Sesión de debug GAM SOAP Integration · mediacloud-tvazteca
+  </div>
+
+</body>
+</html>
