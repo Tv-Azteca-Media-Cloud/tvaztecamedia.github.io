@@ -599,6 +599,16 @@
   .hdu-check { font-size: 18px; color: var(--green); }
   .hdu-key { font-family: monospace; font-size: 11px; background: var(--gray-100); padding: 2px 7px; border-radius: 4px; color: var(--navy); white-space: nowrap; }
   .hdu-date { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .hdu-sprint { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; letter-spacing: .3px; }
+  .hdu-sprint.s1 { background: #dbeafe; color: #1e40af; }
+  .hdu-sprint.s2 { background: #ede9fe; color: #5b21b6; }
+  .hdu-sprint.s3 { background: #fce7f3; color: #9d174d; }
+  .hdu-sprint.s4 { background: #d1fae5; color: #065f46; }
+  .hdu-sprint.s5 { background: #fef3c7; color: #92400e; }
+  .hdu-sprint.s6 { background: #fee2e2; color: #991b1b; }
+  .hdu-sprint.s7 { background: #e0f2fe; color: #0c4a6e; }
+  .hdu-sprint.s67 { background: linear-gradient(90deg,#fee2e2 50%,#e0f2fe 50%); color: #374151; }
+  .hdu-table th.sprint-col { width: 60px; text-align: center; }
   .hdu-group-header {
     background: var(--surface-2);
     padding: 8px 14px;
@@ -1086,7 +1096,6 @@
             <ul class="con-list">
               <li>Anti-pattern: product proliferation</li>
               <li>El catálogo escala mal — si se agregan canales, se multiplica el número de productos</li>
-              <li>Rompe la jerarquía Product Classification → Product</li>
             </ul>
           </td>
         </tr>
@@ -1392,8 +1401,8 @@
           <tr>
             <td><span class="code-ref">TVAI_QuoteToOrderService</span></td>
             <td>crp-integrations</td>
-            <td><span class="risk-badge alto">Alto</span></td>
-            <td>Crea <code>AdOrderItemAdSpaceSpec</code> junction records a partir de <code>AdQuoteLine → AdSpaceSpec</code> y copia <code>AdOrderLineTargetValue</code> desde <code>AdQuoteLineTargetValue</code>. Con N productos / 1 AdSpaceSpec por producto, la lógica de resolución del spec y los defaults de targeting necesitan validación. Además, el match de líneas con Data Cloud (<code>AdQuoteLine.TVAM_GamLineItemId__c</code>) requiere pruebas end-to-end.</td>
+            <td><span class="risk-badge medio">Medio</span></td>
+            <td>Requiere validación del flujo de conversión cuando un Producto tiene asignado exactamente 1 <code>AdSpaceSpecProduct</code>: verificar que la creación de <code>AdOrderItemAdSpaceSpec</code> resuelve el spec correctamente y que los defaults de targeting se copian sin ambigüedad desde <code>AdQuoteLineTargetValue</code>.</td>
           </tr>
           <tr>
             <td><span class="code-ref">TVAI_QuoteToOrder_GAMAcceptance</span></td>
@@ -1442,20 +1451,19 @@
   <!-- ── 4. Field Auto-population ── -->
   <div class="gaps-card" style="margin-bottom: 32px;">
     <div class="gaps-header" style="background:var(--green-light);border-bottom-color:#a7f3d0;color:var(--green);">
-      <span>⚡</span> 4 — Automatización de campos: oportunidad del anti-pattern
+      <span>⚡</span> 4 — Automatización de campos en AdQuoteLine al seleccionar producto
     </div>
     <div class="gaps-body">
       <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
-        Con el enfoque de 1 producto por combinación MEDIO × PLATAFORMA, el <code>AdSpaceSpecificationId</code> en <code>AdQuoteLine</code> se puede derivar automáticamente desde el producto seleccionado — cada producto tendría exactamente 1 <code>AdSpaceSpecProduct</code> vinculado. Esto elimina el paso manual de selección de spec, una ventaja operativa real del anti-pattern que vale la pena diseñar bien si se decide adoptarlo.
+        Al seleccionar un producto en el Media Planning Grid, los campos de contexto de la línea de cotización pueden derivarse automáticamente a partir de la configuración del catálogo, sin intervención manual del usuario. Esto garantiza consistencia entre lo que se configura en el catálogo y lo que se captura en cada propuesta, reduce errores de captura y acelera el proceso de planeación. Los campos objetivo de esta automatización son el dispositivo, el tipo de inventario y el tipo de contratación asociados al producto seleccionado.
       </p>
 
       <div style="margin-bottom:16px;">
         <div class="section-title" style="font-size:11px;margin-bottom:10px;">Campos candidatos a auto-poblarse en AdQuoteLine</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span class="code-ref">AdQuoteLine.AdSpaceSpecificationId</span>
-          <span class="code-ref">AdQuoteLineCreativeSizeType (tamaños por defecto del spec)</span>
-          <span class="code-ref">AdProductDefaultTargetCategory / AdProductDefaultTargetValue</span>
-          <span class="code-ref">AdQuoteLine.TVAM_GamLineItemId__c (en flujos PG/PD)</span>
+          <span class="code-ref">AdQuoteLine.TVAM_Dispositivo__c</span>
+          <span class="code-ref">AdQuoteLine.TVAM_TipoInventario__c</span>
+          <span class="code-ref">AdQuoteLine.SponsorshipType (Tipo de Contratación)</span>
         </div>
       </div>
 
@@ -1464,32 +1472,24 @@
       <div class="automation-option">
         <div class="automation-option-num">1</div>
         <div class="automation-option-body">
-          <div class="automation-option-title">Flow Record-Triggered en AdQuoteLine &nbsp;<span class="risk-badge bajo">Recomendado · sin código</span></div>
-          <div class="automation-option-desc">Before-save flow en <code>AdQuoteLine</code> (Create / Update cuando <code>Product2Id</code> cambia): busca el único <code>AdSpaceSpecProduct</code> vinculado al producto y actualiza <code>AdSpaceSpecificationId</code>. Mantenible por admin, no requiere Apex. Ideal si la regla <em>1 producto → 1 spec</em> se mantiene estricta. Limitación: si un producto tiene más de 1 <code>AdSpaceSpecProduct</code>, el flow necesita criterios adicionales de selección que lo volverían complejo.</div>
+          <div class="automation-option-title">Flow Record-Triggered &nbsp;<span class="risk-badge bajo">Recomendado · sin código</span></div>
+          <div class="automation-option-desc">Al agregar o modificar una línea en el Media Plan, un flow detecta el producto seleccionado y puebla automáticamente los campos de dispositivo, tipo de inventario y tipo de contratación. Mantenible por administrador, sin necesidad de código.</div>
         </div>
       </div>
 
       <div class="automation-option">
         <div class="automation-option-num">2</div>
         <div class="automation-option-body">
-          <div class="automation-option-title">TAF Apex Action &nbsp;<span class="risk-badge medio">Robusto · testeable</span></div>
-          <div class="automation-option-desc">Una clase action del Trigger Action Framework (<code>TVAM_AutoPopulateAdQuoteLineSpecAction</code>) invocada desde un record-triggered flow. Permite manejar casos edge: múltiples specs por producto, lógica de selección por contexto (período de vuelo, medio), y operaciones bulkificadas. Requiere test class con <span class="code-ref">SObjectFabricator</span> + <span class="code-ref">apex-mockery</span> según ADR-009. Recomendado si la lógica de selección involucra más de una condición o si se necesita poblar múltiples campos derivados.</div>
-        </div>
-      </div>
-
-      <div class="automation-option">
-        <div class="automation-option-num">3</div>
-        <div class="automation-option-body">
-          <div class="automation-option-title">Decision Table lookup &nbsp;<span class="risk-badge bajo">Declarativo</span></div>
-          <div class="automation-option-desc">Si el mapping producto → AdSpaceSpec es puramente data-driven y ya existe en los registros del catálogo (<code>AdSpaceSpecProduct</code>), puede exponerse como paso de lookup dentro del pricing procedure o un sub-flow de Product Discovery. Cuidado: mezclar lógica de auto-población con el pricing procedure añade complejidad al flujo de cálculo de precios — evaluar con el TA antes de usar esta ruta.</div>
+          <div class="automation-option-title">Apex Action (TAF) &nbsp;<span class="risk-badge medio">Robusto · testeable</span></div>
+          <div class="automation-option-desc">Misma experiencia para el usuario, implementada en Apex para mayor robustez y cobertura de pruebas. Recomendado si la lógica de auto-población crece o necesita manejar casos especiales.</div>
         </div>
       </div>
 
       <div class="callout info" style="margin-top:14px;margin-bottom:0;">
         <div class="callout-icon">📌</div>
         <div class="callout-body">
-          <strong>Prerrequisito para cualquier mecanismo de automatización</strong>
-          <p>La automatización solo es viable y mantenible si la regla <em>1 producto → 1 AdSpaceSpecProduct</em> se mantiene de forma estricta en el catálogo. Si un producto puede tener múltiples specs (ej. un bundle de medios), la automatización requiere lógica adicional de selección y el beneficio operativo se reduce significativamente.</p>
+          <strong>Dependencia de datos en catálogo</strong>
+          <p>La automatización requiere que los valores de <code>TVAM_Dispositivo__c</code>, <code>TVAM_TipoInventario__c</code> y <code>SponsorshipType</code> estén configurados en el catálogo (ya sea en <code>AdSpaceSpec</code> o en atributos del producto). Sin esos datos, la auto-población devuelve nulo. La fuente de verdad debe quedar definida antes de implementar el mecanismo.</p>
         </div>
       </div>
     </div>
@@ -1594,7 +1594,6 @@
     <span style="font-size:13px;color:var(--text-secondary)"><strong style="color:var(--text-primary)">Media Cloud Ad Sales — Modelo de Datos</strong> · Vista general + detalle por proceso</span>
     <div style="display:flex;gap:14px;margin-left:auto;flex-wrap:wrap;flex-shrink:0">
       <span style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text-secondary)"><span style="width:20px;height:14px;border-radius:3px;background:#ede9fe;border:1.5px solid #7c3aed;display:inline-block"></span>Media Cloud / DRO</span>
-      <span style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text-secondary)"><span style="width:20px;height:14px;border-radius:3px;background:white;border:2px solid #111827;display:inline-block"></span>Salesforce Standard</span>
       <span style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text-secondary)"><span style="width:20px;height:14px;border-radius:3px;background:#fdf0ea;border:1.5px solid #e85d1a;display:inline-block"></span>Custom TVA</span>
     </div>
   </div>
@@ -1617,35 +1616,69 @@
   <div class="dm-svg-wrap dm-wrap" data-diag="dm-overview" style="padding:20px;overflow:auto;min-height:400px">
     <div id="dm-overview" class="mermaid dm-mermaid" style="transform-origin:top left;transition:transform 0.15s ease">
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ede9fe', 'primaryBorderColor': '#7c3aed', 'primaryTextColor': '#3b0764', 'lineColor': '#6b7280', 'secondaryColor': '#f8f9fb', 'fontFamily': '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif', 'fontSize': '12px', 'edgeLabelBackground': '#f5f3ff'}}}%%
+graph LR
+    classDef tva fill:#fdf0ea,stroke:#e85d1a,color:#7c2d12
+    Account -->|owns| Creativo
+    Account -->|target of| AdSalesOpportunity
+    Account -->|for| Quote
+    Account -->|for| Contract
+    Account -->|for| Order
+    Account -->|server in| AdServerAccount
+    Contract -->|made up of| SalesContractLine
+    Contract -->|has| Balance
+    Contract -->|based on| Quote
+    AdSalesOpportunity -->|source of| AdQuote
+    Quote -->|based on| AdQuote
+    AdQuote -->|made up of| AdQuoteLine
+    Quote -->|based on| Order
+    AdQuoteLine -->|part of| AdQLDelivSchedule
+    AdQuoteLine -->|part of| AdQLDelivFrequency
+    AdQuoteLine -->|part of| AdQLHiatus
+    AdQuoteLine -->|part of| AdQLTargetExpression
+    AdQuoteLine -->|part of| AdQLTargetValue
+    AdQuoteLine -->|part of| AdQLAdSpaceSpec
+    AdQuoteLine -->|part of| AdQLCreativeSizeType
+    Order -->|made up of| AdOrderItem
+    AdOrderItem -->|part of| AdOIAdSpaceSpec
+    AdOrderItem -->|part of| AdOIDelivSchedule
+    AdOrderItem -->|part of| AdOIDelivFreq
+    AdOrderItem -->|part of| AdOIAdTarget
+    AdOrderItem -->|part of| AdOITargetValue
+    AdOrderItem -->|fulfilled by| CreativoArtPedido
+    CreativoArtPedido -->|uses| Creativo
+    Product2 -->|linked via| AdSpaceSpecProduct
+    AdSpaceSpecProduct -->|subject of| AdSpaceSpecification
+    Product2 -->|priced via| PricebookEntry
+    Product2 -->|fulfilled by| ProductFulfillScenario
+    ProductFulfillScenario -->|defined by| FulfillStepDefGroup
+    FulfillStepDefGroup -->|executed in| FulfillWorkspace
+    AdSpaceSpecification -->|compatible with| AdSpaceCreativeSizeType
+    AdServer -->|has| AdServerAccount
+    AdServer -->|offers| AdSpaceSpecification
+    MediaChannel -->|classifies| AdSpaceSpecification
+    class Balance,CreativoArtPedido,Creativo tva
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SECCIÓN 2 — MODELO DE CATÁLOGO Y FULFILLMENT
+       ═══════════════════════════════════════ -->
+  <div style="display:flex;align-items:baseline;gap:10px;margin:40px 0 8px">
+    <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text-primary)">Modelo de Catálogo y Fulfillment</h3>
+    <span style="font-size:12px;color:var(--text-secondary)">Product2 → AdSpaceSpecification · DRO · AdServer · MediaChannel</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+    <span style="font-size:11px;color:var(--text-secondary);margin-right:2px">Zoom:</span>
+    <button onclick="dmZoomBy('dm-product',-0.15)" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;line-height:1;color:var(--text-primary)">−</button>
+    <button onclick="dmZoomBy('dm-product', 0.15)" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;line-height:1;color:var(--text-primary)">+</button>
+    <button onclick="dmZoomRst('dm-product')" style="padding:0 10px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;color:var(--text-secondary)">Reset</button>
+    <span id="dm-product-zoom-lbl" style="font-size:11px;color:var(--text-secondary);min-width:36px">100%</span>
+    <span style="font-size:11px;color:var(--text-secondary);margin-left:6px">· Ctrl+scroll</span>
+  </div>
+  <div class="dm-svg-wrap dm-wrap" data-diag="dm-product" style="padding:20px;overflow:auto">
+    <div id="dm-product" class="mermaid dm-mermaid" style="transform-origin:top left;transition:transform 0.15s ease">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ede9fe', 'primaryBorderColor': '#7c3aed', 'primaryTextColor': '#3b0764', 'lineColor': '#6b7280', 'secondaryColor': '#f8f9fb', 'fontFamily': '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif', 'fontSize': '12px', 'edgeLabelBackground': '#f5f3ff'}}}%%
 erDiagram
-    Account ||--o{ AdSalesOpportunity : "target of"
-    Account ||--o{ Quote : "for"
-    Account ||--o{ Contract : "for"
-    Account ||--o{ Order : "for"
-    Account ||--o{ AdServerAccount : "server in"
-    Account ||--o{ Creativo : "owns"
-    Contract ||--o{ SalesContractLine : "made up of"
-    Contract ||--o{ Balance : "has"
-    Contract ||--o{ Quote : "based on"
-    AdSalesOpportunity ||--o{ AdQuote : "source of"
-    Quote ||--o{ AdQuote : "based on"
-    AdQuote ||--o{ AdQuoteLine : "made up of"
-    Quote ||--o{ Order : "based on"
-    AdQuoteLine ||--o{ AdQLDelivSchedule : "part of"
-    AdQuoteLine ||--o{ AdQLDelivFrequency : "part of"
-    AdQuoteLine ||--o{ AdQLHiatus : "part of"
-    AdQuoteLine ||--o{ AdQLTargetExpression : "part of"
-    AdQuoteLine ||--o{ AdQLTargetValue : "part of"
-    AdQuoteLine ||--o{ AdQLAdSpaceSpec : "part of"
-    AdQuoteLine ||--o{ AdQLCreativeSizeType : "part of"
-    Order ||--o{ AdOrderItem : "made up of"
-    AdOrderItem ||--o{ AdOIAdSpaceSpec : "part of"
-    AdOrderItem ||--o{ AdOIDelivSchedule : "part of"
-    AdOrderItem ||--o{ AdOIDelivFreq : "part of"
-    AdOrderItem ||--o{ AdOIAdTarget : "part of"
-    AdOrderItem ||--o{ AdOITargetValue : "part of"
-    AdOrderItem ||--o{ CreativoArtPedido : "fulfilled by"
-    CreativoArtPedido }o--|| Creativo : "uses"
     Product2 ||--o{ AdSpaceSpecProduct : "linked via"
     AdSpaceSpecProduct }o--|| AdSpaceSpecification : "subject of"
     Product2 ||--o{ PricebookEntry : "priced via"
@@ -1654,13 +1687,14 @@ erDiagram
     FulfillStepDefGroup ||--o{ FulfillWorkspace : "executed in"
     AdSpaceSpecification ||--o{ AdSpaceCreativeSizeType : "compatible with"
     AdServer ||--o{ AdServerAccount : "has"
+    AdServerAccount }o--|| Account : "for"
     AdServer ||--o{ AdSpaceSpecification : "offers"
     MediaChannel ||--o{ AdSpaceSpecification : "classifies"
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       SECCIÓN 2 — MODELO DE MEDIA PLAN
+       SECCIÓN 3 — MODELO DE MEDIA PLAN
        ═══════════════════════════════════════ -->
   <div style="display:flex;align-items:baseline;gap:10px;margin:40px 0 8px">
     <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text-primary)">Modelo de Media Plan</h3>
@@ -1698,7 +1732,7 @@ erDiagram
   </div>
 
   <!-- ═══════════════════════════════════════
-       SECCIÓN 3 — MODELO DE PEDIDO
+       SECCIÓN 4 — MODELO DE PEDIDO
        ═══════════════════════════════════════ -->
   <div style="display:flex;align-items:baseline;gap:10px;margin:40px 0 8px">
     <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text-primary)">Modelo de Pedido</h3>
@@ -1727,39 +1761,6 @@ erDiagram
     AdOrderItem ||--o{ AdOITargetValue : "part of"
     AdOrderItem ||--o{ CreativoArtPedido : "fulfilled by"
     CreativoArtPedido }o--|| Creativo : "uses"
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       SECCIÓN 4 — MODELO DE CATÁLOGO Y FULFILLMENT
-       ═══════════════════════════════════════ -->
-  <div style="display:flex;align-items:baseline;gap:10px;margin:40px 0 8px">
-    <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text-primary)">Modelo de Catálogo y Fulfillment</h3>
-    <span style="font-size:12px;color:var(--text-secondary)">Product2 → AdSpaceSpecification · DRO · AdServer · MediaChannel</span>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-    <span style="font-size:11px;color:var(--text-secondary);margin-right:2px">Zoom:</span>
-    <button onclick="dmZoomBy('dm-product',-0.15)" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;line-height:1;color:var(--text-primary)">−</button>
-    <button onclick="dmZoomBy('dm-product', 0.15)" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;line-height:1;color:var(--text-primary)">+</button>
-    <button onclick="dmZoomRst('dm-product')" style="padding:0 10px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;color:var(--text-secondary)">Reset</button>
-    <span id="dm-product-zoom-lbl" style="font-size:11px;color:var(--text-secondary);min-width:36px">100%</span>
-    <span style="font-size:11px;color:var(--text-secondary);margin-left:6px">· Ctrl+scroll</span>
-  </div>
-  <div class="dm-svg-wrap dm-wrap" data-diag="dm-product" style="padding:20px;overflow:auto">
-    <div id="dm-product" class="mermaid dm-mermaid" style="transform-origin:top left;transition:transform 0.15s ease">
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ede9fe', 'primaryBorderColor': '#7c3aed', 'primaryTextColor': '#3b0764', 'lineColor': '#6b7280', 'secondaryColor': '#f8f9fb', 'fontFamily': '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif', 'fontSize': '12px', 'edgeLabelBackground': '#f5f3ff'}}}%%
-erDiagram
-    Product2 ||--o{ AdSpaceSpecProduct : "linked via"
-    AdSpaceSpecProduct }o--|| AdSpaceSpecification : "subject of"
-    Product2 ||--o{ PricebookEntry : "priced via"
-    Product2 ||--o{ ProductFulfillScenario : "fulfilled by"
-    ProductFulfillScenario ||--o{ FulfillStepDefGroup : "defined by"
-    FulfillStepDefGroup ||--o{ FulfillWorkspace : "executed in"
-    AdSpaceSpecification ||--o{ AdSpaceCreativeSizeType : "compatible with"
-    AdServer ||--o{ AdServerAccount : "has"
-    AdServerAccount }o--|| Account : "for"
-    AdServer ||--o{ AdSpaceSpecification : "offers"
-    MediaChannel ||--o{ AdSpaceSpecification : "classifies"
     </div>
   </div>
 
@@ -1803,6 +1804,7 @@ erDiagram
     <table class="hdu-table">
       <thead>
         <tr>
+          <th class="sprint-col">Sprint</th>
           <th>Key</th>
           <th>Historia de Usuario</th>
           <th>Aprobada en Demo</th>
@@ -1810,61 +1812,73 @@ erDiagram
       </thead>
       <tbody>
         <tr>
+          <td><span class="hdu-sprint s1">S1</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-69" target="_blank" class="hdu-key">PR1066114-69</a></td>
           <td>Configuración de Catálogo y Motor de Reglas Revenue Cloud (Product &amp; Pricing Admin)</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-05-11</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-176" target="_blank" class="hdu-key">PR1066114-176</a></td>
           <td>Configuración de Productos — Display</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S2</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-182" target="_blank" class="hdu-key">PR1066114-182</a></td>
           <td>Configuración de Productos — Rich Media</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-05-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-79" target="_blank" class="hdu-key">PR1066114-79</a></td>
           <td>Configuración de Productos — Redes Sociales</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S2/S3</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-81" target="_blank" class="hdu-key">PR1066114-81</a></td>
           <td>Configuración de Productos — Producción</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S2/S3</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-265" target="_blank" class="hdu-key">PR1066114-265</a></td>
           <td>Configuración de Productos — Branded Content</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S4</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-370" target="_blank" class="hdu-key">PR1066114-370</a></td>
           <td>Configuración de Productos — Push Notification</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-371" target="_blank" class="hdu-key">PR1066114-371</a></td>
           <td>Configuración de Productos — Producto Integrado</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-380" target="_blank" class="hdu-key">PR1066114-380</a></td>
           <td>Configuración de Productos — Talento</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-196" target="_blank" class="hdu-key">PR1066114-196</a></td>
           <td>Configuración de Segmentación</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S4</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s67">S6·S7</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-115" target="_blank" class="hdu-key">PR1066114-115</a></td>
           <td>Catálogo Programático y Captura del Deal (PG/PD/Open)</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-08-03</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s7">S7</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-726" target="_blank" class="hdu-key">PR1066114-726</a></td>
           <td>Definir producto como Comercial o de Producción (Costo) en el catálogo</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-08-03</span></td>
@@ -1882,6 +1896,7 @@ erDiagram
     <table class="hdu-table">
       <thead>
         <tr>
+          <th class="sprint-col">Sprint</th>
           <th>Key</th>
           <th>Historia de Usuario</th>
           <th>Aprobada en Demo</th>
@@ -1889,56 +1904,67 @@ erDiagram
       </thead>
       <tbody>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-89" target="_blank" class="hdu-key">PR1066114-89</a></td>
           <td>Diseño de Campaña con Productos de Video en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-05-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-193" target="_blank" class="hdu-key">PR1066114-193</a></td>
           <td>Diseño de Campaña con Productos de Display en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-05-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-194" target="_blank" class="hdu-key">PR1066114-194</a></td>
           <td>Diseño de Campaña con Productos de Rich Media en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-05-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-94" target="_blank" class="hdu-key">PR1066114-94</a></td>
           <td>Diseño de Campaña con Productos de Producción en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S2/S3</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-91" target="_blank" class="hdu-key">PR1066114-91</a></td>
           <td>Diseño de Campaña con Productos de Redes Sociales en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S2/S3</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s3">S3</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-267" target="_blank" class="hdu-key">PR1066114-267</a></td>
           <td>Diseño de Campaña con Productos de Branded Content en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S4</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-377" target="_blank" class="hdu-key">PR1066114-377</a></td>
           <td>Diseño de Campaña con Productos de Push Notification en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-378" target="_blank" class="hdu-key">PR1066114-378</a></td>
           <td>Diseño de Campaña con Productos de Talento en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-379" target="_blank" class="hdu-key">PR1066114-379</a></td>
           <td>Diseño de Campaña con Productos de Pauta Externa en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-381" target="_blank" class="hdu-key">PR1066114-381</a></td>
           <td>Diseño de Campaña con Productos de Video para Disney en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-382" target="_blank" class="hdu-key">PR1066114-382</a></td>
           <td>Diseño de Campaña con Productos de Producto Integrado en el Media Planning Grid</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
@@ -1956,6 +1982,7 @@ erDiagram
     <table class="hdu-table">
       <thead>
         <tr>
+          <th class="sprint-col">Sprint</th>
           <th>Key</th>
           <th>Historia de Usuario</th>
           <th>Aprobada en Demo</th>
@@ -1963,26 +1990,31 @@ erDiagram
       </thead>
       <tbody>
         <tr>
+          <td><span class="hdu-sprint s2">S2</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-63" target="_blank" class="hdu-key">PR1066114-63</a></td>
           <td>Ajustes Generales a leyendas de campos (Media Plan, Order)</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">Demo S5</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s6">S6</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-61" target="_blank" class="hdu-key">PR1066114-61</a></td>
           <td>Compact Layout de Media Plan (5 campos clave)</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-07-20</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s4">S4</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-376" target="_blank" class="hdu-key">PR1066114-376</a></td>
           <td>List View nativa de Media Plan (filtros: Status, Owner, Account)</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-06-22</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s6">S6</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-585" target="_blank" class="hdu-key">PR1066114-585</a></td>
           <td>Edición masiva del campo Status en Media Plans desde List View</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-07-20</span></td>
         </tr>
         <tr>
+          <td><span class="hdu-sprint s6">S6</span></td>
           <td><a href="https://salesforce.atlassian.net/browse/PR1066114-589" target="_blank" class="hdu-key">PR1066114-589</a></td>
           <td>List Views nativas de Media Plan (Status con filtro; Owner y Account por orden alfabético) + List View Chart</td>
           <td><span class="hdu-check">✓</span> <span class="hdu-date" style="display:none">2026-07-20</span></td>
