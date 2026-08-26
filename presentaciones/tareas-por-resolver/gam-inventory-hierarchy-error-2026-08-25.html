@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Hallazgo — Error de Jerarquía en Segmentación de Inventario (GAM)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      padding: 32px 16px;
+    }
+
+    .page-header {
+      max-width: 960px;
+      margin: 0 auto 32px;
+    }
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #7f1d1d;
+    }
+    .page-header .meta {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    .page-header .meta span {
+      margin-right: 20px;
+    }
+
+    .summary-strip {
+      max-width: 960px;
+      margin: 0 auto 32px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px 20px;
+      border-left: 4px solid #d1d5db;
+    }
+    .stat-card.red    { border-color: #ef4444; }
+    .stat-card.amber  { border-color: #f59e0b; }
+    .stat-card.green  { border-color: #10b981; }
+    .stat-card .num   { font-size: 1.5rem; font-weight: 700; word-break: break-all; }
+    .stat-card.red    .num { color: #ef4444; }
+    .stat-card.amber  .num { color: #f59e0b; }
+    .stat-card.green  .num { color: #10b981; }
+    .stat-card .label { font-size: 0.75rem; color: #6b7280; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section {
+      max-width: 960px;
+      margin: 0 auto 28px;
+    }
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6b7280;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .badge {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .badge.resolved  { background: #d1fae5; color: #065f46; }
+    .badge.qa        { background: #fee2e2; color: #991b1b; }
+    .badge.rule      { background: #dbeafe; color: #1e40af; }
+
+    .card-id {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #9ca3af;
+      min-width: 52px;
+      margin-top: 3px;
+    }
+    .card-title-block { flex: 1; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    .card-body {
+      padding: 16px 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .row { display: grid; grid-template-columns: 160px 1fr; gap: 8px; align-items: start; }
+    .row-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+    .row-value { font-size: 0.875rem; color: #374151; line-height: 1.5; }
+
+    code, .mono {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      font-size: 0.78rem;
+    }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #b91c1c;
+      line-height: 1.5;
+    }
+
+    .action-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      line-height: 1.5;
+    }
+
+    .warning-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #92400e;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #1e40af;
+      line-height: 1.5;
+    }
+
+    /* Hierarchy tree */
+    .tree {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.82rem;
+      line-height: 2;
+    }
+    .tree .lvl1 { color: #f87171; }
+    .tree .lvl2 { color: #fbbf24; padding-left: 24px; }
+    .tree .lvl3 { color: #86efac; padding-left: 48px; }
+    .tree .badge-inline {
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    .tree .b-abuelo { background: rgba(248,113,113,0.2); color: #f87171; border: 1px solid rgba(248,113,113,0.4); }
+    .tree .b-padre  { background: rgba(251,191,36,0.2);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.4);  }
+    .tree .b-hijo   { background: rgba(134,239,172,0.2); color: #86efac; border: 1px solid rgba(134,239,172,0.4); }
+
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+    pre .del { color: #f87171; background: rgba(239,68,68,0.15); display: block; }
+    pre .add { color: #86efac; background: rgba(34,197,94,0.12); display: block; }
+    pre .ctx { color: #94a3b8; }
+
+    @media (max-width: 640px) {
+      .summary-strip { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .row-label { margin-bottom: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Registro de Hallazgo QA — Error de Jerarquía en Segmentación de Inventario</h1>
+    <div class="meta">
+      <span>📅 2026-08-25</span>
+      <span>👤 Daniel Murcia</span>
+      <span>🔗 Integración: Creación de Propuestas · GAM API</span>
+      <span>⚠️ Contexto: Pruebas QA · Entorno de prueba</span>
+    </div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="stat-card red">
+      <div class="num">API ERROR</div>
+      <div class="label">Código de error GAM</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="num">Regla de negocio</div>
+      <div class="label">Tipo de causa raíz</div>
+    </div>
+    <div class="stat-card green">
+      <div class="num">Documentada</div>
+      <div class="label">Estado del hallazgo</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- HALLAZGO PRINCIPAL                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">⚠️ Hallazgo — Incidencia detectada en QA</div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">QA #1</span>
+        <div class="card-title-block">
+          <div class="card-title">Error de validación por redundancia jerárquica en Ad Units</div>
+          <div class="card-subtitle">Integración: inyección de <code>targetedAdUnits</code> · Bloque de segmentación de inventario</div>
+        </div>
+        <span class="badge qa">Error QA</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Código de Error API</span>
+          <div class="row-value">
+            <div class="error-box">INVENTORY_UNIT_CANNOT_BE_TARGETED_IF_ANCESTOR_IS_TARGETED</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Descripción del contexto</span>
+          <span class="row-value">
+            Durante las pruebas de calidad (QA) en la integración de creación de propuestas, se identificó una interrupción en el servicio al intentar inyectar múltiples unidades de anuncio (<code>targetedAdUnits</code>) en el bloque de segmentación de inventario. El sistema de Google Ad Manager rechazó la petición lanzando un error de ancestro.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CAUSA RAÍZ                                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">🔍 Análisis y Causa Raíz</div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">ROOT</span>
+        <div class="card-title-block">
+          <div class="card-title">Regla de negocio GAM — ancestro y descendiente no pueden coexistir en el mismo request</div>
+          <div class="card-subtitle">includeDescendants: true · Segmentación simultánea padre + hijo</div>
+        </div>
+        <span class="badge rule">Regla GAM</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Causa raíz</span>
+          <span class="row-value">
+            No es posible segmentar simultáneamente a una unidad de anuncio descendiente y a su ancestro directo en el mismo request. Cuando la integración envía <code>includeDescendants: true</code>, la API asume que el hijo ya está implícitamente incluido al apuntar al padre o abuelo. Si además se envía el ID del hijo de forma explícita, GAM detecta la redundancia y rechaza la petición.
+          </span>
+        </div>
+        <div class="row">
+          <span class="row-label">Jerarquía de inventario de prueba</span>
+          <div class="row-value">
+            <div class="tree">
+              <div class="lvl1">📦 Kapup Test Network &nbsp;<span class="badge-inline b-abuelo">Nivel 1 · Abuelo · Red completa</span></div>
+              <div class="lvl2">📁 Kapup &nbsp;<span class="badge-inline b-padre">Nivel 2 · Padre</span></div>
+              <div class="lvl3">📄 NivelTop &nbsp;<span class="badge-inline b-hijo">Nivel 3 · Hijo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Escenario de fallo</span>
+          <div class="row-value">
+            <div class="warning-box">
+              Al apuntar a <strong>"Kapup Test Network"</strong> (o <strong>"Kapup"</strong>) con <code>includeDescendants: true</code>, el hijo <strong>"NivelTop"</strong> queda implícitamente incluido.<br /><br />
+              Si el payload también envía el ID de <strong>"NivelTop"</strong> de manera explícita, la API detecta la redundancia jerárquica y lanza:<br />
+              <code>INVENTORY_UNIT_CANNOT_BE_TARGETED_IF_ANCESTOR_IS_TARGETED</code>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Comportamiento del payload</span>
+          <div class="row-value">
+<pre><span class="ctx">// Payload problemático — envía ancestro + descendiente en el mismo bloque:</span>
+<span class="del">- targetedAdUnits: [</span>
+<span class="del">-   { adUnitId: "kapupTestNetwork", includeDescendants: true },  // Nivel 1 (Abuelo)</span>
+<span class="del">-   { adUnitId: "nivelTop",         includeDescendants: true }   // Nivel 3 (Hijo) ← CONFLICTO</span>
+<span class="del">- ]</span>
+
+<span class="ctx">// Payload válido — solo el nivel más alto deseado en la jerarquía:</span>
+<span class="add">+ targetedAdUnits: [</span>
+<span class="add">+   { adUnitId: "kapupTestNetwork", includeDescendants: true }   // Nivel 1 (Abuelo) — incluye todo</span>
+<span class="add">+ ]</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- RESOLUCIÓN Y BUENAS PRÁCTICAS                          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">✅ Resolución y Buenas Prácticas</div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-id">FIX</span>
+        <div class="card-title-block">
+          <div class="card-title">Reglas de integración para evitar colisión jerárquica en producción</div>
+          <div class="card-subtitle">Aplicable al bloque <code>targetedAdUnits</code> de cualquier request de segmentación de inventario</div>
+        </div>
+        <span class="badge resolved">Documentado</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label">Regla 1</span>
+          <div class="row-value">
+            <div class="action-box">
+              <strong>Enviar solo el ID del nivel más alto deseado.</strong><br />
+              Si se segmenta a un nodo padre o abuelo con <code>includeDescendants: true</code>, eliminar del payload todos los IDs descendientes directos. El sistema GAM los incluye implícitamente.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Regla 2</span>
+          <div class="row-value">
+            <div class="action-box">
+              <strong>Múltiples IDs solo si son ramas independientes ("hermanos").</strong><br />
+              Es válido enviar varios IDs en el mismo request únicamente si estos operan como nodos del mismo nivel sin relación padre-hijo entre sí (e.g., dos hijos distintos de un mismo padre, sin incluir al padre).
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Validación recomendada</span>
+          <div class="row-value">
+            <div class="info-box">
+              Antes de construir el payload de <code>targetedAdUnits</code>, la integración debe verificar que ningún ID en la lista sea ancestro de otro ID de la misma lista. Si se detecta esa condición, conservar solo el ID del nivel más alto y eliminar a sus descendientes del array.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Ejemplo correcto (hermanos)</span>
+          <div class="row-value">
+<pre><span class="ctx">// Válido — "Kapup" y otro nodo hermano sin relación padre-hijo entre ellos:</span>
+<span class="add">+ targetedAdUnits: [</span>
+<span class="add">+   { adUnitId: "kapup",      includeDescendants: true },  // Hermano A</span>
+<span class="add">+   { adUnitId: "otroNodo",   includeDescendants: true }   // Hermano B (rama separada)</span>
+<span class="add">+ ]</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:960px;margin:0 auto;padding-bottom:48px;text-align:center;font-size:0.75rem;color:#9ca3af">
+    Hallazgo reportado el 2026-08-25 · QA — Integración de Creación de Propuestas · mediacloud-tvazteca
+  </div>
+
+</body>
+</html>
