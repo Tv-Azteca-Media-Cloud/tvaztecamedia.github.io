@@ -681,7 +681,6 @@
     <p>Análisis: Enfoque actual (best practice) vs. requerimiento del cliente</p>
   </div>
   <div class="header-meta">
-    <div>Ambiente: TVA QA</div>
     <div>Producto analizado: Banner Display</div>
     <div>Fecha: 2026-08-24</div>
   </div>
@@ -692,6 +691,7 @@
   <button class="tab-btn active" onclick="switchTab('analysis', this)">📄 Análisis de Enfoques</button>
   <button class="tab-btn" onclick="switchTab('impacto', this)">⚡ Impacto Técnico</button>
   <button class="tab-btn" onclick="switchTab('datamodel', this)">🗄 Modelo de Datos</button>
+  <button class="tab-btn" onclick="switchTab('explorer', this)">📦 Productos Configurados</button>
   <button class="tab-btn" onclick="switchTab('referencias', this)">📚 Referencias</button>
 </nav>
 
@@ -714,7 +714,7 @@
     <div class="org-state-header">
       <span>📦</span>
       Catálogo en la org
-      <div class="org-badge">TVA QA</div>
+      <div class="org-badge">Catálogo</div>
     </div>
     <div class="org-state-body">
       <div class="product-card">
@@ -1221,7 +1221,7 @@
   </div>
 
   <div class="page-footer">
-    <span>Generado desde datos reales de TVA QA · Herramienta: Salesforce CLI + SOQL</span>
+    <span>Generado desde datos reales del org · Herramienta: Salesforce CLI + SOQL</span>
     <span>TV Azteca Media · Salesforce Implementation · 2026-08-24</span>
   </div>
 
@@ -2031,6 +2031,40 @@ erDiagram
 </div><!-- /container -->
 </div><!-- /tab-antecedentes -->
 
+<!-- TAB: Productos Configurados -->
+<div id="tab-explorer" class="tab-panel">
+<div class="container" style="padding-top:32px;padding-bottom:48px">
+
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:18px;font-weight:700;color:#0f2d52;margin-bottom:4px">Productos Configurados</h2>
+    <p style="color:#6b7280;font-size:13px">46 productos activos · 112 vínculos AdSpaceSpecification · 2026-08-24</p>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <input id="prod-search" type="text" placeholder="Buscar producto, código o spec…"
+      style="padding:7px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none;width:280px;background:#f9fafb;font-family:inherit">
+    <div id="prod-filters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <span id="prod-count" style="margin-left:auto;font-size:12px;color:#9ca3af"></span>
+  </div>
+
+  <div style="overflow-x:auto;border:1px solid #dde1ea;border-radius:8px">
+    <table id="prod-table" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:#f1f3f7">
+          <th style="padding:9px 10px;text-align:center;border-bottom:2px solid #dde1ea;color:#374151;font-weight:700;white-space:nowrap;width:40px">#</th>
+          <th style="padding:9px 14px;text-align:left;border-bottom:2px solid #dde1ea;color:#374151;font-weight:700;white-space:nowrap">Producto</th>
+          <th style="padding:9px 14px;text-align:left;border-bottom:2px solid #dde1ea;color:#374151;font-weight:700;white-space:nowrap">Código</th>
+          <th style="padding:9px 14px;text-align:left;border-bottom:2px solid #dde1ea;color:#374151;font-weight:700;white-space:nowrap">Categoría</th>
+          <th style="padding:9px 14px;text-align:left;border-bottom:2px solid #dde1ea;color:#374151;font-weight:700">AdSpaceSpecification</th>
+        </tr>
+      </thead>
+      <tbody id="prod-tbody"></tbody>
+    </table>
+  </div>
+
+</div>
+</div><!-- /tab-explorer -->
+
 
 <script>
 // ── Tab switching ──
@@ -2046,7 +2080,7 @@ function switchTab(id, btn) {
   }
 }
 
-// ── Explorer data (TVA QA · SOQL 2026-08-24) ──
+// ── Explorer data (SOQL 2026-08-24) ──
 const EXP_RAW = [
   ["Acción especial (virtual, cintillo, marcador y cortinilla)","PROD_ACCI_ESPE_VIRT_CINT_001","TVAzteca - Transmisión de Eventos Especiales - CTV","Transmisión de Eventos Especiales","CTV","","true","true"],
   ["Acción especial (virtual, cintillo, marcador y cortinilla)","PROD_ACCI_ESPE_VIRT_CINT_001","TVAzteca - Transmisión de Eventos Especiales - Desktop","Transmisión de Eventos Especiales","Desktop","","true","true"],
@@ -2415,6 +2449,109 @@ document.addEventListener('wheel', function(e) {
     },
     er: { diagramPadding: 24, layoutDirection: 'TB', minEntityWidth: 120 }
   });
+</script>
+<script>
+// ── Productos Configurados — tabla simple (sobreescribe el explorer SVG) ──
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function initExplorer() {
+  const cats = ['Todos','Display','Video','Notas','CTV/Streaming','Social','Transmisión','Paquetes'];
+  window._prodCat = 'Todos';
+  const filtersEl = document.getElementById('prod-filters');
+  filtersEl.textContent = '';
+  cats.forEach(c => {
+    const btn = document.createElement('button');
+    btn.textContent = c;
+    btn.style.cssText = `padding:3px 10px;border-radius:20px;border:1px solid #d1d5db;font-size:11px;cursor:pointer;background:${c==='Todos'?'#0f2d52':'white'};color:${c==='Todos'?'white':'#4b5563'};font-weight:500;white-space:nowrap;font-family:inherit`;
+    btn.addEventListener('click', () => prodSetFilter(c, btn));
+    filtersEl.appendChild(btn);
+  });
+  document.getElementById('prod-search').addEventListener('input', e => renderProdTable(e.target.value, window._prodCat));
+  renderProdTable('', 'Todos');
+}
+
+function prodSetFilter(cat, btn) {
+  window._prodCat = cat;
+  document.querySelectorAll('#prod-filters button').forEach(b => { b.style.background='white'; b.style.color='#4b5563'; });
+  btn.style.background='#0f2d52'; btn.style.color='white';
+  renderProdTable(document.getElementById('prod-search').value, cat);
+}
+
+function renderProdTable(q, cat) {
+  q = (q||'').toLowerCase();
+  const CAT_ORDER = ['Display','Video','Notas','CTV/Streaming','Social','Transmisión','Paquetes','Otros'];
+  // Recopilar productos únicos con sus specs, ordenados por categoría → nombre
+  const prodMap = {};
+  for (const r of EXP_RAW) {
+    const [name,code,specName] = r;
+    const c = EXP_CATS[code]||'Otros';
+    if (cat !== 'Todos' && c !== cat) continue;
+    if (!prodMap[code]) prodMap[code] = {name, code, cat:c, specs:[]};
+    prodMap[code].specs.push(specName);
+  }
+  let prods = Object.values(prodMap);
+  // filtro de búsqueda
+  if (q) prods = prods.filter(p =>
+    p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q) ||
+    p.specs.some(s => s.toLowerCase().includes(q))
+  );
+  // ordenar por categoría luego por nombre
+  prods.sort((a,b) => {
+    const ci = CAT_ORDER.indexOf(a.cat) - CAT_ORDER.indexOf(b.cat);
+    return ci !== 0 ? ci : a.name.localeCompare(b.name, 'es');
+  });
+
+  // contar filas totales
+  const totalRows = prods.reduce((s,p)=>s+p.specs.length, 0);
+  document.getElementById('prod-count').textContent = `${prods.length} productos · ${totalRows} specs`;
+
+  const tbody = document.getElementById('prod-tbody');
+  tbody.textContent = '';
+  const border = '1px solid #e5e7eb';
+
+  let num = 0;
+  prods.forEach((p, pi) => {
+    num++;
+    const bg = pi % 2 === 0 ? '#ffffff' : '#f9fafb';
+    const col = EXP_CAT_COLORS[p.cat]||'#666';
+    p.specs.forEach((specName, si) => {
+      const tr = document.createElement('tr');
+      const base = `padding:8px 14px;border-bottom:${border};background:${bg}`;
+      if (si === 0) {
+        // columna #
+        const tdN = document.createElement('td');
+        tdN.style.cssText = `padding:8px 10px;border-bottom:${border};background:${bg};text-align:center;color:#9ca3af;font-size:12px;font-weight:600;vertical-align:top`;
+        tdN.textContent = num;
+        // nombre
+        const tdName = document.createElement('td');
+        tdName.style.cssText = base+';font-weight:600;color:#111827;vertical-align:top';
+        tdName.textContent = p.name;
+        // código
+        const tdCode = document.createElement('td');
+        tdCode.style.cssText = base+';vertical-align:top';
+        const codeEl = document.createElement('code');
+        codeEl.style.cssText = 'font-size:11px;color:#6b7280';
+        codeEl.textContent = p.code;
+        tdCode.appendChild(codeEl);
+        // categoría
+        const tdCat = document.createElement('td');
+        tdCat.style.cssText = base+';vertical-align:top';
+        const span = document.createElement('span');
+        span.style.cssText = `padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:${col}22;color:${col}`;
+        span.textContent = p.cat;
+        tdCat.appendChild(span);
+        tr.appendChild(tdN); tr.appendChild(tdName); tr.appendChild(tdCode); tr.appendChild(tdCat);
+      } else {
+        ['','','',''].forEach(() => { const td=document.createElement('td'); td.style.cssText=base; tr.appendChild(td); });
+      }
+      const tdSpec = document.createElement('td');
+      tdSpec.style.cssText = base+';color:#374151';
+      tdSpec.textContent = specName;
+      tr.appendChild(tdSpec);
+      tbody.appendChild(tr);
+    });
+  });
+}
 </script>
 </body>
 </html>
