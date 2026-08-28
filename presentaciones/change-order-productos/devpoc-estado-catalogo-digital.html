@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>DevPoc · Estado Catálogo Digital · 2026-08-28</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Salesforce Sans', 'Segoe UI', Arial, sans-serif;
+    background: #f3f2f2;
+    color: #3e3e3c;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  body { padding-bottom: 80px; }
+
+  .topbar {
+    background: #032d60;
+    color: #fff;
+    padding: 0 32px;
+    height: 48px;
+    display: flex; align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar .brand { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
+  .topbar .dot { width: 6px; height: 6px; background: #ffb75d; border-radius: 50%; margin: 0 14px; }
+  .topbar .subtitle { font-size: 12px; opacity: 0.85; font-weight: 400; }
+  .topbar .right { margin-left: auto; font-size: 11px; opacity: 0.75; }
+
+  .hero {
+    background: linear-gradient(135deg, #032d60 0%, #0070d2 100%);
+    color: #fff;
+    padding: 36px 48px 44px;
+  }
+  .hero .kicker {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #ffb75d; font-weight: 600; margin-bottom: 12px;
+  }
+  .hero h1 { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+  .hero .lead { font-size: 14px; opacity: 0.92; max-width: 900px; }
+  .hero .meta {
+    margin-top: 22px; display: flex; gap: 32px; flex-wrap: wrap;
+    font-size: 12px; opacity: 0.9;
+  }
+  .hero .meta strong { display: block; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; opacity: 0.75; margin-bottom: 2px; }
+
+  /* Tabs */
+  .tabs-bar {
+    background: #fff; border-bottom: 1px solid #dddbda;
+    padding: 0 48px;
+    display: flex; gap: 0;
+    position: sticky; top: 48px; z-index: 90;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .tab-btn {
+    padding: 14px 22px;
+    font-size: 13px; font-weight: 500;
+    color: #706e6b;
+    border: none; background: none; cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .tab-btn.active { color: #0070d2; border-bottom-color: #0070d2; font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: #3e3e3c; border-bottom-color: #dddbda; }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 48px; }
+
+  section { margin-bottom: 36px; }
+  h2 {
+    font-size: 18px; font-weight: 600; color: #032d60;
+    padding-bottom: 8px; margin-bottom: 18px;
+    border-bottom: 2px solid #0070d2;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  h2 .badge {
+    display: inline-block; background: #0070d2; color: #fff;
+    font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600;
+  }
+  h3 { font-size: 14px; font-weight: 600; color: #032d60; margin: 18px 0 10px; }
+  p { margin-bottom: 10px; }
+
+  /* KPI Grid */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  .kpi {
+    background: #fff; border: 1px solid #dddbda; border-radius: 4px;
+    padding: 16px 18px; text-align: center;
+  }
+  .kpi .num { font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .kpi .lbl { font-size: 11px; color: #706e6b; text-transform: uppercase; letter-spacing: 0.8px; }
+  .kpi .sub { font-size: 11px; color: #706e6b; margin-top: 4px; }
+  .kpi.ok .num { color: #2e844a; }
+  .kpi.warn .num { color: #dd7a01; }
+  .kpi.info .num { color: #0070d2; }
+
+  /* Status Table */
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #dddbda; border-radius: 4px; overflow: hidden; margin-bottom: 18px; }
+  th { background: #f4f6f9; color: #032d60; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 14px; text-align: left; border-bottom: 1px solid #dddbda; }
+  td { padding: 9px 14px; border-bottom: 1px solid #f3f2f2; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf9; }
+
+  .pill {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .pill-green  { background: #e3f5e1; color: #2e844a; }
+  .pill-yellow { background: #fef0cd; color: #8e6007; }
+  .pill-red    { background: #fde8e8; color: #ba0517; }
+  .pill-blue   { background: #e0f0ff; color: #014486; }
+  .pill-gray   { background: #f3f2f2; color: #706e6b; }
+
+  /* Alert boxes */
+  .alert {
+    border-radius: 4px; padding: 14px 18px; margin-bottom: 18px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .alert-warn { background: #fef7e6; border: 1px solid #ffb75d; }
+  .alert-danger { background: #fde8e8; border: 1px solid #c23934; }
+  .alert-ok { background: #e3f5e1; border: 1px solid #4bca81; }
+  .alert-info { background: #e0f0ff; border: 1px solid #0070d2; }
+  .alert .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert .body { font-size: 13px; }
+  .alert .body strong { display: block; font-weight: 600; margin-bottom: 4px; }
+
+  /* Product list */
+  .prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  .prod-card {
+    background: #fff; border: 1px solid #dddbda; border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .prod-card .code { font-size: 10px; color: #706e6b; font-family: monospace; margin-bottom: 3px; }
+  .prod-card .name { font-size: 12px; font-weight: 600; color: #032d60; }
+  .prod-card .tag { margin-top: 6px; }
+
+  /* Script section */
+  .script-intro {
+    background: #fff; border: 1px solid #dddbda; border-radius: 4px;
+    padding: 18px 22px; margin-bottom: 20px;
+  }
+  .check-block {
+    background: #fff; border: 1px solid #dddbda; border-radius: 4px;
+    margin-bottom: 16px; overflow: hidden;
+  }
+  .check-header {
+    background: #f4f6f9; padding: 12px 18px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid #dddbda;
+  }
+  .check-num {
+    display: inline-block; background: #0070d2; color: #fff;
+    width: 24px; height: 24px; border-radius: 50%;
+    font-size: 12px; font-weight: 700; text-align: center; line-height: 24px;
+    flex-shrink: 0;
+  }
+  .check-title { font-size: 13px; font-weight: 600; color: #032d60; }
+  .check-desc { font-size: 12px; color: #706e6b; margin-left: auto; }
+  .check-body { padding: 14px 18px; }
+  .check-body p { font-size: 12px; color: #3e3e3c; margin-bottom: 10px; }
+  pre {
+    background: #16171a; color: #e0e0e0; border-radius: 4px;
+    padding: 14px 18px; font-size: 12px; font-family: 'SF Mono', 'Consolas', monospace;
+    line-height: 1.6; overflow-x: auto; margin: 0;
+  }
+  pre .cm  { color: #6a9955; }
+  pre .kw  { color: #569cd6; }
+  pre .str { color: #ce9178; }
+  pre .fn  { color: #dcdcaa; }
+  pre .num { color: #b5cea8; }
+  pre .ok  { color: #4ec9b0; }
+  pre .err { color: #f48771; }
+
+  .expected-output {
+    background: #1e2020; color: #9cdcfe;
+    border-radius: 0 0 4px 4px; padding: 10px 18px;
+    font-size: 11px; font-family: monospace;
+    border-top: 1px solid #333;
+  }
+  .expected-output .label { color: #706e6b; font-style: italic; margin-bottom: 4px; display: block; }
+
+  .run-box {
+    background: #032d60; color: #fff; border-radius: 4px;
+    padding: 18px 22px; margin-top: 24px;
+  }
+  .run-box h3 { color: #ffb75d; margin-top: 0; margin-bottom: 10px; }
+  .run-box pre { background: #021e42; color: #9cdcfe; border: 1px solid #0a4a8a; }
+
+  .footnote { font-size: 11px; color: #706e6b; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">TVAzteca Media Cloud</span>
+  <span class="dot"></span>
+  <span class="subtitle">DevPoc — Estado Catálogo Digital</span>
+  <span class="right">Diagnóstico · 2026-08-28</span>
+</div>
+
+<div class="hero">
+  <div class="kicker">Diagnóstico Post-Carga · aztecamedia--devpoc</div>
+  <h1>Catálogo Digital — Estado actual vs. Plan</h1>
+  <p class="lead">
+    Análisis del estado del sandbox DevPoc comparado contra el plan de ejecución
+    <em>CatalogoDigital_Reconfiguracion_PlanEjecucion</em>. Gustavo ya cargó la mayor
+    parte del catálogo. Este documento muestra qué está hecho, qué queda pendiente,
+    y el script de validación F6 listo para ejecutar.
+  </p>
+  <div class="meta">
+    <div><strong>Sandbox</strong>aztecamedia--devpoc</div>
+    <div><strong>Alias SF CLI</strong>DevPoc</div>
+    <div><strong>Fecha diagnóstico</strong>2026-08-28</div>
+    <div><strong>Completitud estimada</strong>~90 %</div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('estado')">Estado Actual</button>
+  <button class="tab-btn" onclick="switchTab('script')">Script F6 · Validación</button>
+  <button class="tab-btn" onclick="switchTab('catalogo')">Catálogo Completo</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ TAB 1: ESTADO ═══ -->
+<div id="tab-estado" class="tab-pane active">
+<div class="wrap">
+
+  <section>
+    <div class="kpi-grid">
+      <div class="kpi ok">
+        <div class="num">75</div>
+        <div class="lbl">Product2 activos</div>
+        <div class="sub">objetivo del plan: 70</div>
+      </div>
+      <div class="kpi ok">
+        <div class="num">20</div>
+        <div class="lbl">ProductCategories</div>
+        <div class="sub">7 medios + 13 otros</div>
+      </div>
+      <div class="kpi ok">
+        <div class="num">6/6</div>
+        <div class="lbl">AdUnits faltantes</div>
+        <div class="sub">todos presentes</div>
+      </div>
+      <div class="kpi ok">
+        <div class="num">138</div>
+        <div class="lbl">AdSpaceSpecProduct</div>
+        <div class="sub">junctions</div>
+      </div>
+      <div class="kpi ok">
+        <div class="num">38</div>
+        <div class="lbl">ProdFulfillmentScenario</div>
+        <div class="sub">creados en DRO</div>
+      </div>
+    </div>
+
+    <div class="alert alert-ok">
+      <div class="icon">✅</div>
+      <div class="body">
+        <strong>~90 % del plan completado por Gustavo</strong>
+        Las fases F0.5 (AdUnits), F0.6 (ProductCategories), F0.7 (renombrado AdSpaceSpecs),
+        F1 (Bucket C — clones), F2 (Bucket D — nuevos), F3 (Bucket B — reconfigurar),
+        F4 (Bucket A — renombrar) están materializadas en los datos del org.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Fases del plan vs. estado actual</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Fase</th>
+          <th>Descripción</th>
+          <th>Objetivo</th>
+          <th>Estado</th>
+          <th>Evidencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>F0.5</strong></td>
+          <td>Crear 6 AdUnits faltantes en AdTargetSegmentValue</td>
+          <td>6 registros</td>
+          <td><span class="pill pill-green">✅ Done</span></td>
+          <td>Los 6 nombres exactos del plan existen en el org (incl. <em>AZA-Envivo-USA</em>, <em>Apps-USA-App-EnVivo-USA-Series-ABCForense</em>)</td>
+        </tr>
+        <tr>
+          <td><strong>F0.6</strong></td>
+          <td>Crear ProductCategories por Medio (7)</td>
+          <td>7 nuevas</td>
+          <td><span class="pill pill-green">✅ Done</span></td>
+          <td>TV Azteca, UnoTV, Claro Sports, Pluto, Tubi, Disney, YT — todos presentes. 13 adicionales.</td>
+        </tr>
+        <tr>
+          <td><strong>F0.7</strong></td>
+          <td>Renombrar 5 AdSpaceSpecs (TV azteca → TVAzteca; Claro Sport → Claro Sports)</td>
+          <td>5 renombradas</td>
+          <td><span class="pill pill-green">✅ Done</span></td>
+          <td>Las 77 AdSpaceSpecs relevantes ya usan prefijo <code>TVAzteca</code> y <code>Claro Sports</code> (con 's'). No hay registros con el nombre viejo.</td>
+        </tr>
+        <tr>
+          <td><strong>F1</strong></td>
+          <td>Bucket C — Clonar 18 productos por Medio con variantes CTV</td>
+          <td>18 clones</td>
+          <td><span class="pill pill-green">✅ Done</span></td>
+          <td>Variants CTV presentes: Pluto CTV, Tubi CTV, Disney CTV, TV Azteca Video Pre-roll CTV, etc.</td>
+        </tr>
+        <tr>
+          <td><strong>F2</strong></td>
+          <td>Bucket D — Crear 6 productos desde cero</td>
+          <td>6 nuevos</td>
+          <td><span class="pill pill-green">✅ Done</span></td>
+          <td><em>Programmatic Display</em>, <em>Programmatic Video</em>, <em>Programmatic Video CTV</em>, <em>YouTube Non-Skippable</em> (TV Azteca, Claro Sports, UnoTV) presentes.</td>
+        </tr>
+        <tr>
+          <td><strong>F3</strong></td>
+          <td>Bucket B — Renombrar + reconfigurar 13 productos base</td>
+          <td>13 actualizados</td>
+          <td><span class="pill pill-yellow">⚠️ Verificar</span></td>
+          <td>Los productos existen con nuevos nombres. Los AdSpaceSpecProduct de reconfiguracion deben confirmarse con el script F6.</td>
+        </tr>
+        <tr>
+          <td><strong>F4</strong></td>
+          <td>Bucket A — Renombrar 33 productos (solo Name)</td>
+          <td>33 renombrados</td>
+          <td><span class="pill pill-yellow">⚠️ Verificar</span></td>
+          <td>Productos con nomenclatura correcta <code>Medio - Tipo</code> visibles. Confirmar con F6 que no quedan nombres viejos.</td>
+        </tr>
+        <tr>
+          <td><strong>F5.5</strong></td>
+          <td>DRO Publish/Activate fulfillment scenarios</td>
+          <td>38 scenarios activados</td>
+          <td><span class="pill pill-red">❌ Pendiente</span></td>
+          <td>Los 38 ProductFulfillmentScenario están creados pero <strong>requieren activación manual en DRO Designer UI</strong>. No automatizable vía API.</td>
+        </tr>
+        <tr>
+          <td><strong>F6</strong></td>
+          <td>Validación de cobertura completa</td>
+          <td>0 huecos</td>
+          <td><span class="pill pill-blue">🔵 Listo para correr</span></td>
+          <td>Script disponible en la pestaña "Script F6 · Validación". No ejecutado aún.</td>
+        </tr>
+        <tr>
+          <td><strong>F7</strong></td>
+          <td>E2E test (manual)</td>
+          <td>Flujo completo verificado</td>
+          <td><span class="pill pill-gray">⏳ Post-DRO</span></td>
+          <td>Depende de F5.5 completado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>5 productos extra — revisión requerida <span class="badge">⚠️</span></h2>
+
+    <p>El plan estimaba un target de <strong>70 productos</strong>. DevPoc tiene <strong>75</strong>. Los 5 extras necesitan revisión antes del F6 para decidir si se mantienen, eliminan o estandarizan.</p>
+
+    <div class="prod-grid">
+      <div class="prod-card">
+        <div class="code">MEDIA-TP-GAM</div>
+        <div class="name">Media TP GAM</div>
+        <div class="tag"><span class="pill pill-red">Sin prefijo Medio</span></div>
+        <p style="font-size:11px;color:#706e6b;margin-top:6px;">ProductCode fuera del patrón estándar. Probable producto legacy o de prueba. Candidato a eliminar.</p>
+      </div>
+      <div class="prod-card">
+        <div class="code">PROD_NOTA_EDIT_NOTA_POST_BUNDLE</div>
+        <div class="name">TV Azteca - Nota Editorial Bundle</div>
+        <div class="tag"><span class="pill pill-yellow">Bundle — verificar</span></div>
+        <p style="font-size:11px;color:#706e6b;margin-top:6px;">Producto tipo bundle. El plan no menciona bundles en scope. Confirmar si es intencional con Gustavo.</p>
+      </div>
+      <div class="prod-card">
+        <div class="code">PROD_VID_DISP_PROG_001</div>
+        <div class="name">Video y Display Programmatic</div>
+        <div class="tag"><span class="pill pill-yellow">Sin prefijo Medio</span></div>
+        <p style="font-size:11px;color:#706e6b;margin-top:6px;">Nombre genérico sin Medio. El plan tiene <em>TV Azteca - Programmatic Display</em> y <em>TV Azteca - Programmatic Video</em> separados. ¿Duplicado o catch-all?</p>
+      </div>
+      <div class="prod-card">
+        <div class="code">PROD_NOTA_EDIT_NOTA_POST_001</div>
+        <div class="name">UnoTV - Nota Editorial + 1 Posteo orgánico en Facebook + 500 mil impresiones Display</div>
+        <div class="tag"><span class="pill pill-yellow">Nombre muy largo</span></div>
+        <p style="font-size:11px;color:#706e6b;margin-top:6px;">Parece un paquete específico de UnoTV. Verificar si era Bucket C (clon) o Bucket D.</p>
+      </div>
+      <div class="prod-card">
+        <div class="code">PROD_NOTA_EDIT_POST_FACE_001</div>
+        <div class="name">Claro Sports - Nota Editorial + 2 Posteos en Facebook + Push notification in App</div>
+        <div class="tag"><span class="pill pill-yellow">Nombre muy largo</span></div>
+        <p style="font-size:11px;color:#706e6b;margin-top:6px;">Similar al anterior pero de Claro Sports. Verificar si estaba contemplado en el plan o es adicional.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Único paso bloqueante: DRO Publish/Activate</h2>
+
+    <div class="alert alert-danger">
+      <div class="icon">🚫</div>
+      <div class="body">
+        <strong>F5.5 — No automatizable vía API</strong>
+        Los 38 <code>ProductFulfillmentScenario</code> están creados en Salesforce, pero DRO exige
+        que cada scenario sea <strong>publicado y activado manualmente</strong> desde la interfaz de
+        DRO Designer. No existe API ni CLI que permita hacer esta transición de estado. Este es el
+        único paso que requiere trabajo de UI manual.
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Acción</th><th>Cómo</th><th>Responsable</th><th>Estimado</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Correr script F6 de validación</td>
+          <td><code>bash validate-catalog-devpoc.sh</code></td>
+          <td>José / Claude</td>
+          <td>~5 min</td>
+        </tr>
+        <tr>
+          <td>Revisar 5 productos extra</td>
+          <td>Comparar contra plan con Gustavo</td>
+          <td>José + Gustavo</td>
+          <td>~20 min</td>
+        </tr>
+        <tr>
+          <td>DRO Publish/Activate (38 scenarios)</td>
+          <td>DRO Designer UI en DevPoc</td>
+          <td>Gustavo / José</td>
+          <td>~1–2 hrs</td>
+        </tr>
+        <tr>
+          <td>E2E test</td>
+          <td>Flujo completo: Oportunidad → Quote → Orden → Fulfillment</td>
+          <td>QA / José</td>
+          <td>~2 hrs</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ TAB 2: SCRIPT ═══ -->
+<div id="tab-script" class="tab-pane">
+<div class="wrap">
+
+  <div class="script-intro">
+    <h3 style="margin-top:0">¿Qué valida este script?</h3>
+    <p>
+      El script <code>validate-catalog-devpoc.sh</code> corre <strong>7 checks</strong> de cobertura
+      contra el org <code>DevPoc</code> usando la SF CLI (<code>sf data query</code>).
+      No modifica ningún dato — es puramente de lectura. Cada check genera una línea
+      <span style="color:#2e844a;font-weight:600">✅ PASS</span> o
+      <span style="color:#ba0517;font-weight:600">❌ FAIL</span> con detalle.
+    </p>
+    <p>
+      Al final imprime un <strong>resumen consolidado</strong> y, si hay FAILs, lista los productos
+      concretos que tienen huecos para que puedas actuar con precisión en lugar de buscar manualmente.
+    </p>
+    <p style="margin-bottom:0">
+      <strong>Prerequisito:</strong> SF CLI autenticado con <code>sf org login web --alias DevPoc
+      --instance-url https://aztecamedia--devpoc.sandbox.my.salesforce.com</code>
+    </p>
+  </div>
+
+  <!-- CHECK 1 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">1</span>
+      <span class="check-title">Conteo total de Product2 activos</span>
+      <span class="check-desc">PASS si ≥ 70</span>
+    </div>
+    <div class="check-body">
+      <p>Verifica que el org tenga al menos los 70 productos objetivo del plan. El diagnóstico actual muestra 75, pero si alguien desactivó productos el número puede haber bajado.</p>
+      <pre><span class="cm"># Check 1 — Total Product2 activos</span>
+TOTAL=$(<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT COUNT() FROM Product2 WHERE IsActive = true"</span> \
+  --json | python3 -c <span class="str">"import json,sys; print(json.load(sys.stdin)['result']['totalSize'])"</span>)
+
+<span class="kw">if</span> [ "$TOTAL" -ge 70 ]; <span class="kw">then</span>
+  <span class="ok">echo "  ✅ PASS | Product2 activos: $TOTAL (≥ 70)"</span>
+<span class="kw">else</span>
+  <span class="err">echo "  ❌ FAIL | Product2 activos: $TOTAL — esperado ≥ 70"</span>
+  ((FAIL++))
+<span class="kw">fi</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada:</span>
+        ✅ PASS | Product2 activos: 75 (≥ 70)
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 2 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">2</span>
+      <span class="check-title">Productos sin AdSpaceSpecProduct</span>
+      <span class="check-desc">PASS si solo quedan los no-digitales</span>
+    </div>
+    <div class="check-body">
+      <p>
+        Busca productos activos que no tienen ninguna junction a un AdSpaceSpecification.
+        Es normal que productos no-digitales (Producción, Talento, Cobertura) no tengan junctions —
+        el script los lista para que puedas confirmar que todos los "sin junction" son efectivamente
+        productos no-digitales y no un error de carga.
+      </p>
+      <pre><span class="cm"># Check 2 — Productos sin AdSpaceSpecProduct junction</span>
+<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT Id, Name, ProductCode
+           FROM Product2
+           WHERE IsActive = true
+             AND Id NOT IN (SELECT ProductId FROM AdSpaceSpecProduct)
+           ORDER BY Name"</span> \
+  --json | python3 -c <span class="str">"
+import json, sys
+r = json.load(sys.stdin)['result']
+total = r['totalSize']
+print(f'  → {total} productos sin AdSpaceSpecProduct junction:')
+for x in r['records']:
+    print(f\"    {x.get('ProductCode',''):<35} | {x['Name']}\")
+if total == 0:
+    print('  ✅ PASS — todos los productos tienen al menos 1 junction')
+else:
+    print(f'  ⚠️  Revisar: ¿son todos productos no-digitales (Producción, Talento, etc.)?')
+"</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada (ejemplo con productos no-digitales correctos):</span>
+        → 10 productos sin AdSpaceSpecProduct junction:<br>
+        &nbsp;&nbsp;PROD_PRODUCTION_001 &nbsp;&nbsp;&nbsp;&nbsp;| TV Azteca - Producción<br>
+        &nbsp;&nbsp;PROD_PROD_EXTE_001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| TV Azteca - Producción Externa<br>
+        &nbsp;&nbsp;PROD_TALE_EXTE_001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| TV Azteca - Talento Externo<br>
+        &nbsp;&nbsp;... (todos no-digitales = ✅ OK)
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 3 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">3</span>
+      <span class="check-title">Productos sin ProductCategoryProduct</span>
+      <span class="check-desc">PASS si n = 0</span>
+    </div>
+    <div class="check-body">
+      <p>
+        <strong>Check más crítico:</strong> todos los productos deben estar asignados a al menos
+        una ProductCategory (el Medio correspondiente). Si algún producto no tiene categoría,
+        no será encontrado por los flujos de Media Planning y no aparecerá en los catálogos.
+      </p>
+      <pre><span class="cm"># Check 3 — Productos sin ProductCategoryProduct</span>
+ORPHANS=$(<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT COUNT()
+           FROM Product2
+           WHERE IsActive = true
+             AND Id NOT IN (SELECT ProductId FROM ProductCategoryProduct)"</span> \
+  --json | python3 -c <span class="str">"import json,sys; print(json.load(sys.stdin)['result']['totalSize'])"</span>)
+
+<span class="kw">if</span> [ "$ORPHANS" -eq 0 ]; <span class="kw">then</span>
+  <span class="ok">echo "  ✅ PASS | Todos los productos tienen ProductCategoryProduct asignado"</span>
+<span class="kw">else</span>
+  <span class="err">echo "  ❌ FAIL | $ORPHANS productos sin categoría"</span>
+  <span class="cm"># Listar cuáles son</span>
+  <span class="fn">sf data query</span> \
+    --target-org DevPoc \
+    --query <span class="str">"SELECT Name, ProductCode FROM Product2
+             WHERE IsActive = true
+               AND Id NOT IN (SELECT ProductId FROM ProductCategoryProduct)
+             ORDER BY Name"</span> \
+    --json | python3 -c <span class="str">"
+import json,sys
+for x in json.load(sys.stdin)['result']['records']:
+    print(f\"    ❌ {x.get('ProductCode',''):<35} | {x['Name']}\")
+"</span>
+  ((FAIL++))
+<span class="kw">fi</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada:</span>
+        ✅ PASS | Todos los productos tienen ProductCategoryProduct asignado
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 4 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">4</span>
+      <span class="check-title">Productos digitales sin ProductFulfillmentScenario</span>
+      <span class="check-desc">PASS si n = 0 para digitales</span>
+    </div>
+    <div class="check-body">
+      <p>
+        Verifica que los productos de tipo digital (que necesitan DRO fulfillment) tengan un
+        <code>ProductFulfillmentScenario</code> creado. Excluye explícitamente los productos
+        no-digitales (Producción, Talento) que legítimamente no necesitan fulfillment en DRO.
+      </p>
+      <pre><span class="cm"># Check 4 — Productos digitales sin ProductFulfillmentScenario</span>
+<span class="cm"># Excluimos los productos no-digitales conocidos</span>
+<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT Id, Name, ProductCode
+           FROM Product2
+           WHERE IsActive = true
+             AND Name NOT LIKE '%Producc%'
+             AND Name NOT LIKE '%Talento%'
+             AND Name NOT LIKE '%Cobertura%'
+             AND Name NOT LIKE '%Bundle%'
+             AND Name NOT LIKE 'Media TP GAM'
+             AND Name NOT LIKE 'Video y Display%'
+             AND Id NOT IN (SELECT ProductId FROM ProductFulfillmentScenario)
+           ORDER BY Name"</span> \
+  --json | python3 -c <span class="str">"
+import json, sys
+r = json.load(sys.stdin)['result']
+total = r['totalSize']
+if total == 0:
+    print('  ✅ PASS | Todos los productos digitales tienen ProductFulfillmentScenario')
+else:
+    print(f'  ❌ FAIL | {total} productos digitales sin fulfillment scenario:')
+    for x in r['records']:
+        print(f\"    ❌ {x.get('ProductCode',''):<35} | {x['Name']}\")
+"</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada:</span>
+        ✅ PASS | Todos los productos digitales tienen ProductFulfillmentScenario
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 5 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">5</span>
+      <span class="check-title">Verificar que no quedan nombres viejos de AdSpaceSpec</span>
+      <span class="check-desc">PASS si n = 0</span>
+    </div>
+    <div class="check-body">
+      <p>
+        El plan renombró 5 AdSpaceSpecs: 2 de <em>"TV azteca en vivo"</em> → <em>"TVAzteca"</em>
+        y 3 de <em>"Claro Sport"</em> → <em>"Claro Sports"</em> (con 's').
+        Este check confirma que no quedó ningún registro con el nombre viejo.
+      </p>
+      <pre><span class="cm"># Check 5 — Sin nombres viejos de AdSpaceSpecification</span>
+OLD_SPECS=$(<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT COUNT()
+           FROM AdSpaceSpecification
+           WHERE Name LIKE 'TV azteca en vivo%'
+              OR Name LIKE 'Claro Sport -%'
+              OR (Name LIKE 'Claro Sport%'
+                  AND Name NOT LIKE 'Claro Sports%')"</span> \
+  --json | python3 -c <span class="str">"import json,sys; print(json.load(sys.stdin)['result']['totalSize'])"</span>)
+
+<span class="kw">if</span> [ "$OLD_SPECS" -eq 0 ]; <span class="kw">then</span>
+  <span class="ok">echo "  ✅ PASS | Sin AdSpaceSpecs con nombres viejos"</span>
+<span class="kw">else</span>
+  <span class="err">echo "  ❌ FAIL | $OLD_SPECS AdSpaceSpecs aún con nombre viejo:"</span>
+  <span class="fn">sf data query</span> \
+    --target-org DevPoc \
+    --query <span class="str">"SELECT Id, Name FROM AdSpaceSpecification
+             WHERE Name LIKE 'TV azteca en vivo%'
+                OR Name LIKE 'Claro Sport -%'
+                OR (Name LIKE 'Claro Sport%' AND Name NOT LIKE 'Claro Sports%')
+             ORDER BY Name"</span> \
+    --json | python3 -c <span class="str">"
+import json,sys
+for x in json.load(sys.stdin)['result']['records']:
+    print(f\"    ❌ {x['Id']} | {x['Name']}\")
+"</span>
+  ((FAIL++))
+<span class="kw">fi</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada:</span>
+        ✅ PASS | Sin AdSpaceSpecs con nombres viejos
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 6 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">6</span>
+      <span class="check-title">Los 6 AdUnits faltantes existen con nombre exacto</span>
+      <span class="check-desc">PASS si n = 6</span>
+    </div>
+    <div class="check-body">
+      <p>
+        Valida que los 6 AdTargetSegmentValues que el plan identificó como faltantes están presentes
+        con exactamente los nombres del catálogo de GAM. Un nombre con error tipográfico causaría
+        que el targeting no funcione en producción.
+      </p>
+      <pre><span class="cm"># Check 6 — Los 6 AdUnits faltantes existen</span>
+EXPECTED_ADUNITS=(
+  <span class="str">"DeportesPruebasPleca"</span>
+  <span class="str">"Sinaloa-ADN40"</span>
+  <span class="str">"US-ADN40-DAI"</span>
+  <span class="str">"USA-ADN40-Pop-Pop-Nota"</span>
+  <span class="str">"Apps-USA-App-EnVivo-USA-Series-ABCForense"</span>
+  <span class="str">"AZA-Envivo-USA"</span>
+)
+
+FOUND=$(<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT COUNT()
+           FROM AdTargetSegmentValue
+           WHERE Name IN (
+             'DeportesPruebasPleca',
+             'Sinaloa-ADN40',
+             'US-ADN40-DAI',
+             'USA-ADN40-Pop-Pop-Nota',
+             'Apps-USA-App-EnVivo-USA-Series-ABCForense',
+             'AZA-Envivo-USA'
+           )"</span> \
+  --json | python3 -c <span class="str">"import json,sys; print(json.load(sys.stdin)['result']['totalSize'])"</span>)
+
+<span class="kw">if</span> [ "$FOUND" -eq 6 ]; <span class="kw">then</span>
+  <span class="ok">echo "  ✅ PASS | Los 6 AdUnits faltantes existen (6/6)"</span>
+<span class="kw">else</span>
+  <span class="err">echo "  ❌ FAIL | Solo $FOUND/6 AdUnits faltantes encontrados"</span>
+  ((FAIL++))
+<span class="kw">fi</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada:</span>
+        ✅ PASS | Los 6 AdUnits faltantes existen (6/6)
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK 7 -->
+  <div class="check-block">
+    <div class="check-header">
+      <span class="check-num">7</span>
+      <span class="check-title">Estado de ProductFulfillmentScenario (Draft vs Published)</span>
+      <span class="check-desc">Informativo — confirma cuántos necesitan activación en DRO</span>
+    </div>
+    <div class="check-body">
+      <p>
+        No es un PASS/FAIL sino un <strong>check informativo</strong>: cuántos fulfillment scenarios
+        están en estado <code>Draft</code> (creados pero no activados en DRO Designer) vs.
+        <code>Published</code> / <code>Active</code>. Permite cuantificar el trabajo pendiente de F5.5.
+      </p>
+      <pre><span class="cm"># Check 7 — Estado de ProductFulfillmentScenario (informativo)</span>
+echo "  → Distribución de estado en ProductFulfillmentScenario:"
+<span class="fn">sf data query</span> \
+  --target-org DevPoc \
+  --query <span class="str">"SELECT Status, COUNT(Id) total
+           FROM ProductFulfillmentScenario
+           GROUP BY Status
+           ORDER BY Status"</span> \
+  --json | python3 -c <span class="str">"
+import json, sys
+r = json.load(sys.stdin)['result']['records']
+for x in r:
+    status = x.get('Status', '(sin estado)')
+    total  = x.get('expr0', 0)
+    icon = '✅' if status in ('Active','Published') else '⚠️'
+    print(f'    {icon}  {status:<15} {total} scenarios')
+print()
+print('  → Si todos están en Draft: ejecutar F5.5 (DRO Designer UI)')
+"</span></pre>
+      <div class="expected-output">
+        <span class="label">Salida esperada (antes de F5.5):</span>
+        ⚠️  Draft &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 38 scenarios<br>
+        <br>
+        → Si todos están en Draft: ejecutar F5.5 (DRO Designer UI)
+      </div>
+    </div>
+  </div>
+
+  <!-- Script completo -->
+  <div class="run-box">
+    <h3>Script completo — guardar como <code>validate-catalog-devpoc.sh</code></h3>
+    <p style="font-size:12px;margin-bottom:14px;opacity:0.9">
+      Copia el script completo a un archivo local y ejecútalo. Genera un reporte consolidado
+      con todos los checks y un resumen final.
+    </p>
+    <pre>#!/usr/bin/env bash
+<span class="cm"># F6 — Validación de cobertura del Catálogo Digital en DevPoc
+# Uso: bash validate-catalog-devpoc.sh
+# Requiere: sf CLI autenticado con alias DevPoc</span>
+
+ORG=<span class="str">"DevPoc"</span>
+FAIL=0; PASS=0
+
+q() { <span class="fn">sf data query</span> --target-org "$ORG" --query "$1" --json 2>/dev/null; }
+count() { q "$1" | python3 -c <span class="str">"import json,sys; print(json.load(sys.stdin)['result']['totalSize'])"</span>; }
+names() { q "$1" | python3 -c <span class="str">"
+import json,sys
+for x in json.load(sys.stdin)['result']['records']:
+    print(f\"    {x.get('ProductCode',x.get('Name','')):<35} | {x.get('Name','')}\")"</span>; }
+
+echo ""
+echo "═══════════════════════════════════════════════════════"
+echo "  F6 · Validación Catálogo Digital · DevPoc · $(date +%Y-%m-%d)"
+echo "═══════════════════════════════════════════════════════"
+echo ""
+
+<span class="cm">## Check 1 — Total Product2</span>
+T=$(count <span class="str">"SELECT COUNT() FROM Product2 WHERE IsActive = true"</span>)
+if [ "$T" -ge 70 ]; then echo "  ✅ PASS | Product2 activos: $T (≥70)"; ((PASS++))
+else echo "  ❌ FAIL | Product2 activos: $T — esperado ≥70"; ((FAIL++)); fi
+
+<span class="cm">## Check 2 — Sin AdSpaceSpecProduct (listar, no falla)</span>
+echo ""
+echo "  → Productos sin AdSpaceSpecProduct junction (revisar si son no-digitales):"
+names <span class="str">"SELECT Id, Name, ProductCode FROM Product2
+       WHERE IsActive = true
+         AND Id NOT IN (SELECT ProductId FROM AdSpaceSpecProduct)
+       ORDER BY Name"</span>
+
+<span class="cm">## Check 3 — Sin ProductCategoryProduct</span>
+C=$(count <span class="str">"SELECT COUNT() FROM Product2
+           WHERE IsActive = true
+             AND Id NOT IN (SELECT ProductId FROM ProductCategoryProduct)"</span>)
+if [ "$C" -eq 0 ]; then echo ""; echo "  ✅ PASS | Todos los productos tienen ProductCategoryProduct"; ((PASS++))
+else echo ""; echo "  ❌ FAIL | $C productos sin categoría:"; ((FAIL++))
+  names <span class="str">"SELECT Id, Name, ProductCode FROM Product2
+         WHERE IsActive = true
+           AND Id NOT IN (SELECT ProductId FROM ProductCategoryProduct)
+         ORDER BY Name"</span>
+fi
+
+<span class="cm">## Check 4 — Digitales sin ProductFulfillmentScenario</span>
+D=$(count <span class="str">"SELECT COUNT() FROM Product2
+           WHERE IsActive = true
+             AND Name NOT LIKE '%Producc%' AND Name NOT LIKE '%Talento%'
+             AND Name NOT LIKE '%Cobertura%' AND Name NOT LIKE '%Bundle%'
+             AND Name NOT LIKE 'Media TP GAM' AND Name NOT LIKE 'Video y Display%'
+             AND Id NOT IN (SELECT ProductId FROM ProductFulfillmentScenario)"</span>)
+if [ "$D" -eq 0 ]; then echo "  ✅ PASS | Todos los productos digitales tienen ProductFulfillmentScenario"; ((PASS++))
+else echo "  ❌ FAIL | $D digitales sin fulfillment scenario:"; ((FAIL++))
+  names <span class="str">"SELECT Id, Name, ProductCode FROM Product2
+         WHERE IsActive = true
+           AND Name NOT LIKE '%Producc%' AND Name NOT LIKE '%Talento%'
+           AND Name NOT LIKE '%Cobertura%' AND Name NOT LIKE '%Bundle%'
+           AND Name NOT LIKE 'Media TP GAM' AND Name NOT LIKE 'Video y Display%'
+           AND Id NOT IN (SELECT ProductId FROM ProductFulfillmentScenario)
+         ORDER BY Name"</span>
+fi
+
+<span class="cm">## Check 5 — Sin nombres viejos AdSpaceSpec</span>
+O=$(count <span class="str">"SELECT COUNT() FROM AdSpaceSpecification
+           WHERE Name LIKE 'TV azteca en vivo%'
+              OR (Name LIKE 'Claro Sport%' AND Name NOT LIKE 'Claro Sports%')"</span>)
+if [ "$O" -eq 0 ]; then echo "  ✅ PASS | Sin AdSpaceSpecs con nombres viejos"; ((PASS++))
+else echo "  ❌ FAIL | $O AdSpaceSpecs con nombre viejo aún:"; ((FAIL++))
+  names <span class="str">"SELECT Id, Name FROM AdSpaceSpecification
+         WHERE Name LIKE 'TV azteca en vivo%'
+            OR (Name LIKE 'Claro Sport%' AND Name NOT LIKE 'Claro Sports%')
+         ORDER BY Name"</span>
+fi
+
+<span class="cm">## Check 6 — Los 6 AdUnits faltantes</span>
+AU=$(count <span class="str">"SELECT COUNT() FROM AdTargetSegmentValue
+            WHERE Name IN (
+              'DeportesPruebasPleca','Sinaloa-ADN40','US-ADN40-DAI',
+              'USA-ADN40-Pop-Pop-Nota',
+              'Apps-USA-App-EnVivo-USA-Series-ABCForense','AZA-Envivo-USA'
+            )"</span>)
+if [ "$AU" -eq 6 ]; then echo "  ✅ PASS | Los 6 AdUnits faltantes existen (6/6)"; ((PASS++))
+else echo "  ❌ FAIL | Solo $AU/6 AdUnits encontrados"; ((FAIL++)); fi
+
+<span class="cm">## Check 7 — Estado ProductFulfillmentScenario (informativo)</span>
+echo ""
+echo "  → Estado ProductFulfillmentScenario (informativo — F5.5 DRO):"
+q <span class="str">"SELECT Status, COUNT(Id) total FROM ProductFulfillmentScenario GROUP BY Status"</span> \
+  | python3 -c <span class="str">"
+import json,sys
+for x in json.load(sys.stdin)['result']['records']:
+    s=x.get('Status','?'); t=x.get('expr0',0)
+    icon='✅' if s in ('Active','Published') else '⚠️ '
+    print(f'    {icon}  {s:<15} {t} scenarios')"</span>
+
+echo ""
+echo "═══════════════════════════════════════════════════════"
+echo "  Resumen: $PASS PASS · $FAIL FAIL"
+if [ "$FAIL" -eq 0 ]; then
+  echo "  ✅ Catálogo validado — listo para F5.5 (DRO Publish) y F7 (E2E)"
+else
+  echo "  ❌ Corregir los $FAIL FAILs antes de proceder a DRO"
+fi
+echo "═══════════════════════════════════════════════════════"
+echo ""</pre>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ TAB 3: CATÁLOGO COMPLETO ═══ -->
+<div id="tab-catalogo" class="tab-pane">
+<div class="wrap">
+
+  <!-- Sub-nav -->
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="subbtn active" onclick="showSec('products',this)">Productos · 75</button>
+    <button class="subbtn" onclick="showSec('adspaces',this)">AdSpaces · 138</button>
+    <button class="subbtn" onclick="showSec('cats',this)">Categorías · 20</button>
+    <button class="subbtn" onclick="showSec('targeting',this)">Targeting</button>
+    <button class="subbtn" onclick="showSec('scenarios',this)">Fulfillment · 38</button>
+  </div>
+
+  <!-- ─── PRODUCTS ─── -->
+  <div id="sec-products" class="sec-pane">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <input id="prod-search" type="text" placeholder="Buscar producto o código…"
+        style="padding:7px 12px;border:1px solid #dddbda;border-radius:4px;font-size:12px;width:280px"
+        oninput="filterProds()">
+      <select id="medio-filter" onchange="filterProds()"
+        style="padding:7px 10px;border:1px solid #dddbda;border-radius:4px;font-size:12px">
+        <option value="">Todos los medios</option>
+        <option>TV Azteca</option><option>UnoTV</option><option>Claro Sports</option>
+        <option>Disney</option><option>Pluto</option><option>Tubi</option><option>Otros</option>
+      </select>
+      <span id="prod-count" style="font-size:12px;color:#706e6b"></span>
+    </div>
+    <table id="prod-table">
+      <thead><tr>
+        <th style="width:36px">#</th>
+        <th>Código</th>
+        <th>Nombre del producto</th>
+        <th>Medio</th>
+        <th>Categorías funcionales</th>
+      </tr></thead>
+      <tbody id="prod-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ─── ADSPACES ─── -->
+  <div id="sec-adspaces" class="sec-pane" style="display:none">
+    <p style="margin-bottom:14px;font-size:12px;color:#706e6b">138 junctions AdSpaceSpecProduct. Cada producto y sus AdSpaceSpecifications asignadas.</p>
+    <div id="adspace-list"></div>
+  </div>
+
+  <!-- ─── CATEGORIES ─── -->
+  <div id="sec-cats" class="sec-pane" style="display:none">
+    <p style="margin-bottom:14px;font-size:12px;color:#706e6b">20 ProductCategories. Click para expandir los productos asignados.</p>
+    <div id="cat-list"></div>
+  </div>
+
+  <!-- ─── TARGETING ─── -->
+  <div id="sec-targeting" class="sec-pane" style="display:none">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <p style="font-size:12px;color:#706e6b;margin:0"><strong>912 AdProductDefaultTargetValue</strong> — valores por defecto asignados a cada producto desde el org DevPoc.</p>
+      <input id="tgt-search" type="text" placeholder="Filtrar por producto…"
+        style="margin-left:auto;padding:7px 12px;border:1px solid #dddbda;border-radius:4px;font-size:12px;width:240px"
+        oninput="filterTargeting()">
+    </div>
+    <div id="tgt-list"></div>
+    <div id="tgt-empty" style="display:none;color:#706e6b;font-size:12px;padding:12px 0">Sin resultados.</div>
+  </div>
+
+  <!-- ─── SCENARIOS ─── -->
+  <div id="sec-scenarios" class="sec-pane" style="display:none">
+    <p style="margin-bottom:14px;font-size:12px;color:#706e6b">38 ProductFulfillmentScenario: 11 de tipo <em>amendment</em> y 27 de tipo <em>fulfillment estándar</em>. Todos pendientes de activar en DRO Designer (F5.5).</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div>
+        <h3 style="font-size:13px;color:#032d60;margin-bottom:10px">🔄 Amendment Scenarios (11)</h3>
+        <table><thead><tr><th>#</th><th>Nombre</th></tr></thead>
+        <tbody id="amend-tbody"></tbody></table>
+      </div>
+      <div>
+        <h3 style="font-size:13px;color:#032d60;margin-bottom:10px">📦 Fulfillment Scenarios (27)</h3>
+        <table><thead><tr><th>#</th><th>Nombre</th></tr></thead>
+        <tbody id="escen-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<style>
+.subbtn {
+  padding:7px 16px;font-size:12px;font-weight:500;
+  border:1px solid #dddbda;border-radius:20px;
+  background:#fff;cursor:pointer;color:#706e6b;
+  transition:all .15s;
+}
+.subbtn.active { background:#0070d2;color:#fff;border-color:#0070d2;font-weight:600; }
+.subbtn:hover:not(.active) { background:#f4f6f9;color:#3e3e3c; }
+
+.adspace-item { background:#fff;border:1px solid #dddbda;border-radius:4px;margin-bottom:8px;overflow:hidden; }
+.adspace-item summary {
+  padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;color:#032d60;
+  display:flex;align-items:center;gap:8px;list-style:none;
+  user-select:none;
+}
+.adspace-item summary::-webkit-details-marker { display:none; }
+.adspace-item summary::before { content:'▶';font-size:10px;color:#0070d2;transition:transform .15s; }
+.adspace-item[open] summary::before { transform:rotate(90deg); }
+.adspace-item .inner { padding:8px 14px 12px 34px;border-top:1px solid #f3f2f2; }
+.adspace-item .inner span { display:inline-block;background:#e0f0ff;color:#014486;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px 3px 2px 0; }
+
+.cat-item { background:#fff;border:1px solid #dddbda;border-radius:4px;margin-bottom:8px;overflow:hidden; }
+.cat-item summary { padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;color:#032d60;display:flex;align-items:center;gap:8px;list-style:none;user-select:none; }
+.cat-item summary::-webkit-details-marker { display:none; }
+.cat-item summary::before { content:'▶';font-size:10px;color:#0070d2;transition:transform .15s; }
+.cat-item[open] summary::before { transform:rotate(90deg); }
+.cat-item .inner { padding:8px 14px 12px 34px;border-top:1px solid #f3f2f2; }
+.cat-item .inner span { display:inline-block;background:#f3f2f2;color:#3e3e3c;font-size:11px;padding:2px 8px;border-radius:3px;margin:2px 3px 2px 0; }
+
+.medio-tag { display:inline-block;padding:1px 8px;border-radius:3px;font-size:10px;font-weight:600; }
+.m-tv  { background:#cfe2ff;color:#032d60; }
+.m-uno { background:#d4edda;color:#155724; }
+.m-cs  { background:#fff3cd;color:#856404; }
+.m-dis { background:#f8d7da;color:#721c24; }
+.m-plu { background:#e2d9f3;color:#432874; }
+.m-tub { background:#d1ecf1;color:#0c5460; }
+.m-ot  { background:#f3f2f2;color:#3e3e3c; }
+
+.fcat-tag { display:inline-block;background:#f4f6f9;color:#706e6b;font-size:10px;padding:1px 6px;border-radius:3px;margin:1px 2px 1px 0;white-space:nowrap; }
+</style>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+function showSec(id, btn) {
+  document.querySelectorAll('.sec-pane').forEach(p => p.style.display='none');
+  document.querySelectorAll('.subbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-'+id).style.display='block';
+  btn.classList.add('active');
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────
+const PRODS = [
+  // Claro Sports
+  ["PROD_CLAROSPORTS_BANNERDISPLAY_001","Claro Sports - Banner Display","Claro Sports"],
+  ["PROD_CLAROSPORTS_BUMPERS_001","Claro Sports - Bumpers","Claro Sports"],
+  ["PROD_CLAROSPORTS_NOTAEDIT_001","Claro Sports - Nota editorial","Claro Sports"],
+  ["PROD_NOTA_EDIT_POST_FACE_001","Claro Sports - Nota Editorial + 2 Posteos Facebook + Push notification App","Claro Sports"],
+  ["PROD_CLAROSPORTS_NOTAPATR_001","Claro Sports - Nota Patrocinada","Claro Sports"],
+  ["PROD_PVOL_PREM_001","Claro Sports - Paquete de Volumen Premium durante 24Hrs","Claro Sports"],
+  ["PROD_CLAROSPORTS_PAUTAEXT_001","Claro Sports - Pauta externa","Claro Sports"],
+  ["PROD_CLAROSPORTS_VIDEO_001","Claro Sports - Video","Claro Sports"],
+  ["PROD_CLAROSPORTS_VIDEOPREROLL_001","Claro Sports - Video ads Pre-roll","Claro Sports"],
+  ["PROD_CLAROSPORTS_YT_NONSKIP_001","Claro Sports - YouTube Non-Skippable (max 15s)","Claro Sports"],
+  ["PROD_CLAROSPORTS_YT_SKIP_001","Claro Sports - YouTube Skippable","Claro Sports"],
+  // Disney
+  ["PROD_BLIT_ALTO_VOLU_IMPR_001","Disney - Blitz: Alto volumen de impresiones (3 a 5 días)","Disney"],
+  ["PROD_FAND_PATR_ALGU_CATE_001","Disney - Fandom: Patrocinio de alguna categoria o contenido","Disney"],
+  ["PROD_SPLA_THE_DAY_ALTO_001","Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día","Disney"],
+  ["PROD_SPON_VIDE_CONT_PRIM_001","Disney - Sponsorship: Video en un contenido. Primer Preroll 10s","Disney"],
+  ["PROD_DISNEY_VIDEOPREROLL_CTV_001","Disney - Video ads Pre-roll CTV","Disney"],
+  // Pluto
+  ["PROD_BILL_BUND_001","Pluto - Billboard bundlee","Pluto"],
+  ["PROD_PATR_CANA_001","Pluto - Patrocinio de canal","Pluto"],
+  ["PROD_PLUTO_PAUSEADS_CTV_001","Pluto - Pause Ads CTV","Pluto"],
+  ["PROD_PLUTO_VIDEOPREROLL_CTV_001","Pluto - Video ads Pre-roll CTV","Pluto"],
+  ["PROD_VIDE_BLAS_001","Pluto - Video blast","Pluto"],
+  // Tubi
+  ["PROD_FIRS_IMPR_001","Tubi - First Impression","Tubi"],
+  ["PROD_TUBI_PAUSEADS_CTV_001","Tubi - Pause Ads CTV","Tubi"],
+  ["PROD_THEM_TAKE_001","Tubi - Thematic Takeover","Tubi"],
+  ["PROD_TUBI_VIDEOPREROLL_CTV_001","Tubi - Video ads Pre-roll CTV","Tubi"],
+  // TV Azteca
+  ["PROD_ACCI_ESPE_VIRT_CINT_001","TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","TV Azteca"],
+  ["PROD_BANNER_001","TV Azteca - Banner Display","TV Azteca"],
+  ["PROD_BUMP_OR_SHOR_VIDE_001","TV Azteca - Bumpers","TV Azteca"],
+  ["PROD_CPSU_PROD_001","TV Azteca - Cápsula producida","TV Azteca"],
+  ["PROD_CARD_BACK_001","TV Azteca - Card Back","TV Azteca"],
+  ["PROD_CLIP_247_YO_MINU_001","TV Azteca - Clipping 24/7 y/o minuto a minuto","TV Azteca"],
+  ["PROD_COBE_EVEN_001","TV Azteca - Cobertura/conducción de eventos","TV Azteca"],
+  ["PROD_ELLE_10_001","TV Azteca - Elle 10\"","TV Azteca"],
+  ["PROD_GRFI_INFO_001","TV Azteca - Gráfico o infografía","TV Azteca"],
+  ["PROD_GRFI_TRAN_001","TV Azteca - Gráficos en transmisión","TV Azteca"],
+  ["PROD_MENC_10_001","TV Azteca - Mención 10\"","TV Azteca"],
+  ["PROD_NOTA_EDIT_001","TV Azteca - Nota Editorial","TV Azteca"],
+  ["PROD_NOTA_EDIT_NOTA_POST_BUNDLE","TV Azteca - Nota Editorial Bundle","TV Azteca"],
+  ["PROD_NOTA_PATR_001","TV Azteca - Nota Patrocinada","TV Azteca"],
+  ["PROD_PATR_LIVE_001","TV Azteca - Patrocinio Live","TV Azteca"],
+  ["PROD_PADS_001","TV Azteca - Pause Ads CTV","TV Azteca"],
+  ["PROD_PAUT_EXTE_001","TV Azteca - Pauta externa","TV Azteca"],
+  ["PROD_PRODUCTION_001","TV Azteca - Producción","TV Azteca"],
+  ["PROD_PROD_EXTE_001","TV Azteca - Producción Externa","TV Azteca"],
+  ["PROD_PROD_INTE_001","TV Azteca - Producción Interna","TV Azteca"],
+  ["PROD_TVAZTECA_PROGDISPLAY_001","TV Azteca - Programmatic Display","TV Azteca"],
+  ["PROD_TVAZTECA_PROGVIDEO_001","TV Azteca - Programmatic Video","TV Azteca"],
+  ["PROD_TVAZTECA_PROGVIDEO_CTV_001","TV Azteca - Programmatic Video CTV","TV Azteca"],
+  ["PROD_PUSH_NOTI_001","TV Azteca - Push notification","TV Azteca"],
+  ["PROD_SEMI_001","TV Azteca - Semiposter","TV Azteca"],
+  ["PROD_SHOPPINGDIS_001","TV Azteca - Shopping Display","TV Azteca"],
+  ["PROD_STOR_001","TV Azteca - Stories","TV Azteca"],
+  ["PROD_SUPE_10_001","TV Azteca - Super 10\"","TV Azteca"],
+  ["PROD_SUPE_MENC_10_001","TV Azteca - Super+ Mención 10\"","TV Azteca"],
+  ["PROD_TALE_EXTE_001","TV Azteca - Talento Externo","TV Azteca"],
+  ["PROD_TALE_INTE_001","TV Azteca - Talento Interno","TV Azteca"],
+  ["PROD_VIDE_001","TV Azteca - Video","TV Azteca"],
+  ["PROD_VIDE_ADS_PRER_MIDR_001","TV Azteca - Video ads Pre-roll","TV Azteca"],
+  ["PROD_TVAZTECA_VIDEOPREROLL_CTV_001","TV Azteca - Video ads Pre-roll CTV","TV Azteca"],
+  ["PROD_VIDE_VERT_CORT_DURA_001","TV Azteca - Videos verticales corta duración (Shorts, Reels, TikToks)","TV Azteca"],
+  ["PROD_TVAZTECA_YT_NONSKIP_001","TV Azteca - YouTube Non-Skippable (max 15s)","TV Azteca"],
+  ["PROD_VIDE_PRER_YOU_TUBE_001","TV Azteca - YouTube Skippable","TV Azteca"],
+  // UnoTV
+  ["PROD_UNOTV_BANNERDISPLAY_001","UnoTV - Banner Display","UnoTV"],
+  ["PROD_UNOTV_BUMPERS_001","UnoTV - Bumpers","UnoTV"],
+  ["PROD_NOTA_EDIT_NOTA_POST_001","UnoTV - Nota Editorial + 1 Posteo orgánico Facebook + 500k impresiones Display","UnoTV"],
+  ["PROD_UNOTV_NOTAPATR_001","UnoTV - Nota Patrocinada","UnoTV"],
+  ["PROD_PAQU_VOLU_ESPE_MILL_001","UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","UnoTV"],
+  ["PROD_UNOTV_PAUTAEXT_001","UnoTV - Pauta externa","UnoTV"],
+  ["PROD_UNOTV_SHOPPINGDIS_001","UnoTV - Shopping Display","UnoTV"],
+  ["PROD_UNOTV_VIDEO_001","UnoTV - Video","UnoTV"],
+  ["PROD_UNOTV_VIDEOPREROLL_001","UnoTV - Video ads Pre-roll","UnoTV"],
+  ["PROD_UNOTV_YT_NONSKIP_001","UnoTV - YouTube Non-Skippable (max 15s)","UnoTV"],
+  ["PROD_UNOTV_YT_SKIP_001","UnoTV - YouTube Skippable","UnoTV"],
+  // Otros
+  ["MEDIA-TP-GAM","Media TP GAM","Otros"],
+  ["PROD_VID_DISP_PROG_001","Video y Display Programmatic","Otros"],
+];
+
+// Category assignments: [productName, categoryName]
+const CAT_PAIRS = [
+  ["Claro Sports - Nota editorial","Branded Content"],["Claro Sports - Nota Editorial + 2 Posteos Facebook + Push notification App","Branded Content"],
+  ["TV Azteca - Nota Editorial","Branded Content"],["TV Azteca - Nota Editorial Bundle","Branded Content"],
+  ["UnoTV - Nota Editorial + 1 Posteo orgánico Facebook + 500k impresiones Display","Branded Content"],
+  ["Claro Sports - Banner Display","Claro Sports"],["Claro Sports - Bumpers","Claro Sports"],
+  ["Claro Sports - Nota editorial","Claro Sports"],["Claro Sports - Nota Editorial + 2 Posteos Facebook + Push notification App","Claro Sports"],
+  ["Claro Sports - Nota Patrocinada","Claro Sports"],["Claro Sports - Paquete de Volumen Premium durante 24Hrs","Claro Sports"],
+  ["Claro Sports - Pauta externa","Claro Sports"],["Claro Sports - Video","Claro Sports"],
+  ["Claro Sports - Video ads Pre-roll","Claro Sports"],["Claro Sports - YouTube Non-Skippable (max 15s)","Claro Sports"],
+  ["Claro Sports - YouTube Skippable","Claro Sports"],
+  ["Disney - Blitz: Alto volumen de impresiones (3 a 5 días)","Disney"],["Disney - Fandom: Patrocinio de alguna categoria o contenido","Disney"],
+  ["Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día","Disney"],["Disney - Sponsorship: Video en un contenido. Primer Preroll 10s","Disney"],
+  ["Disney - Video ads Pre-roll CTV","Disney"],
+  ["Claro Sports - Banner Display","Display"],["Claro Sports - Paquete de Volumen Premium durante 24Hrs","Display"],
+  ["Pluto - Billboard bundlee","Display"],["Tubi - First Impression","Display"],["Tubi - Thematic Takeover","Display"],
+  ["TV Azteca - Banner Display","Display"],["TV Azteca - Card Back","Display"],["TV Azteca - Pause Ads CTV","Display"],
+  ["TV Azteca - Programmatic Display","Display"],["TV Azteca - Semiposter","Display"],["TV Azteca - Shopping Display","Display"],
+  ["UnoTV - Banner Display","Display"],["UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","Display"],
+  ["UnoTV - Shopping Display","Display"],["Video y Display Programmatic","Display"],
+  ["Claro Sports - Nota Patrocinada","Patrocinio"],["Disney - Blitz: Alto volumen de impresiones (3 a 5 días)","Patrocinio"],
+  ["Disney - Fandom: Patrocinio de alguna categoria o contenido","Patrocinio"],["Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día","Patrocinio"],
+  ["Pluto - Billboard bundlee","Patrocinio"],["Pluto - Patrocinio de canal","Patrocinio"],["Tubi - Thematic Takeover","Patrocinio"],
+  ["TV Azteca - Card Back","Patrocinio"],["TV Azteca - Nota Patrocinada","Patrocinio"],["TV Azteca - Patrocinio Live","Patrocinio"],
+  ["TV Azteca - Semiposter","Patrocinio"],["UnoTV - Nota Patrocinada","Patrocinio"],
+  ["Claro Sports - Pauta externa","Pauta Externa"],["TV Azteca - Pauta externa","Pauta Externa"],["UnoTV - Pauta externa","Pauta Externa"],
+  ["Pluto - Billboard bundlee","Pluto"],["Pluto - Patrocinio de canal","Pluto"],["Pluto - Pause Ads CTV","Pluto"],
+  ["Pluto - Video ads Pre-roll CTV","Pluto"],["Pluto - Video blast","Pluto"],
+  ["TV Azteca - Cápsula producida","Producción"],["TV Azteca - Gráfico o infografía","Producción"],
+  ["TV Azteca - Gráficos en transmisión","Producción"],["TV Azteca - Producción","Producción"],
+  ["TV Azteca - Producción Externa","Producción"],["TV Azteca - Producción Interna","Producción"],
+  ["Claro Sports - Paquete de Volumen Premium durante 24Hrs","Producto Integrado"],
+  ["TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","Producto Integrado"],
+  ["TV Azteca - Clipping 24/7 y/o minuto a minuto","Producto Integrado"],
+  ["TV Azteca - Elle 10\"","Producto Integrado"],["TV Azteca - Mención 10\"","Producto Integrado"],
+  ["TV Azteca - Super 10\"","Producto Integrado"],["TV Azteca - Super+ Mención 10\"","Producto Integrado"],
+  ["UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","Producto Integrado"],
+  ["TV Azteca - Banner Display","Programáticos"],["TV Azteca - Programmatic Display","Programáticos"],
+  ["TV Azteca - Programmatic Video","Programáticos"],["TV Azteca - Programmatic Video CTV","Programáticos"],
+  ["Video y Display Programmatic","Programáticos"],["Claro Sports - Pauta externa","Programáticos"],
+  ["TV Azteca - Pauta externa","Programáticos"],["UnoTV - Pauta externa","Programáticos"],
+  ["TV Azteca - Push notification","Push Notification"],
+  ["TV Azteca - Cápsula producida","Redes Sociales"],["TV Azteca - Clipping 24/7 y/o minuto a minuto","Redes Sociales"],
+  ["TV Azteca - Cobertura/conducción de eventos","Redes Sociales"],["TV Azteca - Gráfico o infografía","Redes Sociales"],
+  ["TV Azteca - Gráficos en transmisión","Redes Sociales"],["TV Azteca - Stories","Redes Sociales"],
+  ["TV Azteca - Videos verticales corta duración (Shorts, Reels, TikToks)","Redes Sociales"],
+  ["TV Azteca - Shopping Display","Rich Media"],
+  ["TV Azteca - Cobertura/conducción de eventos","Talento"],["TV Azteca - Elle 10\"","Talento"],
+  ["TV Azteca - Mención 10\"","Talento"],["TV Azteca - Super 10\"","Talento"],["TV Azteca - Super+ Mención 10\"","Talento"],
+  ["TV Azteca - Talento Externo","Talento"],["TV Azteca - Talento Interno","Talento"],
+  ["Tubi - First Impression","Tubi"],["Tubi - Pause Ads CTV","Tubi"],
+  ["Tubi - Thematic Takeover","Tubi"],["Tubi - Video ads Pre-roll CTV","Tubi"],
+  ["TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","TV Azteca"],
+  ["TV Azteca - Banner Display","TV Azteca"],["TV Azteca - Bumpers","TV Azteca"],
+  ["TV Azteca - Cápsula producida","TV Azteca"],["TV Azteca - Card Back","TV Azteca"],
+  ["TV Azteca - Clipping 24/7 y/o minuto a minuto","TV Azteca"],["TV Azteca - Cobertura/conducción de eventos","TV Azteca"],
+  ["TV Azteca - Elle 10\"","TV Azteca"],["TV Azteca - Gráfico o infografía","TV Azteca"],
+  ["TV Azteca - Gráficos en transmisión","TV Azteca"],["TV Azteca - Mención 10\"","TV Azteca"],
+  ["TV Azteca - Nota Editorial","TV Azteca"],["TV Azteca - Nota Editorial Bundle","TV Azteca"],
+  ["TV Azteca - Nota Patrocinada","TV Azteca"],["TV Azteca - Patrocinio Live","TV Azteca"],
+  ["TV Azteca - Pause Ads CTV","TV Azteca"],["TV Azteca - Pauta externa","TV Azteca"],
+  ["TV Azteca - Producción","TV Azteca"],["TV Azteca - Producción Externa","TV Azteca"],
+  ["TV Azteca - Producción Interna","TV Azteca"],["TV Azteca - Programmatic Display","TV Azteca"],
+  ["TV Azteca - Programmatic Video","TV Azteca"],["TV Azteca - Programmatic Video CTV","TV Azteca"],
+  ["TV Azteca - Push notification","TV Azteca"],["TV Azteca - Semiposter","TV Azteca"],
+  ["TV Azteca - Shopping Display","TV Azteca"],["TV Azteca - Stories","TV Azteca"],
+  ["TV Azteca - Super 10\"","TV Azteca"],["TV Azteca - Super+ Mención 10\"","TV Azteca"],
+  ["TV Azteca - Talento Externo","TV Azteca"],["TV Azteca - Talento Interno","TV Azteca"],
+  ["TV Azteca - Video","TV Azteca"],["TV Azteca - Video ads Pre-roll","TV Azteca"],
+  ["TV Azteca - Video ads Pre-roll CTV","TV Azteca"],
+  ["TV Azteca - Videos verticales corta duración (Shorts, Reels, TikToks)","TV Azteca"],
+  ["TV Azteca - YouTube Non-Skippable (max 15s)","TV Azteca"],["TV Azteca - YouTube Skippable","TV Azteca"],
+  ["Video y Display Programmatic","TV Azteca"],
+  ["UnoTV - Banner Display","UnoTV"],["UnoTV - Bumpers","UnoTV"],
+  ["UnoTV - Nota Editorial + 1 Posteo orgánico Facebook + 500k impresiones Display","UnoTV"],
+  ["UnoTV - Nota Patrocinada","UnoTV"],["UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","UnoTV"],
+  ["UnoTV - Pauta externa","UnoTV"],["UnoTV - Shopping Display","UnoTV"],
+  ["UnoTV - Video","UnoTV"],["UnoTV - Video ads Pre-roll","UnoTV"],
+  ["UnoTV - YouTube Non-Skippable (max 15s)","UnoTV"],["UnoTV - YouTube Skippable","UnoTV"],
+  ["Claro Sports - Bumpers","Video"],["Claro Sports - Video","Video"],
+  ["Claro Sports - Video ads Pre-roll","Video"],["Claro Sports - YouTube Non-Skippable (max 15s)","Video"],
+  ["Claro Sports - YouTube Skippable","Video"],["Disney - Blitz: Alto volumen de impresiones (3 a 5 días)","Video"],
+  ["Disney - Fandom: Patrocinio de alguna categoria o contenido","Video"],
+  ["Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día","Video"],
+  ["Disney - Sponsorship: Video en un contenido. Primer Preroll 10s","Video"],
+  ["Disney - Video ads Pre-roll CTV","Video"],
+  ["Pluto - Pause Ads CTV","Video"],["Pluto - Video ads Pre-roll CTV","Video"],["Pluto - Video blast","Video"],
+  ["Tubi - First Impression","Video"],["Tubi - Pause Ads CTV","Video"],["Tubi - Video ads Pre-roll CTV","Video"],
+  ["TV Azteca - Bumpers","Video"],["TV Azteca - Pause Ads CTV","Video"],
+  ["TV Azteca - Programmatic Video","Video"],["TV Azteca - Programmatic Video CTV","Video"],
+  ["TV Azteca - Video","Video"],["TV Azteca - Video ads Pre-roll","Video"],
+  ["TV Azteca - Video ads Pre-roll CTV","Video"],
+  ["TV Azteca - YouTube Non-Skippable (max 15s)","Video"],["TV Azteca - YouTube Skippable","Video"],
+  ["UnoTV - Bumpers","Video"],["UnoTV - Video","Video"],["UnoTV - Video ads Pre-roll","Video"],
+  ["UnoTV - YouTube Non-Skippable (max 15s)","Video"],["UnoTV - YouTube Skippable","Video"],
+  ["Video y Display Programmatic","Video"],["Video y Display Programmatic","Video y Display"],
+  ["Claro Sports - YouTube Non-Skippable (max 15s)","YT"],["Claro Sports - YouTube Skippable","YT"],
+  ["TV Azteca - YouTube Non-Skippable (max 15s)","YT"],["TV Azteca - YouTube Skippable","YT"],
+  ["UnoTV - YouTube Non-Skippable (max 15s)","YT"],["UnoTV - YouTube Skippable","YT"],
+];
+
+// AdSpaceSpec junctions: [productName, adSpaceName]
+const SPACE_PAIRS = [
+  ["Claro Sports - Banner Display","Claro Sports - Sitio Completo - Desktop"],
+  ["Claro Sports - Banner Display","Claro Sports - Sitio Completo - Mobile"],
+  ["Claro Sports - Bumpers","Claro Sports - YouTube Uno TV - Mobile"],
+  ["Claro Sports - Nota editorial","Claro Sports - Sección y sitio a elegir - Desktop"],
+  ["Claro Sports - Nota editorial","Claro Sports - Sección y sitio a elegir - Mobile"],
+  ["Claro Sports - Nota Editorial + 2 Posteos Facebook + Push notification App","Claro Sports - Landing Page - Desktop"],
+  ["Claro Sports - Nota Editorial + 2 Posteos Facebook + Push notification App","Claro Sports - Landing Page - Mobile"],
+  ["Claro Sports - Nota Patrocinada","Claro Sports - Sección y sitio a elegir - Desktop"],
+  ["Claro Sports - Nota Patrocinada","Claro Sports - Sección y sitio a elegir - Mobile"],
+  ["Claro Sports - Paquete de Volumen Premium durante 24Hrs","Claro Sports - Home Page+ Sección Futbol y Minuto a Minuto de eventos en vivo - Desktop"],
+  ["Claro Sports - Paquete de Volumen Premium durante 24Hrs","Claro Sports - Home Page+ Sección Futbol y Minuto a Minuto de eventos en vivo - Mobile"],
+  ["Claro Sports - Pauta externa","Claro Sports - Redes sociales - Redes Sociales"],
+  ["Claro Sports - Video","Claro Sports - Sitio Completo - Desktop"],
+  ["Claro Sports - Video","Claro Sports - Sitio Completo - Mobile"],
+  ["Claro Sports - Video ads Pre-roll","Claro Sports - Contenido regular - Desktop"],
+  ["Claro Sports - Video ads Pre-roll","Claro Sports - Contenido regular - Mobile"],
+  ["Claro Sports - YouTube Non-Skippable (max 15s)","Claro Sports - YouTube Uno TV - Desktop"],
+  ["Claro Sports - YouTube Non-Skippable (max 15s)","Claro Sports - YouTube Uno TV - Mobile"],
+  ["Claro Sports - YouTube Skippable","Claro Sports - YouTube Uno TV - Desktop"],
+  ["Claro Sports - YouTube Skippable","Claro Sports - YouTube Uno TV - Mobile"],
+  ["Disney - Blitz: Alto volumen de impresiones (3 a 5 días)","Disney - Contenido regular - CTV"],
+  ["Disney - Fandom: Patrocinio de alguna categoria o contenido","Disney - Categoria a elegir - CTV"],
+  ["Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día","Disney - Contenido regular - CTV"],
+  ["Disney - Sponsorship: Video en un contenido. Primer Preroll 10s","Disney - CTV"],
+  ["Disney - Video ads Pre-roll CTV","Disney - Contenido regular - CTV"],
+  ["Pluto - Billboard bundlee","Pluto - Contenido regular - CTV"],
+  ["Pluto - Patrocinio de canal","Pluto - Contenido regular - CTV"],
+  ["Pluto - Pause Ads CTV","Pluto - Contenido Regular - CTV"],
+  ["Pluto - Video ads Pre-roll CTV","Pluto - Contenido regular - CTV"],
+  ["Pluto - Video blast","Pluto - Contenido regular - CTV"],
+  ["Tubi - First Impression","Tubi - Cada que se muestra un contenido - CTV"],
+  ["Tubi - Pause Ads CTV","Tubi - Contenido Regular - CTV"],
+  ["Tubi - Thematic Takeover","Tubi - Contenido regular - CTV"],
+  ["Tubi - Video ads Pre-roll CTV","Tubi - Contenido regular - CTV"],
+  ["TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","TVAzteca - Transmisión de Eventos Especiales - CTV"],
+  ["TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","TVAzteca - Transmisión de Eventos Especiales - Desktop"],
+  ["TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla)","TVAzteca - Transmisión de Eventos Especiales - Mobile"],
+  ["TV Azteca - Banner Display","TVAzteca - Sitio Completo - Desktop"],
+  ["TV Azteca - Banner Display","TVAzteca - Sitio Completo - Mobile"],
+  ["TV Azteca - Bumpers","TVAzteca - YouTube Uno TV - Mobile"],
+  ["TV Azteca - Cápsula producida","TVAzteca - FB, IG, X, TT, YT - Desktop"],
+  ["TV Azteca - Cápsula producida","TVAzteca - FB, IG, X, TT, YT - Mobile"],
+  ["TV Azteca - Card Back","TVAzteca - Contenido regular - CTV"],
+  ["TV Azteca - Clipping 24/7 y/o minuto a minuto","TVAzteca - FB, IG, X, TT, YT - Desktop"],
+  ["TV Azteca - Clipping 24/7 y/o minuto a minuto","TVAzteca - FB, IG, X, TT, YT - Mobile"],
+  ["TV Azteca - Cobertura/conducción de eventos","TVAzteca - FB, IG, X, TT, YT - Desktop"],
+  ["TV Azteca - Cobertura/conducción de eventos","TVAzteca - FB, IG, X, TT, YT - Mobile"],
+  ["TV Azteca - Elle 10\"","TVAzteca - Streaming en vivo - CTV"],
+  ["TV Azteca - Elle 10\"","TVAzteca - Streaming en vivo - Desktop"],
+  ["TV Azteca - Elle 10\"","TVAzteca - Streaming en vivo - Mobile"],
+  ["TV Azteca - Gráfico o infografía","TVAzteca - FB, IG, X - Desktop"],
+  ["TV Azteca - Gráfico o infografía","TVAzteca - FB, IG, X - Mobile"],
+  ["TV Azteca - Gráficos en transmisión","TVAzteca - FB, IG, X - Desktop"],
+  ["TV Azteca - Gráficos en transmisión","TVAzteca - FB, IG, X - Mobile"],
+  ["TV Azteca - Mención 10\"","TVAzteca - Streaming en vivo - CTV"],
+  ["TV Azteca - Mención 10\"","TVAzteca - Streaming en vivo - Desktop"],
+  ["TV Azteca - Mención 10\"","TVAzteca - Streaming en vivo - Mobile"],
+  ["TV Azteca - Nota Editorial","TVAzteca - Sección y sitio a elegir - Desktop"],
+  ["TV Azteca - Nota Editorial","TVAzteca - Sección y sitio a elegir - Mobile"],
+  ["TV Azteca - Nota Patrocinada","TVAzteca - Sección y sitio a elegir - Desktop"],
+  ["TV Azteca - Nota Patrocinada","TVAzteca - Sección y sitio a elegir - Mobile"],
+  ["TV Azteca - Patrocinio Live","TVAzteca - Canales en vivo - CTV"],
+  ["TV Azteca - Pause Ads CTV","TVAzteca - Contenido regular - CTV"],
+  ["TV Azteca - Pauta externa","TVAzteca - Redes sociales - Redes Sociales"],
+  ["TV Azteca - Producción","TVAzteca - Contenido regular - Desktop"],
+  ["TV Azteca - Producción Externa","TVAzteca - Desarrollo de contenido - Redes Sociales, Sitio y app"],
+  ["TV Azteca - Producción Interna","TVAzteca - Desarrollo de contenido - Redes Sociales, Sitio y app"],
+  ["TV Azteca - Programmatic Display","TVAzteca - Contenido regular - Desktop"],
+  ["TV Azteca - Programmatic Display","TVAzteca - Contenido regular - Mobile"],
+  ["TV Azteca - Programmatic Video","TVAzteca - Contenido regular - Desktop"],
+  ["TV Azteca - Programmatic Video","TVAzteca - Contenido regular - Mobile"],
+  ["TV Azteca - Programmatic Video CTV","TVAzteca - Contenido regular - CTV"],
+  ["TV Azteca - Push notification","TVAzteca - App - Mobile"],
+  ["TV Azteca - Semiposter","TVAzteca - Canales en vivo - CTV"],
+  ["TV Azteca - Shopping Display","TVAzteca - Contenido regular - Desktop"],
+  ["TV Azteca - Stories","TVAzteca - FB, IG, TT - Desktop"],
+  ["TV Azteca - Stories","TVAzteca - FB, IG, TT - Mobile"],
+  ["TV Azteca - Super 10\"","TVAzteca - Streaming en vivo - CTV"],
+  ["TV Azteca - Super 10\"","TVAzteca - Streaming en vivo - Desktop"],
+  ["TV Azteca - Super 10\"","TVAzteca - Streaming en vivo - Mobile"],
+  ["TV Azteca - Super+ Mención 10\"","TVAzteca - Streaming en vivo - CTV"],
+  ["TV Azteca - Super+ Mención 10\"","TVAzteca - Streaming en vivo - Desktop"],
+  ["TV Azteca - Super+ Mención 10\"","TVAzteca - Streaming en vivo - Mobile"],
+  ["TV Azteca - Talento Externo","TVAzteca - Contenido - Redes Sociales, Sitio y app"],
+  ["TV Azteca - Talento Interno","TVAzteca - Contenido - Redes Sociales, Sitio y app"],
+  ["TV Azteca - Video","TVAzteca - Sitio Completo - Desktop"],
+  ["TV Azteca - Video","TVAzteca - Sitio Completo - Mobile"],
+  ["TV Azteca - Video ads Pre-roll","TVAzteca - Contenido regular - CTV"],
+  ["TV Azteca - Video ads Pre-roll CTV","TVAzteca - Contenido regular - CTV"],
+  ["TV Azteca - Videos verticales corta duración (Shorts, Reels, TikToks)","TVAzteca - FB, IG, TT, YT - Desktop"],
+  ["TV Azteca - Videos verticales corta duración (Shorts, Reels, TikToks)","TVAzteca - FB, IG, TT, YT - Mobile"],
+  ["TV Azteca - YouTube Non-Skippable (max 15s)","TVAzteca - YouTube Uno TV - Desktop"],
+  ["TV Azteca - YouTube Non-Skippable (max 15s)","TVAzteca - YouTube Uno TV - Mobile"],
+  ["TV Azteca - YouTube Skippable","TVAzteca - YouTube Uno TV - Desktop"],
+  ["TV Azteca - YouTube Skippable","TVAzteca - YouTube Uno TV - Mobile"],
+  ["UnoTV - Banner Display","UnoTV - Sitio Completo - Desktop"],
+  ["UnoTV - Banner Display","UnoTV - Sitio Completo - Mobile"],
+  ["UnoTV - Bumpers","UnoTV - YouTube Uno TV - Mobile"],
+  ["UnoTV - Nota Editorial + 1 Posteo orgánico Facebook + 500k impresiones Display","UnoTV - Landing Page - Desktop"],
+  ["UnoTV - Nota Editorial + 1 Posteo orgánico Facebook + 500k impresiones Display","UnoTV - Landing Page - Mobile"],
+  ["UnoTV - Nota Patrocinada","UnoTV - Sección y sitio a elegir - Desktop"],
+  ["UnoTV - Nota Patrocinada","UnoTV - Sección y sitio a elegir - Mobile"],
+  ["UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","UnoTV - ROS - Desktop"],
+  ["UnoTV - Paquete de Volumen Especial 24 hrs (3 millones en 1 día)","UnoTV - ROS - Mobile"],
+  ["UnoTV - Pauta externa","UnoTV - Redes sociales - Redes Sociales"],
+  ["UnoTV - Shopping Display","UnoTV - ROS - Desktop"],
+  ["UnoTV - Shopping Display","UnoTV - ROS - Mobile"],
+  ["UnoTV - Video","UnoTV - Sitio Completo - Desktop"],
+  ["UnoTV - Video","UnoTV - Sitio Completo - Mobile"],
+  ["UnoTV - Video ads Pre-roll","UnoTV - Contenido regular - Desktop"],
+  ["UnoTV - Video ads Pre-roll","UnoTV - Contenido regular - Mobile"],
+  ["UnoTV - YouTube Non-Skippable (max 15s)","UnoTV - YouTube Uno TV - Desktop"],
+  ["UnoTV - YouTube Non-Skippable (max 15s)","UnoTV - YouTube Uno TV - Mobile"],
+  ["UnoTV - YouTube Skippable","UnoTV - YouTube Uno TV - Desktop"],
+  ["UnoTV - YouTube Skippable","UnoTV - YouTube Uno TV - Mobile"],
+  ["Video y Display Programmatic","Claro Sports - Contenido regular - Desktop"],
+  ["Video y Display Programmatic","Claro Sports - Contenido regular - Mobile"],
+  ["Video y Display Programmatic","Pluto - Contenido regular - Desktop"],
+  ["Video y Display Programmatic","Pluto - Contenido regular - Mobile"],
+  ["Video y Display Programmatic","Tubi - Contenido regular - Desktop"],
+  ["Video y Display Programmatic","Tubi - Contenido regular - Mobile"],
+  ["Video y Display Programmatic","TVAzteca - Contenido regular - Desktop"],
+  ["Video y Display Programmatic","TVAzteca - Contenido regular - Mobile"],
+  ["Video y Display Programmatic","UnoTV - Contenido regular - Desktop"],
+  ["Video y Display Programmatic","UnoTV - Contenido regular - Mobile"],
+];
+
+const AMEND_SCENARIOS = [
+  "amend-Bumpers or Short Video Ad","amend-order",
+  "amend-Paquete de Volumen Especial 24 hrs (3 millones a devengar en 1 día)",
+  "amend-Paquete de Volumen Premium durante 24Hrs","amend-Patrocinio Live",
+  "amend-Shopping Display","amend-Video","amend-Video ads (Pre-roll y mid-roll)",
+  "amend-Video blast","amend-Video Pre-Roll You Tube","amend-Video y Display Programmatic",
+];
+const FULFIL_SCENARIOS = [
+  "Escenario Banner Display","Escenario Billboard bundlee","Escenario Blitz",
+  "Escenario Bumpers or Short Video Ad","Escenario Fandom","Escenario First Impression",
+  "Escenario Nota editorial","Escenario Nota Editorial + 1 Posteo orgánico",
+  "Escenario Nota Editorial +2 Posteos en Facebook","Escenario Nota Patrocinada",
+  "Escenario Paquete de Volumen Especial 24 hrs (3 millones a devengar en 1 día)",
+  "Escenario Paquete de Volumen Premium durante 24Hrs","Escenario Patrocinio de canal",
+  "Escenario Patrocinio Live","Escenario Pause Ads","Escenario Pauta externa",
+  "Escenario Shopping Display","Escenario Splash","Escenario Sponsorship",
+  "Escenario Thematic Takeover","Escenario Video",
+  "Escenario Video ads (Pre-roll y mid-roll) — TV Azteca",
+  "Escenario Video ads (Pre-roll y mid-roll) — Claro Sports / UnoTV",
+  "Escenario Video blast","Escenario Video Pre-Roll You Tube — TV Azteca",
+  "Escenario Video Pre-Roll You Tube — UnoTV","Escenario Video y Display Programmatic",
+];
+
+// PROD_TARGET_DEFAULTS: data live from DevPoc — AdProductDefaultTargetValue (912 records)
+const PROD_TARGET_DEFAULTS = {
+  "Claro Sports - Banner Display":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Bumpers":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Nota Editorial + 2 Posteos en Facebook + Push notification in App":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Nota Patrocinada":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Nota editorial":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Paquete de Volumen Premium durante 24Hrs":{"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Pauta externa":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Video":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - Video ads Pre-roll":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - YouTube Non-Skippable (max 15s)":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Claro Sports - YouTube Skippable":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-ClaroSports","AZI-Azteca-Noticias","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Disney - Blitz: Alto volumen de impresiones en un periodo corto de tiempo (de 3 a 5 días)":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"]},
+  "Disney - Fandom: Patrocinio de alguna categoria o contenido":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"]},
+  "Disney - Splash/Sieze the Day: Alto volumen de impresiones en un día, ideal para…":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"]},
+  "Disney - Sponsorship: Video en un contenido. Primer Preroll10 segundos+Segundo Preroll…":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"]},
+  "Disney - Video ads Pre-roll CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"]},
+  "Pluto - Billboard bundlee":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Pluto-Tv","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI"]},
+  "Pluto - Patrocinio de canal":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Pluto-Tv","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI"]},
+  "Pluto - Pause Ads CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Pluto-Tv","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI"]},
+  "Pluto - Video ads Pre-roll CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Pluto-Tv","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI"]},
+  "Pluto - Video blast":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Pluto-Tv","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI"]},
+  "Tubi - First Impression":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Tubi","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Tubi - Pause Ads CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Tubi","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Tubi - Thematic Takeover":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Tubi","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Tubi - Video ads Pre-roll CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Envivo-USA","AZA-Noticias-USA","AZD-App-Envivo-Android","AZD-App-Envivo-IOS","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-Azteca-Envivo-Web","AZD-Tubi","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","Apps-USA-App-EnVivo-USA-Series-ABCForense","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Acción especial (virtual, cintillo, marcador y cortinilla de entrada y salida":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes","Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Banner Display":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Bumpers":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Cápsula producida":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Card Back":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Clipping 24/7 y/o minuto a minuto":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Cobertura/conducción de eventos":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Elle 10\"":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes","Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Gráfico o infografía":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Gráficos en transmisión":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Mención 10\"":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes","Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Nota Editorial":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Nota Editorial Bundle":{"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Nota Patrocinada":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Patrocinio Live":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Pause Ads CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Pauta externa":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Producción":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Producción Externa":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Producción Interna":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Programmatic Display":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Programmatic Video":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Programmatic Video CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Push notification":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Semiposter":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Shopping Display":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Stories":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Super 10\"":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes","Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Super+ Mención 10\"":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes","Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Talento Externo":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Talento Interno":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Video":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Video ads Pre-roll":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Video ads Pre-roll CTV":{"Categoría de dispositivo":["Tv Conectada"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - Videos verticales corta duración (Shorts, Reels o TikToks)":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - YouTube Non-Skippable (max 15s)":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "TV Azteca - YouTube Skippable":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-Deportes-USA","AZD-Azteca-7","AZI-Azteca-7","AZI-Azteca-Deportes","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Banner Display":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Bumpers":{"Categoría de dispositivo":["Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Nota Editorial + 1 Posteo orgánico en Facebook + 500 mil impresiones Display":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Nota Patrocinada":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Paquete de Volumen Especial 24 hrs (3 millones a devengar en 1 día)":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Pauta externa":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Shopping Display":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Video":{"Categoría de dispositivo":["Computadora"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - Video ads Pre-roll":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - YouTube Non-Skippable (max 15s)":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "UnoTV - YouTube Skippable":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"],"Inventario":["ADN40","AZA-ADN40-USA","AZA-Deportes-USA","AZA-Noticias-USA","AZD-Azteca-7","AZD-Azteca-Deportes","AZD-UnoTV","AZI-Azteca-7","AZI-Azteca-Deportes","AZI-Azteca-Noticias","DeportesPruebasPleca","Sinaloa-ADN40","US-ADN40-DAI","USA-ADN40-Pop-Pop-Nota"]},
+  "Video y Display Programmatic":{"Categoría de dispositivo":["Computadora","Tablets","Teléfono de gama media","Teléfonos inteligentes"],"Geografía":["México"]},
+};
+
+// ── MEDIO → CSS class ──
+const MEDIO_CSS = {
+  "TV Azteca":"m-tv","UnoTV":"m-uno","Claro Sports":"m-cs",
+  "Disney":"m-dis","Pluto":"m-plu","Tubi":"m-tub","Otros":"m-ot"
+};
+// ── Build lookup maps ──
+const PROD_CATS = {};
+CAT_PAIRS.forEach(([p,c])=>{ if(!PROD_CATS[p]) PROD_CATS[p]=[]; if(!PROD_CATS[p].includes(c)) PROD_CATS[p].push(c); });
+const CAT_PRODS = {};
+CAT_PAIRS.forEach(([p,c])=>{ if(!CAT_PRODS[c]) CAT_PRODS[c]=[]; if(!CAT_PRODS[c].includes(p)) CAT_PRODS[c].push(p); });
+const PROD_SPACES = {};
+SPACE_PAIRS.forEach(([p,s])=>{ if(!PROD_SPACES[p]) PROD_SPACES[p]=[]; const u=new Set(PROD_SPACES[p]); if(!u.has(s)) PROD_SPACES[p].push(s); });
+// Normalize product names for lookup (trim)
+function normKey(n){ return n.trim(); }
+
+// ── RENDER: Products ──
+function renderProds(list) {
+  const tbody = document.getElementById('prod-tbody');
+  tbody.innerHTML = '';
+  list.forEach(([code,name,medio],i) => {
+    const mc = MEDIO_CSS[medio]||'m-ot';
+    const cats = (PROD_CATS[name]||[]).filter(c=>c!==medio&&c!=='TV Azteca'&&c!=='UnoTV'&&c!=='Claro Sports'&&c!=='Disney'&&c!=='Pluto'&&c!=='Tubi');
+    const catHtml = cats.slice(0,4).map(c=>`<span class="fcat-tag">${c}</span>`).join('');
+    tbody.innerHTML += `<tr>
+      <td style="color:#706e6b;font-size:11px">${i+1}</td>
+      <td style="font-family:monospace;font-size:10px;color:#706e6b">${code}</td>
+      <td style="font-size:12px;font-weight:500">${name}</td>
+      <td><span class="medio-tag ${mc}">${medio}</span></td>
+      <td>${catHtml}</td>
+    </tr>`;
+  });
+  document.getElementById('prod-count').textContent = list.length + ' productos';
+}
+
+function filterProds() {
+  const q = document.getElementById('prod-search').value.toLowerCase();
+  const m = document.getElementById('medio-filter').value;
+  const filtered = PRODS.filter(([code,name,medio]) =>
+    (!q || name.toLowerCase().includes(q) || code.toLowerCase().includes(q)) &&
+    (!m || medio === m)
+  );
+  renderProds(filtered);
+}
+
+// ── RENDER: AdSpaces ──
+function renderAdSpaces() {
+  const el = document.getElementById('adspace-list');
+  PRODS.forEach(([code,name,medio]) => {
+    const spaces = PROD_SPACES[name] || [];
+    const mc = MEDIO_CSS[medio]||'m-ot';
+    const spaceHtml = spaces.length
+      ? spaces.map(s=>`<span>${s}</span>`).join('')
+      : '<span style="color:#ba0517;background:#fde8e8">Sin AdSpaceSpecProduct asignado</span>';
+    el.innerHTML += `<details class="adspace-item">
+      <summary>
+        <span class="medio-tag ${mc}" style="font-size:10px">${medio}</span>
+        ${name}
+        <span style="font-size:10px;color:#706e6b;margin-left:auto">${spaces.length} space(s)</span>
+      </summary>
+      <div class="inner">${spaceHtml}</div>
+    </details>`;
+  });
+}
+
+// ── RENDER: Categories ──
+function renderCats() {
+  const el = document.getElementById('cat-list');
+  const allCats = [...new Set(CAT_PAIRS.map(([,c])=>c))].sort();
+  allCats.forEach(cat => {
+    const prods = CAT_PRODS[cat]||[];
+    el.innerHTML += `<details class="cat-item">
+      <summary>${cat} <span style="margin-left:auto;font-size:10px;color:#706e6b">${prods.length} productos</span></summary>
+      <div class="inner">${prods.map(p=>`<span>${p}</span>`).join('')}</div>
+    </details>`;
+  });
+}
+
+// ── RENDER: Targeting by product ──
+const CAT_ICON = {
+  "Inventario": "📡",
+  "Categoría de dispositivo": "📱",
+  "Geografía": "🌎",
+};
+const INV_STYLE = "background:#e0f0ff;color:#014486";
+const DEV_STYLE = "background:#d4edda;color:#155724";
+const GEO_STYLE = "background:#fff3cd;color:#856404";
+const CAT_STYLES = {"Inventario":INV_STYLE,"Categoría de dispositivo":DEV_STYLE,"Geografía":GEO_STYLE};
+
+function buildTargetingItem(prod, cats) {
+  const mc = MEDIO_CSS[PRODS.find(p=>p[1]===prod)?.[2]||''] || 'm-ot';
+  const medio = PRODS.find(p=>p[1]===prod)?.[2] || '';
+  let innerHtml = '';
+  for (const [cat, vals] of Object.entries(cats)) {
+    const icon = CAT_ICON[cat] || '🏷';
+    const style = CAT_STYLES[cat] || 'background:#f3f2f2;color:#3e3e3c';
+    const pills = vals.map(v => `<span style="${style};display:inline-block;font-size:10px;padding:1px 7px;border-radius:3px;margin:2px 3px 2px 0">${v}</span>`).join('');
+    innerHtml += `<div style="margin-bottom:8px">
+      <div style="font-size:10px;font-weight:600;color:#706e6b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">${icon} ${cat}</div>
+      <div>${pills}</div>
+    </div>`;
+  }
+  const totalVals = Object.values(cats).flat().length;
+  return `<details class="adspace-item tgt-item" data-prod="${prod.toLowerCase()}">
+    <summary>
+      <span class="medio-tag ${mc}" style="font-size:10px">${medio}</span>
+      ${prod}
+      <span style="font-size:10px;color:#706e6b;margin-left:auto">${totalVals} valores</span>
+    </summary>
+    <div class="inner" style="padding-top:10px">${innerHtml}</div>
+  </details>`;
+}
+
+function renderTargeting() {
+  const el = document.getElementById('tgt-list');
+  el.innerHTML = '';
+  for (const [prod, cats] of Object.entries(PROD_TARGET_DEFAULTS)) {
+    el.innerHTML += buildTargetingItem(prod, cats);
+  }
+}
+
+function filterTargeting() {
+  const q = document.getElementById('tgt-search').value.toLowerCase();
+  const items = document.querySelectorAll('.tgt-item');
+  let visible = 0;
+  items.forEach(item => {
+    const match = !q || item.dataset.prod.includes(q);
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('tgt-empty').style.display = visible === 0 ? '' : 'none';
+}
+
+// ── RENDER: Scenarios ──
+function renderScenarios() {
+  const at = document.getElementById('amend-tbody');
+  const et = document.getElementById('escen-tbody');
+  AMEND_SCENARIOS.forEach((s,i) => {
+    at.innerHTML += `<tr><td style="color:#706e6b;font-size:11px">${i+1}</td><td style="font-size:12px">${s}</td></tr>`;
+  });
+  FULFIL_SCENARIOS.forEach((s,i) => {
+    et.innerHTML += `<tr><td style="color:#706e6b;font-size:11px">${i+1}</td><td style="font-size:12px">${s}</td></tr>`;
+  });
+}
+
+// ── Init on load ──
+document.addEventListener('DOMContentLoaded', () => {
+  renderProds(PRODS);
+  renderAdSpaces();
+  renderCats();
+  renderTargeting();
+  renderScenarios();
+});
+</script>
+</body>
+</html>

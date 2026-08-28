@@ -660,6 +660,11 @@
           <span class="nav-ico">🔧</span>Tareas por resolver
         </a>
       </li>
+      <li>
+        <a onclick="filterCategory('change-order-productos',this)" id="nav-change-order-productos">
+          <span class="nav-ico">📦</span><span class="nav-lbl">Change Order · Productos</span>
+        </a>
+      </li>
       <li class="nav-sep"></li>
       <li class="nav-grp">ANÁLISIS DE BUGS R1</li>
       <li>
@@ -838,6 +843,7 @@
         <button class="f-tab" onclick="filterCategory('gobierno-tecnico',this)">Gobierno Técnico</button>
         <button class="f-tab" onclick="filterCategory('discovery-entregables',this)">Discovery &amp; Entregables</button>
         <button class="f-tab" onclick="filterCategory('tareas-por-resolver',this)">Tareas por resolver</button>
+        <button class="f-tab" onclick="filterCategory('change-order-productos',this)">Change Order · Productos</button>
       </div>
 
       <!-- Cards -->
@@ -1090,6 +1096,27 @@
           <div class="card-desc-wrap">
             <div class="card-desc">Hallazgo QA: INVENTORY_UNIT_CANNOT_BE_TARGETED_IF_ANCESTOR_IS_TARGETED — redundancia jerárquica al segmentar Ad Units padre e hijo simultáneamente con includeDescendants:true.</div>
             <div class="card-footer">Ver hallazgo <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           CHANGE ORDER · PRODUCTOS
+      ══════════════════════════════════════════ -->
+      <div class="section-title">Change Order · Productos</div>
+      <div class="pres-grid">
+
+        <a href="presentaciones/change-order-productos/devpoc-estado-catalogo-digital.html"
+           class="pres-card" data-category="change-order-productos">
+          <div class="card-banner" style="background:linear-gradient(135deg,#0f2d52 0%,#0176d3 60%,#06a59a 100%)">
+            <div class="card-banner-top"><span class="card-tag">Media Cloud · PCM · DevPoc</span></div>
+            <div class="card-date">28 Ago 2026</div>
+            <div class="card-title">DevPoc · Estado Catálogo Digital</div>
+          </div>
+          <div class="card-desc-wrap">
+            <div class="card-desc">Análisis del catálogo en DevPoc: 75 productos, 138 AdSpaces, 38 escenarios de fulfillment, 20 categorías y validación F6. Catálogo completo con targeting.</div>
+            <div class="card-footer">Ver análisis <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
         </a>
 
