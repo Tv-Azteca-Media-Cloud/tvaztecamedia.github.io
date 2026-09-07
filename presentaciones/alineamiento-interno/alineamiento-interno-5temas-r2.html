@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Alineamiento Interno · 5 Temas Post-Discovery R2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Salesforce Sans', 'Segoe UI', Arial, sans-serif;
+    background: #f3f2f2;
+    color: #3e3e3c;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  body { padding-bottom: 80px; }
+
+  .topbar {
+    background: #032d60;
+    color: #fff;
+    padding: 0 32px;
+    height: 48px;
+    display: flex; align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar .brand { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
+  .topbar .dot { width: 6px; height: 6px; background: #ffb75d; border-radius: 50%; margin: 0 14px; }
+  .topbar .subtitle { font-size: 12px; opacity: 0.85; font-weight: 400; }
+  .topbar .right { margin-left: auto; font-size: 11px; opacity: 0.75; }
+
+  .hero {
+    background: linear-gradient(135deg, #032d60 0%, #0070d2 100%);
+    color: #fff;
+    padding: 40px 48px 44px;
+  }
+  .hero .kicker {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #ffb75d; font-weight: 600; margin-bottom: 12px;
+  }
+  .hero h1 { font-size: 28px; font-weight: 600; margin-bottom: 10px; }
+  .hero .lead { font-size: 14px; opacity: 0.92; max-width: 940px; line-height: 1.65; }
+  .hero .meta {
+    margin-top: 22px; display: flex; gap: 32px; flex-wrap: wrap;
+    font-size: 12px; opacity: 0.9;
+  }
+  .hero .meta strong { display: block; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; opacity: 0.75; margin-bottom: 3px; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 48px; }
+
+  section { margin-bottom: 40px; }
+  h2 {
+    font-size: 20px; font-weight: 600; color: #032d60;
+    padding-bottom: 8px; margin-bottom: 20px;
+    border-bottom: 2px solid #0070d2;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  h2 .num {
+    display: inline-block; background: #0070d2; color: #fff;
+    font-size: 12px; padding: 2px 10px; border-radius: 3px; font-weight: 600;
+  }
+  h2 .num.warn { background: #e07000; }
+  h3 {
+    font-size: 14px; font-weight: 600; color: #032d60;
+    margin: 20px 0 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  p { margin-bottom: 12px; }
+
+  .prose p { margin-bottom: 10px; }
+
+  table.exec {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid #dddbda; border-radius: 4px; overflow: hidden;
+    margin-bottom: 12px;
+  }
+  table.exec th {
+    background: #032d60; color: #fff; text-align: left;
+    padding: 10px 12px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; font-weight: 600;
+  }
+  table.exec td {
+    padding: 11px 12px; font-size: 12px; border-top: 1px solid #dddbda;
+    vertical-align: top;
+  }
+  table.exec tr:nth-child(even) td { background: #fafafa; }
+
+  .badge {
+    display: inline-block; padding: 3px 9px; border-radius: 12px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .badge.absorb { background: #e3f4ec; color: #04844b; }
+  .badge.change { background: #fdeedd; color: #e07000; }
+  .badge.internal { background: #ebe9f5; color: #716caa; }
+  .badge.new { background: #fce8e6; color: #c23934; }
+  .badge.done { background: #e3f0fc; color: #0070d2; }
+  .badge.partial { background: #f5f0e0; color: #8a6d3b; }
+
+  .topic-card {
+    background: #fff; border: 1px solid #dddbda; border-radius: 4px;
+    padding: 26px 30px; margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border-left: 4px solid #0070d2;
+  }
+  .topic-card.absorb { border-left-color: #04844b; }
+  .topic-card.change { border-left-color: #e07000; }
+
+  .topic-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 6px; gap: 20px;
+  }
+  .topic-header h2 {
+    border: none; padding: 0; margin: 0;
+    font-size: 19px; color: #032d60;
+  }
+  .topic-header .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+
+  .topic-subtitle {
+    font-size: 12px; color: #706e6b; margin-bottom: 18px; margin-top: 2px;
+  }
+
+  .block { margin-bottom: 16px; }
+  .block-title {
+    font-size: 11px; font-weight: 700; color: #032d60;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    padding-left: 10px;
+    border-left: 3px solid #0070d2;
+  }
+  .block-body { padding-left: 13px; font-size: 13px; color: #3e3e3c; }
+  .block-body p { margin-bottom: 8px; }
+  .block-body ul { padding-left: 18px; margin: 8px 0; }
+  .block-body ul li { margin-bottom: 5px; font-size: 12.5px; }
+
+  .callout {
+    background: #f7fbff; border-left: 4px solid #0070d2;
+    padding: 12px 16px; border-radius: 4px;
+    margin-top: 14px; margin-bottom: 6px;
+    font-size: 12.5px;
+  }
+  .callout.warn { background: #fff9f0; border-left-color: #e07000; }
+  .callout.done { background: #f0f8f3; border-left-color: #04844b; }
+  .callout .callout-title {
+    font-weight: 700; color: #032d60; margin-bottom: 4px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+  }
+
+  .kpi-inline {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    padding: 12px 14px; background: #fafafa;
+    border-radius: 4px; margin-top: 10px;
+    border: 1px solid #ececec;
+  }
+  .kpi-inline .kpi-item {
+    flex: 1 1 auto; min-width: 140px;
+  }
+  .kpi-inline .k-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: #706e6b; font-weight: 600;
+  }
+  .kpi-inline .k-value {
+    font-size: 15px; font-weight: 700; color: #032d60; margin-top: 3px;
+  }
+  .kpi-inline .k-sub { font-size: 11px; color: #706e6b; }
+
+  .status-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 3px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.4px; margin-left: 6px;
+  }
+  .status-pill.on { background: #e3f4ec; color: #04844b; }
+  .status-pill.wait { background: #f5f0e0; color: #8a6d3b; }
+  .status-pill.co { background: #fdeedd; color: #e07000; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 2px solid #dddbda;
+    padding: 0 48px;
+    position: sticky; top: 48px; z-index: 90;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .tab {
+    background: none; border: none;
+    padding: 15px 24px; font-size: 13px; font-weight: 600;
+    color: #706e6b; cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-family: inherit;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: #032d60; }
+  .tab.active {
+    color: #0070d2;
+    border-bottom-color: #0070d2;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Sequence diagram (Tab 3 · Integraciones Actuales) */
+  .seq-legend {
+    background: #fdf6d8; border: 1px solid #f0e2a3; border-radius: 4px;
+    padding: 16px 22px; margin-bottom: 16px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 26px;
+    font-size: 12.5px; color: #4a4a48;
+  }
+  .seq-legend-item { display: flex; align-items: center; gap: 9px; }
+  .seq-legend-icon {
+    width: 24px; height: 24px; border-radius: 5px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+  }
+  .seq-legend-date { margin-left: auto; font-size: 11px; color: #8a6d3b; font-weight: 700; }
+
+  .seq-status-legend {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 11.5px; color: #3e3e3c; margin-bottom: 18px;
+  }
+  .seq-status-legend .seq-star { position: static; transform: none; font-size: 15px; margin-right: 5px; vertical-align: -2px; }
+
+  .seq-diagram {
+    background: #fff; border: 1px solid #0070d2; border-radius: 6px;
+    padding: 26px 22px 18px; overflow-x: auto;
+  }
+  .seq-inner { min-width: 780px; }
+
+  .seq-actors { position: relative; height: 42px; }
+  .seq-actors.seq-actors-bottom { margin-top: 10px; }
+  .seq-actor { position: absolute; top: 0; transform: translateX(-50%); }
+  .seq-actor .box {
+    display: inline-block; border: 1px solid #3e3e3c; border-radius: 3px;
+    padding: 9px 16px; font-size: 12.5px; font-weight: 700;
+    background: #fff; color: #032d60; white-space: nowrap;
+  }
+
+  .seq-body { position: relative; padding: 8px 0; }
+  .seq-lifeline { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed #b5b2b0; }
+
+  .seq-row { position: relative; }
+  .seq-row.seq-msg { min-height: 68px; }
+  .seq-row.seq-note-row { min-height: 54px; }
+  .seq-row.seq-section { margin: 22px 0 16px; }
+
+  .seq-section-box {
+    border: 1px solid #3e3e3c; border-radius: 2px; background: #fafafa;
+    padding: 9px 16px; font-size: 12.5px; font-weight: 700;
+    text-align: center; color: #032d60;
+  }
+
+  .seq-note-mini {
+    position: absolute; top: 6px; border: 1px solid #3e3e3c; border-radius: 2px;
+    background: #fff; padding: 8px 10px; font-size: 11px; font-weight: 600;
+    text-align: center; color: #032d60; box-sizing: border-box;
+  }
+
+  .seq-label {
+    position: absolute; top: 2px; font-size: 11px; font-weight: 600;
+    color: #3e3e3c; text-align: center; line-height: 1.3;
+    padding: 0 6px; box-sizing: border-box;
+  }
+
+  .seq-arrow-line { position: absolute; top: 48px; height: 0; border-top: 1.5px solid #3e3e3c; }
+  .seq-arrow-line.right::after {
+    content: ''; position: absolute; right: -1px; top: -4px;
+    border-style: solid; border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent #3e3e3c;
+  }
+  .seq-arrow-line.left::after {
+    content: ''; position: absolute; left: -1px; top: -4px;
+    border-style: solid; border-width: 4px 6px 4px 0;
+    border-color: transparent #3e3e3c transparent transparent;
+  }
+
+  .seq-star {
+    position: absolute; top: 38px; font-size: 19px; line-height: 1;
+    transform: translateX(-50%);
+  }
+  .seq-star.pending { color: #d4a72c; }
+  .seq-star.done { color: #04844b; }
+  .seq-star.issue { color: #c23934; }
+
+  /* Estimaciones (Tab 4) */
+  .est-scroll { overflow-x: auto; margin-bottom: 26px; border-radius: 4px; }
+  table.est {
+    width: 100%; min-width: 900px; border-collapse: collapse; background: #fff;
+    border: 1px solid #dddbda; font-size: 11px;
+  }
+  table.est th {
+    background: #032d60; color: #fff; text-align: center;
+    padding: 7px 8px; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.3px; font-weight: 600; white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  table.est th.role-col, table.est th.name-col { text-align: left; }
+  table.est td {
+    padding: 6px 8px; border-top: 1px solid #ececec; text-align: center;
+    white-space: nowrap; color: #3e3e3c;
+  }
+  table.est td.role-col, table.est td.name-col { text-align: left; white-space: normal; }
+  table.est tr:nth-child(even) td { background: #fafafa; }
+  table.est tfoot td {
+    font-weight: 700; background: #e3f0fc !important; color: #032d60;
+    border-top: 2px solid #0070d2;
+  }
+  table.est td.money, table.est th.money { text-align: right; }
+  table.est td.empty { color: #dddbda; }
+
+  .est-total-tag {
+    display: inline-block; margin-left: 6px; font-size: 9.5px; font-weight: 700;
+    color: #706e6b; text-transform: uppercase;
+  }
+
+  .roadmap-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 11px; }
+  .roadmap-legend .phase-pill { font-size: 9.5px; }
+
+  .phase-pill {
+    display: inline-block; padding: 3px 7px; border-radius: 3px;
+    font-size: 9px; font-weight: 700; color: #fff; letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .phase-pill.est { background: #c23934; }
+  .phase-pill.analisis { background: #e07000; }
+  .phase-pill.dev { background: #0070d2; }
+  .phase-pill.uat { background: #04844b; }
+  .phase-pill.deploy { background: #716caa; }
+  .phase-pill.scale { background: #8a6d3b; }
+
+  .assumptions-block { margin-top: 8px; }
+
+  /* Escalation cards (Tab 2) */
+  .escalation-card {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-left: 6px solid #c23934;
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .escalation-card.migration { border-left-color: #716caa; }
+  .escalation-header {
+    display: flex; gap: 20px; align-items: flex-start;
+    margin-bottom: 22px;
+  }
+  .escalation-number {
+    background: #c23934; color: #fff;
+    font-size: 22px; font-weight: 700;
+    padding: 10px 16px; border-radius: 4px;
+    min-width: 60px; text-align: center;
+    line-height: 1;
+  }
+  .escalation-card.migration .escalation-number { background: #716caa; }
+  .escalation-title-wrap { flex: 1; }
+  .escalation-title-wrap h2 {
+    border: none; padding: 0; margin: 0 0 6px 0;
+    font-size: 22px; color: #032d60;
+  }
+  .escalation-subtitle {
+    font-size: 11px; color: #706e6b;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .claim-banner {
+    background: linear-gradient(135deg, #fce8e6 0%, #fdeedd 100%);
+    border-left: 4px solid #c23934;
+    padding: 18px 22px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .escalation-card.migration .claim-banner {
+    background: linear-gradient(135deg, #ebe9f5 0%, #f7f6fb 100%);
+    border-left-color: #716caa;
+  }
+  .claim-label {
+    font-size: 10px; font-weight: 700;
+    color: #c23934;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .escalation-card.migration .claim-label { color: #716caa; }
+  .claim-body {
+    font-size: 14px; color: #3e3e3c;
+    font-style: italic; line-height: 1.6;
+  }
+
+  .esc-section { margin-bottom: 20px; }
+  .esc-section-title {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    padding: 6px 14px; border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  .esc-section.reality .esc-section-title { background: #e3f0fc; color: #032d60; }
+  .esc-section.omitted .esc-section-title { background: #fdeedd; color: #e07000; }
+  .esc-section.posture .esc-section-title { background: #e3f4ec; color: #04844b; }
+  .esc-section.escalation .esc-section-title { background: #ebe9f5; color: #716caa; }
+  .esc-section-body {
+    padding: 0 4px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #3e3e3c;
+  }
+  .esc-section-body p { margin-bottom: 10px; }
+  .esc-section-body ul { padding-left: 22px; margin: 8px 0; }
+  .esc-section-body ul li { margin-bottom: 6px; font-size: 12.5px; }
+  .esc-section-body strong { color: #032d60; }
+
+  .esc-split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 12px 0;
+  }
+  .esc-side {
+    background: #fafafa;
+    border: 1px solid #ececec;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .esc-side-label {
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.6px; font-weight: 700;
+    color: #032d60; margin-bottom: 6px;
+  }
+
+  .escalation-intro {
+    background: #f7f6fb;
+    border-left: 4px solid #716caa;
+    padding: 18px 22px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .escalation-intro strong { color: #032d60; }
+
+  footer {
+    text-align: center; font-size: 11px; color: #706e6b;
+    padding: 28px; border-top: 1px solid #dddbda; margin-top: 20px;
+    background: #fff;
+  }
+
+  @media print {
+    .topbar { position: static; }
+    section, .topic-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">TV Azteca · Media Cloud</span>
+  <span class="dot"></span>
+  <span class="subtitle">Alineamiento Interno · Temas Post-Discovery R2</span>
+  <span class="right">2026-09-03</span>
+</div>
+
+<div class="hero">
+  <div class="kicker">Documento Interno · Salesforce Delivery</div>
+  <h1>Temas en discusión · Postura del equipo</h1>
+  <p class="lead">
+    Este documento fija la posición del equipo Salesforce Delivery frente a los temas actualmente en discusión con el
+    cliente tras el cierre del Discovery del Release 2. Se estructura en dos ejes: los <strong>cinco temas de alcance
+    técnico-funcional</strong> — que se resuelven con la lógica habitual de absorción vs. Change Order — y los
+    <strong>dos temas de acuerdos verbales</strong>, cuya naturaleza es primero comercial y de escalamiento, y sólo
+    después técnica. El objetivo es que el equipo llegue con lectura unificada a la conversación externa.
+  </p>
+  <div class="meta">
+    <div><strong>Release</strong>R2 · en UAT</div>
+    <div><strong>Origen</strong>Sesiones de refinamiento post-Discovery</div>
+    <div><strong>Alcance</strong>Definición de postura interna</div>
+    <div><strong>Squads involucrados</strong>Sales · Media · Integraciones</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="tab-1">Alcance Técnico-Funcional · 5 temas</button>
+  <button class="tab" data-tab="tab-2">Acuerdos Verbales · Escalamiento Comercial · 2 temas</button>
+  <button class="tab" data-tab="tab-3">Integraciones Actuales</button>
+  <button class="tab" data-tab="tab-4">Estimaciones</button>
+</div>
+
+<div class="wrap">
+
+<div id="tab-1" class="tab-panel active">
+
+<section>
+  <h2>Resumen ejecutivo</h2>
+  <table class="exec">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 26%">Tema</th>
+        <th style="width: 22%">Origen del requerimiento</th>
+        <th style="width: 22%">Cobertura Discovery / SOW</th>
+        <th style="width: 26%">Postura</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Conciliación operativa y dashboards</td>
+        <td>Continuación de entrega existente</td>
+        <td>Sí — Intent 04 aprobado</td>
+        <td><span class="badge absorb">Absorber</span> — en andamiento por Sales</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Centro de costos y subproducción</td>
+        <td>Discutido en Discovery sin historia formal</td>
+        <td>Parcial — brecha reconocida</td>
+        <td><span class="badge absorb">Absorber</span> — en tratamiento por Media</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>Contratos con descuento especial</td>
+        <td>Parte del diseño de solución del Discovery</td>
+        <td>Sí — dentro del modelo de contratos</td>
+        <td><span class="badge absorb">Absorber</span> — en andamiento por Media</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>Flujo de aprobación de descargas</td>
+        <td>Requerimiento nuevo post-Discovery</td>
+        <td>No</td>
+        <td><span class="badge change">Cotizar Change Order</span></td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>Correos automáticos para productos no-GAM</td>
+        <td>Detalle recibido excede entendimiento inicial</td>
+        <td>No</td>
+        <td><span class="badge change">Cotizar Change Order</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 12.5px; color: #3e3e3c; margin-top: 14px; line-height: 1.65;">
+    La lectura general es que los temas 1 a 3 son gestionables dentro del release en curso — dos como continuidad natural
+    de lo entregado, uno como cierre técnico de una definición ya prevista en el diseño de solución. Los temas 4 y 5 son
+    alcance nuevo y deben tratarse como tal, tanto por el volumen del trabajo requerido como por la responsabilidad de
+    definición que recae fuera del equipo Salesforce.
+  </p>
+</section>
+
+<div class="topic-card absorb">
+  <div class="topic-header">
+    <h2><span class="num">01</span> Conciliación operativa y dashboards</h2>
+    <div class="badges">
+      <span class="badge absorb">Absorber</span>
+      <span class="badge done">En ejecución</span>
+    </div>
+  </div>
+  <p class="topic-subtitle">Continuación del entregable de dashboards de conciliación · Squad responsable: Sales</p>
+
+  <div class="prose">
+    <div class="block">
+      <div class="block-title">Alcance original</div>
+      <div class="block-body">
+        <p>
+          El SOW contempla explícitamente los dashboards de conciliación asociados al ciclo comercial —
+          Cuentas, Contactos, Contratos, Órdenes e Ítems por Orden. El primer intento funcional, enfocado en
+          el avance de campañas, fue construido, entregado y aprobado dentro del R2.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Solicitud actual</div>
+      <div class="block-body">
+        <p>
+          El cliente solicita un intento adicional enfocado en ítems facturados — la vista que reconcilia lo que
+          efectivamente se facturó contra lo que quedó registrado en Salesforce. Este bloque incluye:
+        </p>
+        <ul>
+          <li>Herencia de marca y submarca desde Oportunidad hacia Orden.</li>
+          <li>Ejecutivo responsable en pedidos originados en back-office como campo de captura manual.</li>
+          <li>Modelo híbrido para el tratamiento de eventos, con datos concatenados en la cabecera y detalle a nivel de línea.</li>
+          <li>Clasificación de programación asociada a la orden.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Postura</div>
+      <div class="block-body">
+        <p>
+          Este bloque es continuidad directa del reporte de conciliación ya aprobado. No representa un ensanchamiento
+          del alcance sino la finalización del objetivo original: el dashboard de conciliación fue concebido para cerrar
+          el ciclo comercial y la vista de facturación es parte natural de ese cierre.
+        </p>
+        <p>
+          <strong>Recomendación:</strong> absorber sin apertura de negociación. Presentarlo al cliente como cierre técnico
+          del entregable de conciliación, no como concesión.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout done">
+      <div class="callout-title">Estado actual</div>
+      Trabajo en andamiento por la squad de Sales, con presentación prevista dentro de la semana en curso.
+    </div>
+  </div>
+</div>
+
+<div class="topic-card absorb">
+  <div class="topic-header">
+    <h2><span class="num">02</span> Centro de costos y subproducción de campaña</h2>
+    <div class="badges">
+      <span class="badge absorb">Absorber</span>
+      <span class="badge partial">Dependencia cliente</span>
+    </div>
+  </div>
+  <p class="topic-subtitle">Cierre de brecha compartida · Squad responsable: Media</p>
+
+  <div class="prose">
+    <div class="block">
+      <div class="block-title">Alcance original</div>
+      <div class="block-body">
+        <p>
+          Los campos de centro de costos, tipo de costo, monto de costo, monto de costo complementario, costo de bolsa
+          y subproducción fueron discutidos durante las sesiones de Discovery. No obstante, no se formalizaron en ninguna
+          historia de usuario ni quedaron reflejados en la definición del contrato integrado.
+        </p>
+        <p>
+          Esta omisión es reconocida internamente como brecha compartida entre el equipo de Discovery y el cliente:
+          ambos lados sabían que los campos debían estar presentes y ninguno los materializó en la fase adecuada.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Solicitud actual</div>
+      <div class="block-body">
+        <p>
+          Que los campos habiliten la trazabilidad completa del costo asociado a cada campaña, integrándose al flujo
+          comercial y al reporte de conciliación operativa.
+        </p>
+        <p>
+          Decisiones ya acordadas en la última sesión de refinamiento del reporte de ítems facturados:
+        </p>
+        <ul>
+          <li>
+            <strong>Centro de costos</strong> — no será recibido por integración. Se gestionará mediante
+            <strong>carga masiva a nivel de Cuenta</strong>, dado que es un dato de dimensión del cliente y no del contrato individual.
+          </li>
+          <li>
+            <strong>Resto de campos</strong> (tipo de costo, monto de costo, monto de costo complementario, costo de bolsa, subproducción)
+            — serán configurados en Salesforce para ser <strong>completados durante el proceso de venta</strong> y
+            utilizados conforme a la definición del Discovery.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Postura</div>
+      <div class="block-body">
+        <p>
+          La ejecución técnica del lado Salesforce es acotada — creación de campos, mapeo de herencia, configuración de
+          visibilidad en pantallas del proceso de venta y exhibición en el reporte de conciliación. Se trata de un ajuste
+          contenido, sin desarrollo mayor asociado.
+        </p>
+        <p>
+          <strong>Recomendación:</strong> absorber la ejecución técnica sin costo adicional. Formalizar frente al cliente
+          que este cierre es un gesto de buena fe conjunta sobre una definición que quedó pendiente para ambos lados.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">Dependencia del cliente</div>
+      Al no involucrar integración, la ejecución no requiere ajuste del contrato de interfaz. La dependencia es
+      <strong>informativa</strong>: el cliente debe entregar (a) la <strong>lista maestra de Centros de Costo</strong>
+      que se cargará masivamente a nivel de Cuenta, y (b) la <strong>definición de negocio</strong> de los campos de
+      costo (tipo, monto, monto complementario, costo de bolsa, subproducción) que se completarán durante el proceso
+      de venta — valores válidos, reglas de captura y momento del ciclo en que se registran.
+    </div>
+  </div>
+</div>
+
+<div class="topic-card absorb">
+  <div class="topic-header">
+    <h2><span class="num">03</span> Contratos con descuento especial</h2>
+    <div class="badges">
+      <span class="badge absorb">Absorber</span>
+      <span class="badge done">En andamiento</span>
+    </div>
+  </div>
+  <p class="topic-subtitle">Cierre técnico de funcionalidad prevista en el diseño original · Squad responsable: Media</p>
+
+  <div class="prose">
+    <div class="block">
+      <div class="block-title">Alcance original</div>
+      <div class="block-body">
+        <p>
+          El modelo de contratos con descuento especial <strong>fue parte del diseño de solución elaborado durante el Discovery</strong>,
+          en el marco de la configuración de Salesforce Pricing. El campo que representa el factor de descuento a nivel
+          contrato está creado y viaja actualmente en la integración.
+        </p>
+        <p>
+          Lo que no fue completado fue la lógica de aplicación y multiplicación de ese factor en las órdenes,
+          los cálculos de conciliación y la exhibición en rentabilidad. <strong>Este bloque no es un requisito
+          olvidado, es un requisito diferido.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Decisión de priorización</div>
+      <div class="block-body">
+        <p>
+          El diferimiento del bloque fue una <strong>decisión de priorización tomada por la squad de Media</strong>
+          durante el ritmo intensivo del último tramo del proyecto. Se optó por proteger los entregables críticos del
+          release en curso y postergar el cierre de la lógica de aplicación del descuento especial para una ventana posterior.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Solicitud actual</div>
+      <div class="block-body">
+        <p>Que el factor de descuento especial impacte de forma consistente:</p>
+        <ul>
+          <li>El cálculo del precio final a nivel línea de orden.</li>
+          <li>La multiplicación correcta de valores en la conciliación operativa.</li>
+          <li>La exhibición del descuento efectivo en los reportes de rentabilidad.</li>
+        </ul>
+        <p>
+          Adicionalmente, el ajuste al producto de Costo de Producción — que involucra un campo de tipo de costo con
+          selección manual del usuario — está siendo tratado en paralelo por su simplicidad y proximidad funcional.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Postura</div>
+      <div class="block-body">
+        <p>
+          El equipo Salesforce ya se comprometió internamente a cerrar este punto dentro de la semana en curso,
+          apoyándose en la lógica ya construida y el campo ya integrado. La squad de Media está tratando la ejecución;
+          la complejidad es contenida y el trabajo restante corresponde principalmente a lógica de aplicación y
+          regresión sobre los reportes existentes.
+        </p>
+        <p>
+          <strong>Recomendación:</strong> absorber. Presentarlo al cliente como ajuste técnico final de la funcionalidad
+          de descuentos, no como nuevo desarrollo. El framing importa: reabrir la discusión de scope introduciría
+          fricción innecesaria sobre un trabajo que va a ejecutarse igual dentro de la semana.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">Punto a definir</div>
+      El cálculo de rentabilidad — específicamente cómo el factor de descuento se propaga a través de las multiplicaciones
+      de órdenes agrupadas — requiere una definición conjunta entre Media, Sales y el equipo de finanzas del cliente.
+      Se recomienda agendar una sesión breve de alineación técnica antes del cierre de la semana.
+    </div>
+  </div>
+</div>
+
+<div class="topic-card change">
+  <div class="topic-header">
+    <h2><span class="num warn">04</span> Flujo de aprobación de descargas</h2>
+    <div class="badges">
+      <span class="badge change">Change Order</span>
+      <span class="badge new">Requerimiento nuevo</span>
+    </div>
+  </div>
+  <p class="topic-subtitle">Alcance nuevo post-Discovery · Cross-squad (Sales, Media, Integraciones)</p>
+
+  <div class="prose">
+    <div class="block">
+      <div class="block-title">Alcance original</div>
+      <div class="block-body">
+        <p>
+          Este flujo <strong>no está contemplado en el SOW ni en ninguna historia de usuario de Discovery</strong>.
+          La primera versión formal del proceso apareció en el BPMN v0.4 con fecha 2026-07-31, muy posterior al cierre
+          de la fase de Discovery del R2. La auditoría completa del SOW confirmó que no existe requisito, línea
+          presupuestaria ni alusión indirecta que respalde este alcance.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Solicitud actual</div>
+      <div class="block-body">
+        <p>
+          Un flujo completo de aprobación para situaciones donde la solicitud de descarga excede el saldo disponible en
+          el contrato, con las siguientes componentes:
+        </p>
+        <ul>
+          <li>Notificaciones bidireccionales entre Salesforce y el sistema MultiAd (DS).</li>
+          <li>Matriz de aprobación diferenciada por tipo de contrato — con carriles distintos para ATL, One Stop y TargetC.</li>
+          <li>Perfiles de aprobación cruzados: dirección de cuenta, agencias, cobranza y administración.</li>
+          <li>Reglas de activación de campañas sin saldo disponible bajo condiciones controladas.</li>
+          <li>Trazabilidad del proceso vía Approval Process nativo con correlación por identificador de solicitud.</li>
+        </ul>
+        <p>
+          La complejidad se agrava por el hecho de que el propio cliente no tiene un proceso interno consolidado y
+          solicita al equipo Salesforce que <strong>diseñe la recomendación</strong> siguiendo prácticas de industria.
+          No se está pidiendo implementar un proceso conocido: se está pidiendo diseñarlo, validarlo y construirlo.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Evaluación de esfuerzo</div>
+      <div class="block-body">
+        <p>
+          El equipo ya realizó un análisis técnico completo del flujo y su documentación está consolidada en el archivo
+          <strong>Descargas_ResumenSolucion.html</strong> dentro de la carpeta de Discovery. Las dimensiones
+          principales evaluadas fueron:
+        </p>
+        <ul>
+          <li>Definición del proceso de aprobación con Approval Process nativo y aprobador dinámico por tipo de contrato.</li>
+          <li>Integración bidireccional con MultiAd/DS reutilizando el canal existente (sin canal adicional tipo Slack).</li>
+          <li>Correlación por identificador de solicitud usando el ProcessInstance nativo.</li>
+          <li>Trigger sobre Contract para el intercambio dinámico del ContractId en la Opportunity.</li>
+          <li>Alertas de correo para aprobación y rechazo, acción de recall, bypass por perfil.</li>
+        </ul>
+        <div class="callout warn" style="margin-top: 4px; margin-bottom: 12px;">
+          <div class="callout-title">Ballpark · sujeto a refinamiento</div>
+          Las cifras que se muestran a continuación son una <strong>estimación preliminar de referencia</strong>
+          producida sobre el análisis conceptual del flujo. No constituyen una cotización cerrada: requieren
+          refinamiento formal con validación de historias de usuario detalladas, criterios de aceptación acordados
+          con el cliente y confirmación del contorno funcional definitivo antes de convertirse en compromiso comercial.
+        </div>
+        <div class="kpi-inline">
+          <div class="kpi-item">
+            <div class="k-label">Desarrollo tradicional</div>
+            <div class="k-value">11–14 días-dev</div>
+            <div class="k-sub">Ballpark baseline sin IA</div>
+          </div>
+          <div class="kpi-item">
+            <div class="k-label">Desarrollo asistido por IA</div>
+            <div class="k-value">5–6 días-dev</div>
+            <div class="k-sub">Ballpark con aceleradores</div>
+          </div>
+          <div class="kpi-item">
+            <div class="k-label">Sprints referenciales</div>
+            <div class="k-value">1 + 0.5</div>
+            <div class="k-sub">Sprint completo + colchón</div>
+          </div>
+          <div class="kpi-item">
+            <div class="k-label">Impacto</div>
+            <div class="k-value">Cross-squad</div>
+            <div class="k-sub">Sales · Media · Integraciones</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Postura</div>
+      <div class="block-body">
+        <p>Este tema debe tratarse como <strong>Change Order formal</strong>. Las razones son las siguientes:</p>
+        <ul>
+          <li><strong>Cobertura contractual inexistente.</strong> No hay línea del SOW ni historia de usuario que sostenga este alcance.</li>
+          <li><strong>Temporalidad.</strong> La solicitud es posterior al cierre del Discovery y no atravesó las validaciones estructuradas del release.</li>
+          <li><strong>Complejidad transversal.</strong> El flujo impacta a los tres squads y requiere coordinación cruzada — no es absorbible sin poner en riesgo la ventana de UAT del R2.</li>
+          <li><strong>Alcance mixto de consultoría y construcción.</strong> Al no tener el cliente un proceso definido, parte del esfuerzo es consultivo y parte es constructivo. Ambas facetas requieren dimensionamiento explícito.</li>
+          <li><strong>Análisis técnico disponible como base.</strong> El diseño está documentado y cuenta con un ballpark de esfuerzo; sobre esa base puede refinarse la cotización formal.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">Framing recomendado para el cliente</div>
+      El flujo de aprobación de descargas es un requerimiento nuevo, posterior al cierre del alcance del R2 y sin cobertura
+      en el contrato vigente. La solución técnica ya está diseñada, dimensionada y lista para incorporar como Change Order
+      en el R2 con extensión de la ventana de UAT, o para diferir al R3 según la prioridad del cliente.
+    </div>
+  </div>
+</div>
+
+<div class="topic-card change">
+  <div class="topic-header">
+    <h2><span class="num warn">05</span> Correos automáticos para productos no-GAM</h2>
+    <div class="badges">
+      <span class="badge change">Change Order</span>
+      <span class="badge new">Desvío material</span>
+    </div>
+  </div>
+  <p class="topic-subtitle">Desvío material del entendimiento inicial · Detalle funcional pendiente del cliente</p>
+
+  <div class="prose">
+    <div class="block">
+      <div class="block-title">Alcance original</div>
+      <div class="block-body">
+        <p>
+          La revisión exhaustiva del SOW confirma que <strong>no existe requerimiento explícito para emails
+          transaccionales operativos con datos de pedido o líneas</strong>. Las únicas menciones a envío de correo dentro
+          del SOW corresponden a procesos administrativos del proyecto — notificaciones de tiempos y gastos y
+          notificaciones de Change Orders — no a funcionalidad del producto.
+        </p>
+        <p>
+          El entendimiento inicial del equipo Salesforce fue que se trataba de una notificación estándar: un correo
+          simple que informara al destinatario correspondiente sobre la creación o modificación de la orden.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Plantillas entregadas por el cliente</div>
+      <div class="block-body">
+        <p>
+          El cliente entregó el detalle funcional de <strong>5 plantillas</strong> (machotes de correo de activación),
+          confirmando el alcance real del componente. El desvío es significativo: pasamos de "una notificación por email"
+          a un sistema de comunicación con plantillas diferenciadas, lógica de disparo por tipo de producto y campos
+          dinámicos desde Salesforce.
+        </p>
+        <table class="exec" style="margin-top:8px;">
+          <thead>
+            <tr>
+              <th style="width:6%">#</th>
+              <th style="width:18%">Plantilla</th>
+              <th style="width:20%">Plataformas cubiertas</th>
+              <th style="width:30%">Campos de SF requeridos</th>
+              <th style="width:26%">Destinatarios</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>P1</strong></td>
+              <td><strong>Disney</strong></td>
+              <td>Disney</td>
+              <td>Cliente, Campaña, Formato de venta, Material (URL)</td>
+              <td>Implementadores → Disney<br><small style="color:#706e6b;">CC: brayan.ortega</small></td>
+            </tr>
+            <tr>
+              <td><strong>P2</strong></td>
+              <td><strong>RRSS</strong></td>
+              <td>TikTok, Meta</td>
+              <td>Cliente, Razón social, ID Contrato, Fecha publicación, Monto, Marca, Submarca, Plataforma, Copy, Handles por red</td>
+              <td>Entretenimiento / Deportes (por área)<br><small style="color:#706e6b;">CC: brayan.ortega</small></td>
+            </tr>
+            <tr>
+              <td><strong>P3</strong></td>
+              <td><strong>Push Notification</strong></td>
+              <td>Firebase</td>
+              <td>Cliente, Razón social, ID Contrato, Fecha, Monto, Marca, Título, Cuerpo, Material (URL), URL destino</td>
+              <td>Entretenimiento / Deportes (por área)<br><small style="color:#706e6b;">CC: brayan.ortega</small></td>
+            </tr>
+            <tr>
+              <td><strong>P4</strong></td>
+              <td><strong>Nota Editorial</strong></td>
+              <td>CMS</td>
+              <td>Cliente, Razón social, ID Contrato, Fecha, Monto, Marca, Título, Teaser, Material (URL), URL destino, Sitio</td>
+              <td>Entretenimiento / Deportes / Azteca Noticias / ADN (por área)<br><small style="color:#706e6b;">CC: brayan.ortega</small></td>
+            </tr>
+            <tr>
+              <td><strong>P5</strong></td>
+              <td><strong>Pauta Externa</strong></td>
+              <td>Google Ads, DV360, Amazon DSP</td>
+              <td>Segmentación demográfica, Material (URL o Drive)</td>
+              <td>Traffickers (vía estructura de ventas)<br><small style="color:#706e6b;">CC: viridiana.torres</small></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top:10px; font-size:12px; color:#706e6b;">
+          ⚠ DV360 aparece referenciado como "Plantilla 6" en el canvas del cliente pero no tiene machote definido. Confirmar con el cliente si usa P5 (Pauta Externa) o requiere plantilla adicional.
+        </p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-title">Postura</div>
+      <div class="block-body">
+        <p>Debe tratarse como <strong>Change Order</strong>. Razones:</p>
+        <ul>
+          <li><strong>Ausencia de cobertura contractual.</strong> Verificado por auditoría exhaustiva del SOW.</li>
+          <li><strong>Cambio material del entendimiento.</strong> El detalle recibido excede en al menos un orden de magnitud el trabajo asumido inicialmente.</li>
+          <li><strong>Cinco flujos de email diferenciados.</strong> Cada plantilla requiere diseño gráfico, lógica de disparo por tipo de producto, campos dinámicos desde Salesforce, distribución por área operativa y regresión — no es una suma lineal de configuraciones.</li>
+          <li><strong>Plantilla DV360 pendiente de confirmar.</strong> DV360 aparece referenciado como "Plantilla 6" pero no tiene machote entregado — confirmar si comparte P5 o requiere flujo adicional.</li>
+          <li><strong>Plataformas externas y directas en sitio sin cobertura.</strong> Amazon STV, Equativ, Magnite, Tubi, Pluto y otras 7 plataformas no tienen plantilla definida en el material recibido. Su inclusión ampliaría el alcance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">Framing recomendado para el cliente</div>
+      El requerimiento cambió sustancialmente respecto al entendimiento inicial. Lo que se dimensionó como una notificación
+      estándar se convirtió, con el detalle funcional recibido, en un sistema de comunicación con 5 plantillas diferenciadas,
+      lógica de disparo por tipo de producto, distribución por área operativa y campos dinámicos desde Salesforce. Este es
+      alcance nuevo y requiere Change Order. <strong>El cliente ya entregó el paquete de plantillas; la cotización formal puede
+      refinarse a partir del material recibido.</strong> Quedan dos puntos abiertos: confirmar el tratamiento de DV360
+      (¿P5 o plantilla adicional?) y definir si las plataformas directas en sitio (Tubi, Pluto, Mgid, Teads y otras) se
+      incorporan al mismo Change Order.
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-1 -->
+
+<div id="tab-2" class="tab-panel">
+
+  <div class="escalation-intro">
+    Los dos temas de esta pestaña se distinguen de los cinco anteriores por su naturaleza. No son discusiones sobre
+    <strong>qué construir</strong>, sino reclamos del cliente sostenidos en <strong>acuerdos verbales sin registro
+    documental</strong>. La postura del equipo de entrega no se juega en el mérito técnico — se juega en el escalamiento
+    correcto: el equipo comercial Salesforce (Sales) es quien tiene la información y la autoridad para confirmar,
+    desmentir o reformalizar cualquiera de estos acuerdos. Ninguno de los dos puede resolverse desde delivery de manera
+    aislada.
+  </div>
+
+  <!-- Escalation Card 06: Snowflake -->
+  <div class="escalation-card">
+    <div class="escalation-header">
+      <div class="escalation-number">06</div>
+      <div class="escalation-title-wrap">
+        <h2>Snowflake · Conectividad Zero Copy vía Data Cloud</h2>
+        <p class="escalation-subtitle">Análisis técnico realizado sobre un pedido del cliente · sin Change Order firmado ni cierre comercial devuelto al proyecto</p>
+      </div>
+    </div>
+
+    <div class="claim-banner">
+      <div class="claim-label">Reclamación del cliente</div>
+      <div class="claim-body">
+        "La conectividad con Snowflake fue acordada dentro del alcance del proyecto y el equipo Salesforce debe entregarla."
+      </div>
+    </div>
+
+    <div class="esc-section reality">
+      <div class="esc-section-title">Registro documental disponible</div>
+      <div class="esc-section-body">
+        <ul>
+          <li>El SOW original <strong>no contempla Snowflake</strong> dentro del stack contratado.</li>
+          <li>El pedido del cliente ingresó como <strong>solicitud considerada para análisis</strong> — no como Change Order formalizado ni como CR firmado. A la fecha <strong>no existe Change Order firmado</strong> que incorpore Snowflake al alcance.</li>
+          <li>El análisis técnico está consolidado en <code>Snowflake_DataCloud_AnalisisArquitectura.html</code> (actualizado 11-Jun-2026) más el diagrama de arquitectura <code>TVA_DiagramaArquitetura_Snowflake.png</code>. El documento propone una recomendación (Opción A · Zero Copy pura) y define cinco validaciones críticas que debían cerrarse <em>antes</em> de presentar un CR formal para firma.</li>
+          <li>Escenario técnico explorado en el análisis: <strong>Snowflake (data lake del cliente) → Data Cloud (Zero Copy)</strong>. Data Cloud queda como plataforma consumidora del dato vía Zero Copy; no se definió una plataforma receptora externa aguas abajo — el análisis no cierra un caso de uso concreto de consumo del dato una vez expuesto en Data Cloud.</li>
+          <li>El backlog registra el estado bloqueado a la espera de habilitación. La <strong>provisión productiva de Data Cloud sí fue completada a inicios de julio</strong>; siguen abiertos la habilitación del conector Snowflake ↔ Data Cloud, el alineamiento de región entre ambos servicios (deben residir en la misma región para que Zero Copy sea viable), y el cierre comercial del lado de Sales Salesforce (licenciamiento / créditos). El estado en backlog no representa un compromiso de entrega firmado.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="esc-section omitted">
+      <div class="esc-section-title">Contexto omitido en la reclamación</div>
+      <div class="esc-section-body">
+        <p>El bloqueo del avance no es técnico del lado del equipo de entrega. Hay pendientes en <strong>ambos lados</strong> de la mesa que nunca se cerraron.</p>
+        <div class="esc-split">
+          <div class="esc-side">
+            <div class="esc-side-label">Del lado del cliente</div>
+            Tras el provisionamiento productivo de Data Cloud a inicios de julio, la pendencia del lado del cliente se concentra en <strong>dos frentes de infraestructura</strong>: (a) habilitación del <strong>conector Snowflake ↔ Data Cloud</strong>, y (b) <strong>alineamiento de región</strong> — ambos servicios deben residir en la misma región para que Zero Copy sea viable, y esa validación no fue cerrada. Adicionalmente, no existe una definición cerrada por parte del cliente sobre el caso de uso final del dato una vez expuesto en Data Cloud.
+          </div>
+          <div class="esc-side">
+            <div class="esc-side-label">Del lado comercial Salesforce</div>
+            El equipo del proyecto <strong>nunca recibió información</strong> sobre el avance del análisis y las negociaciones internas de consumo de créditos de Data Cloud vinculadas al posible caso de uso Snowflake (el patrón estimado en el análisis es de 540K–1.08M créditos/año y requería validación de tier de licencia, disponibilidad del Snowflake Connector y modelo de créditos por parte del AE de Salesforce). El proyecto quedó a la espera de una devolución que no llegó.
+          </div>
+        </div>
+        <p>En síntesis: hubo pedido del cliente, hubo análisis técnico, hubo recomendación con condiciones — pero <strong>ni la habilitación técnica del lado del cliente ni la habilitación comercial del lado de Sales Salesforce</strong> cerraron. Sin esos dos cierres no hubo condiciones para presentar el Change Order formal ni para arrancar ejecución.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Escalation Card 07: Migración ORG Actual → Nueva -->
+  <div class="escalation-card migration">
+    <div class="escalation-header">
+      <div class="escalation-number">07</div>
+      <div class="escalation-title-wrap">
+        <h2>Migración de funcionalidades · ORG Actual → Nueva ORG</h2>
+        <p class="escalation-subtitle">Reclamado como acuerdo verbal de cierre de contrato · sin registro formal en SOW ni ADR</p>
+      </div>
+    </div>
+
+    <div class="claim-banner">
+      <div class="claim-label">Reclamación del cliente</div>
+      <div class="claim-body">
+        "La migración de funcionalidades desde la ORG heredada hacia la nueva ORG fue acordada verbalmente con el equipo
+        de ventas Salesforce (Rodrigo Zaldivar y Gabriel Rada) durante la cena de cierre del contrato SOW. Por eso el
+        equipo Salesforce debe entregarla dentro del alcance actual."
+      </div>
+    </div>
+
+    <div class="esc-section reality">
+      <div class="esc-section-title">Registro documental disponible</div>
+      <div class="esc-section-body">
+        <ul>
+          <li>El <strong>SOW §2.5</strong> define el proyecto como <strong>greenfield estricto</strong> y excluye explícitamente la migración de configuraciones heredadas — con mención específica al Ticketing custom y a la Parrilla TV lineal.</li>
+          <li>El resumen ejecutivo del Release 2 lista dentro de "Fuera de alcance": migración masiva de SKUs históricos y sistema de tickets (queda en la ORG heredada).</li>
+          <li>La decisión Greenfield vs Brownfield fue <strong>cerrada en abril de 2026</strong> con tres sesiones dedicadas de arquitectura, todas documentadas. La conclusión — greenfield — fue aceptada explícitamente por las partes en su momento.</li>
+          <li><strong>No existe registro formal</strong> — SOW, ADR, memoria de reunión, email de confirmación — que respalde la existencia de un acuerdo verbal contrario a lo anterior.</li>
+          <li>El equipo de entrega, en su momento, <strong>direccionó el interés del cliente</strong> sobre migración de funcionalidades hacia una iniciativa de portfolio futuro fuera del alcance del proyecto actual, precisamente porque no cabía en el contrato firmado.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="esc-section omitted">
+      <div class="esc-section-title">Contexto omitido en la reclamación</div>
+      <div class="esc-section-body">
+        <p>
+          Un acuerdo comercial de la magnitud implicada — migrar funcionalidades desde una ORG legada a una ORG
+          greenfield — no puede sostenerse por un compromiso verbal en un evento social sin registro contractual.
+          Los contratos SOW existen precisamente para blindar a ambas partes de este tipo de ambigüedad.
+        </p>
+        <p>
+          Adicionalmente, la naturaleza greenfield del proyecto <strong>no es una preferencia arbitraria</strong>: es un
+          pilar de diseño de la solución. Toda la arquitectura de datos, el modelo de OrderItem, la configuración de
+          Territory2, la jerarquía de aprobaciones y el catálogo digital fueron construidos asumiendo greenfield.
+          Reintroducir migración retroactivamente altera de forma material el diseño ya acordado, entregado y validado
+          en el Discovery.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- end tab-2 -->
+
+<div id="tab-3" class="tab-panel">
+
+<section>
+  <h2>Integraciones Actuales</h2>
+  <p class="topic-subtitle">Procesos de integración del Proyecto TV Azteca · Salesforce · MultiAds · GAM · Meta</p>
+
+  <div class="seq-legend">
+    <div class="seq-legend-item"><span class="seq-legend-icon" style="background:linear-gradient(135deg,#f5576c,#f7b733);">MDS</span> Multiads TV Azteca MDS</div>
+    <div class="seq-legend-item"><span class="seq-legend-icon" style="background:#0070d2;">SF</span> Salesfroce SF</div>
+    <div class="seq-legend-item"><span class="seq-legend-icon" style="background:#34a853;">GAM</span> google Ad Manager GAM</div>
+    <div class="seq-legend-item"><span class="seq-legend-icon" style="background:#000;">M</span> Meta Retirada por el cliente</div>
+    <div class="seq-legend-date">Updated Date 31/08/2026</div>
+  </div>
+
+  <div class="seq-status-legend">
+    <div><span class="seq-star pending">☆</span>Pendiente / por evaluar</div>
+    <div><span class="seq-star done">★</span>Implementado</div>
+    <div><span class="seq-star issue">★</span>Con incidencia (proceso duplicado / a corregir)</div>
+  </div>
+
+  <div class="seq-diagram">
+   <div class="seq-inner">
+
+    <div class="seq-actors">
+      <div class="seq-actor" style="left:12%;"><span class="box">Salesforce</span></div>
+      <div class="seq-actor" style="left:38%;"><span class="box">MultiAds</span></div>
+      <div class="seq-actor" style="left:64%;"><span class="box">GAM</span></div>
+      <div class="seq-actor" style="left:92%;"><span class="box">META</span></div>
+    </div>
+
+    <div class="seq-body">
+      <div class="seq-lifeline" style="left:12%;"></div>
+      <div class="seq-lifeline" style="left:38%;"></div>
+      <div class="seq-lifeline" style="left:64%;"></div>
+      <div class="seq-lifeline" style="left:92%;"></div>
+
+      <div class="seq-row seq-section"><div class="seq-section-box">Gestión de Cliente/Company (GAM)</div></div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Sincronización de Clientes Creación (Creación de company.) Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star pending" style="left:79%;">☆</div>
+      </div>
+
+      <div class="seq-row seq-note-row">
+        <div class="seq-note-mini" style="left:12%; width:26%;">Creación/Actualización de la Cuenta en Salesforce</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Sincronización de Clientes Actualización/Creación Upsert (Activación, Cambio de Owner, External Ids, etc.) Exponer API</div>
+        <div class="seq-arrow-line left" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-section"><div class="seq-section-box">Proceso de Contrato en MultiAds</div></div>
+
+      <div class="seq-row seq-note-row">
+        <div class="seq-note-mini" style="left:12%; width:26%;">Proceso de Actualización del Contrato en Salesforce</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:26%;">Sincronización de Contratos Actualización (Saldo, Status, Montos, etc.) Exponer API</div>
+        <div class="seq-arrow-line left" style="left:12%; width:26%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-section"><div class="seq-section-box">Proceso de Gestión de Ordénes</div></div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:26%;">Creación de Orden en Multiads Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:26%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Creación de Orden en GAM Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Creación de Line Items del Orden Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Pausar de Line Items del Orden Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star pending" style="left:79%;">☆</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Amendment Line Items del Orden Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star pending" style="left:79%;">☆</div>
+      </div>
+
+      <div class="seq-row seq-section"><div class="seq-section-box">Procedo de Gestión de Venta Programática</div></div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Creación de Proposal en GAM Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Creación de Proposal Line Items del Orden Consumir API</div>
+        <div class="seq-arrow-line right" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:52%;">Quote to Order de venta programática (DC process + Flow)</div>
+        <div class="seq-arrow-line left" style="left:12%; width:52%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-section"><div class="seq-section-box">Proceso de conciliación de Ordénes</div></div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:26%;">Resultado de rendimiento de la campaña hasta el momento (DC process)</div>
+        <div class="seq-arrow-line left" style="left:12%; width:26%;"></div>
+        <div class="seq-star done" style="left:79%;">★</div>
+      </div>
+
+      <div class="seq-row seq-msg">
+        <div class="seq-label" style="left:12%; width:26%;">Resultado de rendimiento de la campaña hasta el momento. DC Process *</div>
+        <div class="seq-arrow-line left" style="left:12%; width:26%;"></div>
+        <div class="seq-star issue" style="left:79%;">★</div>
+      </div>
+
+    </div>
+
+    <div class="seq-actors seq-actors-bottom">
+      <div class="seq-actor" style="left:12%;"><span class="box">Salesforce</span></div>
+      <div class="seq-actor" style="left:38%;"><span class="box">MultiAds</span></div>
+      <div class="seq-actor" style="left:64%;"><span class="box">GAM</span></div>
+      <div class="seq-actor" style="left:92%;"><span class="box">META</span></div>
+    </div>
+
+   </div>
+  </div>
+
+  <p style="font-size:11px; color:#706e6b; margin-top:10px;">* El proceso de conciliación marcado en rojo presenta un resultado duplicado — pendiente de corrección técnica.</p>
+</section>
+
+</div><!-- end tab-3 -->
+
+<div id="tab-4" class="tab-panel">
+
+<section>
+  <h2>Estimaciones</h2>
+  <p class="topic-subtitle">Horas y costos por workstream · TV Azteca</p>
+
+  <h3>1 · Conciliación, Descargas y Descuentos — UAT 14-Sep-26</h3>
+  <div class="est-scroll">
+    <table class="est">
+      <thead>
+        <tr>
+          <th class="role-col">Rol</th>
+          <th class="name-col">Recurso</th>
+          <th>Tarifa/hr</th>
+          <th>Horas</th>
+          <th class="money">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="role-col">Principal Program Manager</td><td class="name-col">Sergio Rafael Galindo</td><td>$125</td><td>1</td><td class="money">$125.00</td></tr>
+        <tr><td class="role-col">Senior Project Manager</td><td class="name-col">Ana Ruth Salinas</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Project Manager</td><td class="name-col">Mariano Arnica</td><td>$125</td><td>1</td><td class="money">$125.00</td></tr>
+        <tr><td class="role-col">Senior Technical Architect</td><td class="name-col">Daniel Murcia</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Salesforce CTO</td><td class="name-col">Gustavo Sant Anna</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Salesforce CTO</td><td class="name-col">José Carlos Padilla</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Lead</td><td class="name-col">Froy Rodriguez</td><td>$125</td><td>40</td><td class="money">$5,000.00</td></tr>
+        <tr><td class="role-col">Technical Architect</td><td class="name-col">Oscar García</td><td>$125</td><td>40</td><td class="money">$5,000.00</td></tr>
+        <tr><td class="role-col">Solution Architect</td><td class="name-col">Gustavo Richter</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Developer</td><td class="name-col">Oscar Omar Perera</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Consultant</td><td class="name-col">Nazareno Casasola</td><td>$125</td><td>40</td><td class="money">$5,000.00</td></tr>
+        <tr><td class="role-col">Solution Architect</td><td class="name-col">Saul Ricardo Hernandez</td><td>$125</td><td>20</td><td class="money">$2,500.00</td></tr>
+        <tr><td class="role-col">Developer</td><td class="name-col">Mauricio Ruiz Rocha</td><td>$125</td><td>40</td><td class="money">$5,000.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Consultant</td><td class="name-col">Fernanda Rodriguez</td><td>$125</td><td>40</td><td class="money">$5,000.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="3">Total horas / precio</td><td>342</td><td class="money">$42,750.00</td></tr>
+        <tr><td colspan="3">+ SWE</td><td>—</td><td class="money">$57,000.00</td></tr>
+        <tr><td colspan="3">Total general</td><td>342</td><td class="money">$99,750.00</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3>2 · Flujo y Correos Automáticos NO-GAM</h3>
+  <div class="est-scroll">
+    <table class="est">
+      <thead>
+        <tr>
+          <th class="role-col">Rol</th>
+          <th class="name-col">Recurso</th>
+          <th>Tarifa/hr</th>
+          <th>DEV<br>21-Sep-26</th>
+          <th>UAT<br>28-Sep-26</th>
+          <th>Release Mgmt<br>05-Oct-26</th>
+          <th>Horas</th>
+          <th class="money">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="role-col">Principal Program Manager</td><td class="name-col">Sergio Rafael Galindo</td><td>$240</td><td>1</td><td>1</td><td class="empty">—</td><td>2</td><td class="money">$480.00</td></tr>
+        <tr><td class="role-col">Senior Project Manager</td><td class="name-col">Ana Ruth Salinas</td><td>$157</td><td>20</td><td>20</td><td>20</td><td>60</td><td class="money">$9,420.00</td></tr>
+        <tr><td class="role-col">Project Manager</td><td class="name-col">Mariano Arnica</td><td>$157</td><td>1</td><td>1</td><td class="empty">—</td><td>2</td><td class="money">$314.00</td></tr>
+        <tr><td class="role-col">Senior Technical Architect</td><td class="name-col">Daniel Murcia</td><td>$157</td><td>20</td><td>20</td><td class="empty">—</td><td>40</td><td class="money">$6,280.00</td></tr>
+        <tr><td class="role-col">Salesforce CTO</td><td class="name-col">Gustavo Sant Anna</td><td>$157</td><td>20</td><td>20</td><td>20</td><td>60</td><td class="money">$9,420.00</td></tr>
+        <tr><td class="role-col">Salesforce CTO</td><td class="name-col">José Carlos Padilla</td><td>$157</td><td>20</td><td>20</td><td>20</td><td>60</td><td class="money">$9,420.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Lead</td><td class="name-col">Froy Rodriguez</td><td>$116</td><td>40</td><td>40</td><td class="empty">—</td><td>80</td><td class="money">$9,280.00</td></tr>
+        <tr><td class="role-col">Technical Architect</td><td class="name-col">Oscar García</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>120</td><td class="money">$13,920.00</td></tr>
+        <tr><td class="role-col">Solution Architect</td><td class="name-col">Gustavo Richter</td><td>$116</td><td>20</td><td>20</td><td class="empty">—</td><td>40</td><td class="money">$4,640.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Consultant</td><td class="name-col">Nazareno Casasola</td><td>$46</td><td>40</td><td>40</td><td class="empty">—</td><td>80</td><td class="money">$3,680.00</td></tr>
+        <tr><td class="role-col">Technical Architect</td><td class="name-col">Edgar Azeka</td><td>$116</td><td>40</td><td>40</td><td>20</td><td>100</td><td class="money">$11,600.00</td></tr>
+        <tr><td class="role-col">Developer</td><td class="name-col">Mauricio / Axel</td><td>$51</td><td>40</td><td>40</td><td class="empty">—</td><td>80</td><td class="money">$4,080.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="6">Total</td><td>724</td><td class="money">$82,534.00</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3>3 · Migración</h3>
+  <div class="est-scroll">
+    <table class="est">
+      <thead>
+        <tr>
+          <th class="role-col" rowspan="2">Rol</th>
+          <th rowspan="2">Tarifa/hr</th>
+          <th colspan="2">Sprint 1</th>
+          <th colspan="2">Sprint 2</th>
+          <th colspan="2">UAT</th>
+          <th colspan="2">Deploy</th>
+          <th>Scale</th>
+          <th rowspan="2">Horas</th>
+          <th class="money" rowspan="2">Precio</th>
+        </tr>
+        <tr>
+          <th>14-Sep</th><th>21-Sep</th><th>28-Sep</th><th>05-Oct</th>
+          <th>12-Oct</th><th>19-Oct</th><th>26-Oct</th><th>02-Nov</th><th>09-Nov</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="role-col">Senior Project Manager</td><td>$157</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>320</td><td class="money">$50,240.00</td></tr>
+        <tr><td class="role-col">Senior Technical Architect</td><td>$157</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>260</td><td class="money">$40,820.00</td></tr>
+        <tr><td class="role-col">Solution Architect</td><td>$157</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>260</td><td class="money">$40,820.00</td></tr>
+        <tr><td class="role-col">Salesforce CTO</td><td>$157</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>260</td><td class="money">$40,820.00</td></tr>
+        <tr><td class="role-col">Developer</td><td>$51</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>20</td><td class="empty">—</td><td class="empty">—</td><td>220</td><td class="money">$11,220.00</td></tr>
+        <tr><td class="role-col">Quality Assurance Lead</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td class="empty">—</td><td class="empty">—</td><td>280</td><td class="money">$32,480.00</td></tr>
+        <tr><td class="role-col">Release Mgmt</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>320</td><td class="money">$37,120.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="11">Total</td><td>1,920</td><td class="money">$253,520.00</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3>4 · Snowflake, Data Cloud + Vista 360</h3>
+  <div class="est-scroll">
+    <table class="est">
+      <thead>
+        <tr>
+          <th class="role-col" rowspan="2">Rol</th>
+          <th rowspan="2">Tarifa/hr</th>
+          <th colspan="2">Sprint 1</th>
+          <th colspan="2">Sprint 2</th>
+          <th colspan="2">Sprint 3</th>
+          <th colspan="2">Sprint 4</th>
+          <th colspan="2">UAT</th>
+          <th colspan="2">Deploy</th>
+          <th>Scale</th>
+          <th rowspan="2">Horas</th>
+          <th class="money" rowspan="2">Precio</th>
+        </tr>
+        <tr>
+          <th>14-Sep</th><th>21-Sep</th><th>28-Sep</th><th>05-Oct</th>
+          <th>12-Oct</th><th>19-Oct</th><th>26-Oct</th><th>02-Nov</th>
+          <th>09-Nov</th><th>16-Nov</th><th>23-Nov</th><th>30-Nov</th><th>07-Dec</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="role-col">Senior Project Manager</td><td>$157</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>480</td><td class="money">$75,360.00</td></tr>
+        <tr><td class="role-col">Data Cloud</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>480</td><td class="money">$55,680.00</td></tr>
+        <tr><td class="role-col">Solution Architect</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>480</td><td class="money">$55,680.00</td></tr>
+        <tr><td class="role-col">Technical Architect</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>480</td><td class="money">$55,680.00</td></tr>
+        <tr><td class="role-col">Developer</td><td>$51</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td class="empty">—</td><td class="empty">—</td><td>440</td><td class="money">$22,440.00</td></tr>
+        <tr><td class="role-col">QA</td><td>$46</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td class="empty">—</td><td class="empty">—</td><td>440</td><td class="money">$20,240.00</td></tr>
+        <tr><td class="role-col">Technical Architect</td><td>$116</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>40</td><td>20</td><td>20</td><td>480</td><td class="money">$55,680.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="15">Total</td><td>3,280</td><td class="money">$340,760.00</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3>Resumen de costos por workstream</h3>
+  <table class="exec">
+    <thead>
+      <tr>
+        <th style="width:50%;">Workstream</th>
+        <th style="width:20%; text-align:right;">Horas</th>
+        <th style="width:30%; text-align:right;">Costo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Conciliación, Descargas y Descuentos (UAT)</td><td style="text-align:right;">342</td><td style="text-align:right;">$99,750.00</td></tr>
+      <tr><td>Flujo y Correos Automáticos NO-GAM</td><td style="text-align:right;">724</td><td style="text-align:right;">$82,534.00</td></tr>
+      <tr><td>Migración</td><td style="text-align:right;">1,920</td><td style="text-align:right;">$253,520.00</td></tr>
+      <tr><td>Snowflake, Data Cloud + Vista 360</td><td style="text-align:right;">3,280</td><td style="text-align:right;">$340,760.00</td></tr>
+      <tr style="font-weight:700; background:#e3f0fc;"><td>Total</td><td style="text-align:right;">6,266</td><td style="text-align:right;">$776,564.00</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Roadmap · Salesforce TV Azteca</h3>
+  <div class="roadmap-legend">
+    <span class="phase-pill est">ESTIMACION</span>
+    <span class="phase-pill analisis">ANALISIS</span>
+    <span class="phase-pill dev">DEV</span>
+    <span class="phase-pill uat">UAT</span>
+    <span class="phase-pill deploy">DEPLOY</span>
+    <span class="phase-pill scale">SCALE</span>
+  </div>
+  <div class="est-scroll">
+    <table class="est">
+      <thead>
+        <tr>
+          <th class="role-col">Workstream</th>
+          <th>31-Aug</th><th>07-Sep</th><th>14-Sep</th><th>21-Sep</th><th>28-Sep</th>
+          <th>05-Oct</th><th>12-Oct</th><th>19-Oct</th><th>26-Oct</th><th>02-Nov</th>
+          <th>09-Nov</th><th>16-Nov</th><th>23-Nov</th><th>30-Nov</th><th>07-Dec</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="role-col">Conciliación operativa y dashboards</td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill uat">UAT</span></td>
+          <td><span class="phase-pill deploy">DEPLOY</span><br><span class="phase-pill scale">SCALE</span></td><td><span class="phase-pill scale">SCALE</span></td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Centro de costos y subproducción de campaña</td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill uat">UAT</span></td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Contratos con descuento especial</td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill uat">UAT</span></td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Flujo de aprobación de descargas</td>
+          <td><span class="phase-pill est">ESTIMACION</span></td><td><span class="phase-pill analisis">ANALISIS</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill deploy">DEPLOY</span></td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Correos automáticos para productos no-GAM</td>
+          <td><span class="phase-pill est">ESTIMACION</span></td><td><span class="phase-pill analisis">ANALISIS</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill deploy">DEPLOY</span></td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+          <td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Migración</td>
+          <td><span class="phase-pill est">ESTIMACION</span></td><td><span class="phase-pill analisis">ANALISIS</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill deploy">DEPLOY</span></td><td><span class="phase-pill scale">SCALE</span></td>
+          <td><span class="phase-pill scale">SCALE</span></td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td>
+        </tr>
+        <tr>
+          <td class="role-col">Snowflake, Datacloud+ Vista 360</td>
+          <td><span class="phase-pill est">ESTIMACION</span></td><td><span class="phase-pill analisis">ANALISIS</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td><td><span class="phase-pill dev">DEV</span></td>
+          <td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill uat">UAT</span></td><td><span class="phase-pill deploy">DEPLOY</span></td><td><span class="phase-pill scale">SCALE</span></td><td><span class="phase-pill scale">SCALE</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Prioridades TV Azteca</h3>
+  <table class="exec">
+    <thead>
+      <tr>
+        <th style="width:8%;">#</th>
+        <th style="width:52%;">Tema</th>
+        <th style="width:40%;">Categoría</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Conciliación operativa y dashboards</td><td><span class="badge absorb">Salesforce</span></td></tr>
+      <tr><td><strong>2</strong></td><td>Centro de costos y subproducción de la campaña</td><td><span class="badge absorb">Salesforce</span></td></tr>
+      <tr><td><strong>3</strong></td><td>Contratos de descuentos especiales</td><td><span class="badge absorb">Salesforce</span></td></tr>
+      <tr><td><strong>4</strong></td><td>Flujo de aprobación de descargas</td><td><span class="badge new">Requerimiento Nuevo TVA</span></td></tr>
+      <tr><td><strong>5</strong></td><td>Flujos de correo para productos diferentes a GAM</td><td><span class="badge new">Requerimiento Nuevo TVA</span></td></tr>
+      <tr><td><strong>6</strong></td><td>Shadowing / Workshops</td><td><span class="badge change">Requerimiento de TVA no en contrato</span></td></tr>
+      <tr><td><strong>7</strong></td><td>Snowflake, arquitectura Data 360 y Data Cloud</td><td><span class="badge new">Requerimiento Nuevo TVA</span></td></tr>
+      <tr><td><strong>8</strong></td><td>Migración: Carta de programación y temas de metas</td><td><span class="badge new">Requerimiento Nuevo TVA</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="topic-card" style="margin-top:20px;">
+    <div class="topic-header">
+      <h2><span class="num">07</span> Snowflake, arquitectura Data 360 y Data Cloud</h2>
+      <div class="badges"><span class="badge new">Requerimiento Nuevo TVA</span></div>
+    </div>
+    <div class="prose">
+      <div class="block">
+        <div class="block-title">Supuestos</div>
+        <div class="block-body">
+          <ul>
+            <li>Ingesta e integración inicial: la conexión y vinculación entre sistemas es rápida; sin embargo, la unificación de perfiles conlleva mayor complejidad técnica.</li>
+            <li>Se asume la información integrada e higienizada desde el inicio.</li>
+            <li>Inicios desde cero o configuraciones, abarcando hasta 6 objetos distintos con sus respectivos ajustes.</li>
+            <li>Requiere un análisis técnico más profundo si el número de objetos o la complejidad supera los parámetros anteriores.</li>
+            <li>Unificación de datos en Snowflake — alrededor de 6 objetos a configurar.</li>
+            <li>No incluye actualización de GAM.</li>
+            <li>Servidor en la misma ubicación (US-1).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title">Exclusiones / Fuera de alcance</div>
+        <div class="block-body">
+          <ul>
+            <li>Modelo de datos entregado al cliente al inicio — no se realizarán ajustes por retraso en el ingreso de nuevos requerimientos.</li>
+            <li><strong>Congelamiento de Modelo de Datos (Data Model Baseline):</strong> el plan de trabajo y el cronograma están calculados exclusivamente sobre la información de los supuestos.</li>
+            <li>Cualquier modificación al modelo de datos original, inclusión de nuevas entidades o incorporación de requerimientos no especificados al inicio será considerada Fuera de Alcance (Out of Scope).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="callout-title">Gestión de retrasos y control de cambios</div>
+        Si el cliente o equipo requirente introduce cambios al modelo de datos durante la ejecución, estos no se absorberán dentro del tiempo estimado inicial. Se tramitarán mediante una Solicitud de Cambio (Change Request), ajustando formalmente el cronograma y el esfuerzo del proyecto.
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header">
+      <h2><span class="num">08</span> Migración · Carta de programación y temas de metas</h2>
+      <div class="badges"><span class="badge new">Requerimiento Nuevo TVA</span></div>
+    </div>
+    <div class="prose">
+      <div class="block">
+        <div class="block-title">Supuestos</div>
+        <div class="block-body">
+          <p>
+            Contempla la migración de componentes desde la organización de origen, cuyo alcance se definirá
+            formalmente a partir del inventario de elementos elegibles provisto por SF. Dichos componentes quedarán
+            sujetos a la revisión, validación técnica y aprobación final por parte de TVA como criterio clave de
+            aceptación previo a su despliegue.
+          </p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-title">Exclusiones</div>
+        <div class="block-body">
+          <ul>
+            <li><strong>Ajustes y acoplamiento:</strong> no se realizará ninguna reconfiguración o adaptación de los componentes de la organización anterior para ajustarlos a la solución actual.</li>
+            <li><strong>Gestión de cambios:</strong> una vez aprobada la lista de componentes a migrar por parte de TVA, el alcance quedará congelado y no se aceptarán modificaciones ni adiciones posteriores.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+</div><!-- end tab-4 -->
+
+</div>
+
+<footer>
+  TV Azteca · Media Cloud · Alineamiento Interno Salesforce Delivery · 2026-09-03
+</footer>
+
+<script>
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
