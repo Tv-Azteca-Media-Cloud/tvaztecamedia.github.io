@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ADR-010 — Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org — TV Azteca Media Cloud</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;--green:#1e7e34;--red:#9b2226;--amber:#854d0e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:10.8px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+#progress{position:sticky;top:0;height:3px;background:rgba(0,0,0,.06);z-index:50}
+#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-badges{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+.hdr-title{font-size:15px;font-weight:700}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:2px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+main{padding:28px 38px 64px;flex:1;max-width:980px}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px;scroll-margin-top:16px}
+.section-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section p{margin-bottom:10px;line-height:1.65}
+.section ul,.section ol{margin:0 0 12px 20px;line-height:1.6}
+.section li{margin-bottom:6px}
+.section code{background:#eef1f5;color:#0176d3;padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:Consolas,Monaco,monospace}
+
+.sub-hdr{font-size:.85rem;font-weight:700;color:var(--navy);margin:18px 0 8px;padding-top:4px;border-top:1px dashed var(--border)}
+.table-wrap{overflow-x:auto;margin:10px 0 16px}
+.layer-table td,.layer-table th{white-space:normal}
+
+
+.callout{border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.55;border-left:4px solid}
+.callout.warning{background:#fff8ec;border-color:var(--amber);color:#4a3300}
+.callout-title{font-weight:700;margin-bottom:3px;color:var(--navy)}
+
+.conseq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+.conseq-grid .pos,.conseq-grid .neg{border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.55}
+.conseq-grid .pos{background:#f0f9f1;border-left:4px solid var(--green)}
+.conseq-grid .neg{background:#fdf1f0;border-left:4px solid var(--red)}
+.conseq-grid h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--navy)}
+.conseq-grid ul{margin:0 0 0 16px}
+@media (max-width:720px){.conseq-grid{grid-template-columns:1fr}}
+
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.related-card{display:block;background:#f7f9fb;border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+.related-card:hover{box-shadow:0 4px 14px rgba(1,118,211,.12)}
+.related-id{font-size:10px;font-weight:800;font-family:monospace;color:var(--blue);margin-bottom:4px}
+.related-title{font-size:11.5px;color:var(--text);line-height:1.4}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR-010</div>
+    <div class="sub">Core Layer · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">EN ESTA PÁGINA</li>
+    <li><a href="#context">Context</a></li>
+    <li><a href="#decision">Decision</a></li>
+    <li><a href="#alternatives-considered">Alternatives Considered</a></li>
+    <li><a href="#consequences">Consequences</a></li>
+    
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">📐</span>ADR Library</a></li>
+    <li><a href="../../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">Architecture Decision Record<br>TV Azteca · Media Cloud · 2026</div>
+</div>
+
+<div id="page">
+<div id="progress"><div id="progress-bar"></div></div>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-badges">
+        <span class="badge">ADR-010</span>
+        <span class="badge">Accepted</span>
+        <span class="badge">Core Layer</span>
+      </div>
+      <div class="hdr-title">Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org</div>
+      <div class="hdr-sub">TV Azteca · Salesforce Delivery Platform · ADP Whitelabel</div>
+    </div>
+    <a href="../index.html" class="hdr-home" title="ADR Library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-meta">
+    <span>Fecha: <strong>2026-06-02</strong></span>
+    <span>Estado: <strong>Accepted</strong></span>
+    <span>Layer: <strong>Core / Base Template</strong></span>
+  </div>
+</header>
+
+<main>
+<section class="section" id="context">
+  <div class="section-hdr">Context</div>
+  <p>The project promotes metadata across managed environments via immutable release artifacts built from <code>manifest/buildfile.json</code> (Org Development Model — see <code>architecture/CICD.md</code>). Two facts about Salesforce shape this decision:</p>
+<ol><li><strong>A Salesforce deployment only applies what is listed in <code>package.xml</code>.</strong> The git working tree may hold the full accumulated state of a release, but the artifact deploys exactly the components enumerated in its manifest — nothing more. A sprint delta artifact (manifest scoped to <code>git diff develop-sit...develop</code>) therefore deploys only that sprint's changes, not the whole release.</li><li><strong>UAT, PreProd, and Production start without the prior sprints loaded.</strong> A sprint delta artifact cannot be promoted to a fresh UAT org — the delta assumes the previous sprints' metadata is already present. It would fail to &quot;stand up from zero.&quot;</li></ol>
+<p>This created an apparent need for two parallel artifact tracks: a per-sprint <strong>delta</strong> (base <code>develop-sit</code>) for incremental SIT certification, and a <strong>cumulative</strong> release artifact (base <code>main</code>) generated at the end of the release for UAT/Prod. The risk identified: if the cumulative artifact is assembled only at release close and first executed in UAT, then <strong>UAT becomes the first place that artifact is ever tested as a unit</strong> — a big-bang anti-pattern that violates artifact-based promotion (&quot;the same immutable artifact, validated before promotion&quot;).</p>
+<p>The team also evaluated whether the &quot;install from zero&quot; validation should happen by refreshing SIT to baseline each sprint. This was rejected: SIT is where humans perform functional E2E certification, so SIT must retain the real accumulated functional state. A build org validates only that a deployment applies cleanly — no human tests functionality there. Forcing SIT to serve both roles (stable functional certification AND clean-install validation) is contradictory, because clean-install validation requires destroying the accumulated state that functional certification depends on.</p>
+
+</section>
+
+<section class="section" id="decision">
+  <div class="section-hdr">Decision</div>
+  <p><strong>The artifact promoted to SIT is the cumulative release artifact — the manifest and <code>buildfile.json</code> accumulate all sprint work to date, not just the current sprint's delta.</strong></p>
+<ul><li>The release manifest is generated against the <strong>release baseline</strong> (<code>main</code> / the release start commit), producing the full net footprint of the release — not <code>git diff develop-sit...develop</code>.</li><li>This collapses the &quot;sprint artifact&quot; and &quot;release artifact&quot; into a single artifact type: the release artifact <strong>is</strong> the last cumulative sprint artifact. There is no separate big-bang assembly at release close — <strong>the anti-pattern is eliminated by construction.</strong></li><li>The same cumulative artifact is promoted unchanged across SIT → UAT → PreProd → Production. It is never regenerated per environment.</li><li><strong>SIT receives the cumulative artifact on a sprint cadence and retains accumulated functional state</strong> — it is the environment of record for human functional certification. The cumulative artifact deploying onto an org that already holds prior sprints is accepted: re-deploying unchanged components is largely idempotent for Salesforce metadata, and re-running the full test suite each sprint is free regression coverage.</li><li><strong>The &quot;install from zero&quot; validation is delegated to a build org refreshed to baseline</strong> (<code>tva-bldngt</code> / <code>tva-bldrel</code>), run continuously (nightly or per sprint). Because a build org is disposable, refreshing it to baseline costs no functional state. This is what proves the artifact stands up in the same conditions a fresh UAT/Prod will face.</li><li>By the time of the release dress rehearsal (e.g., <em>Ejercicio Despliegue R1</em>, 2026-07-03), the cumulative artifact has been (a) deployed to SIT every sprint and functionally certified, and (b) deployed to a baseline build org continuously and validated as a clean install. <strong>UAT sees nothing new.</strong></li></ul>
+<p>Net effect: one manifest, validated under two conditions — accumulated state (SIT, functional) and baseline state (build org, install). Not two parallel tracks.</p>
+
+</section>
+
+<section class="section" id="alternatives-considered">
+  <div class="section-hdr">Alternatives Considered</div>
+  <div class="callout warning"><div class="callout-title">Two parallel artifact tracks (sprint delta for SIT + separate cumulative for UAT generated at release close)</div><div>Rejected — the cumulative artifact's first execution as a unit would be in UAT, a big-bang anti-pattern. Also doubles the manifest-generation surface.</div></div>
+<div class="callout warning"><div class="callout-title">Refresh SIT to baseline each sprint to validate clean install there</div><div>Rejected — destroys the accumulated functional state that human E2E certification in SIT depends on. SIT cannot serve both the functional-certification and clean-install roles simultaneously.</div></div>
+<div class="callout warning"><div class="callout-title">Validate clean install only in a build org, keep sprint deltas for SIT</div><div>Rejected — a build org validates deployment mechanics only; nobody performs functional testing there. SIT must carry the real accumulated functional state, which a delta-based SIT already does but a delta artifact is not promotable to a fresh UAT. The cumulative-to-SIT model gives SIT the same functional state while producing a directly promotable artifact.</div></div>
+
+</section>
+
+<section class="section" id="consequences">
+  <div class="section-hdr">Consequences</div>
+  <ul><li><code>develop-sit</code> loses its role as the delta baseline for promotion. The promotion manifest is generated against the release baseline (<code>main</code>). <code>develop-sit</code> remains, at most, a historical marker; the unfreeze trigger (<code>releaseCreateManual</code> ✓ + <code>releaseDeploy</code> ✓) is unchanged. See <code>architecture/RM-RUNBOOK.md</code>.</li><li><code>generate-sprint-manifest</code> must support a cumulative mode (<code>--base main</code> / release-start commit) that produces the full net footprint, replacing delta-against-<code>develop-sit</code> for promotion artifacts.</li><li><strong>Destructive changes must represent the net end state, not the historical sequence.</strong> If sprint S1 creates a field and S3 deletes it, the cumulative manifest must exclude the field and carry its destructive entry. The same <code>buildfile.json</code> runs on both targets: on SIT (which had the field since S1) the destructive deletes; on a baseline build org (where the field never existed) the destructive is a no-op — <code>sf</code> tolerates destructives against non-existent components with a warning. Net consolidation of destructives across sprints is the core work of the cumulative mode.</li><li>The consolidated <code>buildfile.json</code> must sequence all four <code>crp-*</code> packages in dependency order as a single coherent plan — more complex than an isolated sprint buildfile.</li><li>Deployment cost grows each sprint as the cumulative footprint expands and re-deploys unchanged components. This is mostly idempotent for Salesforce + Media Cloud metadata, but <strong>metadata types with side effects on re-deploy must be spot-checked</strong>; the offsetting benefit is free regression from re-running the full test suite each sprint.</li><li>This model has a hard prerequisite: <strong>disposable, baseline-recreatable build orgs (IaC)</strong> per <code>SOUL.md</code>. If refreshing <code>tva-bldngt</code> / <code>tva-bldrel</code> to baseline is manual, the continuous clean-install validation will not happen and the big-bang risk returns. Project time must be allocated to this IaC capability.</li><li>A nightly job must regenerate the cumulative release manifest (base <code>main</code>) and deploy it to a baseline-refreshed build org, extending the existing <code>nightlyDeploy.yml</code> / <code>BLDNGT</code> capability.</li></ul>
+
+</section>
+
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — Uso interno. Architecture Decision Records.</footer>
+</div>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>

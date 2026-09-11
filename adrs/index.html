@@ -102,6 +102,8 @@ footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border
     <li class="nav-sep"></li>
     <li><a onclick="filterLayer('media',this)" id="nav-media"><span class="nav-ico">📡</span>Media Layer</a></li>
     <li class="nav-sep"></li>
+    <li><a onclick="filterLayer('core',this)" id="nav-core"><span class="nav-ico">🧱</span>Core Layer</a></li>
+    <li class="nav-sep"></li>
     <li><a href="../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
   </ul>
   <div class="nav-foot">Architecture Decision Records<br>TV Azteca · Media Cloud · 2026</div>
@@ -130,15 +132,15 @@ footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border
 
   <div class="kpi-strip">
     <div class="kpi">
-      <div class="kpi-v" id="kpi-total">1</div>
+      <div class="kpi-v" id="kpi-total">16</div>
       <div class="kpi-l">ADRs publicados</div>
     </div>
     <div class="kpi">
-      <div class="kpi-v">1</div>
+      <div class="kpi-v">2</div>
       <div class="kpi-l">Layers activos</div>
     </div>
     <div class="kpi">
-      <div class="kpi-v">1</div>
+      <div class="kpi-v">15</div>
       <div class="kpi-l">Accepted</div>
     </div>
   </div>
@@ -159,6 +161,7 @@ footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border
   <div class="filter-bar">
     <button class="f-tab active" onclick="filterLayer('all',this)">Todos</button>
     <button class="f-tab" onclick="filterLayer('media',this)">Media Layer</button>
+    <button class="f-tab" onclick="filterLayer('core',this)">Core Layer</button>
   </div>
 
   <div class="cards-grid" id="grid">
@@ -178,6 +181,338 @@ footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border
       </div>
       <div class="card-desc-wrap">
         <div class="card-desc">Define el único lugar canónico donde ocurre la deserialización de payloads anidados (XML/JSON) dentro de Data Cloud: un Batch Data Transform que lee de un DLO Bronze y escribe a un DLO Silver.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+
+
+    <a href="core/001-passive-core-via-platform-events.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Passive Core via Platform Events"
+       data-desc="The Salesforce core must integrate with multiple external systems (billing, provisioning, network inventory).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-001</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Passive Core via Platform Events</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The Salesforce core must integrate with multiple external systems (billing, provisioning, network inventory).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/002-pro-code-over-omnistudio.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Pro-Code (LWC + Apex) as Primary Extensibility Path"
+       data-desc="The Salesforce stack offers multiple extensibility options: OmniStudio (FlexCards, OmniScripts, Integration Procedures), Screen Flows, and pro-code (LWC + Apex).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#0e4d8a 0%,#06a59a 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-002</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Pro-Code (LWC + Apex) as Primary Extensibility Path</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The Salesforce stack offers multiple extensibility options: OmniStudio (FlexCards, OmniScripts, Integration Procedures), Screen Flows, and pro-code (LWC + Apex).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/003-platform-managed-authentication.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Platform-Managed Authentication for All Integrations"
+       data-desc="Integrations require credentials to authenticate against external systems (billing engine, network inventory, GIS, etc.).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0176d3 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-003</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Platform-Managed Authentication for All Integrations</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">Integrations require credentials to authenticate against external systems (billing engine, network inventory, GIS, etc.).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/004-standard-first-rca-objects.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Standard-First RCA Objects"
+       data-desc="Revenue Cloud Advanced (RCA) provides a rich set of standard objects covering accounts, orders, assets, products, and engagement.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-004</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Standard-First RCA Objects</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">Revenue Cloud Advanced (RCA) provides a rich set of standard objects covering accounts, orders, assets, products, and engagement.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/005-multi-package-tmforum-functional-framework.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Multi-Package Directory Structure Aligned with TMForum Functional Framework"
+       data-desc="As the solution grows across multiple functional domains, a single force-app/main/default/ directory creates ambiguity about which metadata belongs to which business capability.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#0e4d8a 0%,#06a59a 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-005</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Multi-Package Directory Structure Aligned with TMForum Functional Framework</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">As the solution grows across multiple functional domains, a single force-app/main/default/ directory creates ambiguity about which metadata belongs to which business capability.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/006-media-domain-structure.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Multi-Package Directory Structure Aligned with Media Ad Sales Functional Domains"
+       data-desc="This project implements Salesforce Media Cloud Ad Sales Management on a greenfield org.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0176d3 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-006</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Multi-Package Directory Structure Aligned with Media Ad Sales Functional Domains</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">This project implements Salesforce Media Cloud Ad Sales Management on a greenfield org.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/007-omnistudio-media-cloud-exception.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="OmniStudio Acceptable as Part of Media Cloud Standard Package"
+       data-desc="ADR-002 establishes LWC + Apex as the primary extensibility path and designates OmniStudio as a last resort — only when it brings a clear, justified benefit that LWC + Apex cannot provide.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-007</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">OmniStudio Acceptable as Part of Media Cloud Standard Package</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">ADR-002 establishes LWC + Apex as the primary extensibility path and designates OmniStudio as a last resort — only when it brings a clear, justified benefit that LWC + Apex cannot provide.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/008-trigger-action-framework.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Trigger Action Framework as the Standard for Apex Trigger Logic"
+       data-desc="The standard Apex trigger pattern — one trigger per object delegating to a monolithic handler class — works for simple scenarios but has well-known friction points at scale: handler classes grow large, execution order is implicit, recursion control requires boilerplate, and bypass logic is scattered.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#0e4d8a 0%,#06a59a 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-008</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Trigger Action Framework as the Standard for Apex Trigger Logic</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The standard Apex trigger pattern — one trigger per object delegating to a monolithic handler class — works for simple scenarios but has well-known friction points at scale: handler classes grow large, execution order is implicit, recursion control requires boilerplate, and bypass logic is scattered.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/009-apex-unit-testing-stack.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Apex Unit Testing Stack — apex-mockery, SObjectFabricator, FluentAssert"
+       data-desc="Salesforce Apex unit testing has no official framework beyond System.assertEquals and @testSetup.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0176d3 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-009</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Apex Unit Testing Stack — apex-mockery, SObjectFabricator, FluentAssert</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">Salesforce Apex unit testing has no official framework beyond System.assertEquals and @testSetup.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/010-cumulative-artifact-promotion-to-sit.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org"
+       data-desc="The project promotes metadata across managed environments via immutable release artifacts built from manifest/buildfile.json (Org Development Model — see architecture/CICD.md).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-010</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The project promotes metadata across managed environments via immutable release artifacts built from manifest/buildfile.json (Org Development Model — see architecture/CICD.md).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/011-multi-track-coexistence-shared-org.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Multi-Track Coexistence in a Shared Org"
+       data-desc="The client has requested a second development track (&quot;Track 2&quot;) that will go live after R1, built by the client's own autonomous team, to give them a baseline from which to evolve independently.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#0e4d8a 0%,#06a59a 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-011</span>
+          <span class="card-status">Proposed</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Multi-Track Coexistence in a Shared Org</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The client has requested a second development track (&quot;Track 2&quot;) that will go live after R1, built by the client's own autonomous team, to give them a baseline from which to evolve independently.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/012-bugfix-and-hotfix-lines.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Bugfix and Hotfix Lines under Team-Capacity Constraints"
+       data-desc="By 2026-07-06 the project runs two release tracks in parallel: R1 is entering UAT stabilization (Go-Live 2026-07-25) and R2 is mid-flight (sprints S6–S8, Go-Live 2026-08-31).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0176d3 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-012</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Bugfix and Hotfix Lines under Team-Capacity Constraints</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">By 2026-07-06 the project runs two release tracks in parallel: R1 is entering UAT stabilization (Go-Live 2026-07-25) and R2 is mid-flight (sprints S6–S8, Go-Live 2026-08-31).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/013-programmatic-gam-direct-callout.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Direct Apex Callout to GAM for Programmatic PG/PD Quote-to-Proposal Flow"
+       data-desc="The RP (Request-to-Proposal) process for Programmatic Guaranteed (PG) and Programmatic Direct (PD) sales types requires sending a createProposalLineItems request to Google Ad Manager (GAM) via its SOAP API (ProposalLineItemService, v202605) when an AdQuote is Approved or Activated.">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#1a5276 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-013</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Direct Apex Callout to GAM for Programmatic PG/PD Quote-to-Proposal Flow</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">The RP (Request-to-Proposal) process for Programmatic Guaranteed (PG) and Programmatic Direct (PD) sales types requires sending a createProposalLineItems request to Google Ad Manager (GAM) via its SOAP API (ProposalLineItemService, v202605) when an AdQuote is Approved or Activated.</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/014-retire-develop-sit-release-branch-fix-origin.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Retire develop-sit; Release Branches + Immutable Tags Are the Fix Origin"
+       data-desc="develop-sit was introduced (RM-RUNBOOK, docs/sit-bugfix-process/) as a permanent branch that &quot;represents what is currently deployed to SIT&quot; and serves three purposes: the base for sprint-delta calculation, a single ref for &quot;what's in SIT right now,&quot; and the origin of SIT-bugfix branches (bugfix/sit/&lt;squad&gt;/&lt;id&gt;).">
+      <div class="card-banner" style="background:linear-gradient(135deg,#0e4d8a 0%,#06a59a 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-014</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Retire develop-sit; Release Branches + Immutable Tags Are the Fix Origin</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">develop-sit was introduced (RM-RUNBOOK, docs/sit-bugfix-process/) as a permanent branch that &quot;represents what is currently deployed to SIT&quot; and serves three purposes: the base for sprint-delta calculation, a single ref for &quot;what's in SIT right now,&quot; and the origin of SIT-bugfix branches (bugfix/sit/&lt;squad&gt;/&lt;id&gt;).</div>
+        <div class="card-footer">
+          Ver ADR
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="core/015-data-cloud-d360-add-on-package.html"
+       class="adr-card"
+       data-layer="core"
+       data-title="Data Cloud (Data 360) as an Isolated Add-on Package — crp-d360"
+       data-desc="Data Cloud / Data 360 (D360) is explicitly out of the baseline solution in the governance documents that rule this repository:">
+      <div class="card-banner" style="background:linear-gradient(135deg,#032d60 0%,#0176d3 100%)">
+        <div class="card-banner-top">
+          <span class="card-id">ADR-015</span>
+          <span class="card-status">Accepted</span>
+        </div>
+        <div class="card-layer">Core Layer · Base Template</div>
+        <div class="card-title">Data Cloud (Data 360) as an Isolated Add-on Package — crp-d360</div>
+      </div>
+      <div class="card-desc-wrap">
+        <div class="card-desc">Data Cloud / Data 360 (D360) is explicitly out of the baseline solution in the governance documents that rule this repository:</div>
         <div class="card-footer">
           Ver ADR
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

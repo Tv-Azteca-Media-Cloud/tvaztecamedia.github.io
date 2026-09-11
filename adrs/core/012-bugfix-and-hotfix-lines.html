@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ADR-012 — Bugfix and Hotfix Lines under Team-Capacity Constraints — TV Azteca Media Cloud</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;--green:#1e7e34;--red:#9b2226;--amber:#854d0e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:10.8px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+#progress{position:sticky;top:0;height:3px;background:rgba(0,0,0,.06);z-index:50}
+#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-badges{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+.hdr-title{font-size:15px;font-weight:700}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:2px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+main{padding:28px 38px 64px;flex:1;max-width:980px}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px;scroll-margin-top:16px}
+.section-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section p{margin-bottom:10px;line-height:1.65}
+.section ul,.section ol{margin:0 0 12px 20px;line-height:1.6}
+.section li{margin-bottom:6px}
+.section code{background:#eef1f5;color:#0176d3;padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:Consolas,Monaco,monospace}
+
+.sub-hdr{font-size:.85rem;font-weight:700;color:var(--navy);margin:18px 0 8px;padding-top:4px;border-top:1px dashed var(--border)}
+.table-wrap{overflow-x:auto;margin:10px 0 16px}
+.layer-table td,.layer-table th{white-space:normal}
+
+
+.callout{border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.55;border-left:4px solid}
+.callout.warning{background:#fff8ec;border-color:var(--amber);color:#4a3300}
+.callout-title{font-weight:700;margin-bottom:3px;color:var(--navy)}
+
+.conseq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+.conseq-grid .pos,.conseq-grid .neg{border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.55}
+.conseq-grid .pos{background:#f0f9f1;border-left:4px solid var(--green)}
+.conseq-grid .neg{background:#fdf1f0;border-left:4px solid var(--red)}
+.conseq-grid h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--navy)}
+.conseq-grid ul{margin:0 0 0 16px}
+@media (max-width:720px){.conseq-grid{grid-template-columns:1fr}}
+
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.related-card{display:block;background:#f7f9fb;border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+.related-card:hover{box-shadow:0 4px 14px rgba(1,118,211,.12)}
+.related-id{font-size:10px;font-weight:800;font-family:monospace;color:var(--blue);margin-bottom:4px}
+.related-title{font-size:11.5px;color:var(--text);line-height:1.4}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR-012</div>
+    <div class="sub">Core Layer · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">EN ESTA PÁGINA</li>
+    <li><a href="#context">Context</a></li>
+    <li><a href="#decision">Decision</a></li>
+    <li><a href="#consequences">Consequences</a></li>
+    <li><a href="#related">Related</a></li>
+    <li><a href="#related-adrs">ADRs Relacionados</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">📐</span>ADR Library</a></li>
+    <li><a href="../../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">Architecture Decision Record<br>TV Azteca · Media Cloud · 2026</div>
+</div>
+
+<div id="page">
+<div id="progress"><div id="progress-bar"></div></div>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-badges">
+        <span class="badge">ADR-012</span>
+        <span class="badge">Accepted</span>
+        <span class="badge">Core Layer</span>
+      </div>
+      <div class="hdr-title">Bugfix and Hotfix Lines under Team-Capacity Constraints</div>
+      <div class="hdr-sub">TV Azteca · Salesforce Delivery Platform · ADP Whitelabel</div>
+    </div>
+    <a href="../index.html" class="hdr-home" title="ADR Library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-meta">
+    <span>Fecha: <strong>2026-07-06</strong></span>
+    <span>Estado: <strong>Accepted</strong></span>
+    <span>Layer: <strong>Core / Base Template</strong></span>
+  </div>
+</header>
+
+<main>
+<section class="section" id="context">
+  <div class="section-hdr">Context</div>
+  <p>By 2026-07-06 the project runs two release tracks in parallel: R1 is entering UAT stabilization (Go-Live 2026-07-25) and R2 is mid-flight (sprints S6–S8, Go-Live 2026-08-31). Two operational realities emerge that the main development model — one isolated sandbox per developer, artifact-based promotion — does not cover:</p>
+<ol><li><strong>Defects found in something already promoted must be fixed off the main sprint flow.</strong> A bug in what is deployed to SIT/UAT (R1) cannot wait for the next sprint's feature cycle; it is fixed on a dedicated bugfix line branched from <code>develop-sit</code>. A production incident (post Go-Live) needs an even faster path, branched from <code>main</code>.</li><li><strong>The team does not have the capacity to operate a fully robust, dedicated environment chain per line.</strong> The originally-anticipated hotfix chain (dedicated <code>DEVPRD</code> + <code>QAPRD</code> sandboxes, per <code>RELEASE-CALENDAR.md</code> milestones) will <strong>not</strong> be provisioned — there is no team bandwidth to develop, test, and maintain that line at full CI/CD robustness. Sandbox allotment is also finite: exactly one Full Copy (allocated to UAT) and one Partial Copy (allocated to HOTFIX). See ADR context in <code>architecture/ENVIRONMENTS.md</code>.</li></ol>
+<p>These two realities force two deliberate deviations from principles recorded in <code>SOUL.md</code> and <code>architecture/CICD.md</code>:</p>
+<ul><li><strong>Shared developer sandbox for bugfixes.</strong> <code>SOUL.md</code> marks shared developer sandboxes as a non-negotiable anti-pattern (&quot;shared dev sandboxes break CI, hide defects&quot;). The bugfix lines use shared sandboxes (<code>DEVR1</code> for R1-UAT bugfixes; the <code>HOTFIX</code> Partial Copy doubles as the construction+validation org for production hotfixes).</li><li><strong>Delta (diff-based) deployment for production hotfixes.</strong> <code>architecture/CICD.md</code> marks diff-based deployment as an anti-pattern in favor of immutable-artifact promotion. An emergency production fix deploys only the delta of the change, not a regenerated full artifact.</li></ul>
+<p>The decision records <strong>why these exceptions are acceptable, bounded, and how the resulting risk is contained</strong> — so they are never silently adopted as the norm (SOUL non-negotiable #5).</p>
+
+</section>
+
+<section class="section" id="decision">
+  <div class="section-hdr">Decision</div>
+  <p><strong>Operate the R1 bugfix line and the production hotfix line as scoped, deliberate exceptions to the shared-sandbox and artifact-promotion principles — justified by team capacity and a bounded time window, with mandatory containment controls (backpromotion, dual approval, staged validation).</strong></p>
+<div class="sub-hdr">Why the exceptions are acceptable</div>
+<div class="table-wrap"><table class="layer-table"><thead><tr><th>Exception</th><th>Principle deviated</th><th>Why acceptable here</th><th>Bound</th></tr></thead><tbody><tr><td>Shared bugfix sandbox (<code>DEVR1</code>, <code>HOTFIX</code>)</td><td>One isolated sandbox per developer (<code>SOUL.md</code>)</td><td>Bugfix lines are <strong>short, low-volume, single-purpose</strong>. The CI-breakage and hidden-defect risks that shared sandboxes cause come from many developers doing parallel feature work in one org — not from a small set of surgical fixes. Team capacity does not justify a dedicated per-developer chain for a transient line.</td><td>Only for <code>bug/r1/*</code> and <code>hotfix/*</code> work; never for feature construction. Reassess when R1 exits UAT and after R2 Go-Live.</td></tr><tr><td>Delta deploy for PROD hotfix</td><td>Artifact-based promotion, no diff-based deploy (<code>CICD.md</code>)</td><td>An emergency production incident is exactly the case <code>CICD.md</code> reserves as the permitted exception: the minimum necessary change applied quickly and safely. Regenerating and promoting a full immutable artifact through the whole chain is too slow for a live incident.</td><td>Emergency production incidents only. Never for planned releases or routine bugfixes.</td></tr></tbody></table></div>
+<div class="sub-hdr">Mandatory containment controls</div>
+<p>Because both exceptions weaken a safety net, the following controls are <strong>non-negotiable</strong> whenever a line is used:</p>
+<ol><li><strong>Backpromotion to <code>develop</code> is mandatory</strong> after every fix (R1 bugfix and PROD hotfix). No fix may exist only on its line.</li><li><strong>Reconciliation obligation with a deadline.</strong> A PROD hotfix backpromotes to <code>develop</code> immediately; <code>develop-sit</code> and the cumulative artifact (<code>releases/rN</code>) are reconciled <strong>no later than the next sprint's integration window</strong>. Until reconciled, the fix is absent from SIT — RM must not trigger a SIT deploy that would reintroduce the fixed defect. (See RM-RUNBOOK &quot;Reconciliation Obligation&quot;.)</li><li><strong>Production hotfix requires dual approval — RM + TA.</strong> No single-person path to production.</li><li><strong>Staged validation before PROD.</strong> A hotfix is built in the <code>HOTFIX</code> Partial Copy and its deploy is rehearsed in PreProd before promotion to Production. The Partial Copy gives production-data parity for reproduction; PreProd gives a clean-org deploy rehearsal.</li></ol>
+<div class="sub-hdr">What this decision does NOT authorize</div>
+<ul><li>Shared sandboxes for feature development (the main model stands: one per developer).</li><li>Diff-based deployment for planned Major/Minor releases (artifact promotion stands).</li><li>Skipping backpromotion &quot;because the release is close.&quot;</li><li>A production deploy on a single approval.</li></ul>
+
+</section>
+
+<section class="section" id="consequences">
+  <div class="section-hdr">Consequences</div>
+  <div class="conseq-grid">
+  <div class="pos"><h4>Positive</h4><ul><li>The team operates within real capacity instead of maintaining an environment chain it cannot staff.</li><li>Emergency incidents have a defined, fast, still-governed path — the RM-RUNBOOK &quot;Hotfix Path&quot; stub is closed.</li><li>Exceptions are explicit and bounded, satisfying SOUL non-negotiable #5 (never resolve conflicts with principles silently).</li></ul></div>
+  <div class="neg"><h4>Negative / risks accepted</h4><ul><li><strong>Version-skew of the fix across environments</strong> until reconciliation completes. Mitigated by control #2 (deadline + RM gate on SIT deploys).</li><li><strong>Reduced isolation</strong> on the shared bugfix sandbox. Mitigated by scope (surgical fixes only, low volume) and by the line being transient.</li><li><strong>Delta deploy is non-deterministic</strong> by nature. Mitigated by restricting it to genuine emergencies and by mandatory backpromotion so the next artifact re-absorbs the change.</li></ul></div>
+</div>
+
+</section>
+
+<section class="section" id="related">
+  <div class="section-hdr">Related</div>
+  <ul><li><code>SOUL.md</code> — Release Management Principles (individual sandboxes; artifact-based promotion)</li><li><code>architecture/CICD.md</code> — Release Types (Patch/Hotfix), diff-based anti-pattern</li><li><code>architecture/RM-RUNBOOK.md</code> — Hotfix Path, Approval Matrix, <code>develop-sit</code> protocol</li><li><code>architecture/ENVIRONMENTS.md</code> — DEVR1, HOTFIX, PreProd, UAT tiers and allotment</li><li>ADR-010 — Cumulative artifact promotion to SIT</li></ul>
+
+</section>
+
+<section class="section" id="related-adrs">
+  <div class="section-hdr">ADRs Relacionados</div>
+  <div class="related-grid">
+    <a href="010-cumulative-release-artifact-for-sit-promotion-baseline-install-validation-in-build-org.html" class="related-card">
+      <div class="related-id">ADR-010</div>
+      <div class="related-title">Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org</div>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — Uso interno. Architecture Decision Records.</footer>
+</div>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>

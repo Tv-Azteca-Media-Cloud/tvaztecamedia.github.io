@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ADR-011 — Multi-Track Coexistence in a Shared Org — TV Azteca Media Cloud</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;--green:#1e7e34;--red:#9b2226;--amber:#854d0e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:10.8px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+#progress{position:sticky;top:0;height:3px;background:rgba(0,0,0,.06);z-index:50}
+#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+header{background:linear-gradient(135deg,#5a3a00 0%,#854d0e 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-badges{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+.hdr-title{font-size:15px;font-weight:700}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:2px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+main{padding:28px 38px 64px;flex:1;max-width:980px}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px;scroll-margin-top:16px}
+.section-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section p{margin-bottom:10px;line-height:1.65}
+.section ul,.section ol{margin:0 0 12px 20px;line-height:1.6}
+.section li{margin-bottom:6px}
+.section code{background:#eef1f5;color:#0176d3;padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:Consolas,Monaco,monospace}
+
+.sub-hdr{font-size:.85rem;font-weight:700;color:var(--navy);margin:18px 0 8px;padding-top:4px;border-top:1px dashed var(--border)}
+.table-wrap{overflow-x:auto;margin:10px 0 16px}
+.layer-table td,.layer-table th{white-space:normal}
+
+
+.callout{border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.55;border-left:4px solid}
+.callout.warning{background:#fff8ec;border-color:var(--amber);color:#4a3300}
+.callout-title{font-weight:700;margin-bottom:3px;color:var(--navy)}
+
+.conseq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+.conseq-grid .pos,.conseq-grid .neg{border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.55}
+.conseq-grid .pos{background:#f0f9f1;border-left:4px solid var(--green)}
+.conseq-grid .neg{background:#fdf1f0;border-left:4px solid var(--red)}
+.conseq-grid h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--navy)}
+.conseq-grid ul{margin:0 0 0 16px}
+@media (max-width:720px){.conseq-grid{grid-template-columns:1fr}}
+
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.related-card{display:block;background:#f7f9fb;border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+.related-card:hover{box-shadow:0 4px 14px rgba(1,118,211,.12)}
+.related-id{font-size:10px;font-weight:800;font-family:monospace;color:var(--blue);margin-bottom:4px}
+.related-title{font-size:11.5px;color:var(--text);line-height:1.4}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR-011</div>
+    <div class="sub">Core Layer · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">EN ESTA PÁGINA</li>
+    <li><a href="#context">Context</a></li>
+    <li><a href="#decision">Decision</a></li>
+    <li><a href="#alternatives-considered">Alternatives Considered</a></li>
+    <li><a href="#consequences">Consequences</a></li>
+    <li><a href="#related-adrs">ADRs Relacionados</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">📐</span>ADR Library</a></li>
+    <li><a href="../../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">Architecture Decision Record<br>TV Azteca · Media Cloud · 2026</div>
+</div>
+
+<div id="page">
+<div id="progress"><div id="progress-bar"></div></div>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-badges">
+        <span class="badge">ADR-011</span>
+        <span class="badge">Proposed</span>
+        <span class="badge">Core Layer</span>
+      </div>
+      <div class="hdr-title">Multi-Track Coexistence in a Shared Org</div>
+      <div class="hdr-sub">TV Azteca · Salesforce Delivery Platform · ADP Whitelabel</div>
+    </div>
+    <a href="../index.html" class="hdr-home" title="ADR Library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-meta">
+    <span>Fecha: <strong>2026-06-10</strong></span>
+    <span>Estado: <strong>Proposed</strong></span>
+    <span>Layer: <strong>Core / Base Template</strong></span>
+  </div>
+</header>
+
+<main>
+<section class="section" id="context">
+  <div class="section-hdr">Context</div>
+  <p>The client has requested a second development track (&quot;Track 2&quot;) that will go live after R1, built by the client's own autonomous team, to give them a baseline from which to evolve independently. Track 2 is intended to &quot;not impact&quot; the current media project. Six facts shape this decision:</p>
+<ol><li><strong>A Salesforce org has no tenancy boundary between projects.</strong> API names, profiles and permission sets, the sharing model (OWD), the Apex namespace, per-object triggers, the integration user, named credentials, and runtime governor limits are all global within the org. Track 2 and the media project share one Production org (client decision).</li><li><strong>This project runs the Org Development Model, not Package Development (2GP).</strong> Per ADR-005 and ADR-010, the <code>crp-*</code> &quot;packages&quot; are logical folders, not namespaced 2GP packages. <strong>There is therefore no technical enforcement of the boundary between tracks</strong> — Salesforce will let a Track 2 flow fire on the media project's <code>Account</code>. Isolation is exactly as strong as the governance discipline imposed on it; it is a <em>result of governance</em>, not a property of the platform. This makes &quot;Track 2 will not impact R1&quot; an aspiration that must be engineered, not an assumption.</li><li><strong>The real overlap is Track2-vs-R2, and it is transitory.</strong> Track 2 starts construction after Go-Live R1 (2026-07-25), but R2 is still in flight (sprints S6–S8, Go-Live 2026-08-31). The baseline Track 2 inherits is partially stale the day it is handed over, because R2 keeps moving the org underneath it. No R3 is foreseen — <strong>once R2 ships, Track 2 is the only project left in the org.</strong> The shared-org regime lasts roughly 8 weeks (Jul–Aug); the governance apparatus exists to protect a bounded window, not a permanent state.</li><li><strong>Functional coupling is mixed.</strong> Track 2 is mostly a new domain but has several contact points with the core (shared fields, pricing, reports, permissions). &quot;No impact&quot; holds only where Track 2 touches nothing shared — which must be made explicit per change, not assumed.</li><li><strong>Runtime is shared even when metadata is cleanly separated.</strong> A Track 2 trigger/flow on <code>Account</code> runs in the <em>same transaction</em> as the media project's logic on every DML. A poorly written Track 2 action can breach the SOQL/CPU limit of an <code>Account</code> insert belonging to R1/R2.</li><li><strong>Revenue Cloud configuration is data, not metadata.</strong> Pricing, ContextDefinitions, and decision tables are promoted via SFDMU. Config-as-data lacks the three safety nets metadata has: git surfaces no collision (SFDMU upsert overwrites silently), and graph integrity is fragile (a partial load corrupts the pricing engine transversally). Matching is by stable business GUID (confirmed — no record-Id binding), which neutralizes cross-org identity divergence but does <strong>not</strong> resolve simultaneous edits or load ordering.</li></ol>
+
+</section>
+
+<section class="section" id="decision">
+  <div class="section-hdr">Decision</div>
+  <p><strong>Two tracks coexist in one shared Production org under a single governance model — logical isolation enforced by a Shared-Metadata Contract, a cross-track Architecture Review Board, and an artifact-based promotion discipline — for the bounded duration of the overlap, after which custody transfers to the client.</strong></p>
+<div class="sub-hdr">Logical isolation — the Shared-Metadata Contract (four classes)</div>
+<p>One governance model applied to four classes of shared things, with controls graduated by how fragile each class is:</p>
+<div class="table-wrap"><table class="layer-table"><thead><tr><th>Class</th><th>Git safety net</th><th>Extra control</th><th>Change rule</th></tr></thead><tbody><tr><td>Metadata (XML)</td><td>Collision visible in merge</td><td>—</td><td>Shared → ARB authorizes; own → free</td></tr><tr><td>Apex (TAF)</td><td>Visible + additive extension</td><td>Ordering / bypass</td><td>New action class on a shared trigger: ARB authorizes. Editing an R1/R2 action class: <strong>prohibited</strong> for Track 2</td></tr><tr><td>Config-as-data (SFDMU)</td><td>None — silent upsert</td><td><strong>GUID namespace partition + single authorship</strong></td><td>Shared config authored in one place; own config in a reserved GUID range</td></tr><tr><td>Runtime (shared transaction)</td><td>None</td><td>Combined performance test</td><td>Bypass/ordering owned by the steward</td></tr></tbody></table></div>
+<p>Each shared artifact is classified <strong>shared / own / prohibited</strong>. Track 2 has full autonomy over <em>own</em>, zero authority over <em>shared</em>, and never touches <em>prohibited</em> without the ARB.</p>
+<div class="sub-hdr">TAF as the additive extension mechanism</div>
+<p>The Trigger Action Framework (ADR-008) is what makes mixed coupling survivable: because logic lives in discrete, ordered, bypass-controlled action classes, <strong>Track 2 can add its own action class to a shared object's trigger without editing the media project's code.</strong> Extension is additive, not surgery on shared code. Without TAF, every Track 2 change to a shared object would be an edit to another team's code.</p>
+<div class="sub-hdr">Same repo (non-negotiable); the <em>how</em> is a sequenced open decision</div>
+<p>A single repository is required to preserve a single source of truth and git-level collision detection on shared metadata. The mechanism is deferred: the client cannot access GitHub (security policy) but has GitLab. <strong>This is a hard gate of sequence</strong> — calendar, governance, and responsibilities are agreed <em>first</em>; the GitHub/GitLab mechanism is resolved only after. The leading candidate is a federated model (GitHub authoritative for the core, mirrored read-only into the client's GitLab as an immutable baseline), which would enforce the &quot;prohibited&quot; class by construction. See the open decisions below.</p>
+<div class="sub-hdr">Architecture Review Board (ARB) — single authority over shared</div>
+<p>A weekly cross-track ARB (your TA + client TA) is the <strong>only</strong> authority that approves changes to the four shared classes. Default is rejection: silence is not approval, and every decision versions the Shared-Metadata Contract in the repo. The ARB also:</p>
+<ul><li><strong>Certifies which Track 2 releases are &quot;100% own&quot;</strong> (touch nothing shared), which is what makes the warranty-window B-bounded option executable.</li><li><strong>Governs back-promotion</strong> (see below) as a function, not a separate committee.</li></ul>
+<p>The ARB dissolves when the media project exits — there is no longer a &quot;cross-track&quot; to govern.</p>
+<div class="sub-hdr">Convergence by dates + rebase; UAT is the only shared net</div>
+<ul><li><strong>No shared QA or SIT.</strong> Each track keeps its own dev / build / SIT, so neither project's deliverable is contaminated by the other's in-flight (unstable) work.</li><li><strong>UAT is the single point of convergence</strong> and the only environment where the combined state is validated before Production. It accumulates each track's immutable artifact (ADR-010) — artifacts are never merged; each remains a pure, independent deliverable.</li><li><strong>Monthly synchronized train, alternating Prod windows.</strong> A single master Prod calendar serializes windows: one window = one owner = one artifact, order known before construction. The ARB resolves swaps by exception only (hybrid anchored to the calendar). The whoever-ships-second rebases their baseline from Prod and re-validates the combination in their own SIT before their window. This synchronized cadence is the <em>transitory</em> regime; once Track 2 is alone in the org, it may choose any cadence.</li><li><strong>Back-promotion is bidirectional.</strong> Whoever deploys to Prod, the other back-promotes and re-validates before their next release. Governed by the ARB; executed by RM/DevOps with the same <code>sf builds deploy</code> tooling (CICD.md back-promotion principle).</li></ul>
+<div class="sub-hdr">Config-as-data: partition + single authorship</div>
+<p>Stable business GUIDs make cross-org matching reliable but do not prevent collision or coordinate change. Therefore: <strong>reserved GUID namespaces per track</strong> (collision impossible by partition) and <strong>single authorship of shared config</strong> held by the steward during the overlap (the last upsert wins silently, so shared config cannot have two writers). A hotfix touching shared config goes through the same authorship even when expedited — never a direct Prod upsert, because a mis-ordered emergency load on the pricing graph breaks quoting for <em>both</em> tracks.</p>
+<div class="sub-hdr">Handover in two stages</div>
+<ul><li><strong>2026-08-31 (Go-Live R2): platform-custody handover.</strong> The client assumes governance, the master calendar, the ARB, config authorship (including shared config-as-data), and change authorization. This closes the media project's construction-and-control commitment. <strong>The only residual right retained:</strong> deploy of warranty hotfixes on R1/R2.</li><li><strong>2026-08-31 → 2026-09-28 (4-week warranty): warranty scoped to the delivered artifact.</strong> Your team retains a single-purpose, expiring deploy access to Prod for R1/R2 warranty hotfixes only. Warranty covers defects of <em>your</em> deliverable (R1+R2 as delivered, including defects that block Track 2 from your artifact discovered in their sandboxes/UAT) — <strong>not</strong> effects of Track 2 changes layered on top. A warranty hotfix touching shared config-as-data is executed by your team but coordinated with the client, who now holds authorship. Every warranty hotfix is forward-merged to Track 2's integration line. Access is revoked on 2026-09-28 — handover complete.</li></ul>
+<div class="sub-hdr">Open decisions (resolved by the client, not by this ADR)</div>
+<ol><li><strong>Track 2 to Prod during the warranty window?</strong> Two scenarios are presented for the client to choose, owning the risk:</li></ol>
+<ul><li><strong>A — Track 2 waits</strong> (first Prod go-live post 28-Sep): warranty integrity intact, responsibility boundary clean, ~4 weeks delay.</li><li><strong>B — Track 2 ships in warranty</strong>: faster, but dilutes the client's own warranty and introduces incident-origin ambiguity; requires a surgical exclusion clause signed before 31-Aug.</li><li><strong>B-bounded (bridge):</strong> Track 2 may ship in warranty only if the release touches no shared metadata/config (ARB-certified &quot;100% own&quot;). Velocity for the new domain, core warranty intact. Because your team retains warranty-hotfix deploy, Scenario A is the coherent default: if Track 2 mutates Prod during warranty, hotfixes operate on a moving target you no longer own.</li></ul>
+<ol><li><strong>Repo mechanism</strong> (GitHub/GitLab federation) — deferred behind the sequence gate above.</li></ol>
+
+</section>
+
+<section class="section" id="alternatives-considered">
+  <div class="section-hdr">Alternatives Considered</div>
+  <div class="callout warning"><div class="callout-title">Separate org for Track 2</div><div>Rejected by client decision (shared Production org). Would give physical isolation but is not the chosen topology.</div></div>
+<div class="callout warning"><div class="callout-title">Shared SIT (or shared QA)</div><div>Rejected — a shared lower environment would contain the other track's in-flight unstable work, contaminating the <em>validation</em> of each deliverable. Note this is independent of artifact purity (ADR-010 keeps artifacts separate regardless); the rejection is about validation cleanliness. UAT-as-sole-convergence plus dates+rebase achieves combined validation without the contamination.</div></div>
+<div class="callout warning"><div class="callout-title">Separate repo per track</div><div>Rejected — loses both single source of truth and git-level collision detection on shared metadata; in a shared org the only reconciler left would be Production itself (the worst case). Same repo is non-negotiable.</div></div>
+<div class="callout warning"><div class="callout-title">Migrate everything to GitLab</div><div>Rejected — rewriting GitHub Actions → GitLab CI, GHCR, and secrets mid-flight (R1/R2 live) risks the media project itself. Reserved only for a corporate mandate.</div></div>
+<div class="callout warning"><div class="callout-title">Dedicated config-master org as source of truth</div><div>Rejected as a requirement — stable GUIDs let repo-as-SoT survive without an org minting identity. A dedicated authoring org remains an <em>optional convenience</em> only for complex shared config, not a structural need.</div></div>
+<div class="callout warning"><div class="callout-title">Continuous / weekly cadence for Track 2</div><div>Rejected — in a shared org with a fragile, non-IaC UAT as the only net, more releases mean more convergence events stressing the weakest net. Monthly-synchronized minimizes convergence events; the normal instinct (short cadence = safer) inverts here.</div></div>
+<div class="callout warning"><div class="callout-title">Separate back-promotion committee</div><div>Rejected — fragments the same architect already in the ARB and closing R2; the decision data (what changed in shared classes) already lives in the ARB. Back-promotion is an ARB function with RM/DevOps execution.</div></div>
+
+</section>
+
+<section class="section" id="consequences">
+  <div class="section-hdr">Consequences</div>
+  <ul><li><strong>Hotfix path (bidirectional) is a hard prerequisite, operative before 2026-08-31.</strong> The RM-RUNBOOK currently marks the hotfix path &quot;PROCESS NOT DEFINED.&quot; Two tracks sharing Prod make it urgent and bidirectional: a hotfix on shared metadata is an <em>org</em> event whose blast radius ignores the project boundary. The taxonomy must classify hotfixes by <em>who they affect</em> (own vs. shared), not only by urgency, and define direction, notification, and reconciliation. It remains necessary <em>after</em> exit, operated by whoever then owns the org. This is a condition of the model, not a follow-up.</li><li><strong>IaC for UAT is known debt; the risk is signed, not hidden.</strong> There is no IaC to recreate UAT test data without manual effort. Therefore re-anchoring UAT (after a rejected homologation or a hotfix that bypassed UAT) is an expensive, manual last resort — it cannot be the primary integrity mechanism. The weight shifts upstream to the Shared-Metadata Contract + ARB as the only reliable control. While IaC is unfunded, convergence integrity depends entirely on the ARB; the day the ARB fails, there is no cheap fallback net. This is an accepted, signed risk.</li><li><strong>Core knowledge transfer (KT) must happen before 2026-08-31, not on the handover day.</strong> The client inherits an org running your R1+R2 code with no one on your side maintaining it after August. The design rationale (ADRs, known traps: PS license binding, External Client App recreation, Unicode normalization, ContextDefinitions sync) must be transferred and documented beforehand, or the client inherits an org they do not understand. This is several days of architect effort to budget.</li><li><strong>Stewardship must be staffed (risk #5) during R2's final stretch.</strong> DevOps accompaniment and architecture harmonization are dedicated, named, funded hours that occur in parallel with UAT R2 and Go-Live R2. They cannot be drawn from existing capacity without either degrading Track 2 governance or delaying R2.</li><li><strong>Responsibility of delivery (client) is distinct from responsibility of platform (yours).</strong> You do not answer for <em>whether their feature works</em>; you do answer for <em>that their feature does not break the shared org</em> while the org is shared. The RACI (per artifact class and per process) makes the accountability migration explicit at each milestone: everything transfers on 31-Aug except warranty-hotfix deploy, which transfers on 28-Sep.</li><li><strong>The model is transitory by design.</strong> All heavy governance (ARB, rebase, alternating windows, UAT convergence) exists to protect an ~8-week overlap. After 28-Sep the org has a single owner, governance relaxes, and the client is genuinely autonomous. The deck and the ADR must frame this as three acts (overlap → handover → Track 2 alone), not as a permanent regime.</li><li><strong>This ADR is <code>Proposed</code>, not <code>Accepted</code>.</strong> The model depends on the client accepting the conditions — that acceptance is the purpose of the client deck. It moves to <code>Accepted</code> when the client signs the calendar, governance, responsibilities, and (then) the repo mechanism. The A/B warranty scenarios and the repo mechanism remain open decisions referenced here, not resolved here.</li></ul>
+
+</section>
+
+<section class="section" id="related-adrs">
+  <div class="section-hdr">ADRs Relacionados</div>
+  <div class="related-grid">
+    <a href="005-multi-package-directory-structure-aligned-with-tmforum-functional-framework.html" class="related-card">
+      <div class="related-id">ADR-005</div>
+      <div class="related-title">Multi-Package Directory Structure Aligned with TMForum Functional Framework</div>
+    </a>
+    <a href="010-cumulative-release-artifact-for-sit-promotion-baseline-install-validation-in-build-org.html" class="related-card">
+      <div class="related-id">ADR-010</div>
+      <div class="related-title">Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org</div>
+    </a>
+    <a href="008-trigger-action-framework-as-the-standard-for-apex-trigger-logic.html" class="related-card">
+      <div class="related-id">ADR-008</div>
+      <div class="related-title">Trigger Action Framework as the Standard for Apex Trigger Logic</div>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — Uso interno. Architecture Decision Records.</footer>
+</div>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ADR-014 — Retire develop-sit; Release Branches + Immutable Tags Are the Fix Origin — TV Azteca Media Cloud</title>
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--teal:#06a59a;--bg:#f4f6f9;--card:#fff;--text:#181818;--muted:#6b7280;--border:#e2e6ea;--nav:230px;--green:#1e7e34;--red:#9b2226;--amber:#854d0e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;display:flex;min-height:100vh}
+
+#nav{position:fixed;top:0;left:0;width:var(--nav);height:100vh;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.nav-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-logo .proj{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:8px}
+.nav-logo .sub{font-size:8.5px;color:rgba(255,255,255,.25);margin-top:2px}
+.nav-grp{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:14px 16px 4px;list-style:none}
+.nav-sep{height:1px;background:rgba(255,255,255,.06);margin:6px 16px}
+#nav ul{list-style:none;padding:4px 0}
+#nav ul li a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:10.8px;color:rgba(255,255,255,.58);text-decoration:none;border-left:3px solid transparent;transition:all .12s;cursor:pointer}
+#nav ul li a:hover,#nav ul li a.active{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--teal)}
+.nav-ico{font-size:12px;flex-shrink:0}
+.nav-foot{padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);font-size:8.5px;color:rgba(255,255,255,.2);line-height:1.7}
+
+#page{margin-left:var(--nav);flex:1;display:flex;flex-direction:column}
+#progress{position:sticky;top:0;height:3px;background:rgba(0,0,0,.06);z-index:50}
+#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,#0e4d8a 100%);color:#fff;padding:22px 38px 18px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:8px}
+.hdr-badges{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+.hdr-title{font-size:15px;font-weight:700}
+.hdr-sub{font-size:10.5px;opacity:.55;margin-top:2px}
+.hdr-meta{margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10.5px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.85)}
+.hdr-home{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;text-decoration:none;transition:background .15s;flex-shrink:0}
+.hdr-home:hover{background:rgba(255,255,255,.2)}
+
+main{padding:28px 38px 64px;flex:1;max-width:980px}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:20px;scroll-margin-top:16px}
+.section-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section p{margin-bottom:10px;line-height:1.65}
+.section ul,.section ol{margin:0 0 12px 20px;line-height:1.6}
+.section li{margin-bottom:6px}
+.section code{background:#eef1f5;color:#0176d3;padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:Consolas,Monaco,monospace}
+
+.sub-hdr{font-size:.85rem;font-weight:700;color:var(--navy);margin:18px 0 8px;padding-top:4px;border-top:1px dashed var(--border)}
+.table-wrap{overflow-x:auto;margin:10px 0 16px}
+.layer-table td,.layer-table th{white-space:normal}
+
+
+.callout{border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.55;border-left:4px solid}
+.callout.warning{background:#fff8ec;border-color:var(--amber);color:#4a3300}
+.callout-title{font-weight:700;margin-bottom:3px;color:var(--navy)}
+
+.conseq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+.conseq-grid .pos,.conseq-grid .neg{border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.55}
+.conseq-grid .pos{background:#f0f9f1;border-left:4px solid var(--green)}
+.conseq-grid .neg{background:#fdf1f0;border-left:4px solid var(--red)}
+.conseq-grid h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--navy)}
+.conseq-grid ul{margin:0 0 0 16px}
+@media (max-width:720px){.conseq-grid{grid-template-columns:1fr}}
+
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.related-card{display:block;background:#f7f9fb;border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+.related-card:hover{box-shadow:0 4px 14px rgba(1,118,211,.12)}
+.related-id{font-size:10px;font-weight:800;font-family:monospace;color:var(--blue);margin-bottom:4px}
+.related-title{font-size:11.5px;color:var(--text);line-height:1.4}
+
+footer{text-align:center;color:var(--muted);font-size:10.5px;padding:18px;border-top:1px solid var(--border);background:#fff}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <div class="nav-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Logotipo_de_TV_Azteca.png" alt="TV Azteca"/>
+    <div class="proj">ADR-014</div>
+    <div class="sub">Core Layer · 2026</div>
+  </div>
+  <ul>
+    <li class="nav-grp">EN ESTA PÁGINA</li>
+    <li><a href="#context">Context</a></li>
+    <li><a href="#decision">Decision</a></li>
+    <li><a href="#consequences">Consequences</a></li>
+    <li><a href="#follow-ups-bounded-not-authorized-by-this-adr">Follow-ups (bounded; not authorized by this ADR)</a></li>
+    <li><a href="#related">Related</a></li>
+    <li><a href="#related-adrs">ADRs Relacionados</a></li>
+    <li class="nav-sep"></li>
+    <li><a href="../index.html"><span class="nav-ico">📐</span>ADR Library</a></li>
+    <li><a href="../../index.html"><span class="nav-ico">↩</span>Portal de Presentaciones</a></li>
+  </ul>
+  <div class="nav-foot">Architecture Decision Record<br>TV Azteca · Media Cloud · 2026</div>
+</div>
+
+<div id="page">
+<div id="progress"><div id="progress-bar"></div></div>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-badges">
+        <span class="badge">ADR-014</span>
+        <span class="badge">Accepted</span>
+        <span class="badge">Core Layer</span>
+      </div>
+      <div class="hdr-title">Retire develop-sit; Release Branches + Immutable Tags Are the Fix Origin</div>
+      <div class="hdr-sub">TV Azteca · Salesforce Delivery Platform · ADP Whitelabel</div>
+    </div>
+    <a href="../index.html" class="hdr-home" title="ADR Library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
+  </div>
+  <div class="hdr-meta">
+    <span>Fecha: <strong>2026-07-22</strong></span>
+    <span>Estado: <strong>Accepted</strong></span>
+    <span>Layer: <strong>Core / Base Template</strong></span>
+  </div>
+</header>
+
+<main>
+<section class="section" id="context">
+  <div class="section-hdr">Context</div>
+  <p><code>develop-sit</code> was introduced (RM-RUNBOOK, <code>docs/sit-bugfix-process/</code>) as a permanent branch that &quot;represents what is currently deployed to SIT&quot; and serves three purposes: the base for sprint-delta calculation, a single ref for &quot;what's in SIT right now,&quot; and the origin of SIT-bugfix branches (<code>bugfix/sit/&lt;squad&gt;/&lt;id&gt;</code>).</p>
+<p>By 2026-07-22 that construct collides with the project's own governance and with reality:</p>
+<ol><li><strong>It is an environment branch — an explicitly recorded anti-pattern.</strong> <code>SOUL.md</code>: <em>&quot;No environment branches: Branches are not databases — they cannot represent sandbox state. Pipeline mechanics must never depend on per-environment branches.&quot;</em> <code>CICD.md</code> lists the same under Branching Anti-Patterns and warns environment branches <em>&quot;go out of sync exponentially under parallel releases.&quot;</em> <code>develop-sit</code> is precisely &quot;the branch that equals SIT.&quot; It also does <strong>not</strong> appear in the canonical branch table in <code>CICD.md</code> (<code>main</code>, <code>release/*</code>, <code>develop</code>, <code>develop-rXXX</code>, <code>feature-rXXX/*</code>, <code>hotfix/*</code>) — it is a project-local addition the template model never sanctioned.</li><li><strong>Parallel releases break the single-pointer premise.</strong> From the moment R2-s6 is promoted to SIT, R1 is still in UAT (Go-Live 2026-07-25) while R2 owns SIT. A single <code>develop-sit</code> can point at only one of the two live tracks — exactly the &quot;out of sync under parallel releases&quot; failure the docs warn about. <code>CICD.md</code> already assigns parallel-release scaffolding to &quot;the project that adopts the template&quot;; this ADR is that scaffolding.</li><li><strong>The tooling is already tag-based; the doc claim is stale.</strong> <code>scripts/generate-sprint-manifest.js</code> requires <code>--base-tag</code> (canonical) or <code>--base</code> (alias) with <strong>no fallback to <code>develop-sit</code></strong> (line 46). The RM-RUNBOOK claim that the script <em>&quot;uses <code>develop-sit</code> as <code>--base</code> by default&quot;</em> is false today. The delta baseline is already an immutable tag, not the environment branch.</li><li><strong>The apparent &quot;drift&quot; was a tag-placement bug, not a mirror failure — but it proves the same point.</strong> Investigation on 2026-07-22 (git ancestry + GitHub Actions run history) established what was actually deployed to SIT and reconciled the tag confusion:</li></ol>
+<ul><li><strong>SIT holds <code>v1.0.0-rc.34</code> (<code>82e13778</code>)</strong> — the tip of <code>release/r1</code>, and the <strong>only</strong> recent R1 tag that landed on a release branch rather than on <code>develop</code> HEAD.</li><li><strong><code>release/r1-s5</code> (<code>caf7ca7</code>) descends cleanly from <code>rc.34</code></strong> (+3 admin-profile cleanup commits, PRs #453/#448/#447) and is <strong>artifact-identical to SIT</strong> — zero diff across <code>releases/r1/</code>. It is a strict superset of the SIT state, missing nothing.</li><li><strong><code>v1.0.0-rc.35</code> (<code>77fc1ee</code>) is a <code>develop</code> commit, not the SIT artifact.</strong> It was never deployed to SIT. It only looked like &quot;the last RC cut from <code>develop-sit</code>&quot; because of the bug below.</li></ul>
+<p>The confusion originated in <code>releaseCreateManual.yml</code>: <code>gh release create</code> was invoked <strong>without <code>--target</code></strong>, so every tag defaulted to the repository default branch (<code>develop</code>) HEAD instead of the commit that was actually built from <code>inputs.ref</code>. rc.31, rc.32, rc.33, and rc.35 all landed on <code>develop</code>; only rc.34 (built before the pattern) sits on the release branch. So the tags did <strong>not</strong> mark the artifacts they named — the ledger of &quot;what's in SIT&quot; was decoupled from the git tags. That is precisely the environment-branch / floating-pointer failure this ADR retires: the fix is to anchor to a release branch + a tag that is guaranteed to point at the built commit (workflow bug fixed 2026-07-22; see Follow-up #2).</p>
+<p>A fix is authored against a <strong>release artifact</strong>, not against a stage. Which sandbox currently hosts that artifact (SIT, UAT, PreProd) is irrelevant to where the fix branches from. Anchoring the fix line to the release makes it robust to which environment holds the artifact and to parallel tracks.</p>
+
+</section>
+
+<section class="section" id="decision">
+  <div class="section-hdr">Decision</div>
+  <p><strong>Retire <code>develop-sit</code> as the SIT baseline construct. The origin for any fix to promoted work is the per-sprint release branch (<code>release/rN-sX</code>) and its immutable release tag (<code>vX.Y.Z-rc.N</code>) — never a branch that tracks an environment.</strong></p>
+<div class="sub-hdr">What &quot;retire&quot; means here</div>
+<ul><li><strong><code>develop-sit</code> is kept, not deleted.</strong> The ref remains for history and for the CI wiring that still references it (see Follow-ups). It simply <strong>stops advancing</strong> — it is no longer repositioned on sprint close and no longer originates bugfix commits.</li><li><strong><code>release/r1-s5</code> is created</strong> at <code>develop-sit</code>'s state on retirement (<code>caf7ca7</code>) as the properly-named, correctly-shaped anchor for any remaining R1 UAT bugfix — consistent with <code>release/r2-s6</code>. Verification (2026-07-22) confirmed it is <strong>artifact-identical to what is deployed to SIT</strong> (<code>v1.0.0-rc.34</code> / <code>82e13778</code>), descending from it by three admin-profile cleanup commits with zero <code>releases/r1/</code> diff — so it is the correct converged R1 content, not a divergent one. The anchor tag (<code>v1.0.0-rc.36</code>) is minted on <code>caf7ca7</code> by the <strong>fixed</strong> <code>releaseCreateManual.yml</code> (Follow-up #2), then promoted to SIT and UAT so <code>rc.36 = release/r1-s5 = SIT = UAT</code>.</li></ul>
+<div class="sub-hdr">The model that replaces it</div>
+<div class="table-wrap"><table class="layer-table"><thead><tr><th>Need</th><th>Old (<code>develop-sit</code>)</th><th>New</th></tr></thead><tbody><tr><td>Sprint delta base</td><td><code>git diff develop-sit...develop</code></td><td><code>git diff &lt;last-SIT-tag&gt;...develop</code> (already how the script works)</td></tr><tr><td>&quot;What's in SIT now&quot;</td><td>the <code>develop-sit</code> pointer</td><td>the newest <code>release/rN-sX</code> with a green <code>releaseDeploy</code> (also the SIT Artifact column in <code>RELEASE-CALENDAR.md</code>)</td></tr><tr><td>Origin of a fix to promoted work</td><td>branch from <code>develop-sit</code></td><td>branch from the release branch/tag whose artifact is in the target env</td></tr></tbody></table></div>
+<div class="sub-hdr">Rules</div>
+<ol><li><strong>Fix origin = the release the artifact belongs to.</strong> A bug in what is in SIT/UAT for release <code>rN</code> is fixed off the newest <code>release/rN-sX</code> branch (equivalently its <code>-rc.N</code> tag). Within a release, SIT is overwritten each sprint, so &quot;the rN line in a managed env&quot; is always the <strong>latest</strong> sprint branch of <code>rN</code>.</li><li><strong>Anchor to the immutable tag for reproduction.</strong> Reproduce/build against the tagged artifact (<code>vX.Y.Z-rc.N</code>), not a floating branch tip, so &quot;which sandbox state?&quot; cannot re-enter by the back door. Where a stable state is untagged, tag it (once the correct commit is confirmed — see Follow-up #2) so every anchor is immutable.</li><li><strong>Backpromotion is unchanged and still mandatory.</strong> Same two-phase, same-SHA parity mechanic (<code>git merge --no-ff</code>) as before — only the Fase 1 base changes from <code>develop-sit</code> to the release branch. The fix must reach <code>develop</code> (and, for R1 during the R1/R2 overlap, the R2 track) so no line loses it. Backpromotion parity remains the invariant that keeps lines reconcilable (ADR-012, ADR-011).</li><li><strong>Per-sprint release branches are long-lived while their artifact is in a managed env.</strong> This reverses the earlier &quot;cut, generate, dormant&quot; expectation: a <code>release/rN-sX</code> branch remains the fix origin as long as its artifact occupies a managed environment.</li></ol>
+<div class="sub-hdr">Relationship to prior ADRs</div>
+<ul><li><strong>ADR-010 (cumulative artifact promotion)</strong> is reinforced, not weakened: the unit of promotion and now of <em>fix authorship</em> is the immutable artifact.</li><li><strong>ADR-012 (bugfix/hotfix lines)</strong> referenced &quot;branched from <code>develop-sit</code>&quot; for the R1 bugfix line. That phrase is superseded: R1 UAT bugfixes now branch from <code>release/r1-s5</code>. All ADR-012 containment controls (shared-sandbox scope, mandatory backpromotion, reconciliation deadline, dual approval for hotfix) stand unchanged.</li><li><strong>ADR-011 (multi-track coexistence)</strong> anticipated per-track lines and bidirectional back-promotion; retiring the single environment pointer in favor of per-release branches is consistent with that direction.</li></ul>
+
+</section>
+
+<section class="section" id="consequences">
+  <div class="section-hdr">Consequences</div>
+  <div class="conseq-grid">
+  <div class="pos"><h4>Positive</h4><ul><li>Removes a recorded anti-pattern (environment branch) and realigns with the canonical <code>CICD.md</code> branch model.</li><li>Survives parallel releases: R1 (<code>release/r1-s5</code>) and R2 (<code>release/r2-s6</code>) each have an independent, correctly-named fix origin. No single pointer to contend over.</li><li>Simplifies sprint close: step 4 was &quot;reposition <code>develop-sit</code> to the deployed commit&quot; (ambiguous under two tracks). It becomes &quot;confirm the <code>-rc.N</code> tag&quot; — nothing to reposition.</li><li>The delta baseline is immutable (a tag) instead of a mutable branch that could drift.</li></ul></div>
+  <div class="neg"><h4>Negative / risks accepted</h4><ul><li>Release branches become long-lived, and &quot;the rN line in SIT&quot; means <em>the newest sprint branch of rN</em> — an operator must know that a post-S7 SIT bug is fixed off <code>release/r2-s7</code>, not <code>release/r2-s6</code>. Mitigated by documenting the rule in RM-RUNBOOK and the sit-bugfix process, and by the <code>RELEASE-CALENDAR.md</code> SIT Artifact column being the source of truth for &quot;what's in SIT.&quot;</li><li>Docs and CI that reference <code>develop-sit</code> must be reconciled (see Follow-ups). Until then <code>develop-sit</code> remains load-bearing for the workflows below, so it is retired-in-place (kept), not deleted.</li></ul></div>
+</div>
+
+</section>
+
+<section class="section" id="follow-ups-bounded-not-authorized-by-this-adr">
+  <div class="section-hdr">Follow-ups (bounded; not authorized by this ADR)</div>
+  <ol><li><strong>CI + skill rewiring (deferred by RM, 2026-07-22).</strong> <code>develop-sit</code> is still load-bearing for:</li></ol>
+<ul><li><code>.github/workflows/releaseCreateOnPush.yml</code> (push trigger — the SIT-bugfix auto-build),</li><li><code>.github/sandbox-fleet.json</code> (<code>releaseRef</code>) and <code>.github/workflows/fleetResumeScheduled.yml</code>,</li><li>the skills coupled to the above: <code>create-bugfix-pr</code> (Fase 1 base = <code>develop-sit</code>), <code>sprint-close-sit</code> (repositions <code>develop-sit</code> on sprint close), and <code>provision-sandbox-fleet</code> (<code>releaseRef</code> default).</li></ul>
+<p>These are intentionally <strong>not</strong> changed in this ADR's implementation. Until they are repointed, <code>develop-sit</code> must be kept <strong>and</strong> must still be repositioned on sprint close (so the residual auto-build path branches from the true SIT state). Repointing them — SIT-bugfix auto-build trigger → release branch; fleet <code>releaseRef</code> → an appropriate stable ref; skills updated to match — is a separate, later change. When it lands, the transition caveat in <code>RM-RUNBOOK.md</code> (Sprint close) and the banner in <code>docs/sit-bugfix-process/README.md</code> are removed.</p>
+<ol><li><strong>Anchor tag — RESOLVED (2026-07-22).</strong> The original worry (&quot;<code>rc.35</code> may be the true SIT state, don't tag <code>caf7ca7</code> blindly&quot;) was investigated and dismissed:</li></ol>
+<ul><li><strong>What is deployed to SIT is <code>v1.0.0-rc.34</code> (<code>82e13778</code>)</strong> — verified against the GitHub Actions run history and the <code>sf builds deploy</code> target in the run logs. It is the tip of <code>release/r1</code>.</li><li><strong><code>caf7ca7</code> (= <code>develop-sit</code> tip = <code>release/r1-s5</code>) is artifact-identical to <code>rc.34</code></strong> (descends from it by 3 cleanup commits, zero <code>releases/r1/</code> diff). So <code>caf7ca7</code> is the correct converged SIT content, not a divergent branch.</li><li><strong><code>v1.0.0-rc.35</code> (<code>77fc1ee</code>) was never deployed to SIT.</strong> It is a <code>develop</code> commit that only <em>appeared</em> to be &quot;the last RC from <code>develop-sit</code>&quot; because of the tag-placement bug in <code>releaseCreateManual.yml</code> (tags defaulted to <code>develop</code> HEAD — see Context #4). The single substantive artifact gap between <code>caf7ca7</code> and UAT (<code>rc.35</code>) is one validation-rule member, <code>Lead.TVAS_ValidaTransicionStatusPorAprobacion</code>, confirmed to belong in R1 and present in the anchor.</li></ul>
+<p><strong>Resolution.</strong> The <code>releaseCreateManual.yml</code> bug is fixed (<code>--target &quot;$(git rev-parse HEAD)&quot;</code> on <code>gh release create</code>, 2026-07-22) so future tags mark the commit they were built from. The R1 anchor tag <strong><code>v1.0.0-rc.36</code> is minted on <code>caf7ca7</code></strong> by the fixed workflow and promoted <code>BLDREL → SIT → UAT</code>, converging <code>rc.36 = release/r1-s5 = SIT = UAT</code>. The <code>RELEASE-CALENDAR.md</code> SIT Artifact column is updated to <code>rc.36</code>. No further verification is pending.</p>
+
+</section>
+
+<section class="section" id="related">
+  <div class="section-hdr">Related</div>
+  <ul><li><code>SOUL.md</code> — Release Management Principles: no environment branches; artifact-based promotion</li><li><code>architecture/CICD.md</code> — Branching Strategy, Branching Anti-Patterns, parallel-release scaffolding is project-owned</li><li><code>architecture/RM-RUNBOOK.md</code> — <code>develop-sit</code> section, Change Routing, Bugfix Path (updated by this decision)</li><li><code>docs/sit-bugfix-process/README.md</code> — SIT bugfix two-phase process (updated by this decision)</li><li><code>scripts/generate-sprint-manifest.js</code> — already tag-based (<code>--base-tag</code>), confirming the model</li><li>ADR-010 — Cumulative artifact promotion to SIT</li><li>ADR-011 — Multi-track coexistence in a shared org</li><li>ADR-012 — Bugfix and hotfix lines</li></ul>
+
+</section>
+
+<section class="section" id="related-adrs">
+  <div class="section-hdr">ADRs Relacionados</div>
+  <div class="related-grid">
+    <a href="012-bugfix-and-hotfix-lines-under-team-capacity-constraints.html" class="related-card">
+      <div class="related-id">ADR-012</div>
+      <div class="related-title">Bugfix and Hotfix Lines under Team-Capacity Constraints</div>
+    </a>
+    <a href="011-multi-track-coexistence-in-a-shared-org.html" class="related-card">
+      <div class="related-id">ADR-011</div>
+      <div class="related-title">Multi-Track Coexistence in a Shared Org</div>
+    </a>
+    <a href="010-cumulative-release-artifact-for-sit-promotion-baseline-install-validation-in-build-org.html" class="related-card">
+      <div class="related-id">ADR-010</div>
+      <div class="related-title">Cumulative Release Artifact for SIT Promotion, Baseline Install Validation in Build Org</div>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer>&copy; 2026 TV Azteca Media — Uso interno. Architecture Decision Records.</footer>
+</div>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('#nav ul li a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>
